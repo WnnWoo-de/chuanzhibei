@@ -33,25 +33,27 @@ const router = createRouter({
       component: HomeView,
     },
 
-    // ---- 认证相关页面（仅游客可访问，已登录自动跳转） ----
+    // ---- 认证相关页面 ----
+    {
+      path: '/auth',
+      name: 'auth',
+      component: () => import('../views/auth/AuthView.vue'),
+    },
     {
       path: '/auth/login',
       name: 'login',
-      component: () => import('../views/auth/LoginView.vue'),
-      meta: { guestOnly: true },  // 已登录用户不可访问
+      redirect: '/auth',
     },
     {
       path: '/auth/register',
       name: 'register',
-      component: () => import('../views/auth/RegisterView.vue'),
-      meta: { guestOnly: true },
+      redirect: '/auth',
     },
     {
       path: '/auth/callback',
       name: 'auth-callback',
-      // OAuth 回调页面复用登录视图处理 Token
-      component: () => import('../views/auth/LoginView.vue'),
-      meta: { guestOnly: true },
+      // OAuth 回调页面复用认证视图处理 Token
+      component: () => import('../views/auth/AuthView.vue'),
     },
 
     // ---- 核心功能模块 ----
@@ -81,19 +83,16 @@ const router = createRouter({
       path: '/achievements',
       name: 'achievements',
       component: () => import('../views/achievements/AchievementsView.vue'),
-      meta: { requiresAuth: true }, // 必须登录才能访问
     },
     {
       path: '/community',
       name: 'community',
       component: () => import('../views/community/CommunityView.vue'),
-      meta: { requiresAuth: true },
     },
     {
       path: '/volunteer',
       name: 'volunteer',
       component: () => import('../views/volunteer/VolunteerView.vue'),
-      meta: { requiresAuth: true },
     },
 
     // ---- 工具类页面（无需登录） ----
@@ -102,19 +101,22 @@ const router = createRouter({
       name: 'weather',
       component: () => import('../views/weather/WeatherQuery.vue'),
     },
+    {
+      path: '/license',
+      name: 'license',
+      component: () => import('../views/LicenseView.vue'),
+    },
 
-    // ---- 个人中心（需要登录） ----
+    // ---- 个人中心 ----
     {
       path: '/profile',
       name: 'profile',
       component: () => import('../views/ProfileView.vue'),
-      meta: { requiresAuth: true },
     },
     {
       path: '/settings',
       name: 'settings',
       component: () => import('../views/SettingsView.vue'),
-      meta: { requiresAuth: true },
     },
 
     // ---- 404 兜底路由（匹配所有未定义路径） ----

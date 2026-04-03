@@ -137,7 +137,8 @@ const emit = defineEmits(['toggle', 'close', 'expand-change'])
 const route = useRoute()
 const router = useRouter()
 
-const isMini = ref(true)
+// 从 localStorage 恢复侧边栏状态，默认为 mini 状态（折叠）
+const isMini = ref(localStorage.getItem('sidebar_mini') !== 'false')
 const activeNav = ref(route.path)
 
 watch(
@@ -150,13 +151,17 @@ watch(
 
 const isMobile = () => window.innerWidth < 768
 
-const isSidebarExpanded = computed(() => (isMobile() ? props.isOpen : !isMini.value))
+const isSidebarExpanded = computed(() => {
+  if (isMobile()) {
+    return props.isOpen
+  }
+  return !isMini.value
+})
 
 const sidebarClasses = computed(() => {
   if (isMobile()) {
     return props.isOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full'
   }
-
   return isMini.value ? 'w-14 translate-x-0' : 'w-64 translate-x-0'
 })
 
@@ -164,7 +169,6 @@ const toggleButtonClass = computed(() => {
   if (isMobile()) {
     return props.isOpen ? 'left-[264px]' : 'left-3'
   }
-
   return isMini.value ? 'left-[64px]' : 'left-[264px]'
 })
 
@@ -229,11 +233,6 @@ const sidebarItems = [
     label: '核心功能',
     link: '#features',
     icon: 'M13 3 4 14h7v7l9-11h-7z',
-  },
-  {
-    label: '精选推荐',
-    link: '#recommendations',
-    icon: 'M12 3.75 14.547 8.91l5.703.829-4.125 4.021.974 5.68L12 16.762 6.901 19.44l.974-5.68-4.125-4.021 5.703-.829L12 3.75z',
   },
   {
     label: '动态资讯',

@@ -11,6 +11,7 @@ import TheFooter from './components/layout/TheFooter.vue'
 import TheIntro from './components/layout/TheIntro.vue'     // 首次进入的开场动画
 import TheSidebar from './components/layout/TheSidebar.vue' // 左侧导航栏
 import Silk from './component/Silk/Silk.vue'                 // WebGL 丝绸背景动画
+import './styles/design-tokens.css'                          // 设计令牌系统
 
 // 是否显示开场动画（首次进入页面时显示）
 const showIntro = ref(true)
@@ -18,8 +19,8 @@ const showIntro = ref(true)
 // 控制侧边栏展开状态
 const sidebarOpen = ref(false)
 
-// 控制侧边栏是否全宽展开（true 时侧栏为展开状态，影响主内容区左边距）
-const sidebarFull = ref(false)
+// 控制侧边栏是否全宽展开，默认为 mini 状态
+const sidebarFull = ref(localStorage.getItem('sidebar_mini') === 'false')
 
 const route = useRoute()
 
@@ -71,17 +72,17 @@ watch(() => route.path, () => {
   <TheIntro v-if="showIntro" @complete="handleIntroComplete" />
 
   <!-- 左侧导航栏组件 -->
-  <TheSidebar 
-    :is-open="sidebarOpen" 
+  <TheSidebar
+    :is-open="sidebarOpen"
     @toggle="sidebarOpen = !sidebarOpen"
     @close="sidebarOpen = false"
     @expand-change="(v) => { sidebarFull = v }"
   />
 
   <!-- 主内容区：根据侧边栏状态动态调整左边距 -->
-  <div 
+  <div
     class="min-h-screen flex flex-col bg-transparent relative z-10 selection:bg-primary selection:text-white transition-all duration-300"
-    :class="sidebarOpen || sidebarFull ? 'ml-64' : 'ml-14'"
+    :class="sidebarFull ? 'ml-64' : 'ml-14'"
   >
     <!-- 顶部导航栏 -->
     <TheNavbar />

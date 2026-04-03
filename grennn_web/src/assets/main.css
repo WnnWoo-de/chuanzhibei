@@ -301,9 +301,7 @@ img[loading='lazy'].loaded {
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
-}
-
-/* ============================================
+}/* ============================================
    工具类补充
 ============================================ */
 .writing-vertical {
@@ -345,9 +343,7 @@ img[loading='lazy'].loaded {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* 隐藏滚动条工具类 */
+}/* 隐藏滚动条工具类 */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

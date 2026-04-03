@@ -127,14 +127,7 @@
           </div>
         </div>
 
-        <!-- Stats row -->
-        <div class="grid grid-cols-3 gap-4 mb-8 animate-fade-in-up delay-100">
-          <div v-for="stat in stats" :key="stat.label" class="vol-stat-card group">
-            <p class="text-xl mb-1">{{ stat.icon }}</p>
-            <p class="text-2xl md:text-3xl font-bold text-primary tabular-nums">{{ stat.value }}</p>
-            <p class="font-mono text-[9px] uppercase tracking-[0.18em] text-gray-400 mt-1">{{ stat.label }}</p>
-          </div>
-        </div>
+
 
         <!-- Redeem banner -->
         <div class="vol-redeem-banner mb-8 animate-fade-in-up delay-200">
@@ -387,11 +380,7 @@ const volunteerLeaderboard = ref([
   { name: 'Emma W.', hours: 18 },
 ])
 
-const stats = computed(() => [
-  { value: activities.value.length, label: '当前活动', icon: '📅' },
-  { value: activities.value.reduce((s,a)=>s+(a.capacity-a.enrolled),0), label: '剩余名额', icon: '👥' },
-  { value: activities.value.reduce((s,a)=>s+a.enrolled,0), label: '已报名人数', icon: '✅' },
-])
+
 
 const filteredActivities = computed(() => {
   let list = activities.value
@@ -542,24 +531,6 @@ onMounted(async () => { await userStore.init() })
   color: #1e3a8a;
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(96,165,250,0.45);
-}
-
-/* ── Stat Cards ── */
-.vol-stat-card {
-  background: rgba(255,255,255,0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0,0,0,0.07);
-  border-radius: 1.25rem;
-  padding: 1rem 1.1rem;
-  text-align: center;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-  transition: all 0.3s var(--ease-expo);
-}
-.vol-stat-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.09);
-  border-color: rgba(46,125,50,0.15);
 }
 
 /* ── Redeem Banner ── */

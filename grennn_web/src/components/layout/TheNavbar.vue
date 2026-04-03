@@ -120,7 +120,7 @@
                 :class="isActive(item.path) ? 'text-[#2E7D32]' : 'text-black hover:text-[#2E7D32]'"
               >
                 <!-- 菜单图标：悬停时从半透明变为完全可见 -->
-                <span class="text-2xl md:text-4xl opacity-50 group-hover/link:opacity-100 transition-opacity">{{ item.icon }}</span>
+                <NavIcons :name="item.iconName" size="48" class="md:w-16 md:h-16 opacity-50 group-hover/link:opacity-100 transition-opacity" />
                 {{ item.label }}
                 <!-- 当前页面标识 -->
                 <span
@@ -191,6 +191,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import gsap from 'gsap'
 import { useUserStore } from '@/stores/user'
+import NavIcons from '@/components/icons/NavIcons.vue'
 
 // 控制全屏抽屉菜单的展开/收起状态
 const isOpen = ref(false)
@@ -200,13 +201,13 @@ const router = useRouter()
 
 // 全局菜单导航项配置
 const navItems = [
-  { path: '/', label: '关于', icon: '🌱' },
-  { path: '/reconstruction', label: '旧物重构', icon: '♻️' },
-  { path: '/chat', label: 'AI 助手', icon: '🤖' },
-  { path: '/community', label: '社区活动', icon: '🌍' },
-  { path: '/volunteer', label: '志愿活动', icon: '🤝' },
-  { path: '/weather', label: '天气查询', icon: '🌤' },
-  { path: '/achievements', label: '成就系统', icon: '🏆' },
+  { path: '/', label: '关于', iconName: 'about' },
+  { path: '/reconstruction', label: '旧物重构', iconName: 'reconstruction' },
+  { path: '/chat', label: 'AI 助手', iconName: 'chat' },
+  { path: '/community', label: '社区活动', iconName: 'community' },
+  { path: '/volunteer', label: '志愿活动', iconName: 'volunteer' },
+  { path: '/weather', label: '天气查询', iconName: 'weather' },
+  { path: '/achievements', label: '成就系统', iconName: 'achievements' },
 ]
 
 /**
