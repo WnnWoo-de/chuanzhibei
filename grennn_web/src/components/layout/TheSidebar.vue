@@ -137,8 +137,8 @@ const emit = defineEmits(['toggle', 'close', 'expand-change'])
 const route = useRoute()
 const router = useRouter()
 
-// 从 localStorage 恢复侧边栏状态，默认为 mini 状态（折叠）
-const isMini = ref(localStorage.getItem('sidebar_mini') !== 'false')
+// 默认以 mini 形态收起侧边栏
+const isMini = ref(true)
 const activeNav = ref(route.path)
 
 watch(

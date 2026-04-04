@@ -5,13 +5,14 @@
 // ============================================================
 
 import { RouterView, useRoute } from 'vue-router'
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { defineAsyncComponent, ref, watch, onMounted, onUnmounted } from 'vue'
 import TheNavbar from './components/layout/TheNavbar.vue'
 import TheFooter from './components/layout/TheFooter.vue'
-import TheIntro from './components/layout/TheIntro.vue'     // 首次进入的开场动画
 import TheSidebar from './components/layout/TheSidebar.vue' // 左侧导航栏
-import Silk from './component/Silk/Silk.vue'                 // WebGL 丝绸背景动画
 import './styles/design-tokens.css'                          // 设计令牌系统
+
+const TheIntro = defineAsyncComponent(() => import('./components/layout/TheIntro.vue'))
+const Silk = defineAsyncComponent(() => import('./components/effects/Silk.vue'))
 
 // 是否显示开场动画（首次进入页面时显示）
 const showIntro = ref(true)

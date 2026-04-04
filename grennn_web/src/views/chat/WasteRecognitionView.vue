@@ -25,7 +25,7 @@
 
       <!-- Main Content -->
       <div class="col-span-12 md:col-span-9 flex flex-col h-full">
-        <div class="bg-white border border-black/10 flex-1 flex flex-col md:flex-row relative overflow-hidden shadow-sm rounded-sm">
+        <div class="bg-white border border-black/10 flex-1 flex flex-col md:flex-row relative overflow-hidden shadow-sm rounded-2xl">
           
           <!-- Upload Area -->
           <div class="flex-1 p-8 border-b md:border-b-0 md:border-r border-black/10 flex flex-col items-center justify-center relative bg-gray-50/30">
@@ -80,9 +80,22 @@
 
           <!-- Analysis Results -->
           <div class="flex-1 p-8 relative flex flex-col bg-white overflow-y-auto">
-            <div v-if="!analysisResult && !isAnalyzing" class="flex-1 flex flex-col items-center justify-center text-center opacity-40">
-              <el-icon size="64" class="mb-4"><Box /></el-icon>
-              <p class="font-mono text-sm">上传图片后，<br />AI 分析结果将显示在这里。</p>
+            <div v-if="!analysisResult && !isAnalyzing" class="flex-1 animate-fade-in flex flex-col">
+              <div class="flex-1 bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-md">
+                <h4 class="font-bold mb-4 flex items-center gap-2">
+                  <el-icon class="text-primary"><InfoFilled /></el-icon> AI 绿色环保建议
+                </h4>
+                <ul class="space-y-3">
+                  <li class="flex gap-3 text-sm text-gray-600 leading-relaxed">
+                    <span class="text-primary mt-0.5">•</span>
+                    <span>当前展示为默认演示建议；接入 AI 识别接口后，会根据上传图片内容动态生成更精准的分类建议。</span>
+                  </li>
+                  <li class="flex gap-3 text-sm text-gray-600 leading-relaxed">
+                    <span class="text-primary mt-0.5">•</span>
+                    <span>建议接入后端视觉模型与知识库（如分类规范、投放点规则），实现按城市与物品类型返回个性化环保建议。</span>
+                  </li>
+                </ul>
+              </div>
             </div>
             
             <div v-else-if="analysisResult" class="flex-1 animate-fade-in flex flex-col">
@@ -134,7 +147,7 @@
 // 当前为本地 mock 识别逻辑，可替换为后端 /api/v1/classify 接口
 // ============================================================
 import { ref } from 'vue'
-import { Camera, UploadFilled, Loading, Box, InfoFilled } from '@element-plus/icons-vue'
+import { Camera, UploadFilled, Loading, InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 // 拖拽悬停状态（控制上传区域的高亮效果）

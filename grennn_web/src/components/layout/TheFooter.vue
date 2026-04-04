@@ -58,12 +58,42 @@
             style="font-family: var(--font-mono)"
           >网站地图</h3>
           <ul class="space-y-3 text-sm font-medium">
-            <li><router-link to="/" class="opacity-70 hover:opacity-100 hover:text-green-600 transition-all">首页</router-link></li>
-            <li><router-link to="/reconstruction" class="opacity-70 hover:opacity-100 hover:text-green-600 transition-all">旧物重构</router-link></li>
-            <li><router-link to="/chat" class="opacity-70 hover:opacity-100 hover:text-green-600 transition-all">智能助手</router-link></li>
-            <li><router-link to="/community" class="opacity-70 hover:opacity-100 hover:text-green-600 transition-all">社区活动</router-link></li>
-            <li><router-link to="/weather" class="opacity-70 hover:opacity-100 hover:text-green-600 transition-all">天气查询</router-link></li>
-            <li><router-link to="/achievements" class="opacity-70 hover:opacity-100 hover:text-green-600 transition-all">成就系统</router-link></li>
+            <li>
+              <router-link to="/" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
+                <span>首页</span>
+                <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/reconstruction" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
+                <span>旧物重构</span>
+                <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/chat" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
+                <span>智能助手</span>
+                <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/community" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
+                <span>社区活动</span>
+                <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/weather" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
+                <span>天气查询</span>
+                <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/achievements" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
+                <span>成就系统</span>
+                <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
+              </router-link>
+            </li>
           </ul>
         </div>
 
@@ -74,10 +104,35 @@
             style="font-family: var(--font-mono)"
           >关于项目</h3>
           <ul class="space-y-3 text-sm font-medium">
-            <li><a href="#" class="opacity-70 hover:opacity-100 hover:text-green-600 transition-all">项目介绍</a></li>
-            <li><a href="#" class="opacity-70 hover:opacity-100 hover:text-green-600 transition-all">技术栈</a></li>
-            <li><a href="#" class="opacity-70 hover:opacity-100 hover:text-green-600 transition-all">开源地址</a></li>
-            <li><a href="#" class="opacity-70 hover:opacity-100 hover:text-green-600 transition-all">联系我们</a></li>
+            <li>
+              <a href="#" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
+                <span>项目介绍</span>
+                <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
+                <span>技术栈</span>
+                <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/WnnWoo-de/chuanzhibei"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all"
+              >
+                <span>开源地址</span>
+                <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
+                <span>联系我们</span>
+                <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -90,18 +145,39 @@
           <ul class="space-y-3 text-sm font-medium">
             <li>
               <!-- 每个链接前带小圆点装饰 -->
-              <a href="#" class="flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
-                <span class="w-1.5 h-1.5 rounded-full bg-current"></span>GitHub
+              <a
+                href="https://github.com/WnnWoo-de/chuanzhibei"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                <span>GitHub</span>
+                <span class="ml-1 -translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
               </a>
             </li>
             <li>
-              <a href="#" class="flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
-                <span class="w-1.5 h-1.5 rounded-full bg-current"></span>微博
+              <a
+                href="https://weibo.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                <span>微博</span>
+                <span class="ml-1 -translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
               </a>
             </li>
             <li>
-              <a href="#" class="flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
-                <span class="w-1.5 h-1.5 rounded-full bg-current"></span>微信公众号
+              <a
+                href="https://mp.weixin.qq.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                <span>微信公众号</span>
+                <span class="ml-1 -translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
               </a>
             </li>
           </ul>
@@ -122,6 +198,13 @@
             <span>可持续未来倡议</span>
             <span>·</span>
             <span>Web 设计大赛参赛作品</span>
+            <button
+              type="button"
+              @click="scrollToTop"
+              class="ml-2 rounded-full border border-black/20 px-3 py-1 opacity-80 hover:opacity-100 hover:text-green-600 hover:border-green-600 transition-all"
+            >
+              回到顶部 ↑
+            </button>
           </div>
         </div>
       </div>
@@ -131,5 +214,7 @@
 
 <script setup>
 // TheFooter.vue - 页脚组件
-// 纯展示型组件，无业务逻辑，无需 script 内容
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 </script>

@@ -27,6 +27,8 @@ coverage
 *.tsbuildinfo
 
 .eslintcache
+build_output.txt
+.trae/
 
 # Cypress
 /cypress/videos/

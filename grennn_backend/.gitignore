@@ -11,6 +11,9 @@ yarn-error.log
 # Uploads
 uploads/
 
+# Temp scripts
+/tmp_*.js
+
 # OS files
 .DS_Store
 Thumbs.db

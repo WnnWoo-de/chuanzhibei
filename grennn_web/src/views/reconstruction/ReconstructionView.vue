@@ -364,7 +364,7 @@ import { ref, onMounted } from 'vue'
 import { Upload, CircleCheckFilled, MagicStick, ArrowRight, Star, StarFilled } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
-import { mapAnalyzeResult } from '@/utils/reconstruction'
+import { mapAnalyzeResult } from '@/services/reconstructionService'
 import { analyzeReconstruction } from '@/services/reconstructionService'
 
 // Import images

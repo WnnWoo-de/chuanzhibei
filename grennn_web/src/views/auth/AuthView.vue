@@ -34,14 +34,6 @@
               </form>
 
               <div class="mt-6 space-y-4 border-t border-black/10 pt-6">
-                <div v-if="isLogin" class="space-y-3">
-                  <p class="text-xs text-center opacity-50 font-mono">或使用以下方式登录</p>
-                  <a href="/api/v1/auth/google" class="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-sm font-medium text-gray-800">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5" />
-                    <span>Google 登录</span>
-                  </a>
-                </div>
-
                 <div class="text-center">
                   <p class="text-xs opacity-60 mb-2">{{ isLogin ? '还没有账号？' : '已有账号？' }}</p>
                   <button type="button" @click="toggleMode" class="inline-flex items-center justify-center gap-1 px-4 py-2 bg-black text-white text-xs font-mono uppercase rounded-lg hover:bg-green-600 transition-all duration-300">

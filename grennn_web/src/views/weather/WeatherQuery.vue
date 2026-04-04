@@ -188,7 +188,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { Location } from '@element-plus/icons-vue'
-import WeatherIcon from '@/components/WeatherIcon.vue'
+import WeatherIcon from '@/components/weather/WeatherIcon.vue'
 import { queryWeatherByCity } from '@/services/weatherService'
 
 const searchCity = ref('北京')

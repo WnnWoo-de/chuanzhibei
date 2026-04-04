@@ -19,6 +19,23 @@ const jwt     = require('jsonwebtoken'); // JWT 生成与验证
 const { Op }  = require('sequelize');    // Sequelize 操作符（用于 OR 查询）
 const crypto  = require('crypto');       // Node.js 内置加密模块（生成随机令牌）
 
+const getSafeRedirectPath = (redirect) => {
+    if (typeof redirect !== 'string') return '';
+    if (!redirect.startsWith('/')) return '';
+    if (redirect.startsWith('//')) return '';
+    return redirect;
+};
+
+const getOAuthRedirectFromState = (state) => {
+    if (typeof state !== 'string' || !state) return '';
+    try {
+        const decoded = JSON.parse(Buffer.from(state, 'base64url').toString('utf8'));
+        return getSafeRedirectPath(decoded?.redirect);
+    } catch {
+        return '';
+    }
+};
+
 // ── 工具函数 ──────────────────────────────────────────────────────────────────
 
 /**
@@ -238,6 +255,9 @@ exports.login = async (req, res) => {
  */
 exports.oauthCallback = (req, res) => {
     const token = generateToken(req.user);
+    const redirect = getOAuthRedirectFromState(req.query?.state);
+    const query = new URLSearchParams({ token });
+    if (redirect) query.set('redirect', redirect);
     // 将令牌以 query string 形式传给前端，前端接收后存入本地存储
-    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${token}`);
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?${query.toString()}`);
 };

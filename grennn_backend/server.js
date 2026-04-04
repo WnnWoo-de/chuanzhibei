@@ -64,25 +64,35 @@ const PORT = process.env.PORT || 3000;
 // 先尝试数据库连接与自动同步（按需补全字段，不删除现有数据）
 // 若因为索引限制（例如 MySQL 最多 64 个索引）导致 alter 失败，退到不变更索引的同步方式
 async function startServer() {
+    let dbReady = false;
+
     try {
         await db.sequelize.authenticate();
         console.log('Database connection established.');
         await db.sequelize.sync({ alter: true });
         console.log('Database sync completed with alter.');
+        dbReady = true;
     } catch (err) {
         console.error('Database sync with alter failed:', err.message);
+
         if (err.message && err.message.includes('Too many keys specified')) {
-            console.warn('Detected index limit issue. Retrying sync without alter.');
-            await db.sequelize.sync({ alter: false });
-            console.log('Database sync completed without alter.');
-        } else {
-            console.error('Failed to sync db:', err);
-            process.exit(1);
+            try {
+                console.warn('Detected index limit issue. Retrying sync without alter.');
+                await db.sequelize.sync({ alter: false });
+                console.log('Database sync completed without alter.');
+                dbReady = true;
+            } catch (retryErr) {
+                console.error('Database sync without alter failed:', retryErr.message);
+            }
+        }
+
+        if (!dbReady) {
+            console.warn('Database is unavailable. Starting server with weather/public routes only.');
         }
     }
 
     app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
+        console.log(`Server running on port ${PORT}${dbReady ? '' : ' (database unavailable)'}`);
     });
 }
 

@@ -60,23 +60,6 @@
 
         <!-- 登录方式补充 -->
         <div class="mt-6 space-y-4 border-t border-black/10 pt-6">
-          <!-- OAuth 第三方登录 -->
-          <div class="space-y-3">
-            <p class="text-xs text-center opacity-50 font-mono">或使用以下方式登录</p>
-
-            <!-- Google OAuth 登录（跳转后端接口） -->
-            <a href="/api/v1/auth/google" class="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-colors text-sm font-medium text-gray-800">
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 object-contain" />
-              <span>Google 登录</span>
-            </a>
-
-            <!-- Microsoft OAuth 登录 -->
-            <a href="/api/v1/auth/microsoft" class="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-colors text-sm font-medium text-gray-800">
-              <img src="https://www.svgrepo.com/show/452062/microsoft.svg" alt="Microsoft" class="w-5 h-5 object-contain" />
-              <span>Microsoft 登录</span>
-            </a>
-          </div>
-
           <!-- 注册入口 -->
           <div class="text-center pt-2">
             <p class="text-xs opacity-60 mb-2">还没有账号？</p>
@@ -108,7 +91,7 @@
 // ============================================================
 // views/auth/LoginView.vue - 登录页面
 // 包含邮箱/用户名 + 密码表单，支持字段级实时校验
-// 支持 OAuth 登录（Google / Microsoft）及 OAuth 回调 Token 自动登录
+// 支持 Token 自动登录
 // ============================================================
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -231,7 +214,7 @@ const handleLogin = async () => {
 watch(email, () => { if (touched.email) validateEmail() })
 watch(password, () => { if (touched.password) validatePassword() })
 
-// 页面挂载时：检查 URL 中是否有 OAuth 回调 token（Google/Microsoft 登录回调）
+// 页面挂载时：检查 URL 中是否有 Token
 onMounted(async () => {
   const queryToken = route.query?.token || route.query?.access_token
   if (typeof queryToken !== 'string' || !queryToken) return

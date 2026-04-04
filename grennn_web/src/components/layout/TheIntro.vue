@@ -52,7 +52,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import gsap from 'gsap'
 
 // 声明向父组件抛出的事件：动画完成后触发 complete
 const emit = defineEmits(['complete'])
@@ -62,7 +61,8 @@ const introContainer = ref(null)
 // 计数器数字元素的 DOM 引用（用于 GSAP 数字递增动画）
 const counterRef = ref(null)
 
-onMounted(() => {
+onMounted(async () => {
+  const { default: gsap } = await import('gsap')
   // 锁定 body 滚动，防止动画播放期间页面被滚动
   document.body.style.overflow = 'hidden'
 
