@@ -395,7 +395,6 @@ const commuteModes = [
   { label: '步行/骑行', value: 'bike', factor: 0 },
   { label: '公交/地铁', value: 'bus', factor: 0.08 },
   { label: '私家车', value: 'car', factor: 0.19 },
-  { label: '', value: 'car', factor: 0.19 },
 ]
 
 const iconMap = {

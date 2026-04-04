@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-transparent min-h-screen text-[#1a1a1a] font-sans selection:bg-primary selection:text-white overflow-x-hidden"
+    class="home-view bg-transparent min-h-screen text-[#1a1a1a] font-sans selection:bg-primary selection:text-white overflow-x-hidden"
   >
     <!-- Welcome Modal -->
     <transition name="modal-fade">
@@ -102,10 +102,21 @@
     </transition>
 
     <!-- Hero Section (Carousel) -->
-    <section class="h-[100dvh] relative flex flex-col justify-center px-6 pt-20 overflow-hidden">
+    <section class="min-h-[100dvh] relative flex flex-col justify-center overflow-hidden bg-[#fcfffc] px-6 pt-20 text-[#1d3a2d]">
+      <div class="absolute inset-0 z-0 overflow-hidden opacity-55 pointer-events-none">
+        <Silk
+          :speed="1.8"
+          :scale="0.85"
+          color="#ffffff"
+          :noiseIntensity="0.5"
+          :rotation="0.12"
+          class-name="h-full w-full"
+        />
+      </div>
+      <div class="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.98),transparent_42%),radial-gradient(circle_at_78%_20%,rgba(220,252,231,0.34),transparent_26%),linear-gradient(135deg,rgba(252,255,252,0.96),rgba(248,252,248,0.84))] pointer-events-none"></div>
       <!-- Background Grid -->
       <div
-        class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6"
+        class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-[0.07] z-0 px-6"
       >
         <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
         <!-- Mobile grid lines (fewer) -->
@@ -115,135 +126,225 @@
       <!-- Hero 装饰背景图形 -->
       <div class="absolute inset-0 pointer-events-none overflow-hidden">
         <!-- 右上角大圆环 -->
-        <svg class="absolute -right-24 -top-24 w-96 h-96 opacity-[0.04]" viewBox="0 0 200 200" fill="none">
+        <svg class="absolute -right-24 -top-24 w-96 h-96 opacity-[0.025]" viewBox="0 0 200 200" fill="none">
           <circle cx="100" cy="100" r="80" stroke="currentColor" stroke-width="1"/>
           <circle cx="100" cy="100" r="60" stroke="currentColor" stroke-width="0.5"/>
           <circle cx="100" cy="100" r="40" stroke="currentColor" stroke-width="0.5"/>
         </svg>
         <!-- 左下角装饰点阵 -->
-        <svg class="absolute left-0 bottom-24 w-48 h-48 opacity-[0.06]" viewBox="0 0 100 100">
+        <svg class="absolute left-0 bottom-24 w-48 h-48 opacity-[0.035]" viewBox="0 0 100 100">
           <g fill="currentColor">
             <circle v-for="(dot, i) in Array(25)" :key="i" :cx="(i % 5) * 20 + 10" :cy="Math.floor(i / 5) * 20 + 10" r="1.5"/>
           </g>
         </svg>
         <!-- 动态绿色光晕 -->
         <div
-          class="absolute right-1/4 top-1/3 w-64 h-64 rounded-full opacity-[0.06] blur-3xl transition-all duration-1000"
-          :style="{ backgroundColor: '#2E7D32', transform: `translate(${currentSlide * 20}px, ${currentSlide * -10}px)` }"
+          class="absolute right-1/4 top-1/3 w-72 h-72 rounded-full opacity-[0.09] blur-3xl transition-all duration-1000"
+          :style="{ backgroundColor: '#86efac', transform: `translate(${currentSlide * 20}px, ${currentSlide * -10}px)` }"
         ></div>
         <!-- slide 编号装饰 -->
-        <div class="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-3 opacity-20">
-          <span class="font-mono text-xs writing-vertical">0{{ currentSlide + 1 }} / 0{{ slides.length }}</span>
+        <div class="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-3 opacity-15">
+          <span class="font-mono text-xs">0{{ currentSlide + 1 }} / 0{{ slides.length }}</span>
           <div class="w-px h-16 bg-current"></div>
         </div>
       </div>
 
-      <!-- Carousel Content -->
-      <div class="relative z-10 h-full flex flex-col justify-center">
-        <transition name="slide-fade" mode="out-in">
-          <div :key="currentSlide" class="grid grid-cols-12 gap-4 w-full">
-            <div class="col-span-12 md:col-span-8">
-              <div class="overflow-hidden mb-4">
-                <h2
-                  class="text-xs md:text-base font-mono uppercase tracking-widest hero-subtitle text-primary"
-                >
-                  01. {{ slides[currentSlide].subtitle }}
-                </h2>
-              </div>
+      <!-- Hero Badge -->
+      <div class="absolute left-6 top-24 z-20 inline-flex items-center gap-3 rounded-full border border-white/85 bg-white/98 px-3 py-2 shadow-[0_20px_50px_rgba(171,190,176,0.16)] backdrop-blur-md lg:left-6 lg:top-24">
+        <img
+          src="/logo.png"
+          alt="GreenSight logo"
+          class="h-12 w-12 rounded-2xl bg-white p-1 object-contain shadow-sm"
+        />
+        <div>
+          <p class="text-[11px] font-mono uppercase tracking-[0.35em] text-emerald-700/60">Green platform</p>
+          <p class="text-sm font-semibold text-[#163126]">GreenSight-绿我同行</p>
+        </div>
+      </div>
 
-              <div class="overflow-hidden min-h-[30vw] md:min-h-[12vw]">
-                <h1
-                  class="text-[12vw] md:text-[10vw] leading-[0.9] font-bold tracking-tighter hero-title uppercase break-words"
+      <!-- Carousel Content -->
+      <div class="relative z-10 flex h-full flex-col justify-center pt-0 lg:pt-0">
+        <div class="grid grid-cols-1 items-center gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
+          <div class="flex min-h-[320px] flex-col justify-center sm:min-h-[360px] lg:h-full lg:min-h-[420px] lg:pr-6">
+            <div class="mt-2 overflow-hidden lg:-mt-10">
+              <p class="text-xs font-mono uppercase tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
+              <div class="mt-6 space-y-3">
+                <p class="min-h-[2.5rem] font-mono text-xl leading-tight text-emerald-600 sm:min-h-[3rem] sm:text-2xl">
+                  {{ typedBrandLines[0] }}<span v-if="activeTypingLine === 0" class="typing-caret ml-1 inline-block h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
+                </p>
+                <p class="min-h-[2.5rem] font-mono text-xl leading-tight text-emerald-600/85 sm:min-h-[3rem] sm:text-2xl">
+                  {{ typedBrandLines[1] }}<span v-if="activeTypingLine === 1" class="typing-caret ml-1 inline-block h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-6 pt-2 lg:mt-6 lg:pt-0">
+              <div class="flex flex-wrap gap-3">
+                <span class="glass-tag glass-tag--emerald group inline-flex items-center gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-4 py-2 text-sm font-semibold text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70">
+                  <span class="glass-tag__pulse"></span>
+                  <span class="glass-tag__sheen"></span>
+                  <span class="glass-tag__icon relative flex h-5 w-5 items-center justify-center rounded-full bg-emerald-200/38 ring-1 ring-emerald-200/50 shadow-[0_0_22px_rgba(52,211,153,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-3.5 w-3.5 rounded-full bg-emerald-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                    <svg class="relative z-10 h-3.5 w-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <circle cx="12" cy="12" r="7.5" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.2v7.6" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8.8 12h6.4" />
+                    </svg>
+                  </span>
+                  <span class="relative z-10">AI 环保助手</span>
+                </span>
+                <span class="glass-tag glass-tag--cyan group inline-flex items-center gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-cyan-100/68 px-4 py-2 text-sm font-semibold text-cyan-950 shadow-[0_16px_38px_rgba(8,145,178,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-cyan-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-cyan-200/70">
+                  <span class="glass-tag__pulse"></span>
+                  <span class="glass-tag__sheen"></span>
+                  <span class="glass-tag__icon relative flex h-5 w-5 items-center justify-center rounded-full bg-cyan-200/38 ring-1 ring-cyan-200/50 shadow-[0_0_22px_rgba(34,211,238,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-3.5 w-3.5 rounded-full bg-cyan-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                    <svg class="relative z-10 h-3.5 w-3.5 text-cyan-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <circle cx="12" cy="12" r="7.5" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 14.6 10.7 11l2 2 2.8-4.1" />
+                    </svg>
+                  </span>
+                  <span class="relative z-10">碳足迹分析</span>
+                </span>
+                <span class="glass-tag glass-tag--orange group inline-flex items-center gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-orange-100/68 px-4 py-2 text-sm font-semibold text-orange-950 shadow-[0_16px_38px_rgba(234,88,12,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-orange-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(251,146,60,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-orange-200/70">
+                  <span class="glass-tag__pulse"></span>
+                  <span class="glass-tag__sheen"></span>
+                  <span class="glass-tag__icon relative flex h-5 w-5 items-center justify-center rounded-full bg-orange-200/38 ring-1 ring-orange-200/50 shadow-[0_0_22px_rgba(251,146,60,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-3.5 w-3.5 rounded-full bg-orange-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                    <svg class="relative z-10 h-3.5 w-3.5 text-orange-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <circle cx="12" cy="12" r="7.5" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.6v6.8" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8.6 12h6.8" />
+                      <circle cx="12" cy="12" r="2.3" />
+                    </svg>
+                  </span>
+                  <span class="relative z-10">社区共创</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative">
+            <transition name="hero-fade" mode="out-in">
+              <div
+                :key="currentSlide"
+                class="flex min-h-[320px] flex-col justify-center pl-6 sm:min-h-[360px] sm:pl-10 lg:min-h-[420px] lg:pl-14"
+              >
+                <p class="text-xs font-mono uppercase tracking-[0.4em] text-emerald-600/50">
+                  0{{ currentSlide + 1 }} / 0{{ slides.length }}
+                </p>
+                <p class="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-emerald-600/60">
+                  {{ slides[currentSlide].subtitle }}
+                </p>
+                <h2
+                  class="mt-5 max-w-xl font-bold leading-tight tracking-tight text-[#214336]"
+                  :class="currentSlide === 0 ? 'text-2xl md:text-3xl lg:text-4xl' : currentSlide === 1 ? 'text-3xl md:text-4xl lg:text-5xl' : 'text-4xl md:text-5xl lg:text-6xl'"
                 >
                   {{ slides[currentSlide].title }}
-                </h1>
-              </div>
-
-              <div class="mt-6 md:mt-12 max-w-2xl">
-                <p class="text-lg md:text-2xl leading-relaxed hero-text">
+                </h2>
+                <p class="mt-6 max-w-xl text-base leading-8 text-[#5f7f70] md:text-lg">
                   {{ slides[currentSlide].description }}
                 </p>
-                <div class="mt-8 hero-text">
+
+                <div class="mt-10 flex flex-wrap items-center gap-4">
                   <a
                     v-if="slides[currentSlide].link.startsWith('#')"
                     :href="slides[currentSlide].link"
                     @click.prevent="scrollToSection(slides[currentSlide].link)"
-                    class="inline-flex items-center gap-2 border-b border-black pb-1 hover:text-primary hover:border-primary transition-colors group cursor-pointer text-sm md:text-base"
+                    class="inline-flex items-center gap-2 border-b border-emerald-500/70 pb-1 text-sm font-semibold text-emerald-700 transition-colors hover:border-emerald-500 hover:text-emerald-600"
                   >
                     {{ slides[currentSlide].cta }}
-                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    <span>→</span>
                   </a>
                   <router-link
                     v-else
                     :to="slides[currentSlide].link"
-                    class="inline-flex items-center gap-2 border-b border-black pb-1 hover:text-primary hover:border-primary transition-colors group text-sm md:text-base"
+                    class="inline-flex items-center gap-2 border-b border-emerald-500/70 pb-1 text-sm font-semibold text-emerald-700 transition-colors hover:border-emerald-500 hover:text-emerald-600"
                   >
                     {{ slides[currentSlide].cta }}
-                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    <span>→</span>
                   </router-link>
                 </div>
+
+                <div class="mt-12 flex items-center justify-between gap-6 border-t border-white/80 pt-6">
+                  <div class="flex gap-2">
+                    <button
+                      v-for="(slide, index) in slides"
+                      :key="index"
+                      @click="setSlide(index)"
+                      class="h-2 rounded-full transition-all duration-300"
+                      :class="currentSlide === index ? 'w-10 bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.28)]' : 'w-2 bg-emerald-200/75 hover:bg-emerald-300'"
+                    ></button>
+                  </div>
+                  <div class="flex items-center gap-2 md:gap-3">
+                    <button
+                      @click="prevSlide"
+                      class="flex h-11 w-11 items-center justify-center rounded-full border border-white/85 bg-white/92 text-emerald-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
+                    >
+                      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button
+                      @click="toggleAutoPlay"
+                      class="flex h-11 min-w-[88px] items-center justify-center gap-2 rounded-full border border-white/85 bg-white/92 px-4 text-sm font-semibold text-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
+                    >
+                      <svg v-if="!isAutoPlaying" class="h-4 w-4 fill-current" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                      <svg v-else class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                      </svg>
+                      {{ isAutoPlaying ? '暂停' : '播放' }}
+                    </button>
+                    <button
+                      @click="nextSlide"
+                      class="flex h-11 w-11 items-center justify-center rounded-full border border-white/85 bg-white/92 text-emerald-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
+                    >
+                      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </transition>
-
-        <!-- Carousel Controls -->
-        <div class="absolute bottom-8 md:bottom-12 left-6 right-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-          <div class="flex gap-2">
-            <button
-              v-for="(slide, index) in slides"
-              :key="index"
-              @click="setSlide(index)"
-              class="h-1 transition-all duration-300"
-              :class="
-                currentSlide === index ? 'w-8 md:w-12 bg-black' : 'w-3 md:w-4 bg-black/20 hover:bg-black/40'
-              "
-            ></button>
-          </div>
-          <div class="flex gap-3 w-full md:w-auto justify-between md:justify-end items-center">
-            <!-- Prev Button -->
-            <button
-              @click="prevSlide"
-              class="relative group h-10 w-10 md:h-11 md:w-11 flex items-center justify-center rounded-full border border-black/20 bg-white/60 hover:bg-white backdrop-blur-sm transition-all duration-300 hover:border-black/40 hover:shadow-lg hover:-translate-y-0.5"
-            >
-              <svg class="w-5 h-5 md:w-6 md:h-6 stroke-current text-black group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              <div class="absolute inset-0 rounded-full bg-green-400/0 group-hover:bg-green-400/5 transition-colors duration-300"></div>
-            </button>
-
-            <!-- Play/Pause Button -->
-            <button
-              @click="toggleAutoPlay"
-              class="relative group h-10 w-10 md:h-11 md:w-11 flex items-center justify-center rounded-full border border-black/20 bg-white/60 hover:bg-white backdrop-blur-sm transition-all duration-300 hover:border-black/40 hover:shadow-lg hover:-translate-y-0.5"
-            >
-              <svg v-if="!isAutoPlaying" class="w-5 h-5 md:w-6 md:h-6 fill-current text-black group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-              <svg v-else class="w-5 h-5 md:w-6 md:h-6 stroke-current text-black group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-              </svg>
-              <div class="absolute inset-0 rounded-full bg-green-400/0 group-hover:bg-green-400/5 transition-colors duration-300"></div>
-            </button>
-
-            <!-- Next Button -->
-            <button
-              @click="nextSlide"
-              class="relative group h-10 w-10 md:h-11 md:w-11 flex items-center justify-center rounded-full border border-black/20 bg-white/60 hover:bg-white backdrop-blur-sm transition-all duration-300 hover:border-black/40 hover:shadow-lg hover:-translate-y-0.5"
-            >
-              <svg class="w-5 h-5 md:w-6 md:h-6 stroke-current text-black group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-              <div class="absolute inset-0 rounded-full bg-green-400/0 group-hover:bg-green-400/5 transition-colors duration-300"></div>
-            </button>
+            </transition>
           </div>
         </div>
 
         <!-- Scroll Down Indicator -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 scroll-indicator opacity-100 transition-opacity duration-1000">
-          <svg class="w-6 h-6 text-black animate-breathe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 5v14M5 12l7 7 7-7"/>
-          </svg>
+        <div class="absolute bottom-8 left-1/2 z-20 -translate-x-1/2 scroll-indicator opacity-100 transition-opacity duration-1000">
+          <div class="scroll-indicator-stack flex flex-col items-center gap-1.5">
+            <div class="scroll-mouse-shell flex items-center justify-center rounded-full">
+              <svg
+                class="h-10 w-10 text-emerald-900 animate-breathe"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="7" y="2.5" width="10" height="19" rx="5" />
+                <path d="M12 6.5v4" />
+              </svg>
+            </div>
+            <p class="scroll-indicator-text text-[11px] font-medium tracking-[0.35em] text-emerald-900/75 uppercase">
+              SCROLL/向下滑动
+            </p>
+            <svg
+              class="scroll-arrow h-5 w-5 text-emerald-800"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
         </div>
       </div>
     </section>
@@ -416,8 +517,159 @@
       </div>
     </section>
 
+    <!-- Chapter 5: Data Dashboard -->
+    <section class="dashboard-section py-24 px-6 border-t border-black/10 relative overflow-hidden" id="dashboard">
+      <div class="dashboard-noise"></div>
+      <div class="dashboard-grid"></div>
+      <div class="dashboard-ambient dashboard-ambient--left"></div>
+      <div class="dashboard-ambient dashboard-ambient--right"></div>
+
+      <div class="grid grid-cols-12 gap-4 relative z-10">
+        <div class="col-span-12 md:col-span-3 mb-12 md:mb-0">
+          <div class="sticky top-24 dashboard-copy">
+            <h2 class="text-4xl md:text-5xl font-bold mt-3 mb-6 text-white">数据看板</h2>
+            <p class="dashboard-copy__text">
+              用更像“环境控制台”的方式展示平台增长、减排效率与社区热度，让每一次绿色行动都像被实时捕捉。
+            </p>
+            <div class="dashboard-breathing-chip mt-8 inline-flex items-center gap-3 rounded-full px-4 py-2 text-sm">
+              <span class="dashboard-breathing-dot"></span>
+              数据流已接入主屏
+            </div>
+            <div class="dashboard-copy__meta mt-10">
+            </div>
+          </div>
+        </div>
+        <div class="col-span-12 md:col-span-9">
+          <div class="grid gap-6 lg:grid-cols-[minmax(0,1.18fr)_minmax(320px,0.82fr)]">
+            <div class="dashboard-panel dashboard-panel--primary rounded-[2rem] p-6 md:p-8">
+              <div class="dashboard-panel__frame"></div>
+              <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between relative z-10">
+                <div>
+                  <p class="dashboard-eyebrow">影响概览</p>
+                  <h3 class="mt-3 text-2xl font-bold text-white">绿色行动趋势主屏</h3>
+                </div>
+                <p class="dashboard-muted">近 6 个月关键指标实时采样</p>
+              </div>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-3 relative z-10">
+                <article
+                  v-for="(metric, index) in dashboardMetrics"
+                  :key="metric.label"
+                  class="dashboard-stat rounded-[1.5rem] p-5"
+                >
+                  <div class="dashboard-stat__glow"></div>
+                  <p class="dashboard-stat__label">{{ metric.label }}</p>
+                  <div class="mt-4 flex items-end gap-2">
+                    <span class="dashboard-stat__value">{{ displayedDashboardMetrics[index] }}</span>
+                    <span class="dashboard-stat__unit">{{ metric.unit }}</span>
+                  </div>
+                  <p class="dashboard-stat__change mt-3">{{ metric.change }}</p>
+                </article>
+              </div>
+
+              <div class="mt-10 relative z-10">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-semibold text-white">月度活跃趋势</p>
+                  <p class="dashboard-muted dashboard-muted--mono">2025 // 运行中</p>
+                </div>
+                <div class="mt-6 grid grid-cols-6 gap-3 md:gap-4 items-end">
+                  <div
+                    v-for="item in dashboardTrend"
+                    :key="item.month"
+                    class="flex flex-col items-center gap-3"
+                  >
+                    <div class="dashboard-bar-track w-full rounded-full">
+                      <div
+                        class="dashboard-bar breathing-light-bar"
+                        :style="{ height: `${item.height}%` }"
+                      >
+                        <span class="dashboard-bar__shine"></span>
+                      </div>
+                    </div>
+                    <div class="text-center">
+                      <p class="dashboard-trend__value">{{ item.value }}</p>
+                      <p class="dashboard-trend__month">{{ item.month }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid gap-6">
+              <div class="dashboard-panel dashboard-panel--ring rounded-[2rem] p-6 md:p-8">
+                <div class="dashboard-panel__frame"></div>
+                <div class="flex items-center justify-between gap-4 relative z-10">
+                  <div>
+                    <p class="dashboard-eyebrow">碳排脉冲</p>
+                    <h3 class="mt-3 text-2xl font-bold text-white">减排呼吸环</h3>
+                  </div>
+                  <div class="dashboard-ring-badge">{{ animatedPulseProgress }}%</div>
+                </div>
+
+                <div class="mt-8 flex items-center justify-center relative z-10">
+                  <div class="dashboard-ring breathing-ring">
+                    <svg viewBox="0 0 120 120" class="h-full w-full -rotate-90">
+                      <circle cx="60" cy="60" r="44" class="dashboard-ring__track" />
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="44"
+                        class="dashboard-ring__progress"
+                        :style="{ strokeDashoffset: animatedPulseOffset }"
+                      />
+                    </svg>
+                    <div class="dashboard-ring__center">
+                      <span class="dashboard-ring__number">{{ animatedPulseProgress }}%</span>
+                      <span class="dashboard-ring__caption">达成率</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-8 grid grid-cols-2 gap-4 relative z-10">
+                  <div class="dashboard-mini-card">
+                    <p class="dashboard-mini-card__label">本周减排</p>
+                    <p class="dashboard-mini-card__value">18.6 吨</p>
+                  </div>
+                  <div class="dashboard-mini-card">
+                    <p class="dashboard-mini-card__label">AI 建议采纳</p>
+                    <p class="dashboard-mini-card__value">92%</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dashboard-panel dashboard-panel--heat rounded-[2rem] p-6 md:p-8">
+                <div class="dashboard-panel__frame"></div>
+                <div class="flex items-center justify-between gap-3 relative z-10">
+                  <div>
+                    <p class="dashboard-eyebrow">社区热度</p>
+                    <h3 class="mt-3 text-2xl font-bold text-white">社区热力分布</h3>
+                  </div>
+                  <span class="dashboard-live-tag">实时</span>
+                </div>
+
+                <div class="mt-8 space-y-4 relative z-10">
+                  <div v-for="zone in dashboardHeatmap" :key="zone.name" class="space-y-2">
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="dashboard-zone__name">{{ zone.name }}</span>
+                      <span class="dashboard-zone__value">{{ zone.value }}%</span>
+                    </div>
+                    <div class="dashboard-heatmap-track">
+                      <div
+                        class="dashboard-heatmap-fill"
+                        :style="{ width: `${zone.value}%`, background: zone.gradient }"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Footer Marquee -->
-    <div class="py-12 border-t border-black/10 overflow-hidden bg-white text-black/80">
+    <div class="py-12 border-t border-black/10 overflow-hidden bg-white text-white/80">
       <div class="flex whitespace-nowrap animate-marquee">
         <!-- 第一组内容 -->
         <div class="flex items-center shrink-0">
@@ -451,13 +703,135 @@ import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Silk from '@/components/effects/Silk.vue'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const router = useRouter()
 
-// --- Welcome Modal Logic ---
+const dashboardMetrics = [
+  { label: '累计减排', value: 5280, unit: '吨 CO₂e', change: '+28.3%', formatter: 'number' },
+  { label: '活跃用户', value: 125000, unit: '绿色用户', change: '+12.5%', formatter: 'compact' },
+  { label: '旧物重构', value: 8450, unit: '创意方案', change: '+15.7%', formatter: 'number' },
+]
+
+const dashboardTrend = [
+  { month: '1月', value: '2.1k', height: 42 },
+  { month: '2月', value: '2.8k', height: 56 },
+  { month: '3月', value: '3.6k', height: 68 },
+  { month: '4月', value: '4.4k', height: 81 },
+  { month: '5月', value: '5.1k', height: 92 },
+  { month: '6月', value: '5.8k', height: 100 },
+]
+
+const dashboardHeatmap = [
+  { name: '旧物改造话题', value: 86, gradient: 'linear-gradient(90deg, #22d3ee 0%, #06b6d4 52%, #0ea5e9 100%)' },
+  { name: '碳足迹打卡', value: 74, gradient: 'linear-gradient(90deg, #38bdf8 0%, #3b82f6 54%, #6366f1 100%)' },
+  { name: '社区志愿活动', value: 63, gradient: 'linear-gradient(90deg, #2dd4bf 0%, #14b8a6 52%, #0f766e 100%)' },
+  { name: '环保知识学习', value: 58, gradient: 'linear-gradient(90deg, #67e8f9 0%, #22d3ee 50%, #0284c7 100%)' },
+]
+
+const ringCircumference = 2 * Math.PI * 44
+const dashboardPulse = {
+  progress: 78,
+  offset: ringCircumference * (1 - 0.78),
+}
+
+const displayedDashboardMetrics = ref(dashboardMetrics.map((metric) => formatDashboardMetric(0, metric.formatter)))
+const animatedPulseProgress = ref(0)
+const animatedPulseOffset = ref(ringCircumference)
+const hasAnimatedDashboard = ref(false)
+let dashboardAnimationFrame = null
+let dashboardObserver = null
+
+function formatDashboardMetric(value, formatter) {
+  if (formatter === 'compact') {
+    if (value >= 1000) {
+      return `${Math.round(value / 1000)}K`
+    }
+    return `${Math.round(value)}`
+  }
+
+  return new Intl.NumberFormat('zh-CN').format(Math.round(value))
+}
+
+function animateDashboardValues() {
+  if (hasAnimatedDashboard.value) return
+
+  hasAnimatedDashboard.value = true
+  const start = performance.now()
+  const duration = 1800
+
+  const tick = (now) => {
+    const progress = Math.min((now - start) / duration, 1)
+    const eased = 1 - Math.pow(1 - progress, 3)
+
+    displayedDashboardMetrics.value = dashboardMetrics.map((metric) =>
+      formatDashboardMetric(metric.value * eased, metric.formatter),
+    )
+
+    animatedPulseProgress.value = Math.round(dashboardPulse.progress * eased)
+    animatedPulseOffset.value = ringCircumference * (1 - animatedPulseProgress.value / 100)
+
+    if (progress < 1) {
+      dashboardAnimationFrame = requestAnimationFrame(tick)
+      return
+    }
+
+    displayedDashboardMetrics.value = dashboardMetrics.map((metric) =>
+      formatDashboardMetric(metric.value, metric.formatter),
+    )
+    animatedPulseProgress.value = dashboardPulse.progress
+    animatedPulseOffset.value = dashboardPulse.offset
+    dashboardAnimationFrame = null
+  }
+
+  dashboardAnimationFrame = requestAnimationFrame(tick)
+}
+
+const brandLines = [
+  'GreenSight-绿我同行，聚焦绿色生活与 AI 协作体验。',
+  '围绕旧物改造、碳足迹分析、环保问答与社区互动。',
+]
+const typedBrandLines = ref(['', ''])
+const activeTypingLine = ref(0)
 const showWelcomeModal = ref(false)
+let typingInterval = null
+let typingRestartTimeout = null
+
+const startTypewriter = () => {
+  if (typingInterval) clearInterval(typingInterval)
+  if (typingRestartTimeout) clearTimeout(typingRestartTimeout)
+
+  let lineIndex = 0
+  let charIndex = 0
+  typedBrandLines.value = ['', '']
+  activeTypingLine.value = 0
+
+  typingInterval = setInterval(() => {
+    const currentLine = brandLines[lineIndex]
+
+    if (charIndex < currentLine.length) {
+      typedBrandLines.value[lineIndex] += currentLine[charIndex]
+      typedBrandLines.value = [...typedBrandLines.value]
+      charIndex += 1
+      return
+    }
+
+    if (lineIndex < brandLines.length - 1) {
+      lineIndex += 1
+      charIndex = 0
+      activeTypingLine.value = lineIndex
+      return
+    }
+
+    clearInterval(typingInterval)
+    typingInterval = null
+    typingRestartTimeout = setTimeout(() => {
+      startTypewriter()
+    }, 1800)
+  }, 90)
+}
 
 const checkFirstVisit = () => {
   const hasVisited = localStorage.getItem('greenSightVisited')
@@ -486,10 +860,10 @@ let autoPlayInterval = null
 
 const slides = [
   {
-    title: '绿色 AI Web',
+    title: 'GreenSight-绿我同行 AI Web',
     subtitle: '关于我们',
     description:
-      'Green AI Web 是一个旨在通过 AI 技术促进环保行为的全栈平台。我们结合前端 Vue.js、后端 Node.js，为用户提供了一个记录、分享和激励环保活动的数字生态。',
+      'GreenSight-绿我同行 AI Web 以 AI 技术连接旧物改造、碳足迹分析、环保问答与社区互动，打造更轻盈的绿色生活平台。',
     cta: '开始探索',
     link: '#features',
   },
@@ -629,9 +1003,7 @@ const newsItems = [
     title: '本周环保达人榜单公布',
     date: '2025.03.12',
     tag: '排行榜',
-    excerpt: '恭喜 EcoWarrior 获得本周「碳中和先锋」称号，累计减排超过 500kg CO₂e！',
-    tag: '排行榜',
-    excerpt: '恭喜 User888 获得本周“碳中和先锋”称号！',
+    excerpt: '恭喜 User888 获得本周「碳中和先锋」称号，累计减排超过 500kg CO₂e！',
   },
   {
     title: '如何正确进行垃圾分类？AI 助手来教你',
@@ -674,6 +1046,7 @@ const prevPage = () => {
 onMounted(() => {
   checkFirstVisit()
   startAutoPlay()
+  startTypewriter()
 
   // 延迟执行 GSAP 动画，确保 DOM 完全渲染
   nextTick(() => {
@@ -745,15 +1118,43 @@ onMounted(() => {
         onLeaveBack: () => gsap.to(scrollIndicator, { opacity: 1, duration: 0.5 }),
       })
     }
+
+    const dashboardSection = document.querySelector('#dashboard')
+    if (dashboardSection) {
+      dashboardObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return
+          animateDashboardValues()
+          dashboardObserver?.disconnect()
+          dashboardObserver = null
+        },
+        { threshold: 0.35 },
+      )
+
+      dashboardObserver.observe(dashboardSection)
+    }
   })
 })
 
 onUnmounted(() => {
   stopAutoPlay()
+  if (typingInterval) clearInterval(typingInterval)
+  if (typingRestartTimeout) clearTimeout(typingRestartTimeout)
+  if (dashboardAnimationFrame) cancelAnimationFrame(dashboardAnimationFrame)
+  if (dashboardObserver) dashboardObserver.disconnect()
 })
 </script>
 
 <style scoped>
+.home-view {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.home-view::-webkit-scrollbar {
+  display: none;
+}
+
 /* Modal Transition */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
@@ -794,6 +1195,32 @@ onUnmounted(() => {
 .slide-fade-leave-to {
   opacity: 0;
   transform: translateY(-20px);
+}
+
+.hero-fade-enter-active,
+.hero-fade-leave-active {
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.hero-fade-enter-from,
+.hero-fade-leave-to {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.typing-caret {
+  animation: blink-caret 0.9s steps(1) infinite;
+}
+
+@keyframes blink-caret {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  46%,
+  100% {
+    opacity: 0;
+  }
 }
 
 .hero-title {
@@ -855,17 +1282,491 @@ onUnmounted(() => {
   }
 }
 
+/* Scroll Indicator Mouse */
+.scroll-indicator-stack {
+  animation: indicator-drift 2.2s ease-in-out infinite;
+}
+
+.scroll-mouse-shell {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+.scroll-mouse-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0.5rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(16, 185, 129, 0.08) 45%, rgba(16, 185, 129, 0) 75%);
+  filter: blur(6px);
+  animation: mouse-glow 2.2s ease-in-out infinite;
+}
+
+.scroll-arrow {
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.22));
+  animation: arrow-drop 1.6s ease-in-out infinite;
+}
+
+.scroll-indicator-text {
+  text-shadow: 0 0 12px rgba(16, 185, 129, 0.12);
+  animation: text-breathe 2s ease-in-out infinite;
+}
+
 /* Scroll Indicator Breathe */
 .animate-breathe {
-  animation: breathe-icon 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.32));
+  animation: breathe-icon 2.2s ease-in-out infinite;
+}
+
+@keyframes indicator-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@keyframes mouse-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes arrow-drop {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translateY(0) scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(6px) scale(1);
+  }
+}
+
+@keyframes text-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(2px);
+  }
 }
 
 @keyframes breathe-icon {
   0%, 100% {
-    opacity: 0.4;
+    opacity: 0.72;
+    transform: translateY(0) scale(0.96);
   }
   50% {
     opacity: 1;
+    transform: translateY(-4px) scale(1.04);
+  }
+}
+
+.dashboard-ambient {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(70px);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.dashboard-ambient--left {
+  top: 5rem;
+  left: -4rem;
+  width: 14rem;
+  height: 14rem;
+  background: radial-gradient(circle, rgba(134, 239, 172, 0.42) 0%, rgba(134, 239, 172, 0) 72%);
+}
+
+.dashboard-ambient--right {
+  right: -3rem;
+  bottom: 2rem;
+  width: 16rem;
+  height: 16rem;
+  background: radial-gradient(circle, rgba(167, 243, 208, 0.4) 0%, rgba(167, 243, 208, 0) 75%);
+}
+
+.dashboard-panel {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(242, 251, 245, 0.92));
+}
+
+.dashboard-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), transparent 42%);
+  pointer-events: none;
+}
+
+.dashboard-panel--soft {
+  background: linear-gradient(145deg, rgba(247, 253, 249, 0.98), rgba(227, 245, 234, 0.94));
+}
+
+.dashboard-breathing-chip {
+  position: relative;
+}
+
+.dashboard-breathing-chip::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.2) 0%, rgba(74, 222, 128, 0) 70%);
+  z-index: -1;
+  animation: dashboard-chip-breathe 2.6s ease-in-out infinite;
+}
+
+.dashboard-breathing-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: #4ade80;
+  box-shadow: 0 0 0 rgba(74, 222, 128, 0.45);
+  animation: dashboard-dot-pulse 2s ease-in-out infinite;
+}
+
+.dashboard-stat {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.dashboard-stat:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(102, 187, 106, 0.14);
+}
+
+.dashboard-stat__glow {
+  position: absolute;
+  inset: auto -20% -55% auto;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(110, 231, 183, 0.26) 0%, rgba(110, 231, 183, 0) 70%);
+}
+
+.dashboard-bar-track {
+  position: relative;
+  height: 15rem;
+  padding: 0.35rem;
+  display: flex;
+  align-items: flex-end;
+  background: linear-gradient(180deg, rgba(236, 253, 245, 0.9), rgba(220, 252, 231, 0.9));
+}
+
+.dashboard-bar {
+  position: relative;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #bbf7d0 0%, #4ade80 45%, #16a34a 100%);
+  box-shadow: 0 18px 40px rgba(74, 222, 128, 0.24);
+  min-height: 2.5rem;
+  transition: transform 0.35s ease;
+}
+
+.dashboard-bar:hover {
+  transform: translateY(-4px);
+}
+
+.breathing-light-bar {
+  animation: dashboard-bar-breathe 2.8s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.dashboard-bar__shine {
+  position: absolute;
+  top: 0.75rem;
+  left: 50%;
+  width: 55%;
+  height: 26%;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0));
+}
+
+.dashboard-ring-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(22, 101, 52, 0.08);
+  font-weight: 700;
+  color: #166534;
+  box-shadow: 0 12px 24px rgba(134, 239, 172, 0.2);
+}
+
+.dashboard-ring {
+  position: relative;
+  width: 16rem;
+  height: 16rem;
+}
+
+.dashboard-ring__track,
+.dashboard-ring__progress {
+  fill: none;
+  stroke-width: 10;
+}
+
+.dashboard-ring__track {
+  stroke: rgba(34, 197, 94, 0.12);
+}
+
+.dashboard-ring__progress {
+  stroke: #22c55e;
+  stroke-linecap: round;
+  stroke-dasharray: 276.46;
+}
+
+.breathing-ring {
+  filter: drop-shadow(0 0 24px rgba(74, 222, 128, 0.24));
+  animation: dashboard-ring-breathe 2.8s ease-in-out infinite;
+}
+
+.dashboard-ring__center {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dashboard-heatmap-track {
+  height: 0.85rem;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.dashboard-heatmap-fill {
+  height: 100%;
+  border-radius: 999px;
+  box-shadow: 0 8px 18px rgba(74, 222, 128, 0.18);
+  animation: dashboard-heat-breathe 3s ease-in-out infinite;
+}
+
+@keyframes dashboard-dot-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.35);
+  }
+  50% {
+    transform: scale(1.18);
+    box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+  }
+}
+
+@keyframes dashboard-chip-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+.dashboard-section :deep(h2),
+.dashboard-section :deep(h3),
+.dashboard-section :deep(p),
+.dashboard-section :deep(span) {
+  color: #000;
+}
+
+.dashboard-section .dashboard-ring__track,
+.dashboard-section .dashboard-ring__progress {
+  color: initial;
+}
+
+@keyframes dashboard-bar-breathe {
+  0%,
+  100% {
+    filter: brightness(1);
+    box-shadow: 0 16px 34px rgba(74, 222, 128, 0.18);
+  }
+  50% {
+    filter: brightness(1.06);
+    box-shadow: 0 22px 46px rgba(74, 222, 128, 0.28);
+  }
+}
+
+@keyframes dashboard-ring-breathe {
+  0%,
+  100% {
+    transform: scale(0.98);
+    opacity: 0.92;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+}
+
+@keyframes dashboard-heat-breathe {
+  0%,
+  100% {
+    filter: saturate(1);
+    opacity: 0.9;
+  }
+  50% {
+    filter: saturate(1.08);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-bar-track {
+    height: 11rem;
+  }
+
+  .dashboard-ring {
+    width: 13rem;
+    height: 13rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-breathing-chip::after,
+  .dashboard-breathing-dot,
+  .breathing-light-bar,
+  .breathing-ring,
+  .dashboard-heatmap-fill,
+  .glass-tag,
+  .glass-tag__pulse,
+  .glass-tag__sheen {
+    animation: none;
+  }
+}
+
+.glass-tag {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  animation: glass-tag-breathe 4.8s ease-in-out infinite;
+}
+
+.glass-tag__icon {
+  flex-shrink: 0;
+}
+
+.glass-tag__pulse {
+  position: absolute;
+  inset: -18%;
+  z-index: 0;
+  border-radius: 999px;
+  opacity: 0.42;
+  pointer-events: none;
+  filter: blur(18px);
+  animation: glass-tag-pulse 4.8s ease-in-out infinite;
+}
+
+.glass-tag--emerald .glass-tag__pulse {
+  background: radial-gradient(circle at 50% 50%, rgba(167, 243, 208, 0.62) 0%, rgba(110, 231, 183, 0.24) 45%, rgba(16, 185, 129, 0) 82%);
+}
+
+.glass-tag--cyan .glass-tag__pulse {
+  background: radial-gradient(circle at 50% 50%, rgba(165, 243, 252, 0.62) 0%, rgba(103, 232, 249, 0.24) 45%, rgba(6, 182, 212, 0) 82%);
+}
+
+.glass-tag--orange .glass-tag__pulse {
+  background: radial-gradient(circle at 50% 50%, rgba(254, 215, 170, 0.62) 0%, rgba(253, 186, 116, 0.24) 45%, rgba(249, 115, 22, 0) 82%);
+}
+
+.glass-tag__sheen {
+  position: absolute;
+  inset: -38% auto auto -42%;
+  z-index: 0;
+  width: 48%;
+  height: 195%;
+  transform: rotate(24deg);
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.04) 12%, rgba(255, 255, 255, 0.2) 26%, rgba(255, 255, 255, 0.82) 50%, rgba(255, 255, 255, 0.24) 68%, rgba(255, 255, 255, 0.06) 82%, transparent 100%);
+  opacity: 0.92;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: glass-tag-sheen 4.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.glass-tag:hover .glass-tag__sheen {
+  animation-duration: 1.85s;
+}
+
+.glass-tag--emerald .glass-tag__sheen {
+  filter: drop-shadow(0 0 18px rgba(110, 231, 183, 0.26));
+}
+
+.glass-tag--cyan .glass-tag__sheen {
+  filter: drop-shadow(0 0 18px rgba(103, 232, 249, 0.26));
+}
+
+.glass-tag--orange .glass-tag__sheen {
+  filter: drop-shadow(0 0 18px rgba(253, 186, 116, 0.26));
+}
+
+@keyframes glass-tag-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    transform: translateY(-1px);
+    filter: brightness(1.035) saturate(1.04);
+  }
+}
+
+@keyframes glass-tag-pulse {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes glass-tag-sheen {
+  0% {
+    transform: translateX(-172%) rotate(24deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.16;
+  }
+  24% {
+    opacity: 0.88;
+  }
+  42% {
+    transform: translateX(300%) rotate(24deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(300%) rotate(24deg);
+    opacity: 0;
   }
 }
 </style>

@@ -318,9 +318,7 @@ img[loading='lazy'].loaded {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-/* 玻璃拟态 */
+}/* 玻璃拟态 */
 .glass {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(12px);
