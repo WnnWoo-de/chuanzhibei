@@ -20,7 +20,7 @@
               </div>
 
               <form v-if="isLogin" @submit.prevent="handleLogin" class="space-y-6">
-                <BaseInput id="email" v-model="email" type="email" label="邮箱或用户名" placeholder="请输入邮箱或用户名" :error="errors.email" required @blur="validateEmail" />
+                <BaseInput id="email" v-model="email" type="text" label="邮箱或用户名" placeholder="请输入邮箱或用户名" autocomplete="username" inputmode="text" :error="errors.email" required @blur="validateEmail" />
                 <BaseInput id="password" v-model="password" type="password" label="密码" placeholder="••••••••" :error="errors.password" required @blur="validatePassword" />
                 <BaseButton type="submit" class="w-full" :is-loading="isLoading">登录</BaseButton>
               </form>
