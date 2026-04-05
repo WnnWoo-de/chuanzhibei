@@ -26,11 +26,11 @@
           <BaseInput
             id="email"
             v-model="email"
-            type="email"
+            type="text"
             label="邮箱或用户名"
             placeholder="请输入邮箱或用户名"
-            autocomplete="email"
-            inputmode="email"
+            autocomplete="username"
+            inputmode="text"
             :error="errors.email"
             :success="touched.email && Boolean(email) && !errors.email"
             required

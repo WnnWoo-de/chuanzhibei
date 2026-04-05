@@ -152,9 +152,11 @@ const iconStyle = computed(() => ({
   flex-shrink: 0;
 }
 
-.weather-ui-icon :deep(svg) {
+.weather-ui-icon svg {
   width: 100%;
   height: 100%;
+  display: block;
+  fill: none;
   stroke: currentColor;
   stroke-width: var(--icon-stroke-width);
   stroke-linecap: round;

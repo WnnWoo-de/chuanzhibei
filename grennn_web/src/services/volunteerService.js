@@ -6,7 +6,14 @@ export const fetchVolunteerActivities = async () => {
     fallbackMessage: '加载志愿活动失败',
   })
   if (!result.ok) return { ok: false, items: [], message: result.message }
-  return { ok: true, items: Array.isArray(result.data?.items) ? result.data.items : [], message: '' }
+
+  const rawItems = Array.isArray(result.data)
+    ? result.data
+    : Array.isArray(result.data?.items)
+      ? result.data.items
+      : []
+
+  return { ok: true, items: rawItems, message: '' }
 }
 
 export const enrollVolunteerActivity = async (activityId, { phone, remark, agreedRules } = {}) => {

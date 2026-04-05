@@ -30,7 +30,7 @@
 
       <div class="col-span-12 md:col-span-8 xl:col-span-9">
         <div class="grid grid-cols-1 2xl:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] gap-6 xl:gap-8 items-start">
-          <section class="carbon-card carbon-card--form h-fit p-6 md:p-8 xl:p-9">
+          <section class="carbon-card carbon-card--form p-6 md:p-8 xl:p-9">
             <div class="flex items-center justify-between mb-8 gap-4 flex-wrap">
               <div>
                 <p class="font-mono text-xs uppercase tracking-[0.25em] opacity-40 mb-2">Footprint Input</p>
@@ -45,18 +45,18 @@
             </div>
 
             <div class="space-y-8">
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="summary-chip rounded-[24px] px-4 py-4">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 auto-rows-fr">
+                <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
                   <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Commute</p>
                   <div class="text-2xl font-bold">{{ commuteKm }} km</div>
                   <p class="text-sm text-black/50 mt-1">{{ commuteModeLabel }}</p>
                 </div>
-                <div class="summary-chip rounded-[24px] px-4 py-4">
+                <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
                   <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Electricity</p>
                   <div class="text-2xl font-bold">{{ electricityKwh }} kWh</div>
                   <p class="text-sm text-black/50 mt-1">家庭日常用电输入</p>
                 </div>
-                <div class="summary-chip rounded-[24px] px-4 py-4">
+                <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
                   <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Diet</p>
                   <div class="text-2xl font-bold">{{ meatMeals }} 餐</div>
                   <p class="text-sm text-black/50 mt-1">高碳饮食次数</p>
@@ -198,15 +198,31 @@
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 auto-rows-fr">
                 <div
                   v-for="item in animatedBreakdownItems"
                   :key="`${item.key}-metric`"
-                  class="rounded-2xl border border-black/8 p-4 bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(248,250,252,0.95))]"
+                  class="insight-metric-card group relative rounded-[24px] border border-black/8 p-4 md:p-5 overflow-hidden"
                 >
-                  <p class="text-xs font-mono uppercase tracking-[0.16em] text-black/35 mb-3">{{ item.shortLabel }}</p>
-                  <div class="text-2xl font-bold mb-1">{{ item.percent }}%</div>
-                  <p class="text-sm text-black/55">{{ item.label }}</p>
+                  <div class="insight-metric-card__pulse" :style="{ '--pulse-glow': item.glow, '--pulse-color': item.color }"></div>
+                  <div class="relative z-10 flex h-full min-h-[190px] flex-col justify-between">
+                    <div>
+                      <div class="flex items-start justify-between gap-3 mb-3">
+                        <div>
+                          <p class="text-xs font-mono uppercase tracking-[0.16em] text-black/35 mb-2">{{ item.shortLabel }}</p>
+                          <p class="text-sm font-medium text-black/70">{{ item.label }}</p>
+                        </div>
+                        <span class="insight-metric-card__dot" :style="{ '--dot-color': item.color, '--dot-glow': item.glow }"></span>
+                      </div>
+                      <div class="text-3xl font-bold mb-1">{{ item.percent }}%</div>
+                      <p class="text-sm text-black/50">{{ item.value.toFixed(2) }} kg CO₂e</p>
+                    </div>
+
+                    <div class="insight-metric-card__detail mt-5 rounded-2xl border border-white/70 px-4 py-3">
+                      <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Hover Insight</p>
+                      <p class="text-sm leading-6 text-[#294634]">{{ item.detail }}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -252,17 +268,17 @@
                 <p class="mt-4 text-sm leading-7 text-[#2a4a35]">{{ weeklyGoal.summary }}</p>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 auto-rows-fr">
                 <div
                   v-for="item in weeklyGoal.actions"
                   :key="item.title"
-                  class="action-card rounded-[22px] p-4"
+                  class="action-card rounded-[22px] p-4 h-full min-h-[190px] flex flex-col"
                 >
                   <div class="w-10 h-10 mb-3 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
                     <span class="w-5 h-5 block" v-html="renderIcon(item.icon)"></span>
                   </div>
                   <h4 class="font-bold mb-2">{{ item.title }}</h4>
-                  <p class="text-sm text-black/55 leading-6">{{ item.description }}</p>
+                  <p class="text-sm text-black/55 leading-6 mt-auto">{{ item.description }}</p>
                 </div>
               </div>
             </section>
@@ -292,7 +308,7 @@
                 <div
                   v-for="tip in ecoTravelSuggestions"
                   :key="tip.title"
-                  class="tip-card rounded-[22px] p-4 transition-colors"
+                  class="tip-card rounded-[22px] p-4 transition-colors min-h-[132px] flex items-center"
                 >
                   <div class="flex items-start gap-3">
                     <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
@@ -455,6 +471,7 @@ const breakdownItems = computed(() => [
     key: 'commute',
     label: '交通排放',
     shortLabel: 'Traffic',
+    detail: '由通勤距离与出行方式共同决定，切换到公交、地铁、步行或骑行通常能最快看到下降。',
     value: commuteEmission.value,
     percent: percentOfTotal(commuteEmission.value),
     color: '#16a34a',
@@ -465,6 +482,7 @@ const breakdownItems = computed(() => [
     key: 'electricity',
     label: '用电排放',
     shortLabel: 'Power',
+    detail: '主要来自空调、照明和待机设备，压缩高峰时段与无效耗电能明显优化整体占比。',
     value: electricityEmission.value,
     percent: percentOfTotal(electricityEmission.value),
     color: '#0ea5e9',
@@ -475,6 +493,7 @@ const breakdownItems = computed(() => [
     key: 'diet',
     label: '饮食排放',
     shortLabel: 'Diet',
+    detail: '高碳肉类频次越多，占比越高；适当增加豆类、蔬菜与谷物组合会更轻盈。',
     value: dietEmission.value,
     percent: percentOfTotal(dietEmission.value),
     color: '#f59e0b',
@@ -889,7 +908,8 @@ onUnmounted(() => {
 }
 
 .action-card,
-.tip-card {
+.tip-card,
+.insight-metric-card {
   border: 1px solid rgba(15, 23, 42, 0.08);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 252, 248, 0.92));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
@@ -899,10 +919,62 @@ onUnmounted(() => {
   background: linear-gradient(180deg, rgba(248, 252, 248, 1), rgba(239, 248, 241, 0.98));
 }
 
+.insight-metric-card {
+  isolation: isolate;
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.insight-metric-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(34, 197, 94, 0.18);
+  box-shadow: 0 20px 36px rgba(15, 23, 42, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.insight-metric-card__pulse {
+  position: absolute;
+  inset: -12%;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--pulse-color) 18%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(239, 248, 241, 0.38));
+  opacity: 0.95;
+  animation: insight-breathe 3.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.insight-metric-card__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  background: var(--dot-color);
+  box-shadow: var(--dot-glow);
+  animation: signal-breathe 2.8s ease-in-out infinite;
+}
+
+.insight-metric-card__detail {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(239, 248, 241, 0.92));
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.insight-metric-card:hover .insight-metric-card__detail {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .ai-dot-wave {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+@media (hover: none) {
+  .insight-metric-card__detail {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (min-width: 1280px) {
@@ -1012,6 +1084,32 @@ onUnmounted(() => {
   background: linear-gradient(90deg, rgba(209, 250, 229, 0.55) 0%, rgba(134, 239, 172, 0.9) 50%, rgba(209, 250, 229, 0.55) 100%);
   background-size: 200% 100%;
   animation: ai-skeleton-shimmer 1.4s linear infinite;
+}
+
+@keyframes insight-breathe {
+  0%,
+  100% {
+    transform: scale(0.97);
+    opacity: 0.68;
+    filter: saturate(0.96);
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+    filter: saturate(1.08);
+  }
+}
+
+@keyframes signal-breathe {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.78;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
 }
 
 @keyframes ai-dot-bounce {
