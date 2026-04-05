@@ -249,6 +249,7 @@ import {
   Trophy,
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
+import { fetchAchievements } from '@/services/achievementService'
 
 // 图标名称 → Element Plus 图标组件 的映射（供徽章动态渲染使用）
 const iconMap = {
@@ -537,14 +538,27 @@ const handleBadgeUnlocked = (event) => {
   setTimeout(() => { showCelebration.value = false }, 3500)
 }
 
-// 组件挂载：初始化用户状态，若 badges 为空则写入默认数据，注册解锁事件监听
-onMounted(() => {
-  userStore.init()
-  if (userStore.badges.length === 0) {
+// 组件挂载：初始化用户状态，优先拉取后端成就数据，失败时回退到本地默认数据
+onMounted(async () => {
+  await userStore.init()
+  const result = await fetchAchievements()
+  if (result.ok && result.items.length > 0) {
+    userStore.badges = result.items.map((badge) => ({
+      ...badge,
+      icon: badge.icon || defaultBadges.find((item) => item.code === badge.code || item.id === badge.id)?.icon || 'Medal',
+      bgColor:
+        defaultBadges.find((item) => item.code === badge.code || item.id === badge.id)?.bgColor ||
+        (badge.unlocked ? 'bg-green-100' : 'bg-gray-100'),
+      iconColor:
+        defaultBadges.find((item) => item.code === badge.code || item.id === badge.id)?.iconColor ||
+        (badge.unlocked ? 'text-green-600' : 'text-gray-400'),
+      unlockedDate: badge.unlockedAt ? String(badge.unlockedAt).slice(0, 10) : '',
+    }))
+    userStore.save()
+  } else if (userStore.badges.length === 0) {
     userStore.badges = defaultBadges
     userStore.save()
   }
-  // 监听成就解锁事件
   window.addEventListener('badge:unlocked', handleBadgeUnlocked)
 })
 

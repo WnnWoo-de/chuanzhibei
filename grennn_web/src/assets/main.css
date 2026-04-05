@@ -238,9 +238,7 @@ a {
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease both;
-}
-
-.animate-scale-in {
+}.animate-scale-in {
   animation: scaleIn 0.4s var(--ease-expo) both;
 }.animate-slide-in-left {
   animation: slideInLeft 0.5s var(--ease-expo) both;
@@ -371,9 +369,7 @@ img {
 }/* 平滑过渡默认值 */
 *, *::before, *::after {
   box-sizing: border-box;
-}
-
-/* 尊重用户动画偏好 */
+}/* 尊重用户动画偏好 */
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee,
   .animate-marquee-fast {

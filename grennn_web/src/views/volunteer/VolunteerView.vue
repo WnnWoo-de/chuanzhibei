@@ -336,6 +336,11 @@ import { ref, computed, onMounted } from 'vue'
 import { Calendar, Location, Timer, Sunrise, Search, TrophyBase } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import {
+  fetchVolunteerActivities,
+  enrollVolunteerActivity,
+  logVolunteerHours,
+} from '@/services/volunteerService'
 
 const userStore = useUserStore()
 const searchQuery = ref('')
@@ -346,14 +351,15 @@ const showDetailDialog = ref(false)
 const selectedActivity = ref(null)
 const registerForm = ref({ phone: '', note: '', agreed: false })
 const logForm = ref({ hours: 2, reflection: '' })
-const joinedIds = ref(JSON.parse(localStorage.getItem('volunteer_joined') || '[]'))
-const volunteerLogs = ref(JSON.parse(localStorage.getItem('volunteer_logs') || '[]'))
+const activities = ref([])
 
 const totalPoints = computed(() => Number(userStore.user?.points) || 0)
-const myVolunteerHours = computed(() => volunteerLogs.value.reduce((s, l) => s + (l.hours || 0), 0))
-const myJoinedCount = computed(() => joinedIds.value.length)
-const isJoined = (id) => joinedIds.value.includes(id)
-const myActivities = computed(() => activities.value.filter(a => joinedIds.value.includes(a.id)))
+const myVolunteerHours = computed(() =>
+  activities.value.reduce((sum, activity) => sum + Number(activity.enrollment?.loggedHours || 0), 0),
+)
+const myJoinedCount = computed(() => activities.value.filter((activity) => Boolean(activity.enrollment)).length)
+const isJoined = (id) => activities.value.some((activity) => activity.id === id && activity.enrollment)
+const myActivities = computed(() => activities.value.filter((activity) => activity.enrollment))
 
 const categories = [
   { label: '全部', value: '全部', icon: '📋' },
@@ -363,76 +369,177 @@ const categories = [
   { label: '关爱老人', value: '关爱老人', icon: '🤝' },
 ]
 
-const activities = ref([
-  { id:1, title:'城市公园清洁行动', category:'社区清洁', description:'加入我们的周末公园清洁行动，共同美化城市环境，让绿色空间更洁净。', date:'2026-04-05 09:00', location:'中山公园东门', hours:3, points:90, pointsPerHour:30, enrolled:18, capacity:30, urgent:false, status:'confirmed', notes:'请携带手套和水壶。' },
-  { id:2, title:'海滩垃圾清理志愿行', category:'环境保护', description:'共同清理海滩垃圾，保护海洋生态环境，为蓝色地球贡献一份力量。', date:'2026-04-12 08:30', location:'海滩公园南入口', hours:4, points:160, pointsPerHour:40, enrolled:25, capacity:25, urgent:true, status:'confirmed', notes:'请穿着旧衣服，备好防晒用品。' },
-  { id:3, title:'小学生环保科普教育', category:'教育支持', description:'向小学生传授环保知识，开展趣味性环保实验和手工活动，从小培养绿色意识。', date:'2026-04-19 14:00', location:'阳光小学', hours:2, points:80, pointsPerHour:40, enrolled:8, capacity:15, urgent:false, status:'pending' },
-  { id:4, title:'社区树木种植活动', category:'环境保护', description:'共同种植城市树木，增加城市绿化面积，改善生态环境。', date:'2026-04-26 09:00', location:'南山公园内', hours:3, points:90, pointsPerHour:30, enrolled:12, capacity:40, urgent:false, status:'pending' },
-  { id:5, title:'关爱老人探访志愿', category:'关爱老人', description:'探望居家老人，提供情感支持和实际帮助，传递社会温暖。', date:'2026-05-03 10:00', location:'阳光社区养老中心', hours:2, points:60, pointsPerHour:30, enrolled:6, capacity:10, urgent:false, status:'pending' },
-  { id:6, title:'垃圾分类宣传志愿行动', category:'社区清洁', description:'在社区内开展垃圾分类宣传，帮助居民了解并正确执行垃圾分类，减少环境污染。', date:'2026-05-10 09:30', location:'幸福居住区', hours:2, points:50, pointsPerHour:25, enrolled:5, capacity:20, urgent:false, status:'pending' },
-])
-
-const volunteerLeaderboard = ref([
+const baseLeaderboard = [
   { name: 'EcoWarrior', hours: 48 },
   { name: 'GreenStar', hours: 36 },
   { name: 'Sarah J.', hours: 29 },
   { name: 'Mike Chen', hours: 21 },
   { name: 'Emma W.', hours: 18 },
-])
+]
 
-
+const volunteerLeaderboard = computed(() => {
+  const list = [...baseLeaderboard]
+  const userName = userStore.user?.name || userStore.user?.username
+  const hours = myVolunteerHours.value
+  if (userName && hours > 0) {
+    const idx = list.findIndex((item) => item.name === userName)
+    if (idx >= 0) list[idx] = { ...list[idx], hours }
+    else list.push({ name: userName, hours })
+  }
+  return list.sort((a, b) => b.hours - a.hours).slice(0, 5)
+})
 
 const filteredActivities = computed(() => {
   let list = activities.value
-  if (activeCategory.value !== '全部') list = list.filter(a => a.category === activeCategory.value)
+  if (activeCategory.value !== '全部') list = list.filter((a) => a.category === activeCategory.value)
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase()
-    list = list.filter(a => a.title.toLowerCase().includes(q) || a.location.toLowerCase().includes(q))
+    list = list.filter(
+      (a) => a.title.toLowerCase().includes(q) || String(a.location || '').toLowerCase().includes(q),
+    )
   }
   return list
 })
 
-const earnedPoints = computed(() => !selectedActivity.value ? 0 : Math.round(logForm.value.hours * selectedActivity.value.pointsPerHour))
+const earnedPoints = computed(() =>
+  !selectedActivity.value ? 0 : Math.round(logForm.value.hours * Number(selectedActivity.value.pointsPerHour || 0)),
+)
 
-const statusClass = (s) => ({ pending:'bg-yellow-100 text-yellow-700', confirmed:'bg-green-100 text-green-700', completed:'bg-blue-100 text-blue-700' }[s] || 'bg-gray-100 text-gray-500')
-const statusLabel = (s) => ({ pending:'待确认', confirmed:'已确认', completed:'已完成' }[s] || s)
-const categoryBadgeClass = (c) => ({ '环境保护':'bg-green-100 text-green-700', '社区清洁':'bg-blue-100 text-blue-700', '教育支持':'bg-purple-100 text-purple-700', '关爱老人':'bg-orange-100 text-orange-700' }[c] || 'bg-gray-100 text-gray-600')
-const enrollmentColor = (a) => { const r = a.enrolled/a.capacity; return r>=1?'bg-red-400':r>=0.8?'bg-orange-400':'bg-primary' }
-const categoryAccent = (cat) => ({ '环境保护':'bg-gradient-to-r from-green-400 to-emerald-500', '社区清洁':'bg-gradient-to-r from-blue-400 to-sky-500', '教育支持':'bg-gradient-to-r from-purple-400 to-violet-500', '关爱老人':'bg-gradient-to-r from-orange-400 to-amber-500' }[cat] || 'bg-gradient-to-r from-gray-300 to-gray-400')
+const statusClass = (s) =>
+  ({
+    pending: 'bg-yellow-100 text-yellow-700',
+    registered: 'bg-blue-100 text-blue-700',
+    confirmed: 'bg-green-100 text-green-700',
+    completed: 'bg-emerald-100 text-emerald-700',
+    cancelled: 'bg-gray-100 text-gray-500',
+  }[s] || 'bg-gray-100 text-gray-500')
+const statusLabel = (s) =>
+  ({
+    pending: '待确认',
+    registered: '已报名',
+    confirmed: '已确认',
+    completed: '已完成',
+    cancelled: '已取消',
+  }[s] || s)
+const categoryBadgeClass = (c) =>
+  ({
+    环境保护: 'bg-green-100 text-green-700',
+    社区清洁: 'bg-blue-100 text-blue-700',
+    教育支持: 'bg-purple-100 text-purple-700',
+    关爱老人: 'bg-orange-100 text-orange-700',
+  }[c] || 'bg-gray-100 text-gray-600')
+const enrollmentColor = (a) => {
+  const capacity = Math.max(1, Number(a.capacity || 1))
+  const ratio = Number(a.enrolled || 0) / capacity
+  return ratio >= 1 ? 'bg-red-400' : ratio >= 0.8 ? 'bg-orange-400' : 'bg-primary'
+}
+const categoryAccent = (cat) =>
+  ({
+    环境保护: 'bg-gradient-to-r from-green-400 to-emerald-500',
+    社区清洁: 'bg-gradient-to-r from-blue-400 to-sky-500',
+    教育支持: 'bg-gradient-to-r from-purple-400 to-violet-500',
+    关爱老人: 'bg-gradient-to-r from-orange-400 to-amber-500',
+  }[cat] || 'bg-gradient-to-r from-gray-300 to-gray-400')
 
-const openRegisterDialog = (a) => { selectedActivity.value = a; registerForm.value = { phone:'', note:'', agreed:false }; showRegisterDialog.value = true }
-const openLogHoursDialog = (a) => { selectedActivity.value = a; logForm.value = { hours: a.hours, reflection:'' }; showLogHoursDialog.value = true }
-const openDetailDialog = (a) => { selectedActivity.value = a; showDetailDialog.value = true }
+const replaceActivity = (nextActivity) => {
+  const idx = activities.value.findIndex((item) => item.id === nextActivity.id)
+  if (idx >= 0) activities.value[idx] = { ...activities.value[idx], ...nextActivity }
+}
 
-const submitRegister = () => {
-  if (!registerForm.value.phone.trim()) { ElMessage.warning('请填写联系电话'); return }
-  if (!registerForm.value.agreed) { ElMessage.warning('请同意活动规则'); return }
-  const act = selectedActivity.value
-  if (!joinedIds.value.includes(act.id)) {
-    joinedIds.value.push(act.id)
-    act.enrolled = Math.min(act.enrolled + 1, act.capacity)
-    act.status = 'confirmed'
-    localStorage.setItem('volunteer_joined', JSON.stringify(joinedIds.value))
+const loadActivities = async () => {
+  const result = await fetchVolunteerActivities()
+  if (!result.ok) {
+    ElMessage.error(result.message || '加载活动失败')
+    return
   }
+  activities.value = result.items
+}
+
+const openRegisterDialog = (a) => {
+  selectedActivity.value = a
+  registerForm.value = { phone: '', note: '', agreed: false }
+  showRegisterDialog.value = true
+}
+const openLogHoursDialog = (a) => {
+  selectedActivity.value = a
+  logForm.value = { hours: a.hours, reflection: '' }
+  showLogHoursDialog.value = true
+}
+const openDetailDialog = (a) => {
+  selectedActivity.value = a
+  showDetailDialog.value = true
+}
+
+const submitRegister = async () => {
+  if (!userStore.isLoggedIn) {
+    ElMessage.warning('请先登录后再报名活动')
+    return
+  }
+  if (!registerForm.value.phone.trim()) {
+    ElMessage.warning('请填写联系电话')
+    return
+  }
+  if (!registerForm.value.agreed) {
+    ElMessage.warning('请同意活动规则')
+    return
+  }
+
+  const act = selectedActivity.value
+  const result = await enrollVolunteerActivity(act.id, {
+    phone: registerForm.value.phone,
+    remark: registerForm.value.note,
+    agreedRules: registerForm.value.agreed,
+  })
+
+  if (!result.ok || !result.item) {
+    ElMessage.error(result.message || '报名失败')
+    return
+  }
+
+  replaceActivity(result.item)
+  selectedActivity.value = result.item
   showRegisterDialog.value = false
   ElMessage.success('报名成功！期待您的参与 🌱')
 }
 
-const submitLogHours = () => {
-  const pts = earnedPoints.value
-  volunteerLogs.value.push({ activityId: selectedActivity.value.id, title: selectedActivity.value.title, hours: logForm.value.hours, points: pts, date: new Date().toISOString().split('T')[0] })
-  localStorage.setItem('volunteer_logs', JSON.stringify(volunteerLogs.value))
-  userStore.addPoints(pts)
-  const userName = userStore.user?.name || userStore.user?.username || '我'
-  const idx = volunteerLeaderboard.value.findIndex(u => u.name === userName)
-  if (idx >= 0) volunteerLeaderboard.value[idx].hours += logForm.value.hours
-  else volunteerLeaderboard.value.push({ name: userName, hours: logForm.value.hours })
-  volunteerLeaderboard.value.sort((a, b) => b.hours - a.hours)
+const submitLogHours = async () => {
+  if (!userStore.isLoggedIn) {
+    ElMessage.warning('请先登录后再记录志愿时长')
+    return
+  }
+
+  const result = await logVolunteerHours(selectedActivity.value.id, {
+    hours: logForm.value.hours,
+    reflection: logForm.value.reflection,
+  })
+
+  if (!result.ok || !result.data) {
+    ElMessage.error(result.message || '提交失败')
+    return
+  }
+
+  const pts = Number(result.data.pointsAwarded || 0)
+  replaceActivity({
+    ...selectedActivity.value,
+    status: 'completed',
+    enrollment: {
+      ...(selectedActivity.value.enrollment || {}),
+      status: 'completed',
+      loggedHours: Number(result.data.hours || 0),
+      pointsAwarded: pts,
+      completedAt: result.data.completedAt,
+    },
+  })
+  selectedActivity.value = activities.value.find((item) => item.id === selectedActivity.value.id) || null
+  if (pts > 0) await userStore.addPoints(pts)
   showLogHoursDialog.value = false
   ElMessage.success(`志愿时长记录成功！获得 +${pts} 积分`)
 }
 
-onMounted(async () => { await userStore.init() })
+onMounted(async () => {
+  await userStore.init()
+  await loadActivities()
+})
 </script>
 
 <style scoped>

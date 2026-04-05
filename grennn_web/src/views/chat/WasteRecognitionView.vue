@@ -143,12 +143,12 @@
 <script setup>
 // ============================================================
 // views/chat/WasteRecognitionView.vue - 垃圾分类 AI 识别页面
-// 用户上传图片后，模拟 AI 识别物品类型并返回分类结果和环保建议
-// 当前为本地 mock 识别逻辑，可替换为后端 /api/v1/classify 接口
+// 用户上传图片后，调用后端识别接口返回分类结果和环保建议
 // ============================================================
 import { ref } from 'vue'
 import { Camera, UploadFilled, Loading, InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import { analyzeWasteImage } from '@/services/wasteService'
 
 // 拖拽悬停状态（控制上传区域的高亮效果）
 const isDragging = ref(false)
@@ -185,7 +185,7 @@ const processFile = (file) => {
   }
   
   previewUrl.value = URL.createObjectURL(file)
-  analyzeImage(file.name)
+  analyzeImage(file)
 }
 
 /** 重置上传状态，清除预览和识别结果 */
@@ -195,102 +195,20 @@ const resetUpload = () => {
   if (fileInput.value) fileInput.value.value = ''
 }
 
-/**
- * 模拟 AI 图像识别（本地 mock）
- * 根据文件名关键词匹配预设分类结果
- * 生产环境可替换为 POST /api/v1/classify 接口调用
- * @param filename - 上传文件的文件名
- */
-const analyzeImage = async (filename) => {
+/** 调用后端 AI 图像识别接口 */
+const analyzeImage = async (file) => {
   isAnalyzing.value = true
   analysisResult.value = null
-  
-  // 模拟识别延迟
-  await new Promise(resolve => setTimeout(resolve, 2000))
-  
-  const keywords = filename.toLowerCase()
-  let result = {}
-  
-  // 简单的伪识别逻辑
-  if (keywords.includes('bottle') || keywords.includes('瓶') || keywords.includes('塑料')) {
-    result = {
-      itemName: '塑料瓶 / 玻璃瓶',
-      confidence: 96,
-      category: '可回收物',
-      description: '适宜回收和资源化利用的废弃物。塑料瓶属于可回收的高价值废弃物。',
-      tips: [
-        '请清空瓶内残留液体并用水简单冲洗。',
-        '建议压扁后投放，以节省回收桶空间。',
-        '如果是玻璃瓶，请小心轻放避免破碎。'
-      ]
-    }
-  } else if (keywords.includes('battery') || keywords.includes('电池')) {
-    result = {
-      itemName: '废旧电池',
-      confidence: 94,
-      category: '有害垃圾',
-      description: '含有毒有害化学物质的垃圾。会对土壤和地下水造成严重污染。',
-      tips: [
-        '请勿破坏电池外壳，防止有害物质泄漏。',
-        '必须投放到专门的红色有害垃圾桶中或寻找特定的回收点。',
-        '建议日常生活中使用可充电电池代替一次性干电池。'
-      ]
-    }
-  } else if (keywords.includes('apple') || keywords.includes('果') || keywords.includes('food')) {
-    result = {
-      itemName: '水果残余 / 厨余',
-      confidence: 98,
-      category: '厨余垃圾',
-      description: '家庭或饮食服务产生的易腐性垃圾。可以通过生物技术转化为有机肥料。',
-      tips: [
-        '请沥干水分后投放。',
-        '不要连带塑料袋一起投入，需破袋投放。',
-        '您也可以尝试在阳台使用这些果皮自制环保酵素或堆肥。'
-      ]
-    }
-  } else {
-    // 随机一个结果作为演示，让体验更好
-    const random = Math.random()
-    if (random < 0.33) {
-      result = {
-        itemName: '纸制品 / 快递箱',
-        confidence: 89,
-        category: '可回收物',
-        description: '未被严重污染的纸质废弃物，可回收再造。',
-        tips: [
-          '请撕掉快递箱上的胶带和快递单。',
-          '将纸箱拆解、压扁打捆后投放。',
-          '严重沾染食物油渍的纸张（如披萨盒）不可回收，属于其他垃圾。'
-        ]
-      }
-    } else if (random < 0.66) {
-      result = {
-        itemName: '污损物 / 混合垃圾',
-        confidence: 82,
-        category: '其他垃圾',
-        description: '除有害垃圾、可回收物、厨余垃圾外的其他生活废弃物。',
-        tips: [
-          '如果受到严重污染且难以清洗，应直接作为其他垃圾处理。',
-          '尽量沥干水分后投放到灰色其他垃圾桶，这些垃圾通常会被焚烧发电。'
-        ]
-      }
-    } else {
-      result = {
-          itemName: '废旧衣物 / 织物',
-          confidence: 91,
-          category: '可回收物',
-          description: '未经严重污染的纺织类废弃物。',
-          tips: [
-            '请洗净、晾干后再投入专门的旧衣物回收箱。',
-            '可以考虑捐赠给需要的群体。',
-            '您也可以在我们的「旧物重构」板块寻找改造灵感！'
-          ]
-      }
-    }
-  }
-  
-  analysisResult.value = result
+
+  const result = await analyzeWasteImage(file)
   isAnalyzing.value = false
+
+  if (!result.ok || !result.data) {
+    ElMessage.error(result.message || '识别失败')
+    return
+  }
+
+  analysisResult.value = result.data
 }
 
 // ---- 分类样式映射工具函数 ----

@@ -1,26 +1,66 @@
 /**
  * models/index.js - 数据库模型聚合出口
- *
- * 将 Sequelize 实例与所有数据模型集中导出，
- * 方便 server.js 等文件通过统一入口使用数据库功能。
- *
- * 使用示例：
- *   const db = require('./models');
- *   await db.sequelize.sync();  // 同步所有表结构
- *   const user = await db.User.findByPk(id);
  */
 
-const sequelize   = require('../config/database'); // Sequelize 连接实例
-const User        = require('./User');              // 用户模型
-const Post        = require('./Post');              // 社区动态（帖子）模型
-const ChatHistory = require('./ChatHistory');       // 聊天历史记录模型
+const sequelize               = require('../config/database');
+const User                    = require('./User');
+const Post                    = require('./Post');
+const PostLike                = require('./PostLike');
+const ChatHistory             = require('./ChatHistory');
+const ReconstructionRecord    = require('./ReconstructionRecord');
+const WasteRecognitionRecord  = require('./WasteRecognitionRecord');
+const CarbonFootprintRecord   = require('./CarbonFootprintRecord');
+const Achievement             = require('./Achievement');
+const UserAchievement         = require('./UserAchievement');
+const VolunteerActivity       = require('./VolunteerActivity');
+const VolunteerEnrollment     = require('./VolunteerEnrollment');
 
-// 将所有模型与 sequelize 实例打包为一个对象统一导出
+Post.belongsTo(User, { foreignKey: 'userId', as: 'author' });
+User.hasMany(Post, { foreignKey: 'userId', as: 'posts' });
+
+PostLike.belongsTo(Post, { foreignKey: 'postId', as: 'post' });
+PostLike.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+Post.hasMany(PostLike, { foreignKey: 'postId', as: 'likes' });
+User.hasMany(PostLike, { foreignKey: 'userId', as: 'postLikes' });
+
+ChatHistory.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+User.hasMany(ChatHistory, { foreignKey: 'userId', as: 'chatHistories' });
+
+ReconstructionRecord.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+User.hasMany(ReconstructionRecord, { foreignKey: 'userId', as: 'reconstructionRecords' });
+
+WasteRecognitionRecord.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+User.hasMany(WasteRecognitionRecord, { foreignKey: 'userId', as: 'wasteRecognitionRecords' });
+
+CarbonFootprintRecord.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+User.hasMany(CarbonFootprintRecord, { foreignKey: 'userId', as: 'carbonFootprintRecords' });
+
+UserAchievement.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+UserAchievement.belongsTo(Achievement, { foreignKey: 'achievementId', as: 'achievement' });
+User.hasMany(UserAchievement, { foreignKey: 'userId', as: 'userAchievements' });
+Achievement.hasMany(UserAchievement, { foreignKey: 'achievementId', as: 'userAchievements' });
+
+VolunteerActivity.belongsTo(User, { foreignKey: 'organizerId', as: 'organizer' });
+User.hasMany(VolunteerActivity, { foreignKey: 'organizerId', as: 'organizedVolunteerActivities' });
+
+VolunteerEnrollment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+VolunteerEnrollment.belongsTo(VolunteerActivity, { foreignKey: 'activityId', as: 'activity' });
+User.hasMany(VolunteerEnrollment, { foreignKey: 'userId', as: 'volunteerEnrollments' });
+VolunteerActivity.hasMany(VolunteerEnrollment, { foreignKey: 'activityId', as: 'enrollments' });
+
 const db = {
-    sequelize,   // 用于 sync()、transaction()、query() 等数据库级操作
+    sequelize,
     User,
     Post,
-    ChatHistory
+    PostLike,
+    ChatHistory,
+    ReconstructionRecord,
+    WasteRecognitionRecord,
+    CarbonFootprintRecord,
+    Achievement,
+    UserAchievement,
+    VolunteerActivity,
+    VolunteerEnrollment,
 };
 
 module.exports = db;

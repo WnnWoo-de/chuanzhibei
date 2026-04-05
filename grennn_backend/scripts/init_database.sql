@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `Users` (
     `id`                        CHAR(36)      NOT NULL COMMENT '用户唯一ID (UUID v4)',
     `email`                     VARCHAR(255)  NOT NULL COMMENT '邮箱（唯一，用于登录）',
     `password`                  VARCHAR(255)  NULL     COMMENT 'bcrypt 加密密码（OAuth用户为空）',
-    `username`                  VARCHAR(100)  NOT NULL COMMENT '用户名/昵称（2-20字符）',
+    `username`                  VARCHAR(255)  NOT NULL COMMENT '用户名/昵称（应用层限制 2-20 字符）',
     `points`                    INT           NOT NULL DEFAULT 0 COMMENT '绿色积分（默认0）',
     `googleId`                  VARCHAR(255)  NULL     COMMENT 'Google OAuth 唯一标识',
     `microsoftId`               VARCHAR(255)  NULL     COMMENT 'Microsoft OAuth 唯一标识',
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `Users` (
     UNIQUE INDEX `uq_users_email`       (`email`),
     UNIQUE INDEX `uq_users_googleId`    (`googleId`),
     UNIQUE INDEX `uq_users_microsoftId` (`microsoftId`),
-    INDEX `idx_users_username`          (`username`),
+    UNIQUE INDEX `uq_users_username`    (`username`),
     INDEX `idx_users_emailVerified`     (`emailVerified`),
     INDEX `idx_users_points`            (`points` DESC),
     INDEX `idx_users_lastLoginAt`       (`lastLoginAt`)
@@ -131,19 +131,20 @@ CREATE TABLE IF NOT EXISTS `ChatHistories` (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS `ReconstructionRecords` (
     `id`               CHAR(36)      NOT NULL COMMENT 'UUID v4',
-    `userId`           CHAR(36)      NULL,
-    `imageUrl`         VARCHAR(1000) NOT NULL,
-    `originalFilename` VARCHAR(255)  NULL,
-    `material`         VARCHAR(100)  NULL,
-    `integrity`        VARCHAR(50)   NULL,
-    `carbonReduction`  DECIMAL(8,2)  NULL,
-    `suggestions`      JSON          NULL,
-    `analysisId`       VARCHAR(50)   NULL,
-    `pointsEarned`     INT           NOT NULL DEFAULT 0,
-    `isPublished`      TINYINT(1)    NOT NULL DEFAULT 0,
+    `userId`           CHAR(36)      NULL COMMENT '关联用户ID，游客分析可为空',
+    `imageUrl`         VARCHAR(1000) NOT NULL COMMENT '上传图片访问地址',
+    `originalFilename` VARCHAR(255)  NULL COMMENT '原始文件名',
+    `material`         VARCHAR(255)  NULL COMMENT '识别材质结果',
+    `integrity`        VARCHAR(100)  NULL COMMENT '结构完整度评估',
+    `carbonReduction`  VARCHAR(50)   NULL COMMENT '预估碳减排文本，如 12.5 kg CO₂e',
+    `suggestions`      JSON          NULL COMMENT 'AI 返回的重构建议数组',
+    `analysisId`       VARCHAR(100)  NULL COMMENT '业务分析ID，如 rec_时间戳',
+    `pointsEarned`     INT           NOT NULL DEFAULT 0 COMMENT '本次分析奖励积分',
+    `isPublished`      TINYINT(1)    NOT NULL DEFAULT 0 COMMENT '是否发布到案例社区',
     `createdAt`        DATETIME      NOT NULL,
     `updatedAt`        DATETIME      NOT NULL,
     PRIMARY KEY (`id`),
+    UNIQUE INDEX `uq_reconstruction_analysisId` (`analysisId`),
     CONSTRAINT `fk_reconstruction_userId`
         FOREIGN KEY (`userId`) REFERENCES `Users`(`id`)
         ON UPDATE CASCADE ON DELETE SET NULL,
@@ -153,21 +154,21 @@ CREATE TABLE IF NOT EXISTS `ReconstructionRecords` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='旧物重构AI分析记录表';
 
-
 -- ============================================================
 -- 6. WasteRecognitionRecords
 --    frontend: views/chat/WasteRecognitionView.vue
 -- ============================================================
 CREATE TABLE IF NOT EXISTS `WasteRecognitionRecords` (
     `id`               CHAR(36)      NOT NULL COMMENT 'UUID v4',
-    `userId`           CHAR(36)      NULL,
-    `imageUrl`         VARCHAR(1000) NOT NULL,
-    `originalFilename` VARCHAR(255)  NULL,
-    `wasteCategory`    VARCHAR(50)   NULL,
-    `wasteName`        VARCHAR(100)  NULL,
-    `confidence`       DECIMAL(5,2)  NULL,
-    `aiExplanation`    TEXT          NULL,
-    `pointsEarned`     INT           NOT NULL DEFAULT 0,
+    `userId`           CHAR(36)      NULL COMMENT '关联用户ID，游客识别可为空',
+    `imageUrl`         VARCHAR(1000) NOT NULL COMMENT '上传图片访问地址',
+    `originalFilename` VARCHAR(255)  NULL COMMENT '原始文件名',
+    `wasteCategory`    VARCHAR(50)   NULL COMMENT '识别出的垃圾分类',
+    `wasteName`        VARCHAR(100)  NULL COMMENT '识别出的物品名称',
+    `confidence`       DECIMAL(5,2)  NULL COMMENT '识别置信度百分比',
+    `aiExplanation`    TEXT          NULL COMMENT 'AI 对分类结果的说明',
+    `tips`             JSON          NULL COMMENT '环保建议或投放提示列表',
+    `pointsEarned`     INT           NOT NULL DEFAULT 0 COMMENT '本次识别奖励积分',
     `createdAt`        DATETIME      NOT NULL,
     `updatedAt`        DATETIME      NOT NULL,
     PRIMARY KEY (`id`),
@@ -187,18 +188,17 @@ CREATE TABLE IF NOT EXISTS `WasteRecognitionRecords` (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS `CarbonFootprintRecords` (
     `id`                CHAR(36)     NOT NULL COMMENT 'UUID v4',
-    `userId`            CHAR(36)     NULL,
-    `carKm`             DECIMAL(8,1) NOT NULL DEFAULT 0,
-    `publicTransportKm` DECIMAL(8,1) NOT NULL DEFAULT 0,
-    `electricityKwh`    DECIMAL(8,1) NOT NULL DEFAULT 0,
-    `gasM3`             DECIMAL(8,1) NOT NULL DEFAULT 0,
-    `meatFrequency`     ENUM('low','medium','high') NOT NULL DEFAULT 'medium',
-    `transportEmission` DECIMAL(8,2) NOT NULL DEFAULT 0,
-    `energyEmission`    DECIMAL(8,2) NOT NULL DEFAULT 0,
-    `lifestyleEmission` DECIMAL(8,2) NOT NULL DEFAULT 0,
-    `totalEmission`     DECIMAL(8,2) NOT NULL DEFAULT 0,
-    `rating`            ENUM('low','medium','high') NOT NULL DEFAULT 'medium',
-    `aiAdvice`          TEXT         NULL,
+    `userId`            CHAR(36)     NULL COMMENT '关联用户ID，游客测算可为空',
+    `commuteKm`         DECIMAL(8,1) NOT NULL DEFAULT 0 COMMENT '通勤距离（km）',
+    `commuteMode`       ENUM('bike','bus','car') NOT NULL DEFAULT 'bus' COMMENT '通勤方式',
+    `electricityKwh`    DECIMAL(8,1) NOT NULL DEFAULT 0 COMMENT '家庭用电（kWh）',
+    `meatMeals`         INT          NOT NULL DEFAULT 0 COMMENT '肉类餐食次数',
+    `transportEmission` DECIMAL(8,2) NOT NULL DEFAULT 0 COMMENT '交通排放（kg CO₂e）',
+    `energyEmission`    DECIMAL(8,2) NOT NULL DEFAULT 0 COMMENT '用电排放（kg CO₂e）',
+    `lifestyleEmission` DECIMAL(8,2) NOT NULL DEFAULT 0 COMMENT '饮食排放（kg CO₂e）',
+    `totalEmission`     DECIMAL(8,2) NOT NULL DEFAULT 0 COMMENT '总排放（kg CO₂e）',
+    `rating`            ENUM('low','medium','high') NOT NULL DEFAULT 'medium' COMMENT '排放等级',
+    `aiAdvice`          TEXT         NULL COMMENT 'AI 绿色出行建议',
     `createdAt`         DATETIME     NOT NULL,
     `updatedAt`         DATETIME     NOT NULL,
     PRIMARY KEY (`id`),
@@ -218,23 +218,41 @@ CREATE TABLE IF NOT EXISTS `CarbonFootprintRecords` (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS `Achievements` (
     `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `code`          VARCHAR(50)  NOT NULL,
-    `name`          VARCHAR(100) NOT NULL,
-    `description`   VARCHAR(500) NOT NULL,
-    `icon`          VARCHAR(255) NULL,
-    `category`      VARCHAR(50)  NOT NULL DEFAULT 'general',
-    `conditionJson` JSON         NOT NULL,
-    `pointsReward`  INT          NOT NULL DEFAULT 0,
-    `rarity`        ENUM('common','rare','epic','legendary') NOT NULL DEFAULT 'common',
-    `sortOrder`     INT          NOT NULL DEFAULT 0,
+    `code`          VARCHAR(50)  NOT NULL COMMENT '成就唯一编码',
+    `name`          VARCHAR(100) NOT NULL COMMENT '成就名称',
+    `description`   VARCHAR(500) NOT NULL COMMENT '成就描述',
+    `icon`          VARCHAR(255) NULL COMMENT '图标名称或图标字符',
+    `category`      VARCHAR(50)  NOT NULL DEFAULT 'general' COMMENT '成就分类',
+    `requirement`   VARCHAR(500) NULL COMMENT '前端展示的获取条件说明',
+    `conditionJson` JSON         NOT NULL COMMENT '程序判定条件 JSON',
+    `pointsReward`  INT          NOT NULL DEFAULT 0 COMMENT '奖励积分',
+    `rarity`        ENUM('common','rare','epic','legendary') NOT NULL DEFAULT 'common' COMMENT '稀有度',
+    `sortOrder`     INT          NOT NULL DEFAULT 0 COMMENT '展示排序',
     `createdAt`     DATETIME     NOT NULL,
     `updatedAt`     DATETIME     NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `uq_achievements_code` (`code`),
     INDEX `idx_achievements_category`   (`category`),
-    INDEX `idx_achievements_rarity`     (`rarity`)
+    INDEX `idx_achievements_rarity`     (`rarity`),
+    INDEX `idx_achievements_sortOrder`  (`sortOrder`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='成就/徽章定义表';
+
+SET @ach_requirement_exists := (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'Achievements'
+      AND COLUMN_NAME = 'requirement'
+);
+SET @ach_requirement_sql := IF(
+    @ach_requirement_exists = 0,
+    'ALTER TABLE `Achievements` ADD COLUMN `requirement` VARCHAR(500) NULL COMMENT ''前端展示的获取条件说明'' AFTER `category`',
+    'SELECT 1'
+);
+PREPARE ach_requirement_stmt FROM @ach_requirement_sql;
+EXECUTE ach_requirement_stmt;
+DEALLOCATE PREPARE ach_requirement_stmt;
 
 
 -- ============================================================
@@ -244,7 +262,9 @@ CREATE TABLE IF NOT EXISTS `UserAchievements` (
     `id`            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `userId`        CHAR(36)        NOT NULL,
     `achievementId` INT UNSIGNED    NOT NULL,
-    `unlockedAt`    DATETIME        NOT NULL,
+    `progress`      INT             NOT NULL DEFAULT 0 COMMENT '当前进度值',
+    `target`        INT             NULL COMMENT '目标值快照',
+    `unlockedAt`    DATETIME        NULL COMMENT '解锁时间，未解锁可为空',
     `createdAt`     DATETIME        NOT NULL,
     `updatedAt`     DATETIME        NOT NULL,
     PRIMARY KEY (`id`),
@@ -267,18 +287,22 @@ CREATE TABLE IF NOT EXISTS `UserAchievements` (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS `VolunteerActivities` (
     `id`              CHAR(36)      NOT NULL,
-    `title`           VARCHAR(200)  NOT NULL,
-    `description`     TEXT          NULL,
-    `category`        VARCHAR(50)   NOT NULL DEFAULT 'cleanup',
-    `location`        VARCHAR(255)  NULL,
-    `startTime`       DATETIME      NOT NULL,
-    `endTime`         DATETIME      NULL,
-    `maxParticipants` INT           NULL,
-    `currentCount`    INT           NOT NULL DEFAULT 0,
-    `pointsReward`    INT           NOT NULL DEFAULT 0,
-    `status`          ENUM('upcoming','ongoing','completed','cancelled') NOT NULL DEFAULT 'upcoming',
-    `coverImage`      VARCHAR(1000) NULL,
-    `organizerId`     CHAR(36)      NULL,
+    `title`           VARCHAR(200)  NOT NULL COMMENT '活动标题',
+    `description`     TEXT          NULL COMMENT '活动描述',
+    `category`        VARCHAR(50)   NOT NULL DEFAULT '社区清洁' COMMENT '活动分类',
+    `location`        VARCHAR(255)  NULL COMMENT '活动地点',
+    `startTime`       DATETIME      NOT NULL COMMENT '开始时间',
+    `endTime`         DATETIME      NULL COMMENT '结束时间',
+    `durationHours`   DECIMAL(4,1)  NOT NULL DEFAULT 0 COMMENT '活动计划时长（小时）',
+    `maxParticipants` INT           NULL COMMENT '最大参与人数',
+    `currentCount`    INT           NOT NULL DEFAULT 0 COMMENT '当前报名人数',
+    `pointsReward`    INT           NOT NULL DEFAULT 0 COMMENT '默认奖励积分',
+    `pointsPerHour`   INT           NOT NULL DEFAULT 0 COMMENT '每小时奖励积分',
+    `status`          ENUM('pending','confirmed','completed','cancelled') NOT NULL DEFAULT 'pending' COMMENT '活动状态',
+    `isUrgent`        TINYINT(1)    NOT NULL DEFAULT 0 COMMENT '是否急需志愿者',
+    `notes`           VARCHAR(500)  NULL COMMENT '活动须知',
+    `coverImage`      VARCHAR(1000) NULL COMMENT '封面图地址',
+    `organizerId`     CHAR(36)      NULL COMMENT '组织者用户ID',
     `createdAt`       DATETIME      NOT NULL,
     `updatedAt`       DATETIME      NOT NULL,
     PRIMARY KEY (`id`),
@@ -296,15 +320,20 @@ CREATE TABLE IF NOT EXISTS `VolunteerActivities` (
 -- 11. VolunteerEnrollments
 -- ============================================================
 CREATE TABLE IF NOT EXISTS `VolunteerEnrollments` (
-    `id`            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `userId`        CHAR(36)        NOT NULL,
-    `activityId`    CHAR(36)        NOT NULL,
-    `status`        ENUM('enrolled','attended','cancelled') NOT NULL DEFAULT 'enrolled',
-    `remark`        VARCHAR(500)    NULL,
-    `pointsAwarded` INT             NOT NULL DEFAULT 0,
-    `enrolledAt`    DATETIME        NOT NULL,
-    `createdAt`     DATETIME        NOT NULL,
-    `updatedAt`     DATETIME        NOT NULL,
+    `id`              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `userId`          CHAR(36)        NOT NULL,
+    `activityId`      CHAR(36)        NOT NULL,
+    `status`          ENUM('registered','confirmed','completed','cancelled') NOT NULL DEFAULT 'registered',
+    `phone`           VARCHAR(50)     NULL COMMENT '报名联系电话',
+    `remark`          VARCHAR(500)    NULL COMMENT '报名备注',
+    `agreedRules`     TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '是否同意活动规则',
+    `loggedHours`     DECIMAL(4,1)    NOT NULL DEFAULT 0 COMMENT '记录的志愿时长',
+    `reflection`      VARCHAR(500)    NULL COMMENT '活动感想',
+    `pointsAwarded`   INT             NOT NULL DEFAULT 0 COMMENT '实际发放积分',
+    `enrolledAt`      DATETIME        NOT NULL,
+    `completedAt`     DATETIME        NULL,
+    `createdAt`       DATETIME        NOT NULL,
+    `updatedAt`       DATETIME        NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `uq_enrollment_user_activity` (`userId`, `activityId`),
     CONSTRAINT `fk_enrollment_userId`
@@ -323,19 +352,19 @@ CREATE TABLE IF NOT EXISTS `VolunteerEnrollments` (
 -- 12. 种子数据：平台初始成就
 -- ============================================================
 INSERT IGNORE INTO `Achievements`
-    (`code`,`name`,`description`,`icon`,`category`,`conditionJson`,`pointsReward`,`rarity`,`sortOrder`,`createdAt`,`updatedAt`)
+    (`code`,`name`,`description`,`icon`,`category`,`requirement`,`conditionJson`,`pointsReward`,`rarity`,`sortOrder`,`createdAt`,`updatedAt`)
 VALUES
-    ('ECO_BEGINNER',   '环保新手',    '完成第一次垃圾识别',       '🌱','recycling', '{"type":"waste_count","value":1}',      10,  'common',    1, NOW(),NOW()),
-    ('ECO_IDENTIFIER', '分类达人',    '累计完成10次垃圾识别',     '♻️','recycling','{"type":"waste_count","value":10}',     30,  'rare',      2, NOW(),NOW()),
-    ('ECO_RECYCLER',   '旧物重构师',  '完成第一次旧物重构分析',   '🔨','recycling', '{"type":"recon_count","value":1}',      10,  'common',    3, NOW(),NOW()),
-    ('ECO_CREATOR',    '创意改造家',  '累计完成5次旧物重构',      '🎨','recycling', '{"type":"recon_count","value":5}',      50,  'rare',      4, NOW(),NOW()),
-    ('CARBON_TRACKER', '碳足迹记录者','首次完成碳足迹分析',       '📊','carbon',    '{"type":"carbon_count","value":1}',     10,  'common',    5, NOW(),NOW()),
-    ('CARBON_HERO',    '低碳英雄',    '月碳排放达到低碳评级',     '🌍','carbon',    '{"type":"carbon_rating","value":"low"}', 50,  'epic',      6, NOW(),NOW()),
-    ('COMMUNITY_STAR', '社区之星',    '发布第一篇社区帖子',       '⭐','community', '{"type":"post_count","value":1}',       10,  'common',    7, NOW(),NOW()),
-    ('POPULAR_POSTER', '人气博主',    '累计获得50个点赞',         '👍','community', '{"type":"likes_received","value":50}',  30,  'rare',      8, NOW(),NOW()),
-    ('VOLUNTEER_HEART','志愿之心',    '首次参与志愿活动',         '💚','volunteer', '{"type":"volunteer_count","value":1}',  20,  'common',    9, NOW(),NOW()),
-    ('ECO_WARRIOR',    '环保勇士',    '积分达到500分',            '🏆','general',   '{"type":"points","value":500}',         100, 'epic',      10,NOW(),NOW()),
-    ('GREEN_LEGEND',   '绿色传奇',    '积分达到2000分',           '👑','general',   '{"type":"points","value":2000}',        500, 'legendary', 11,NOW(),NOW());
+    ('ECO_BEGINNER',   '环保新手',    '完成第一次垃圾识别',       'Sunrise',    'recycling', '完成 1 次垃圾识别',          '{"type":"waste_count","value":1}',        10,  'common',    1, NOW(),NOW()),
+    ('ECO_IDENTIFIER', '分类达人',    '累计完成10次垃圾识别',     'Compass',    'recycling', '累计完成 10 次垃圾识别',     '{"type":"waste_count","value":10}',       30,  'rare',      2, NOW(),NOW()),
+    ('ECO_RECYCLER',   '旧物重构师',  '完成第一次旧物重构分析',   'Refresh',    'recycling', '完成 1 次旧物重构分析',      '{"type":"recon_count","value":1}',        10,  'common',    3, NOW(),NOW()),
+    ('ECO_CREATOR',    '创意改造家',  '累计完成5次旧物重构',      'MagicStick', 'recycling', '累计完成 5 次旧物重构分析',   '{"type":"recon_count","value":5}',        50,  'rare',      4, NOW(),NOW()),
+    ('CARBON_TRACKER', '碳足迹记录者','首次完成碳足迹分析',       'Sunny',      'carbon',    '完成 1 次碳足迹分析',        '{"type":"carbon_count","value":1}',       10,  'common',    5, NOW(),NOW()),
+    ('CARBON_HERO',    '低碳英雄',    '月碳排放达到低碳评级',     'Planet',     'carbon',    '碳足迹评级达到 low',         '{"type":"carbon_rating","value":"low"}', 50,  'epic',      6, NOW(),NOW()),
+    ('COMMUNITY_STAR', '社区之星',    '发布第一篇社区帖子',       'Star',       'community', '发布 1 篇社区帖子',          '{"type":"post_count","value":1}',         10,  'common',    7, NOW(),NOW()),
+    ('POPULAR_POSTER', '人气博主',    '累计获得50个点赞',         'Promotion',  'community', '累计获得 50 个点赞',         '{"type":"likes_received","value":50}',    30,  'rare',      8, NOW(),NOW()),
+    ('VOLUNTEER_HEART','志愿之心',    '首次参与志愿活动',         'Medal',      'volunteer', '首次报名并参与志愿活动',      '{"type":"volunteer_count","value":1}',    20,  'common',    9, NOW(),NOW()),
+    ('ECO_WARRIOR',    '环保勇士',    '积分达到500分',            'Trophy',     'general',   '积分达到 500 分',            '{"type":"points","value":500}',           100, 'epic',      10,NOW(),NOW()),
+    ('GREEN_LEGEND',   '绿色传奇',    '积分达到2000分',           'TrophyBase', 'general',   '积分达到 2000 分',           '{"type":"points","value":2000}',          500, 'legendary', 11,NOW(),NOW());
 
 
 SET FOREIGN_KEY_CHECKS = 1;

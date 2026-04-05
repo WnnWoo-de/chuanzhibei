@@ -161,6 +161,7 @@
                   <h3 class="text-xl font-bold">排放可视图</h3>
                 </div>
                 <div class="text-xs font-mono text-black/40">今日结构占比</div>
+                <div v-if="latestSavedAt" class="text-xs font-mono text-emerald-700/70">已同步 {{ String(latestSavedAt).slice(0, 16).replace('T', ' ') }}</div>
               </div>
 
               <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6 items-center">
@@ -372,15 +373,17 @@
 </template>
 
 <script setup>
-import { computed, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { consumeChatCompletionsStream, getResponseErrorMessage } from '@/utils/api'
+import { createCarbonRecord, fetchLatestCarbonRecord } from '@/services/carbonService'
 
 const commuteKm = ref(12)
 const electricityKwh = ref(6)
 const meatMeals = ref(1)
 const commuteMode = ref('bus')
+const latestSavedAt = ref('')
 const userStore = useUserStore()
 const aiTravelAdvice = ref('')
 const aiTravelAdviceBuffer = ref('')
@@ -416,6 +419,31 @@ const commuteEmission = computed(() => Number(commuteKm.value) * commuteFactor.v
 const electricityEmission = computed(() => Number(electricityKwh.value) * 0.58)
 const dietEmission = computed(() => Number(meatMeals.value) * 1.6)
 const totalFootprint = computed(() => commuteEmission.value + electricityEmission.value + dietEmission.value)
+
+const persistCarbonRecord = async () => {
+  const result = await createCarbonRecord({
+    commuteKm: Number(commuteKm.value),
+    commuteMode: commuteMode.value,
+    electricityKwh: Number(electricityKwh.value),
+    meatMeals: Number(meatMeals.value),
+  })
+  if (result.ok && result.data?.createdAt) latestSavedAt.value = result.data.createdAt
+}
+
+const hydrateLatestRecord = async () => {
+  await userStore.init()
+  if (!userStore.isLoggedIn) return
+
+  const result = await fetchLatestCarbonRecord()
+  if (!result.ok || !result.data) return
+
+  const record = result.data
+  commuteKm.value = Number(record.commuteKm || 0)
+  electricityKwh.value = Number(record.electricityKwh || 0)
+  meatMeals.value = Number(record.meatMeals || 0)
+  commuteMode.value = record.commuteMode || 'bus'
+  latestSavedAt.value = record.createdAt || ''
+}
 
 const percentOfTotal = (value) => {
   if (totalFootprint.value <= 0) return 0
@@ -774,11 +802,21 @@ const resetForm = () => {
   electricityKwh.value = 6
   meatMeals.value = 1
   commuteMode.value = 'bus'
+  latestSavedAt.value = ''
   aiTravelAdvice.value = ''
   aiTravelAdviceBuffer.value = ''
   copiedAdvice.value = false
   clearTypewriterTimer()
 }
+
+watch([commuteKm, electricityKwh, meatMeals, commuteMode], () => {
+  if (!userStore.isLoggedIn) return
+  persistCarbonRecord().catch(() => {})
+})
+
+onMounted(async () => {
+  await hydrateLatestRecord()
+})
 
 onUnmounted(() => {
   clearTypewriterTimer()
