@@ -39,14 +39,24 @@ const props = defineProps({
   },
 })
 
+const ICON_FALLBACK_MAP = {
+  // qweather-icons@1.8.0 中无 qi-154，使用最接近的阴天图标替代
+  '154': '104',
+}
+
 const normalizedCode = computed(() => {
   if (props.code === null || props.code === undefined || props.code === '') return null
   return String(props.code).trim()
 })
 
-const iconClass = computed(() => {
+const resolvedCode = computed(() => {
   if (!normalizedCode.value) return null
-  return `qi-${normalizedCode.value}`
+  return ICON_FALLBACK_MAP[normalizedCode.value] || normalizedCode.value
+})
+
+const iconClass = computed(() => {
+  if (!resolvedCode.value) return null
+  return `qi-${resolvedCode.value}`
 })
 
 const wrapperStyle = computed(() => ({
