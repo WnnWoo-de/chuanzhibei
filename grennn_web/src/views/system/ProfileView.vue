@@ -13,10 +13,10 @@
         <p class="font-mono text-xs uppercase tracking-widest opacity-50">User Profile / Overview</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:items-stretch">
         <!-- Left Col: Profile info -->
-        <div class="md:col-span-1 space-y-6">
-          <div class="bg-white/90 backdrop-blur-md border border-black/10 p-6 md:p-8 relative group overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500">
+        <div class="md:col-span-1 space-y-6 md:h-full">
+          <div class="bg-white/90 backdrop-blur-md border border-black/10 p-6 md:p-8 relative group overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 md:h-full">
             <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
             
             <div class="flex flex-col items-center text-center">
