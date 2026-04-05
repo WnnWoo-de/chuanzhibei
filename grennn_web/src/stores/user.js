@@ -122,6 +122,25 @@ export const useUserStore = defineStore('user', () => {
   }
 
   /**
+   * 更新当前用户资料
+   * @param {{ username: string, avatar?: string, bio?: string }} payload
+   * @returns {{ ok: boolean, message: string, fieldErrors: object }}
+   */
+  const updateProfile = async (payload = {}) => {
+    const result = await requestAxios(() => axios.put('/api/v1/users/me', payload), {
+      fallbackMessage: '更新资料失败',
+    })
+    if (!result.ok) {
+      if (Object.keys(result.fieldErrors).length === 0) ElMessage.error(result.message)
+      return { ok: false, message: result.message, fieldErrors: result.fieldErrors }
+    }
+
+    setUser(result.data?.user || result.data)
+    ElMessage.success('资料已更新')
+    return { ok: true, message: '' }
+  }
+
+  /**
    * 应用认证信息（Token + 用户数据）
    * 如果传入了 Token 则更新；如果传入了用户数据则更新；
    * 如果有 Token 但无用户数据，则从接口获取
@@ -373,6 +392,7 @@ export const useUserStore = defineStore('user', () => {
     init,
     acceptToken,
     fetchUserProfile,
+    updateProfile,
     login,
     register,
     logout,

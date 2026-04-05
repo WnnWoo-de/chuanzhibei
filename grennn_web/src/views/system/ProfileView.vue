@@ -23,7 +23,7 @@
               <div class="relative mb-6">
                 <!-- Avatar -->
                 <img 
-                  :src="userAvatar" 
+                  :src="previewAvatar" 
                   alt="User Avatar"
                   class="w-24 h-24 rounded-full border-4 border-white shadow-xl object-cover relative z-10"
                 />
@@ -39,8 +39,10 @@
                 <span class="text-xl font-mono font-bold text-primary">{{ userStore.user?.points || 0 }}</span>
               </div>
               
-              <button 
+              <button
+                type="button"
                 class="w-full py-3 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-primary transition-colors flex items-center justify-center gap-2"
+                @click="openEditDialog"
               >
                 编辑资料 <span class="text-[10px]">→</span>
               </button>
@@ -109,28 +111,255 @@
         </div>
       </div>
     </div>
+
+    <el-dialog
+      v-model="showEditDialog"
+      title="编辑资料"
+      :width="560"
+      align-center
+      class="profile-edit-dialog"
+      :close-on-click-modal="!isSaving"
+      :close-on-press-escape="!isSaving"
+      :show-close="!isSaving"
+      @closed="handleDialogClosed"
+    >
+      <div class="space-y-5">
+        <BaseInput
+          id="username"
+          v-model="form.username"
+          type="text"
+          label="用户名"
+          placeholder="请输入用户名"
+          :error="errors.username"
+          :success="touched.username && Boolean(form.username) && !errors.username"
+          required
+          @blur="validateUsername"
+        />
+
+        <div>
+          <label for="email" class="block text-xs font-mono uppercase mb-2 opacity-60">邮箱</label>
+          <input
+            id="email"
+            :value="userStore.user?.email || ''"
+            type="email"
+            disabled
+            class="w-full bg-neutral-100 border-b border-black/20 px-4 py-3 text-sm text-gray-400 cursor-not-allowed"
+          >
+        </div>
+
+        <div>
+          <label for="avatar" class="block text-xs font-mono uppercase mb-2 opacity-60">头像链接</label>
+          <input
+            id="avatar"
+            v-model="form.avatar"
+            type="url"
+            placeholder="https://example.com/avatar.jpg"
+            class="w-full bg-neutral-50 border px-4 py-3 text-sm transition-all focus:outline-none focus:border-primary"
+            :class="errors.avatar ? 'border-red-500 text-red-900 placeholder-red-300' : 'border-black/20'"
+            @blur="validateAvatar"
+          >
+          <p v-if="errors.avatar" class="mt-1 text-xs text-red-500 font-mono">{{ errors.avatar }}</p>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label for="bio" class="block text-xs font-mono uppercase opacity-60">个人简介</label>
+            <span class="text-xs text-gray-400">{{ form.bio.length }}/500</span>
+          </div>
+          <textarea
+            id="bio"
+            v-model="form.bio"
+            rows="4"
+            placeholder="向社区介绍一下你的环保理念..."
+            class="w-full bg-neutral-50 border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all resize-none"
+            :class="errors.bio ? 'border-red-500 text-red-900 placeholder-red-300' : 'border-black/20'"
+            @blur="validateBio"
+          ></textarea>
+          <p v-if="errors.bio" class="mt-1 text-xs text-red-500 font-mono">{{ errors.bio }}</p>
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="flex flex-wrap justify-end gap-3">
+          <button
+            type="button"
+            class="px-5 py-2.5 border border-black/20 text-xs font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-colors"
+            :disabled="isSaving"
+            @click="resetForm"
+          >
+            重置
+          </button>
+          <button
+            type="button"
+            class="px-6 py-2.5 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-primary transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            :disabled="isSaving"
+            @click="handleSubmit"
+          >
+            {{ isSaving ? '保存中...' : '保存资料' }}
+          </button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-// ============================================================
-// views/ProfileView.vue - 个人中心页面
-// 展示用户头像、积分、已解锁成就数量及近期 AI 聊天记录
-// 数据均从 userStore 读取，无需单独的接口请求
-// ============================================================
-import { computed } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
+import { ElMessage } from 'element-plus'
+import BaseInput from '@/components/ui/BaseInput.vue'
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
+const isSaving = ref(false)
+const showEditDialog = ref(false)
 
-/**
- * 用户头像 URL
- * 优先使用后端返回的 avatar 字段
- * 若无自定义头像，则通过 ui-avatars 服务根据用户名自动生成字母头像
- */
-const userAvatar = computed(() => {
-  if (userStore.user?.avatar) return userStore.user.avatar
-  const name = encodeURIComponent(userStore.user?.username || 'U')
-  return `https://ui-avatars.com/api/?name=${name}&background=1a1a1a&color=fff&size=150&rounded=true&bold=true`
+const form = reactive({
+  username: '',
+  avatar: '',
+  bio: '',
 })
+
+const errors = reactive({
+  username: '',
+  avatar: '',
+  bio: '',
+})
+
+const touched = reactive({
+  username: false,
+  avatar: false,
+  bio: false,
+})
+
+const buildFallbackAvatar = (name) => {
+  const safeName = encodeURIComponent(name || 'U')
+  return `https://ui-avatars.com/api/?name=${safeName}&background=1a1a1a&color=fff&size=150&rounded=true&bold=true`
+}
+
+const syncForm = () => {
+  form.username = userStore.user?.username || ''
+  form.avatar = userStore.user?.avatar || ''
+  form.bio = userStore.user?.bio || ''
+  errors.username = ''
+  errors.avatar = ''
+  errors.bio = ''
+  touched.username = false
+  touched.avatar = false
+  touched.bio = false
+}
+
+const validateUsername = (options) => {
+  const shouldTrim = Boolean(options?.shouldTrim) || Boolean(options?.target)
+  touched.username = true
+  if (shouldTrim) form.username = form.username.trim()
+  if (!form.username) {
+    errors.username = '请输入用户名'
+    return false
+  }
+  if (form.username.length < 2) {
+    errors.username = '用户名至少 2 个字符'
+    return false
+  }
+  if (form.username.length > 20) {
+    errors.username = '用户名最多 20 个字符'
+    return false
+  }
+  errors.username = ''
+  return true
+}
+
+const validateAvatar = (options) => {
+  const shouldTrim = Boolean(options?.shouldTrim) || Boolean(options?.target)
+  touched.avatar = true
+  if (shouldTrim) form.avatar = form.avatar.trim()
+  if (!form.avatar) {
+    errors.avatar = ''
+    return true
+  }
+  if (!/^https?:\/\//i.test(form.avatar)) {
+    errors.avatar = '请输入有效的 http 或 https 图片链接'
+    return false
+  }
+  errors.avatar = ''
+  return true
+}
+
+const validateBio = () => {
+  touched.bio = true
+  if (form.bio.length > 500) {
+    errors.bio = '个人简介最多 500 个字符'
+    return false
+  }
+  errors.bio = ''
+  return true
+}
+
+const focusFirstInvalid = () => {
+  if (errors.username) return document.getElementById('username')?.focus?.()
+  if (errors.avatar) return document.getElementById('avatar')?.focus?.()
+  if (errors.bio) return document.getElementById('bio')?.focus?.()
+}
+
+const resetForm = () => {
+  syncForm()
+  ElMessage.info('已恢复为当前保存的资料')
+}
+
+const openEditDialog = () => {
+  syncForm()
+  showEditDialog.value = true
+}
+
+const handleDialogClosed = () => {
+  if (!isSaving.value) syncForm()
+}
+
+const handleSubmit = async () => {
+  if (isSaving.value) return
+
+  const okUsername = validateUsername({ shouldTrim: true })
+  const okAvatar = validateAvatar({ shouldTrim: true })
+  const okBio = validateBio()
+  if (!okUsername || !okAvatar || !okBio) {
+    ElMessage.warning('请先修正表单错误')
+    focusFirstInvalid()
+    return
+  }
+
+  isSaving.value = true
+  const result = await userStore.updateProfile({
+    username: form.username.trim(),
+    avatar: form.avatar.trim(),
+    bio: form.bio.trim(),
+  })
+  isSaving.value = false
+
+  if (!result.ok) {
+    const fieldErrors = result.fieldErrors || {}
+    if (fieldErrors.username) errors.username = fieldErrors.username
+    if (fieldErrors.avatar) errors.avatar = fieldErrors.avatar
+    if (fieldErrors.bio) errors.bio = fieldErrors.bio
+    focusFirstInvalid()
+    return
+  }
+
+  syncForm()
+}
+
+const previewAvatar = computed(() => {
+  if (form.avatar && /^https?:\/\//i.test(form.avatar)) return form.avatar
+  return buildFallbackAvatar(form.username || userStore.user?.username)
+})
+
+watch(() => userStore.user, syncForm, { immediate: true, deep: true })
+watch(() => form.username, () => { if (touched.username) validateUsername() })
+watch(() => form.avatar, () => { if (touched.avatar) validateAvatar() })
+watch(() => form.bio, () => { if (touched.bio) validateBio() })
 </script>
+
+<style scoped>
+:deep(.profile-edit-dialog .el-dialog) {
+  border-radius: 20px;
+  overflow: hidden;
+}
+</style>
