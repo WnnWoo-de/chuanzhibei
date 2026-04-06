@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="fixed left-0 top-14 md:top-0 h-[calc(100vh-3.5rem)] md:h-screen bg-white border-r border-black/10 transition-all duration-300 z-40 overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col"
+      class="fixed left-0 top-0 h-screen bg-white border-r border-black/10 transition-all duration-300 z-[200] overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col"
       :class="sidebarClasses"
     >
       <div
@@ -82,7 +82,7 @@
     <button
       type="button"
       @click="toggleSidebarState"
-      class="fixed top-3 z-[45] flex h-10 w-10 items-center justify-center rounded-md border border-black/10 bg-white text-black shadow-sm transition-all duration-300 hover:bg-white hover:text-black"
+      class="fixed top-3 z-[210] flex h-10 w-10 items-center justify-center rounded-md border border-black/10 bg-white text-black shadow-sm transition-all duration-300 hover:bg-white hover:text-black"
       :class="toggleButtonClass"
       :aria-label="isSidebarExpanded ? '收起侧边栏' : '展开侧边栏'"
     >
@@ -115,7 +115,7 @@
 
     <div
       v-if="isOpen"
-      class="fixed inset-0 z-30 bg-black/30 backdrop-blur-sm md:hidden"
+      class="fixed inset-0 z-[190] bg-black/30 backdrop-blur-sm md:hidden"
       @click="emit('close')"
     ></div>
   </div>
