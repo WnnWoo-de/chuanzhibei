@@ -56,23 +56,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (!id.includes('node_modules')) return
-
-            if (id.includes('/qweather-icons/')) return 'weather-icons'
-            if (id.includes('/element-plus/')) return 'element-plus'
-            if (id.includes('/@element-plus/icons-vue/')) return 'element-plus-icons'
-            if (id.includes('/vue/') || id.includes('/vue-router/') || id.includes('/pinia/')) {
-              return 'vue-vendor'
-            }
-            if (id.includes('/axios/')) return 'axios'
-            if (id.includes('/marked/')) return 'marked'
-            if (id.includes('/nprogress/')) return 'nprogress'
-            if (id.includes('/gsap/')) return 'gsap'
-            if (id.includes('/ogl/')) return 'ogl'
-          },
-        },
+        output: {},
       },
     },
   }
