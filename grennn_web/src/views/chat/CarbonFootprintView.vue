@@ -64,6 +64,25 @@
               </div>
 
               <div>
+                <div class="flex items-center justify-between mb-3 flex-wrap gap-3">
+                  <label class="font-bold">快速场景</label>
+                  <span class="text-xs font-mono opacity-45">一键套用日常模板</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <button
+                    v-for="preset in carbonPresets"
+                    :key="preset.key"
+                    @click="applyPreset(preset)"
+                    class="transport-option px-3 py-3 text-left rounded-2xl transition-all"
+                    :class="activePresetKey === preset.key ? 'transport-option--active' : 'transport-option--idle'"
+                  >
+                    <p class="text-xs font-mono uppercase tracking-[0.12em] mb-1 text-black/45">{{ preset.label }}</p>
+                    <p class="text-sm text-black/65">{{ preset.desc }}</p>
+                  </button>
+                </div>
+              </div>
+
+              <div>
                 <div class="flex items-center justify-between mb-3">
                   <label class="font-bold">通勤距离</label>
                   <span class="text-xs font-mono opacity-50">{{ commuteKm }} km</span>
@@ -406,6 +425,7 @@ const aiTravelAdviceBuffer = ref('')
 const isGeneratingAdvice = ref(false)
 const adviceCooldown = ref(0)
 const copiedAdvice = ref(false)
+const activePresetKey = ref('default')
 const typewriterTimer = ref(null)
 const cooldownTimer = ref(null)
 const copyResetTimer = ref(null)
@@ -414,6 +434,27 @@ const commuteModes = [
   { label: '步行/骑行', value: 'bike', factor: 0 },
   { label: '公交/地铁', value: 'bus', factor: 0.08 },
   { label: '私家车', value: 'car', factor: 0.19 },
+]
+
+const carbonPresets = [
+  {
+    key: 'default',
+    label: '城市通勤日',
+    desc: '中等通勤 + 日常用电 + 轻度肉食',
+    values: { commuteKm: 12, electricityKwh: 6, meatMeals: 1, commuteMode: 'bus' },
+  },
+  {
+    key: 'home',
+    label: '居家办公日',
+    desc: '少出行 + 稳定用电 + 低碳饮食',
+    values: { commuteKm: 2, electricityKwh: 8, meatMeals: 1, commuteMode: 'bike' },
+  },
+  {
+    key: 'heavy',
+    label: '高负荷出行日',
+    desc: '远距离通勤 + 高能耗 + 肉食偏多',
+    values: { commuteKm: 28, electricityKwh: 11, meatMeals: 2, commuteMode: 'car' },
+  },
 ]
 
 const iconMap = {
@@ -444,6 +485,28 @@ const persistCarbonRecord = async () => {
     meatMeals: Number(meatMeals.value),
   })
   if (result.ok && result.data?.createdAt) latestSavedAt.value = result.data.createdAt
+}
+
+const updateActivePreset = () => {
+  const matched = carbonPresets.find((preset) => {
+    const values = preset.values
+    return (
+      Number(values.commuteKm) === Number(commuteKm.value) &&
+      Number(values.electricityKwh) === Number(electricityKwh.value) &&
+      Number(values.meatMeals) === Number(meatMeals.value) &&
+      values.commuteMode === commuteMode.value
+    )
+  })
+  activePresetKey.value = matched?.key || 'custom'
+}
+
+const applyPreset = (preset) => {
+  if (!preset?.values) return
+  commuteKm.value = Number(preset.values.commuteKm)
+  electricityKwh.value = Number(preset.values.electricityKwh)
+  meatMeals.value = Number(preset.values.meatMeals)
+  commuteMode.value = preset.values.commuteMode
+  activePresetKey.value = preset.key
 }
 
 const hydrateLatestRecord = async () => {
@@ -821,6 +884,7 @@ const resetForm = () => {
   electricityKwh.value = 6
   meatMeals.value = 1
   commuteMode.value = 'bus'
+  activePresetKey.value = 'default'
   latestSavedAt.value = ''
   aiTravelAdvice.value = ''
   aiTravelAdviceBuffer.value = ''
@@ -829,12 +893,14 @@ const resetForm = () => {
 }
 
 watch([commuteKm, electricityKwh, meatMeals, commuteMode], () => {
+  updateActivePreset()
   if (!userStore.isLoggedIn) return
   persistCarbonRecord().catch(() => {})
 })
 
 onMounted(async () => {
   await hydrateLatestRecord()
+  updateActivePreset()
 })
 
 onUnmounted(() => {
@@ -847,11 +913,11 @@ onUnmounted(() => {
 <style scoped>
 .carbon-card {
   position: relative;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(21, 48, 33, 0.1);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.93), rgba(248, 252, 249, 0.9));
+  backdrop-filter: blur(14px);
+  box-shadow: 0 12px 30px rgba(20, 40, 28, 0.08);
   overflow: hidden;
 }
 
@@ -860,13 +926,13 @@ onUnmounted(() => {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.52);
   pointer-events: none;
 }
 
 .carbon-card--form {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 252, 250, 0.9)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(245, 251, 247, 0.9)),
     rgba(255, 255, 255, 0.9);
 }
 
@@ -875,32 +941,34 @@ onUnmounted(() => {
 }
 
 .summary-chip {
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(246, 249, 244, 0.95));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(21, 48, 33, 0.09);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(243, 249, 245, 0.94));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
 }
 
 .transport-option {
-  border: 1px solid rgba(15, 23, 42, 0.1);
+  border: 1px solid rgba(21, 48, 33, 0.11);
+  border-radius: 20px;
   min-height: 54px;
 }
 
 .transport-option--idle {
-  color: #698679;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 249, 244, 0.98));
+  color: #587262;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(241, 247, 243, 0.97));
 }
 
 .transport-option--idle:hover {
-  border-color: rgba(74, 222, 128, 0.42);
-  background: linear-gradient(180deg, rgba(250, 255, 251, 1), rgba(232, 246, 236, 1));
+  border-color: rgba(74, 222, 128, 0.35);
+  background: linear-gradient(180deg, rgba(250, 255, 251, 1), rgba(236, 247, 239, 1));
   transform: translateY(-1px);
 }
 
 .transport-option--active {
-  color: #6a786f;
-  border-color: rgba(74, 222, 128, 0.45);
-  background: linear-gradient(135deg, rgba(241, 252, 244, 1), rgba(223, 246, 230, 1) 65%, rgba(209, 250, 229, 0.98) 100%);
-  box-shadow: 0 10px 22px rgba(134, 239, 172, 0.28);
+  color: #4f6358;
+  border-color: rgba(74, 222, 128, 0.4);
+  background: linear-gradient(135deg, rgba(242, 251, 245, 1), rgba(228, 246, 235, 1) 68%, rgba(214, 247, 231, 0.95) 100%);
+  box-shadow: 0 8px 18px rgba(134, 239, 172, 0.2);
 }
 
 .stacked-cards {
@@ -910,35 +978,36 @@ onUnmounted(() => {
 .action-card,
 .tip-card,
 .insight-metric-card {
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 252, 248, 0.92));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(21, 48, 33, 0.08);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(244, 250, 246, 0.9));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 .tip-card:hover {
-  background: linear-gradient(180deg, rgba(248, 252, 248, 1), rgba(239, 248, 241, 0.98));
+  background: linear-gradient(180deg, rgba(247, 252, 248, 1), rgba(238, 247, 241, 0.98));
 }
 
 .insight-metric-card {
   isolation: isolate;
-  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+  transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
 }
 
 .insight-metric-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(34, 197, 94, 0.18);
-  box-shadow: 0 20px 36px rgba(15, 23, 42, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  transform: translateY(-3px);
+  border-color: rgba(34, 197, 94, 0.14);
+  box-shadow: 0 14px 28px rgba(18, 40, 28, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.74);
 }
 
 .insight-metric-card__pulse {
   position: absolute;
   inset: -12%;
-  border-radius: 28px;
+  border-radius: 24px;
   background:
-    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--pulse-color) 18%, transparent), transparent 58%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(239, 248, 241, 0.38));
-  opacity: 0.95;
-  animation: insight-breathe 3.8s ease-in-out infinite;
+    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--pulse-color) 12%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(239, 248, 241, 0.32));
+  opacity: 0.72;
+  animation: insight-breathe 4.2s ease-in-out infinite;
   pointer-events: none;
 }
 
@@ -954,9 +1023,9 @@ onUnmounted(() => {
 
 .insight-metric-card__detail {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(239, 248, 241, 0.92));
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.28s ease, transform 0.28s ease;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.24s ease, transform 0.24s ease;
 }
 
 .insight-metric-card:hover .insight-metric-card__detail {

@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-white/90 backdrop-blur-md text-[#1a1a1a] border-t border-black/10 pt-16 pb-8 px-6 relative overflow-hidden transition-colors">
+  <footer class="bg-white/90 backdrop-blur-md text-[#1a1a1a] border-t border-black/10 pt-12 md:pt-16 pb-8 px-4 md:px-6 relative overflow-hidden transition-colors">
     <!-- 背景网格装饰（12列，纯视觉，不可交互） -->
     <div class="absolute top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6">
       <!-- 桌面端：12列竖线 -->
@@ -16,10 +16,10 @@
         <div class="col-span-12 md:col-span-5 flex flex-col justify-between">
           <div>
             <!-- 品牌 Logo + 大标题 -->
-            <div class="flex items-center gap-4 mb-6">
+            <div class="flex items-start gap-3 md:gap-4 mb-6">
               <img src="@/assets/logo.png" alt="Logo" class="w-12 h-12 object-contain rounded-xl shadow-sm" />
               <h2
-                class="text-5xl md:text-7xl font-bold tracking-tighter leading-none"
+                class="text-3xl md:text-7xl font-bold tracking-tighter leading-none"
                 style="font-family: var(--font-display)"
               >
                 GreenSight<br />AI WEB
@@ -31,7 +31,7 @@
               连接每一位有环保意识的行动者。
             </p>
             <!-- 核心统计数据展示 -->
-            <div class="flex gap-8">
+            <div class="grid grid-cols-3 gap-4 md:flex md:gap-8">
               <div>
                 <p class="text-2xl font-bold text-green-600">2,450+</p>
                 <p class="text-xs opacity-50 mt-1 font-bold" style="font-family: var(--font-mono)">重构案例</p>
@@ -192,16 +192,16 @@
             &copy; 2026 GreenSight AI Web. 保留所有权利。
           </div>
           <!-- 技术栈 + 项目标签 -->
-          <div class="flex items-center gap-6 text-xs opacity-50 font-bold" style="font-family: var(--font-mono)">
+          <div class="flex flex-wrap items-center gap-3 md:gap-6 text-xs opacity-50 font-bold" style="font-family: var(--font-mono)">
             <span>Vue 3 + Node.js + AI</span>
-            <span>·</span>
+            <span class="hidden md:inline">·</span>
             <span>可持续未来倡议</span>
-            <span>·</span>
+            <span class="hidden md:inline">·</span>
             <span>Web 设计大赛参赛作品</span>
             <button
               type="button"
               @click="scrollToTop"
-              class="ml-2 rounded-full border border-black/20 px-3 py-1 opacity-80 hover:opacity-100 hover:text-green-600 hover:border-green-600 transition-all"
+              class="ml-0 md:ml-2 rounded-full border border-black/20 px-3 py-1 opacity-80 hover:opacity-100 hover:text-green-600 hover:border-green-600 transition-all"
             >
               回到顶部 ↑
             </button>

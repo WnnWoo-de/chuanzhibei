@@ -1,16 +1,17 @@
 <template>
-  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans flex flex-col items-center justify-center px-6 relative overflow-hidden pt-16 md:pt-20">
+  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans flex flex-col items-center justify-center px-4 md:px-6 relative overflow-hidden pt-16 md:pt-20">
     <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6">
-      <div v-for="n in 12" :key="n" class="border-r border-black h-full"></div>
+      <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
+      <div v-for="n in 4" :key="`m-${n}`" class="border-r border-black h-full block md:hidden col-span-3"></div>
     </div>
 
     <div class="relative z-10 w-full max-w-5xl flex-1 flex items-center justify-center">
-      <div class="bg-white/95 border border-black/10 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.15)] relative overflow-hidden transition-all duration-700 hover:shadow-[0_25px_50px_rgba(0,0,0,0.2)]">
+      <div class="w-full bg-white/95 border border-black/10 rounded-2xl md:rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.15)] relative overflow-hidden transition-all duration-700 hover:shadow-[0_25px_50px_rgba(0,0,0,0.2)]">
         <div class="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-green-400 to-emerald-500"></div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
           <transition name="form-slide" mode="out-in">
-            <div :key="`form-${isLogin}`" class="p-8 md:p-12 transition-all duration-700" :class="isLogin ? 'lg:order-1' : 'lg:order-2'">
+            <div :key="`form-${isLogin}`" class="p-5 sm:p-6 md:p-12 transition-all duration-700" :class="isLogin ? 'lg:order-1' : 'lg:order-2'">
               <div class="text-center mb-8">
                 <div class="mb-6 flex justify-center">
                   <img src="@/assets/logo.png" alt="Logo" class="w-16 h-16 object-contain rounded-2xl shadow-lg border border-black/10" />
@@ -52,7 +53,7 @@
           </transition>
 
           <transition name="animation-slide" mode="out-in">
-            <div :key="`animation-${isLogin}`" class="hidden lg:flex items-center justify-center p-8 md:p-12 transition-all duration-700" :class="isLogin ? 'lg:order-2' : 'lg:order-1'">
+            <div :key="`animation-${isLogin}`" class="hidden lg:flex items-center justify-center p-8 md:p-12 transition-all duration-700 min-h-[420px]" :class="isLogin ? 'lg:order-2' : 'lg:order-1'">
               <AuthAnimation :is-login="isLogin" />
             </div>
           </transition>

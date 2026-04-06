@@ -5,7 +5,7 @@
 // ============================================================
 
 import { RouterView, useRoute } from 'vue-router'
-import { defineAsyncComponent, ref, watch, onMounted, onUnmounted } from 'vue'
+import { defineAsyncComponent, ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import TheNavbar from './components/layout/TheNavbar.vue'
 import TheFooter from './components/layout/TheFooter.vue'
 import TheSidebar from './components/layout/TheSidebar.vue' // 左侧导航栏
@@ -24,6 +24,21 @@ const sidebarOpen = ref(false)
 const sidebarFull = ref(localStorage.getItem('sidebar_mini') === 'false')
 
 const route = useRoute()
+const isMobile = ref(window.innerWidth < 768)
+
+const handleResize = () => {
+  isMobile.value = window.innerWidth < 768
+  if (isMobile.value) {
+    sidebarFull.value = false
+  }
+}
+
+const layoutOffsetClass = computed(() => {
+  if (isMobile.value) {
+    return 'ml-0'
+  }
+  return sidebarFull.value ? 'md:ml-64' : 'md:ml-14'
+})
 
 /**
  * 开场动画播放完毕后的回调
@@ -44,12 +59,15 @@ const handleKeydown = (e) => {
 
 // 组件挂载时注册键盘监听
 onMounted(() => {
+  handleResize()
   window.addEventListener('keydown', handleKeydown)
+  window.addEventListener('resize', handleResize)
 })
 
 // 组件卸载时移除键盘监听，防止内存泄漏
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
+  window.removeEventListener('resize', handleResize)
 })
 
 // 监听路由变化：在移动端（宽度 < 768px）路由切换后自动关闭侧边栏
@@ -83,13 +101,13 @@ watch(() => route.path, () => {
   <!-- 主内容区：根据侧边栏状态动态调整左边距 -->
   <div
     class="min-h-screen flex flex-col bg-transparent relative z-10 selection:bg-primary selection:text-white transition-all duration-300"
-    :class="sidebarFull ? 'ml-64' : 'ml-14'"
+    :class="layoutOffsetClass"
   >
     <!-- 顶部导航栏 -->
     <TheNavbar />
 
     <!-- 路由视图主体，包含页面切换淡入淡出动画 -->
-    <main class="flex-grow">
+    <main class="flex-grow pt-14 md:pt-16">
       <RouterView v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />

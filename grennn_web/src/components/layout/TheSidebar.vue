@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="fixed left-0 top-0 h-screen bg-white border-r border-black/10 transition-all duration-300 z-40 overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col"
+      class="fixed left-0 top-14 md:top-0 h-[calc(100vh-3.5rem)] md:h-screen bg-white border-r border-black/10 transition-all duration-300 z-40 overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col"
       :class="sidebarClasses"
     >
       <div
@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar p-3 pt-20 md:pt-3">
+      <div class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar p-3 pt-3">
         <nav class="space-y-1">
           <div v-for="(item, index) in sidebarItems" :key="index" class="group">
             <div

@@ -7,17 +7,17 @@
          - h-16 与侧边栏 Logo 区域高度对齐
          ============================================================ -->
     <nav
-      class="fixed top-0 left-0 w-full z-[150] bg-white/90 backdrop-blur-md border-b border-black/10 text-black px-4 md:px-6 h-16 flex justify-between items-center text-xs uppercase tracking-widest"
+      class="fixed top-0 left-0 w-full z-[150] bg-white/90 backdrop-blur-md border-b border-black/10 text-black px-3 md:px-6 h-14 md:h-16 flex justify-between items-center text-[10px] md:text-xs uppercase tracking-widest"
       style="font-family: var(--font-mono)"
     >
       <!-- 左侧占位区：为侧边栏汉堡按钮（固定定位 left=0）预留空间，避免遮挡 Logo -->
-      <div class="w-10"></div>
+      <div class="w-9 md:w-10"></div>
 
       <!-- 中间：品牌 Logo + 站点名称（绝对居中） -->
       <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 group cursor-pointer z-10">
         <router-link to="/" class="flex items-center gap-2">
-          <img src="@/assets/logo.png" alt="Logo" class="w-7 h-7 object-contain" />
-          <div class="flex flex-col items-center relative">
+          <img src="@/assets/logo.png" alt="Logo" class="w-7 h-7 md:w-8 md:h-8 object-contain" />
+          <div class="hidden sm:flex flex-col items-center relative">
             <!-- 主标题：悬停时变为主色调 -->
             <span class="font-bold text-sm tracking-tight group-hover:text-primary transition-colors">GreenSight-绿我同行</span>
             <!-- 版本号：悬停时从下方淡入 -->
@@ -27,7 +27,7 @@
       </div>
 
       <!-- 右侧：用户登录状态 + 全局菜单按钮 -->
-      <div class="flex items-center gap-4 relative z-20">
+      <div class="flex items-center gap-2 md:gap-4 relative z-20">
 
         <!-- 已登录状态：显示用户名 + 退出按钮 -->
         <template v-if="userStore.isLoggedIn && !userStore.isGuest">
@@ -56,8 +56,8 @@
         </template>
 
         <!-- 全局菜单触发按钮：点击展开/收起全屏抽屉菜单 -->
-        <button @click="toggleMenu" class="group flex items-center gap-2 hover:text-[#2E7D32] transition-colors">
-          <div class="border border-current px-3 py-1.5 transition-all duration-300 group-hover:bg-[#2E7D32] group-hover:text-white group-hover:border-[#2E7D32] flex items-center gap-1.5">
+        <button @click="toggleMenu" class="group flex items-center gap-1.5 md:gap-2 hover:text-[#2E7D32] transition-colors">
+          <div class="border border-current px-2.5 py-1 md:px-3 md:py-1.5 transition-all duration-300 group-hover:bg-[#2E7D32] group-hover:text-white group-hover:border-[#2E7D32] flex items-center gap-1.5">
             <span>菜单</span>
             <!-- 开关状态指示符：展开时旋转 90° -->
             <span class="inline-block transition-transform duration-300 text-[10px]" :class="{ 'rotate-90': isOpen }">
@@ -87,7 +87,7 @@
       >
         <!-- 抽屉头部：版权信息 + 关闭按钮 -->
         <div
-          class="px-6 py-4 flex justify-between items-center text-xs uppercase tracking-widest border-b border-black/10 h-16 flex-shrink-0"
+          class="px-4 md:px-6 py-4 flex justify-between items-center text-xs uppercase tracking-widest border-b border-black/10 h-14 md:h-16 flex-shrink-0"
           style="font-family: var(--font-mono)"
         >
           <div><span class="font-bold">©GAW · GreenSight</span></div>
@@ -97,7 +97,7 @@
         </div>
 
         <!-- 抽屉内容区：主菜单导航 + 用户信息 -->
-        <div class="flex-1 px-6 py-10 relative overflow-y-auto">
+        <div class="flex-1 px-4 md:px-6 py-8 md:py-10 relative overflow-y-auto">
           <!-- 背景网格装饰（纯视觉，不可交互） -->
           <div class="absolute inset-0 grid grid-cols-12 gap-4 px-6 pointer-events-none opacity-[0.04] h-full">
             <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
@@ -116,11 +116,11 @@
               <router-link
                 :to="item.path"
                 @click="toggleMenu"
-                class="group/link flex items-center gap-4 font-bold tracking-tighter transition-colors duration-200 text-4xl md:text-6xl"
+                class="group/link flex items-center gap-3 md:gap-4 font-bold tracking-tighter transition-colors duration-200 text-2xl sm:text-3xl md:text-6xl"
                 :class="isActive(item.path) ? 'text-[#2E7D32]' : 'text-black hover:text-[#2E7D32]'"
               >
                 <!-- 菜单图标：悬停时从半透明变为完全可见 -->
-                <NavIcons :name="item.iconName" size="48" class="md:w-16 md:h-16 opacity-50 group-hover/link:opacity-100 transition-opacity" />
+                <NavIcons :name="item.iconName" size="48" class="w-9 h-9 md:w-16 md:h-16 opacity-50 group-hover/link:opacity-100 transition-opacity" />
                 {{ item.label }}
                 <!-- 当前页面标识 -->
                 <span
