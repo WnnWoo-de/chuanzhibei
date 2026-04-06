@@ -102,7 +102,7 @@
     </transition>
 
     <!-- Hero Section (Carousel) -->
-    <section class="min-h-[100dvh] relative flex flex-col justify-center overflow-hidden bg-[#fcfffc] px-6 pt-20 text-[#1d3a2d]">
+    <section class="min-h-[100dvh] md:min-h-screen relative flex flex-col justify-center overflow-hidden bg-[#fcfffc] px-4 md:px-6 pt-10 md:pt-20 text-[#1d3a2d]">
       <div class="absolute inset-0 z-0 overflow-hidden opacity-55 pointer-events-none">
         <Silk
           :speed="1.8"
@@ -150,7 +150,7 @@
       </div>
 
       <!-- Hero Badge -->
-      <div class="absolute left-6 top-24 z-20 inline-flex items-center gap-3 rounded-full border border-white/85 bg-white/98 px-3 py-2 shadow-[0_20px_50px_rgba(171,190,176,0.16)] backdrop-blur-md lg:left-6 lg:top-24">
+      <div class="absolute left-4 top-8 z-20 inline-flex items-center gap-2 md:gap-3 rounded-full border border-white/85 bg-white/98 px-2.5 py-1.5 md:px-3 md:py-2 shadow-[0_20px_50px_rgba(171,190,176,0.16)] backdrop-blur-md md:left-6 md:top-24 scale-90 origin-top-left md:scale-100">
         <img
           src="/logo.png"
           alt="GreenSight logo"
@@ -163,28 +163,28 @@
       </div>
 
       <!-- Carousel Content -->
-      <div class="relative z-10 flex h-full flex-col justify-center pt-28 sm:pt-20 lg:pt-0">
-        <div class="grid grid-cols-1 items-center gap-6 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
-          <div class="flex min-h-[220px] flex-col justify-center sm:min-h-[360px] lg:h-full lg:min-h-[420px] lg:pr-6">
-            <div class="mt-6 sm:mt-2 overflow-hidden lg:-mt-10">
-              <p class="text-xs font-mono uppercase tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
-              <div class="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
-                <p class="min-h-[2rem] font-mono text-lg leading-tight text-emerald-600 sm:min-h-[3rem] sm:text-2xl">
-                  {{ typedBrandLines[0] }}<span v-if="activeTypingLine === 0" class="typing-caret ml-1 inline-block h-5 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
+      <div class="relative z-10 flex h-full flex-col justify-center pt-20 sm:pt-20 lg:pt-0">
+        <div class="grid grid-cols-1 items-center gap-5 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
+          <div class="flex flex-col justify-center lg:h-full lg:min-h-[420px] lg:pr-6">
+            <div class="mt-4 sm:mt-2 overflow-hidden lg:-mt-10">
+              <p class="text-[10px] md:text-xs font-mono uppercase tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
+              <div class="mt-3 sm:mt-6 space-y-1.5 sm:space-y-3">
+                <p class="font-mono text-[15px] leading-snug md:leading-tight text-emerald-600 sm:min-h-[3rem] sm:text-2xl">
+                  {{ typedBrandLines[0] }}<span v-if="activeTypingLine === 0" class="typing-caret ml-1 inline-block h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
                 </p>
-                <p class="min-h-[2rem] font-mono text-lg leading-tight text-emerald-600/85 sm:min-h-[3rem] sm:text-2xl">
-                  {{ typedBrandLines[1] }}<span v-if="activeTypingLine === 1" class="typing-caret ml-1 inline-block h-5 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
+                <p class="font-mono text-[15px] leading-snug md:leading-tight text-emerald-600/85 sm:min-h-[3rem] sm:text-2xl">
+                  {{ typedBrandLines[1] }}<span v-if="activeTypingLine === 1" class="typing-caret ml-1 inline-block h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
                 </p>
               </div>
             </div>
 
-            <div class="mt-4 sm:mt-6 pt-2 lg:mt-6 lg:pt-0">
-              <div class="flex flex-wrap gap-2 sm:gap-3">
-                <span class="glass-tag glass-tag--emerald group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70">
+            <div class="mt-4 sm:mt-6 pt-1 md:pt-2 lg:mt-6 lg:pt-0">
+              <div class="flex flex-wrap gap-1.5 sm:gap-3">
+                <span class="glass-tag glass-tag--emerald group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-2.5 py-1 md:px-4 md:py-2 text-[10px] md:text-sm font-semibold text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70">
                   <span class="glass-tag__pulse"></span>
                   <span class="glass-tag__sheen"></span>
-                  <span class="glass-tag__icon relative flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-emerald-200/38 ring-1 ring-emerald-200/50 shadow-[0_0_22px_rgba(52,211,153,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
-                    <span class="absolute h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-emerald-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-emerald-200/38 ring-1 ring-emerald-200/50 shadow-[0_0_22px_rgba(52,211,153,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-emerald-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
                     <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                       <circle cx="12" cy="12" r="7.5" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.2v7.6" />
@@ -193,11 +193,11 @@
                   </span>
                   <span class="relative z-10">AI 环保助手</span>
                 </span>
-                <span class="glass-tag glass-tag--cyan group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-cyan-100/68 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-cyan-950 shadow-[0_16px_38px_rgba(8,145,178,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-cyan-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-cyan-200/70">
+                <span class="glass-tag glass-tag--cyan group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-cyan-100/68 px-2.5 py-1 md:px-4 md:py-2 text-[10px] md:text-sm font-semibold text-cyan-950 shadow-[0_16px_38px_rgba(8,145,178,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-cyan-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-cyan-200/70">
                   <span class="glass-tag__pulse"></span>
                   <span class="glass-tag__sheen"></span>
-                  <span class="glass-tag__icon relative flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-cyan-200/38 ring-1 ring-cyan-200/50 shadow-[0_0_22px_rgba(34,211,238,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
-                    <span class="absolute h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-cyan-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-cyan-200/38 ring-1 ring-cyan-200/50 shadow-[0_0_22px_rgba(34,211,238,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-cyan-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
                     <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-cyan-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                       <circle cx="12" cy="12" r="7.5" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 14.6 10.7 11l2 2 2.8-4.1" />
@@ -205,11 +205,11 @@
                   </span>
                   <span class="relative z-10">碳足迹分析</span>
                 </span>
-                <span class="glass-tag glass-tag--orange group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-orange-100/68 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-orange-950 shadow-[0_16px_38px_rgba(234,88,12,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-orange-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(251,146,60,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-orange-200/70">
+                <span class="glass-tag glass-tag--orange group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-orange-100/68 px-2.5 py-1 md:px-4 md:py-2 text-[10px] md:text-sm font-semibold text-orange-950 shadow-[0_16px_38px_rgba(234,88,12,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-orange-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(251,146,60,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-orange-200/70">
                   <span class="glass-tag__pulse"></span>
                   <span class="glass-tag__sheen"></span>
-                  <span class="glass-tag__icon relative flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-orange-200/38 ring-1 ring-orange-200/50 shadow-[0_0_22px_rgba(251,146,60,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
-                    <span class="absolute h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-orange-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-orange-200/38 ring-1 ring-orange-200/50 shadow-[0_0_22px_rgba(251,146,60,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-orange-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
                     <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-orange-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                       <circle cx="12" cy="12" r="7.5" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.6v6.8" />
@@ -227,25 +227,25 @@
             <transition name="hero-fade" mode="out-in">
               <div
                 :key="currentSlide"
-                class="flex min-h-[220px] flex-col justify-center pl-0 sm:min-h-[360px] sm:pl-10 lg:min-h-[420px] lg:pl-14"
+                class="flex flex-col justify-center pl-0 sm:pl-10 lg:min-h-[420px] lg:pl-14"
               >
-                <p class="text-xs font-mono uppercase tracking-[0.4em] text-emerald-600/50">
+                <p class="text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] text-emerald-600/50">
                   0{{ currentSlide + 1 }} / 0{{ slides.length }}
                 </p>
-                <p class="mt-3 sm:mt-6 text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] text-emerald-600/60">
+                <p class="mt-2 text-[10px] sm:mt-6 sm:text-sm font-semibold uppercase tracking-[0.3em] text-emerald-600/60">
                   {{ slides[currentSlide].subtitle }}
                 </p>
                 <h2
-                  class="mt-3 sm:mt-5 max-w-xl font-bold leading-tight tracking-tight text-[#214336]"
-                  :class="currentSlide === 0 ? 'text-2xl md:text-3xl lg:text-4xl' : currentSlide === 1 ? 'text-3xl md:text-4xl lg:text-5xl' : 'text-3xl md:text-5xl lg:text-6xl'"
+                  class="mt-2 sm:mt-5 max-w-xl font-bold leading-tight tracking-tight text-[#214336]"
+                  :class="currentSlide === 0 ? 'text-xl md:text-3xl lg:text-4xl' : currentSlide === 1 ? 'text-2xl md:text-4xl lg:text-5xl' : 'text-2xl md:text-5xl lg:text-6xl'"
                 >
                   {{ slides[currentSlide].title }}
                 </h2>
-                <p class="mt-4 sm:mt-6 max-w-xl text-sm sm:text-base leading-7 sm:leading-8 text-[#5f7f70] md:text-lg">
+                <p class="mt-3 sm:mt-6 max-w-xl text-[13px] md:text-base leading-relaxed text-[#5f7f70] md:text-lg line-clamp-3 md:line-clamp-none">
                   {{ slides[currentSlide].description }}
                 </p>
 
-                <div class="mt-10 flex flex-wrap items-center gap-4">
+                <div class="mt-5 md:mt-10 flex flex-wrap items-center gap-4">
                   <a
                     v-if="slides[currentSlide].link.startsWith('#')"
                     :href="slides[currentSlide].link"
@@ -265,30 +265,30 @@
                   </router-link>
                 </div>
 
-                <div class="mt-6 sm:mt-12 flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-t border-black/10 sm:border-white/80 pt-6">
-                  <div class="flex gap-2">
+                <div class="mt-5 sm:mt-12 flex flex-row items-center justify-between gap-4 border-t border-black/10 sm:border-white/80 pt-4 md:pt-6">
+                  <div class="flex gap-1.5 md:gap-2">
                     <button
                       v-for="(slide, index) in slides"
                       :key="index"
                       @click="setSlide(index)"
-                      class="h-1.5 sm:h-2 rounded-full transition-all duration-300"
-                      :class="currentSlide === index ? 'w-8 sm:w-10 bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.28)]' : 'w-1.5 sm:w-2 bg-emerald-200/75 hover:bg-emerald-300'"
+                      class="h-1 sm:h-2 rounded-full transition-all duration-300"
+                      :class="currentSlide === index ? 'w-6 sm:w-10 bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.28)]' : 'w-1 sm:w-2 bg-emerald-200/75 hover:bg-emerald-300'"
                     ></button>
                   </div>
-                  <div class="flex items-center gap-2 md:gap-3">
+                  <div class="flex items-center gap-1.5 md:gap-3">
                     <button
                       @click="prevSlide"
-                      class="flex h-11 w-11 items-center justify-center rounded-full border border-white/85 bg-white/92 text-emerald-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
+                      class="flex h-8 w-8 md:h-11 md:w-11 items-center justify-center rounded-full border border-white/85 bg-white/92 text-emerald-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
                     >
-                      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <svg class="h-3.5 w-3.5 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
                     <button
                       @click="toggleAutoPlay"
-                      class="flex h-11 min-w-[88px] items-center justify-center gap-2 rounded-full border border-white/85 bg-white/92 px-4 text-sm font-semibold text-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
+                      class="flex h-8 min-w-[64px] md:h-11 md:min-w-[88px] items-center justify-center gap-1 md:gap-2 rounded-full border border-white/85 bg-white/92 px-2.5 md:px-4 text-[11px] md:text-sm font-semibold text-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
                     >
-                      <svg v-if="!isAutoPlaying" class="h-4 w-4 fill-current" viewBox="0 0 24 24">
+                      <svg v-if="!isAutoPlaying" class="h-3 w-3 md:h-4 md:w-4 fill-current" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z" />
                       </svg>
                       <svg v-else class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2">
@@ -298,9 +298,9 @@
                     </button>
                     <button
                       @click="nextSlide"
-                      class="flex h-11 w-11 items-center justify-center rounded-full border border-white/85 bg-white/92 text-emerald-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
+                      class="flex h-8 w-8 md:h-11 md:w-11 items-center justify-center rounded-full border border-white/85 bg-white/92 text-emerald-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
                     >
-                      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <svg class="h-3.5 w-3.5 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                       </svg>
                     </button>
@@ -312,7 +312,7 @@
         </div>
 
         <!-- Scroll Down Indicator -->
-        <div class="absolute bottom-8 left-1/2 z-20 -translate-x-1/2 scroll-indicator opacity-100 transition-opacity duration-1000">
+        <div class="hidden md:flex absolute bottom-8 left-1/2 z-0 -translate-x-1/2 scroll-indicator opacity-100 transition-opacity duration-1000">
           <div class="scroll-indicator-stack flex flex-col items-center gap-1.5">
             <div class="scroll-mouse-shell flex items-center justify-center rounded-full">
               <svg
