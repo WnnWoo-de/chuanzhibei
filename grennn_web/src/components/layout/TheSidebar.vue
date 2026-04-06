@@ -6,18 +6,18 @@
     >
       <div
         class="flex items-center border-b border-black/10 transition-all duration-300 flex-shrink-0"
-        :class="isMini ? 'justify-center px-2 py-3 h-16' : 'gap-3 px-6 py-4 h-16'"
+        :class="isMiniMode ? 'justify-center px-2 py-3 h-16' : 'gap-3 px-6 py-4 h-16'"
       >
         <img
           src="@/assets/logo.png"
           alt="Logo"
           class="object-contain rounded-lg shadow-sm flex-shrink-0 transition-all duration-300"
-          :class="isMini ? 'w-8 h-8' : 'w-10 h-10'"
+          :class="isMiniMode ? 'w-8 h-8' : 'w-10 h-10'"
         />
 
         <div
           class="flex flex-col overflow-hidden transition-all duration-300"
-          :class="isMini ? 'w-0 opacity-0' : 'opacity-100 w-auto'"
+          :class="isMiniMode ? 'w-0 opacity-0' : 'opacity-100 w-auto'"
         >
           <span class="font-bold text-lg leading-none whitespace-nowrap">GreenSight</span>
           <span class="text-[10px] text-primary font-mono uppercase tracking-tighter mt-1 whitespace-nowrap">绿我同行</span>
@@ -30,9 +30,9 @@
             <div
               v-if="item.category"
               class="transition-all duration-300 overflow-hidden"
-              :class="isMini ? 'h-0 opacity-0 py-0 my-0' : 'px-3 py-2 text-xs font-mono uppercase tracking-widest text-gray-400 mt-6 mb-2'"
+              :class="isMiniMode ? 'h-0 opacity-0 py-0 my-0' : 'px-3 py-2 text-xs font-mono uppercase tracking-widest text-gray-400 mt-6 mb-2'"
             >
-              <span v-if="!isMini">{{ item.category }}</span>
+              <span v-if="!isMiniMode">{{ item.category }}</span>
               <div v-else class="my-1 border-t border-black/8"></div>
             </div>
 
@@ -42,13 +42,13 @@
               class="w-full flex items-center rounded-lg text-sm transition-all duration-200 hover:bg-gray-50 group/item relative overflow-hidden cursor-pointer"
               :class="[
                 activeNav === item.link ? 'bg-primary/10 text-primary font-medium' : 'text-gray-700',
-                isMini ? 'justify-center px-0 py-2.5 w-10 mx-auto' : 'gap-3 px-3 py-2.5'
+                isMiniMode ? 'justify-center px-0 py-2.5 w-10 mx-auto' : 'gap-3 px-3 py-2.5'
               ]"
-              :title="isMini ? item.label : ''"
+              :title="isMiniMode ? item.label : ''"
               @click="handleNavClick(item.link)"
             >
               <span
-                v-if="!isMini"
+                v-if="!isMiniMode"
                 class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-primary rounded-full transition-all duration-200"
                 :class="activeNav === item.link ? 'opacity-100' : 'opacity-0'"
               ></span>
@@ -65,14 +65,14 @@
                 <path :d="item.icon" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
 
-              <span v-if="!isMini" class="flex-1 whitespace-nowrap text-left">{{ item.label }}</span>
+              <span v-if="!isMiniMode" class="flex-1 whitespace-nowrap text-left">{{ item.label }}</span>
 
               <span
-                v-if="item.badge && !isMini"
+                v-if="item.badge && !isMiniMode"
                 class="text-xs px-2 py-0.5 bg-primary/20 text-primary rounded-full font-mono"
               >{{ item.badge }}</span>
 
-              <span v-if="!isMini" class="opacity-0 group-hover/item:opacity-100 transition-all duration-200 text-gray-400 text-xs">→</span>
+              <span v-if="!isMiniMode" class="opacity-0 group-hover/item:opacity-100 transition-all duration-200 text-gray-400 text-xs">→</span>
             </button>
           </div>
         </nav>
@@ -158,11 +158,16 @@ const isSidebarExpanded = computed(() => {
   return !isMini.value
 })
 
+const isMiniMode = computed(() => {
+  if (isMobile()) return false
+  return isMini.value
+})
+
 const sidebarClasses = computed(() => {
   if (isMobile()) {
     return props.isOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full'
   }
-  return isMini.value ? 'w-14 translate-x-0' : 'w-64 translate-x-0'
+  return isMiniMode.value ? 'w-14 translate-x-0' : 'w-64 translate-x-0'
 })
 
 const toggleButtonClass = computed(() => {
