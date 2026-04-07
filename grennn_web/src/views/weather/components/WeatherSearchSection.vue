@@ -33,7 +33,7 @@
 
       <div class="search-meta">
         <span class="meta-badge">默认城市：{{ defaultCity }}</span>
-        <span v-if="errorMessage" class="meta-error">{{ errorMessage }}</span>
+        <span v-if="errorMessage" :class="errorMessage.includes('演示数据') ? 'meta-info' : 'meta-error'">{{ errorMessage }}</span>
         <span v-else class="meta-tip">支持直接输入地区名，页面会始终保留天气状态展示。</span>
       </div>
     </div>
@@ -237,6 +237,12 @@ defineEmits(['update:searchCity', 'search'])
 
 .meta-tip {
   color: rgba(111, 130, 155, 0.92);
+}
+
+.meta-info {
+  background: rgba(233, 244, 255, 0.96);
+  color: #5a7597;
+  border: 1px solid rgba(199, 223, 248, 0.9);
 }
 
 .meta-error {
