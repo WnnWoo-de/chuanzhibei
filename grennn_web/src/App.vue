@@ -13,15 +13,6 @@ import './styles/design-tokens.css'                          // 设计令牌系�
 
 const TheIntro = defineAsyncComponent(() => import('./components/layout/TheIntro.vue'))
 const Silk = defineAsyncComponent(() => import('./components/effects/Silk.vue'))
-const canUseWindow = typeof window !== 'undefined'
-const getInitialSidebarFull = () => {
-  if (!canUseWindow) return false
-  try {
-    return window.localStorage.getItem('sidebar_mini') === 'false'
-  } catch {
-    return false
-  }
-}
 
 // 是否显示开场动画（首次进入页面时显示）
 const showIntro = ref(true)
@@ -30,13 +21,12 @@ const showIntro = ref(true)
 const sidebarOpen = ref(false)
 
 // 控制侧边栏是否全宽展开，默认为 mini 状态
-const sidebarFull = ref(getInitialSidebarFull())
+const sidebarFull = ref(localStorage.getItem('sidebar_mini') === 'false')
 
 const route = useRoute()
-const isMobile = ref(canUseWindow ? window.innerWidth < 768 : false)
+const isMobile = ref(window.innerWidth < 768)
 
 const handleResize = () => {
-  if (!canUseWindow) return
   isMobile.value = window.innerWidth < 768
   if (isMobile.value) {
     sidebarFull.value = false
@@ -70,21 +60,19 @@ const handleKeydown = (e) => {
 // 组件挂载时注册键盘监听
 onMounted(() => {
   handleResize()
-  if (!canUseWindow) return
   window.addEventListener('keydown', handleKeydown)
   window.addEventListener('resize', handleResize)
 })
 
 // 组件卸载时移除键盘监听，防止内存泄漏
 onUnmounted(() => {
-  if (!canUseWindow) return
   window.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('resize', handleResize)
 })
 
 // 监听路由变化：在移动端（宽度 < 768px）路由切换后自动关闭侧边栏
 watch(() => route.path, () => {
-  if (canUseWindow && window.innerWidth < 768) {
+  if (window.innerWidth < 768) {
     sidebarOpen.value = false
   }
 })

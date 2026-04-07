@@ -258,6 +258,12 @@ onMounted(() => {
     delay: 0.5,
   })
 })
+
+onUnmounted(() => {
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = ''
+  }
+})
 </script>
 
 <style scoped>

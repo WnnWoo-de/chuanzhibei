@@ -234,9 +234,7 @@ a {
 
 .animate-fade-in-up {
   animation: fadeInUp 0.6s var(--ease-expo) both;
-}
-
-.animate-fade-in {
+}.animate-fade-in {
   animation: fadeIn 0.4s ease both;
 }.animate-scale-in {
   animation: scaleIn 0.4s var(--ease-expo) both;
@@ -270,9 +268,7 @@ a {
 
 .animate-marquee:hover {
   animation-play-state: paused;
-}
-
-.animate-marquee-fast {
+}.animate-marquee-fast {
   animation: marquee 15s linear infinite;
   will-change: transform;
 }/* ============================================
@@ -347,9 +343,7 @@ img[loading='lazy'].loaded {
 }
 .btn-glow:hover {
   box-shadow: 0 0 20px rgba(46, 125, 50, 0.35);
-}
-
-/* 卡片悬停上移 */
+}/* 卡片悬停上移 */
 .card-hover {
   transition: transform 0.3s var(--ease-expo), box-shadow 0.3s ease;
 }

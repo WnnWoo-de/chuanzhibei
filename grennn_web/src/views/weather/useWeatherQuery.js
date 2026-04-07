@@ -48,7 +48,7 @@ export const useWeatherQuery = () => {
     if (result.ok && result.data) {
       weather.value = result.data
       lastSuccessfulCity.value = city
-      errorMessage.value = result.message || ''
+      errorMessage.value = ''
       applyForecastRange(result.data)
       return
     }

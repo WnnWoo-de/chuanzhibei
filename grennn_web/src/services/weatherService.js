@@ -1,27 +1,7 @@
 // ============================================================
 // services/weatherService.js - 天气服务
 // 封装天气查询 API 调用，对接后端 /api/v1/weather 接口
-// 在 Cloudflare 静态部署等无法直连后端时自动回退到模拟数据
 // ============================================================
-
-import { createMockAirQualityData, createMockWeatherData } from './weatherMockData'
-
-const WEATHER_API_BASE = '/api/v1/weather'
-const MOCK_MESSAGE = '当前为演示数据：Cloudflare 静态部署未连接天气后端，已自动展示模拟天气。'
-
-const parseJsonSafely = async (response) => {
-  try {
-    return await response.json()
-  } catch {
-    return null
-  }
-}
-
-const createMockResult = (factory, city) => ({
-  ok: true,
-  message: MOCK_MESSAGE,
-  data: factory(city),
-})
 
 /**
  * 查询指定城市的综合天气数据
@@ -31,24 +11,26 @@ const createMockResult = (factory, city) => ({
  * @returns {Promise<{ ok: boolean, message: string, data: import('../types/weather').WeatherQueryResult | null }>}
  */
 export async function queryWeatherByCity(city) {
-  const normalizedCity = String(city || '').trim() || '北京'
-
   try {
-    const url = `${WEATHER_API_BASE}/query?city=${encodeURIComponent(normalizedCity)}`
+    const url = `/api/v1/weather/query?city=${encodeURIComponent(city)}`
     const response = await fetch(url)
-    const json = await parseJsonSafely(response)
+    const json = await response.json()
 
     if (!response.ok) {
-      return createMockResult(createMockWeatherData, normalizedCity)
+      return {
+        ok: false,
+        message: json?.error || `请求失败（${response.status}）`,
+        data: null,
+      }
     }
 
+    return { ok: true, message: '', data: json }
+  } catch (err) {
     return {
-      ok: true,
-      message: '',
-      data: json,
+      ok: false,
+      message: err instanceof Error ? err.message : '网络请求失败',
+      data: null,
     }
-  } catch {
-    return createMockResult(createMockWeatherData, normalizedCity)
   }
 }
 
@@ -60,19 +42,25 @@ export async function queryWeatherByCity(city) {
  * @returns {Promise<{ ok: boolean, message: string, data: object | null }>}
  */
 export async function queryAirQualityByCity(city) {
-  const normalizedCity = String(city || '').trim() || '北京'
-
   try {
-    const url = `${WEATHER_API_BASE}/air-quality?city=${encodeURIComponent(normalizedCity)}`
+    const url = `/api/v1/weather/air-quality?city=${encodeURIComponent(city)}`
     const response = await fetch(url)
-    const json = await parseJsonSafely(response)
+    const json = await response.json()
 
     if (!response.ok) {
-      return createMockResult(createMockAirQualityData, normalizedCity)
+      return {
+        ok: false,
+        message: json?.error || `请求失败（${response.status}）`,
+        data: null,
+      }
     }
 
     return { ok: true, message: '', data: json }
-  } catch {
-    return createMockResult(createMockAirQualityData, normalizedCity)
+  } catch (err) {
+    return {
+      ok: false,
+      message: err instanceof Error ? err.message : '网络请求失败',
+      data: null,
+    }
   }
 }

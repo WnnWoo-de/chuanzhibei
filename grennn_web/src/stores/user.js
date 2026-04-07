@@ -9,24 +9,13 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { dispatchAuthLogout, requestAxios } from '@/utils/api'
 
-const canUseStorage = () => typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
-const safeStorageGet = (key, fallback = '') => {
-  if (!canUseStorage()) return fallback
-  try {
-    const value = window.localStorage.getItem(key)
-    return value ?? fallback
-  } catch {
-    return fallback
-  }
-}
-
 // 标记 Axios 拦截器是否已安装（防止重复安装）
 let axiosInterceptorsInstalled = false
 
 export const useUserStore = defineStore('user', () => {
   // ---- 响应式状态 ----
   const user = ref(null)                                          // 当前登录用户信息
-  const token = ref(safeStorageGet('green_token', ''))           // 从 localStorage 恢复 Token
+  const token = ref(localStorage.getItem('green_token') || '')   // 从 localStorage 恢复 Token
 
   const badges = ref([])       // 成就徽章列表
   const chatHistory = ref([])  // 聊天历史记录
@@ -63,16 +52,15 @@ export const useUserStore = defineStore('user', () => {
    */
   const setToken = (newToken) => {
     token.value = newToken || ''
-    if (!canUseStorage()) return
     if (token.value) {
       try {
-        window.localStorage.setItem('green_token', token.value)
+        localStorage.setItem('green_token', token.value)
       } catch (err) {
         void err
       }
     } else {
       try {
-        window.localStorage.removeItem('green_token')
+        localStorage.removeItem('green_token')
       } catch (err) {
         void err
       }
@@ -201,27 +189,25 @@ export const useUserStore = defineStore('user', () => {
       }
     }
 
-    if (canUseStorage()) {
-      // 从 localStorage 恢复成就徽章数据
-      const storedBadges = safeStorageGet('green_badges')
-      if (storedBadges) {
-        try {
-          const parsed = JSON.parse(storedBadges)
-          if (Array.isArray(parsed)) badges.value = parsed
-        } catch (err) {
-          void err
-        }
+    // 从 localStorage 恢复成就徽章数据
+    const storedBadges = localStorage.getItem('green_badges')
+    if (storedBadges) {
+      try {
+        const parsed = JSON.parse(storedBadges)
+        if (Array.isArray(parsed)) badges.value = parsed
+      } catch (err) {
+        void err
       }
+    }
 
-      // 从 localStorage 恢复聊天历史
-      const storedChat = safeStorageGet('green_chat')
-      if (storedChat) {
-        try {
-          const parsed = JSON.parse(storedChat)
-          if (Array.isArray(parsed)) chatHistory.value = parsed
-        } catch (err) {
-          void err
-        }
+    // 从 localStorage 恢复聊天历史
+    const storedChat = localStorage.getItem('green_chat')
+    if (storedChat) {
+      try {
+        const parsed = JSON.parse(storedChat)
+        if (Array.isArray(parsed)) chatHistory.value = parsed
+      } catch (err) {
+        void err
       }
     }
 
