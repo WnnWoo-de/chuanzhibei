@@ -1,0 +1,19 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+npm-debug.log
+yarn-error.log
+
+# Uploads
+uploads/
+
+# Temp scripts
+/tmp_*.js
+
+# OS files
+.DS_Store
+Thumbs.db
