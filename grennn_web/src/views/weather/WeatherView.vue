@@ -13,6 +13,8 @@
           :default-city="defaultCity"
           :loading="loading"
           :error-message="errorMessage"
+          :info-message="infoMessage"
+          :is-mock-data="isMockData"
           @search="handleSearch(searchCity)"
         />
 
@@ -71,7 +73,17 @@ import WeatherHourlyForecast from './components/WeatherHourlyForecast.vue'
 import WeatherMetricsGrid from './components/WeatherMetricsGrid.vue'
 import WeatherSearchSection from './components/WeatherSearchSection.vue'
 
-const { defaultCity, errorMessage, getBarStyle, handleSearch, loading, searchCity, weather } = useWeatherQuery()
+const {
+  defaultCity,
+  errorMessage,
+  getBarStyle,
+  handleSearch,
+  infoMessage,
+  isMockData,
+  loading,
+  searchCity,
+  weather,
+} = useWeatherQuery()
 const fmt = weatherFmt
 
 const themeClass = computed(() => {

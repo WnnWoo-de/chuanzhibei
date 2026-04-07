@@ -8,6 +8,8 @@ export const useWeatherQuery = () => {
   const weather = ref(null)
   const loading = ref(false)
   const errorMessage = ref('')
+  const infoMessage = ref('')
+  const isMockData = ref(false)
   const globalMinTemp = ref(0)
   const globalMaxTemp = ref(40)
   const lastSuccessfulCity = ref(DEFAULT_CITY)
@@ -41,6 +43,8 @@ export const useWeatherQuery = () => {
     searchCity.value = city
     loading.value = true
     errorMessage.value = ''
+    infoMessage.value = ''
+    isMockData.value = false
 
     const result = await queryWeatherByCity(city)
     loading.value = false
@@ -49,6 +53,8 @@ export const useWeatherQuery = () => {
       weather.value = result.data
       lastSuccessfulCity.value = city
       errorMessage.value = ''
+      isMockData.value = Boolean(result.mock)
+      infoMessage.value = result.mock ? result.message || '当前展示的是本地模拟天气数据。' : ''
       applyForecastRange(result.data)
       return
     }
@@ -64,6 +70,10 @@ export const useWeatherQuery = () => {
         weather.value = fallbackResult.data
         searchCity.value = DEFAULT_CITY
         lastSuccessfulCity.value = DEFAULT_CITY
+        isMockData.value = Boolean(fallbackResult.mock)
+        infoMessage.value = fallbackResult.mock
+          ? fallbackResult.message || '当前展示的是本地模拟天气数据。'
+          : '已为你展示默认城市天气'
         applyForecastRange(fallbackResult.data)
         errorMessage.value = `${result.message || '查询失败'}，已为你展示默认城市天气`
       }
@@ -76,6 +86,8 @@ export const useWeatherQuery = () => {
     weather,
     loading,
     errorMessage,
+    infoMessage,
+    isMockData,
     lastSuccessfulCity,
     getBarStyle,
     handleSearch,

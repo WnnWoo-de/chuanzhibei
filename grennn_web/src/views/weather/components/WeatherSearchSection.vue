@@ -33,7 +33,9 @@
 
       <div class="search-meta">
         <span class="meta-badge">默认城市：{{ defaultCity }}</span>
+        <span v-if="isMockData" class="meta-mock">演示模式：当前展示本地模拟天气数据</span>
         <span v-if="errorMessage" class="meta-error">{{ errorMessage }}</span>
+        <span v-else-if="infoMessage" class="meta-info">{{ infoMessage }}</span>
         <span v-else class="meta-tip">支持直接输入地区名，页面会始终保留天气状态展示。</span>
       </div>
     </div>
@@ -44,10 +46,6 @@
 import { Location } from '@element-plus/icons-vue'
 
 defineProps({
-  searchCity: {
-    type: String,
-    default: '',
-  },
   loading: {
     type: Boolean,
     default: false,
@@ -55,6 +53,14 @@ defineProps({
   errorMessage: {
     type: String,
     default: '',
+  },
+  infoMessage: {
+    type: String,
+    default: '',
+  },
+  isMockData: {
+    type: Boolean,
+    default: false,
   },
   defaultCity: {
     type: String,
@@ -222,6 +228,8 @@ defineEmits(['update:searchCity', 'search'])
 
 .meta-badge,
 .meta-tip,
+.meta-info,
+.meta-mock,
 .meta-error {
   border-radius: 999px;
   padding: 8px 12px;
@@ -237,6 +245,18 @@ defineEmits(['update:searchCity', 'search'])
 
 .meta-tip {
   color: rgba(111, 130, 155, 0.92);
+}
+
+.meta-info {
+  background: rgba(235, 245, 255, 0.96);
+  color: #5f7f9f;
+  border: 1px solid rgba(203, 223, 243, 0.95);
+}
+
+.meta-mock {
+  background: linear-gradient(135deg, rgba(255, 247, 214, 0.95), rgba(255, 236, 188, 0.95));
+  color: #996600;
+  border: 1px solid rgba(244, 214, 120, 0.92);
 }
 
 .meta-error {
