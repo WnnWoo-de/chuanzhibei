@@ -93,7 +93,7 @@ import { ChatDotRound, CopyDocument, Cpu, User } from '@element-plus/icons-vue'
 
 const containerRef = ref(null)
 
-defineProps({
+const props = defineProps({
   allPrompts: {
     type: Array,
     default: () => [],
@@ -126,6 +126,26 @@ const scrollToBottom = async () => {
     behavior: 'smooth',
   })
 }
+
+// 监听消息变化，自动滚动到底部
+watch(
+  () => props.messages,
+  async () => {
+    await scrollToBottom()
+  },
+  { deep: true }
+)
+
+// 监听 isTyping 和 isWriting 状态变化，自动滚动到底部
+watch(
+  () => [props.isTyping, props.isWriting],
+  async (newValues, oldValues) => {
+    // 当开始生成或停止生成时，滚动到底部
+    if (newValues[0] || newValues[1]) {
+      await scrollToBottom()
+    }
+  }
+)
 
 defineExpose({
   scrollToBottom,
