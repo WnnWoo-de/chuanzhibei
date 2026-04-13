@@ -24,6 +24,7 @@
             <ChatMessageList
               ref="chatMessageListRef"
               :all-prompts="allPrompts"
+              :copied-index="copiedMessageIndex"
               :is-typing="isTyping"
               :is-writing="isWriting"
               :messages="messages"
@@ -71,6 +72,8 @@ import { useChatPrompts } from './useChatPrompts'
 
 const userStore = useUserStore()
 const chatMessageListRef = ref(null)
+const copiedMessageIndex = ref(-1)
+let copiedMessageTimer = null
 const { allPrompts, quickPrompts, isShuffling, shufflePrompts } = useChatPrompts()
 
 // AI 助手的欢迎消息（固定为对话第一条）
@@ -110,11 +113,30 @@ const useQuickPrompt = (prompt) => {
 
 /**
  * 复制消息内容到剪贴板
- * @param content - 要复制的纯文本内容
+ * @param {{ content: string, index: number } | string} payload - 要复制的消息内容
  */
-const copyMessage = async (content) => {
+const copyMessage = async (payload) => {
+  const content = typeof payload === 'string' ? payload : payload?.content || ''
+  const index = typeof payload === 'string' ? -1 : Number(payload?.index)
+
+  if (!content.trim()) {
+    ElMessage.warning('暂无可复制内容')
+    return
+  }
+
   try {
     await navigator.clipboard.writeText(content)
+    copiedMessageIndex.value = Number.isInteger(index) ? index : -1
+
+    if (copiedMessageTimer) {
+      clearTimeout(copiedMessageTimer)
+    }
+
+    copiedMessageTimer = setTimeout(() => {
+      copiedMessageIndex.value = -1
+      copiedMessageTimer = null
+    }, 1600)
+
     ElMessage.success('复制成功')
   } catch (err) {
     console.error('Copy failed:', err)
@@ -149,6 +171,10 @@ onMounted(async () => {
  * 及已卸载组件上的状态更新
  */
 onUnmounted(() => {
+  if (copiedMessageTimer) {
+    clearTimeout(copiedMessageTimer)
+    copiedMessageTimer = null
+  }
   if (abortController.value) {
     abortController.value.abort()
   }
@@ -220,49 +246,129 @@ onUnmounted(() => {
 }
 
 /* ---- Markdown 渲染样式（:deep 穿透 scoped 作用域） ---- */
+:deep(.markdown-body) {
+  color: inherit;
+  line-height: 1.8;
+  word-break: break-word;
+}
+:deep(.markdown-body > *:first-child) {
+  margin-top: 0;
+}
+:deep(.markdown-body > *:last-child) {
+  margin-bottom: 0;
+}
+:deep(.markdown-body h1),
+:deep(.markdown-body h2),
+:deep(.markdown-body h3),
+:deep(.markdown-body h4) {
+  margin: 0.9em 0 0.45em;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #111827;
+}
+:deep(.markdown-body h1) {
+  font-size: 1.35rem;
+}
+:deep(.markdown-body h2) {
+  font-size: 1.15rem;
+}
+:deep(.markdown-body h3) {
+  font-size: 1rem;
+}
 :deep(.markdown-body p) {
-  margin-bottom: 0.5em;
+  margin-bottom: 0.7em;
 }
 :deep(.markdown-body p:last-child) {
   margin-bottom: 0;
 }
 :deep(.markdown-body ul),
 :deep(.markdown-body ol) {
-  padding-left: 1.5em;
+  padding-left: 1.4em;
+  margin: 0.65em 0;
+}
+:deep(.markdown-body ul) {
   list-style-type: disc;
-  margin-bottom: 0.5em;
 }
 :deep(.markdown-body ol) {
   list-style-type: decimal;
 }
 :deep(.markdown-body li) {
-  margin-bottom: 0.25em;
+  margin-bottom: 0.35em;
+}
+:deep(.markdown-body li > p) {
+  margin-bottom: 0.35em;
 }
 :deep(.markdown-body strong) {
-  font-weight: 600;
+  font-weight: 700;
+  color: #111827;
+}
+:deep(.markdown-body em) {
+  font-style: italic;
+}
+:deep(.markdown-body a) {
+  color: #0f766e;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 2px;
+}
+:deep(.markdown-body a:hover) {
+  color: #047857;
 }
 :deep(.markdown-body pre) {
-  background-color: #f3f4f6;
-  padding: 0.75rem;
-  border-radius: 0.375rem;
+  background: #111827;
+  color: #f9fafb;
+  padding: 0.9rem 1rem;
+  border-radius: 0.9rem;
   overflow-x: auto;
-  margin: 0.5rem 0;
-  font-family: monospace;
-  font-size: 0.9em;
+  margin: 0.75rem 0;
+  font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: 0.88em;
+  line-height: 1.7;
+}
+:deep(.markdown-body pre code) {
+  background: transparent;
+  padding: 0;
+  color: inherit;
 }
 :deep(.markdown-body code) {
-  background-color: #f3f4f6;
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
-  font-family: monospace;
-  font-size: 0.9em;
+  background: rgba(15, 23, 42, 0.06);
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.4rem;
+  font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: 0.88em;
+  color: #0f172a;
 }
 :deep(.markdown-body blockquote) {
-  border-left: 3px solid #e5e7eb;
-  padding-left: 1rem;
-  color: #6b7280;
-  margin: 0.5rem 0;
-  font-family: monospace;
+  margin: 0.75rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid #10b981;
+  background: rgba(16, 185, 129, 0.08);
+  color: #374151;
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+:deep(.markdown-body hr) {
+  border: none;
+  border-top: 1px solid rgba(15, 23, 42, 0.12);
+  margin: 1rem 0;
+}
+:deep(.markdown-body table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.8rem 0;
+  overflow: hidden;
+  border-radius: 0.85rem;
+  font-size: 0.92em;
+}
+:deep(.markdown-body th),
+:deep(.markdown-body td) {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+:deep(.markdown-body th) {
+  background: rgba(15, 23, 42, 0.05);
+  font-weight: 700;
 }
 
 /* Cursor Effect - 流式输出时末尾显示闪烁光标 ▋ */

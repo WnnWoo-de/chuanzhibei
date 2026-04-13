@@ -19,7 +19,7 @@
           class="p-4 text-sm leading-relaxed relative group transition-all duration-300"
           :class="[
             msg.role === 'user'
-              ? 'bg-gradient-to-br from-black to-gray-800 text-white rounded-3xl rounded-tr-sm shadow-lg hover:shadow-xl hover:scale-105'
+              ? 'bg-gradient-to-br from-black to-gray-800 text-white rounded-3xl rounded-tr-sm shadow-lg hover:shadow-xl hover:scale-105 whitespace-pre-wrap'
               : 'bg-gradient-to-br from-gray-50 to-white text-gray-800 border-2 border-gray-200 rounded-3xl rounded-tl-sm shadow-sm hover:shadow-lg hover:border-green-300 hover:bg-green-50/30',
           ]"
         >
@@ -29,15 +29,24 @@
             :class="{ 'typing-active': isWriting && index === messages.length - 1 }"
             v-html="renderMarkdown(msg.content)"
           ></div>
-          <div v-else>{{ msg.content }}</div>
+          <div v-else class="whitespace-pre-wrap break-words">{{ msg.content }}</div>
 
           <button
-            v-if="msg.role === 'assistant' && !isWriting"
-            class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-gray-200 rounded-full text-gray-400 hover:text-gray-600 z-10"
-            title="复制内容"
-            @click="$emit('copy-message', msg.content)"
+            v-if="!isCurrentStreamingMessage(msg, index)"
+            class="absolute top-2 right-2 inline-flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all px-2.5 py-1.5 rounded-full text-[11px] font-medium z-10"
+            :class="
+              msg.role === 'user'
+                ? 'bg-white/12 text-white hover:bg-white/20'
+                : 'bg-white/80 text-gray-500 hover:bg-white hover:text-gray-700 border border-black/5 shadow-sm'
+            "
+            :title="copiedIndex === index ? '已复制' : '复制内容'"
+            @click="$emit('copy-message', { content: msg.content, index })"
           >
-            <el-icon><CopyDocument /></el-icon>
+            <el-icon>
+              <Select v-if="copiedIndex === index" />
+              <CopyDocument v-else />
+            </el-icon>
+            <span>{{ copiedIndex === index ? '已复制' : '复制' }}</span>
           </button>
 
           <div
@@ -89,7 +98,7 @@
 
 <script setup>
 import { nextTick, ref, watch } from 'vue'
-import { ChatDotRound, CopyDocument, Cpu, User } from '@element-plus/icons-vue'
+import { ChatDotRound, CopyDocument, Cpu, Select, User } from '@element-plus/icons-vue'
 
 const containerRef = ref(null)
 
@@ -97,6 +106,10 @@ const props = defineProps({
   allPrompts: {
     type: Array,
     default: () => [],
+  },
+  copiedIndex: {
+    type: Number,
+    default: -1,
   },
   isTyping: {
     type: Boolean,
@@ -117,6 +130,10 @@ const props = defineProps({
 })
 
 defineEmits(['copy-message', 'quick-prompt'])
+
+const isCurrentStreamingMessage = (msg, index) => {
+  return props.isWriting && msg.role === 'assistant' && index === props.messages.length - 1
+}
 
 const scrollToBottom = async () => {
   await nextTick()
@@ -139,9 +156,9 @@ watch(
 // 监听 isTyping 和 isWriting 状态变化，自动滚动到底部
 watch(
   () => [props.isTyping, props.isWriting],
-  async (newValues, oldValues) => {
+  async ([isTyping, isWriting]) => {
     // 当开始生成或停止生成时，滚动到底部
-    if (newValues[0] || newValues[1]) {
+    if (isTyping || isWriting) {
       await scrollToBottom()
     }
   }

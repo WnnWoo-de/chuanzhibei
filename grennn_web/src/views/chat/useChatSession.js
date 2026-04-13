@@ -4,6 +4,10 @@ import { ElMessage } from 'element-plus'
 import { consumeChatCompletionsStream, getResponseErrorMessage } from '@/utils/api'
 import { getSimulatedChatResponse } from './chatFallbacks'
 
+const CHAT_REQUEST_TIMEOUT = 90_000
+const TYPEWRITER_DELAY = 18
+const TYPEWRITER_CHUNK_SIZE = 2
+
 export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) => {
   const newMessage = ref('')
   const isTyping = ref(false)
@@ -11,43 +15,63 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
   const abortController = ref(null)
   const messages = ref([initialMessage])
 
-  const typeWriter = async (text, messageRef) => {
-    isWriting.value = true
-    const speed = 20
-    let currentText = ''
+  let activeTypewriterState = null
 
-    for (let i = 0; i < text.length; i++) {
-      if (!isWriting.value) break
-      currentText += text[i]
-      messageRef.content = currentText
-      // 每次添加字符都滚动到底部，确保用户能看到最新内容
-      scrollToBottom()
-      await new Promise((resolve) => setTimeout(resolve, speed))
+  const clearTypewriterTimer = () => {
+    if (activeTypewriterState) {
+      activeTypewriterState.cancelled = true
+      activeTypewriterState = null
     }
-
-    isWriting.value = false
-    // 确保最终内容完全可见
-    scrollToBottom()
-    userStore.saveChat(messages.value)
   }
 
-  const fallbackToSimulation = async () => {
-    const lastUserMessage = messages.value[messages.value.length - 1]?.content || ''
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+  const playTypewriter = async (messageRef, pendingChunksRef) => {
+    clearTypewriterTimer()
+    const state = { cancelled: false }
+    activeTypewriterState = state
+
+    while ((isWriting.value || pendingChunksRef.value.length > 0) && !state.cancelled) {
+      if (pendingChunksRef.value.length === 0) {
+        await wait(TYPEWRITER_DELAY)
+        continue
+      }
+
+      const nextChunk = pendingChunksRef.value[0]
+      const output = nextChunk.slice(0, TYPEWRITER_CHUNK_SIZE)
+      messageRef.content += output
+      scrollToBottom()
+
+      if (output.length >= nextChunk.length) {
+        pendingChunksRef.value.shift()
+      } else {
+        pendingChunksRef.value[0] = nextChunk.slice(output.length)
+      }
+
+      await wait(TYPEWRITER_DELAY)
+    }
+
+    if (activeTypewriterState === state) {
+      activeTypewriterState = null
+    }
+  }
+
+  const fallbackToSimulation = async (userMessage) => {
     const simulatedContent = await getSimulatedChatResponse({
       isTyping: () => isTyping.value,
-      userMessage: lastUserMessage,
+      userMessage: userMessage || '',
     })
 
     const assistantMsg = {
       role: 'assistant',
-      content: '',
+      content: simulatedContent,
       time: new Date().toLocaleTimeString('en-GB'),
     }
     messages.value.push(assistantMsg)
-    const reactiveAssistantMsg = messages.value[messages.value.length - 1]
     isTyping.value = false
-
-    await typeWriter(simulatedContent, reactiveAssistantMsg)
+    isWriting.value = false
+    scrollToBottom()
+    userStore.saveChat(messages.value)
   }
 
   const stopGeneration = () => {
@@ -55,8 +79,10 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
       abortController.value.abort()
       abortController.value = null
     }
+    clearTypewriterTimer()
     isTyping.value = false
     isWriting.value = false
+    userStore.saveChat(messages.value)
   }
 
   const clearChat = async () => {
@@ -74,7 +100,7 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
     if (!newMessage.value.trim() || isTyping.value) return
 
     const time = new Date().toLocaleTimeString('en-GB')
-    const userMsg = newMessage.value
+    const userMsg = newMessage.value.trim()
 
     messages.value.push({
       role: 'user',
@@ -82,9 +108,9 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
       time,
     })
 
-    // 确保立即清空输入框，实现类似ChatGPT的效果
     newMessage.value = ''
     isTyping.value = true
+    isWriting.value = false
 
     await nextTick()
     scrollToBottom()
@@ -102,7 +128,7 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
         {
           role: 'system',
           content:
-            '你是GreenSight-绿我同行 AI助手，一个专注于环保和可持续生活的智能 AI 助手。你的名字叫"GreenSight-绿我同行"，象征着绿色生命的开始。请用友善、专业、亲切的语气回答用户关于环保、回收、节能减排、旧物改造等方面的问题。每次回答时尽量提供实用的建议和具体的操作步骤。',
+            '你是GreenSight-绿我同行 AI助手，一个专注于环保和可持续生活的智能 AI 助手。你的名字叫"GreenSight-绿我同行"，象征着绿色生命的开始。请用友善、专业、亲切的语气回答用户关于环保、回收、节能减排、旧物改造等方面的问题。回答时优先使用清晰的 Markdown 结构来组织内容，例如标题、列表、加粗、引用、表格或代码块（在确实合适时使用），确保内容层次清楚、可读性高，并尽量提供实用建议和具体操作步骤。',
         },
         ...messages.value.map((msg) => ({
           role: msg.role,
@@ -115,13 +141,13 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
 
       timeoutId = setTimeout(() => {
         if (abortController.value) abortController.value.abort()
-      }, 60_000)
+      }, CHAT_REQUEST_TIMEOUT)
 
       const response = await fetch('/api/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userStore.token || ''}`,
+          Authorization: `Bearer ${userStore.token || ''}`,
         },
         body: JSON.stringify({
           messages: apiMessages,
@@ -140,23 +166,27 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
 
       messages.value.push(assistantMsg)
       const reactiveAssistantMsg = messages.value[messages.value.length - 1]
+      const pendingChunksRef = { value: [] }
       isTyping.value = false
       isWriting.value = true
-
-      // 确保添加助手消息后立即滚动到底部
       scrollToBottom()
+
+      const typewriterTask = playTypewriter(reactiveAssistantMsg, pendingChunksRef)
 
       await consumeChatCompletionsStream(response.body, {
         signal: abortController.value.signal,
-        shouldStop: () => !isWriting.value,
         onDeltaContent: (content) => {
-          reactiveAssistantMsg.content += content
-          // 每次添加内容都滚动到底部
-          scrollToBottom()
+          pendingChunksRef.value.push(content)
         },
       })
 
       isWriting.value = false
+      await typewriterTask
+
+      if (!reactiveAssistantMsg.content.trim()) {
+        throw new Error('AI 未返回有效内容')
+      }
+
       userStore.saveChat(messages.value)
     } catch (error) {
       if (error?.status === 401) {
@@ -164,28 +194,30 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
         userStore.logout({ silent: true })
         return
       }
+
       if (error.name === 'AbortError') {
-        console.log('Generation stopped by user')
+        const lastMessage = messages.value[messages.value.length - 1]
+        if (lastMessage?.role === 'assistant' && lastMessage.content.trim()) {
+          userStore.saveChat(messages.value)
+          ElMessage.info('已停止生成，已保留当前内容')
+        }
         return
       }
 
       console.error('AI Call failed:', error)
 
-      if (
-        messages.value.length > 0 &&
-        messages.value[messages.value.length - 1].role === 'assistant' &&
-        messages.value[messages.value.length - 1].content === ''
-      ) {
+      const lastMessage = messages.value[messages.value.length - 1]
+      if (lastMessage?.role === 'assistant' && !lastMessage.content.trim()) {
         messages.value.pop()
       }
 
       ElMessage.error('AI 服务暂时不可用，已切换到模拟模式')
-      await fallbackToSimulation()
+      await fallbackToSimulation(userMsg)
     } finally {
       if (timeoutId) clearTimeout(timeoutId)
-      if (!isWriting.value) {
-        isTyping.value = false
-      }
+      clearTypewriterTimer()
+      isTyping.value = false
+      isWriting.value = false
       abortController.value = null
     }
   }
