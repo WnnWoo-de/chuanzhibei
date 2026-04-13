@@ -3,8 +3,6 @@ name = "chuanzhibei"
 compatibility_date = "2026-04-06"
 
 # Pages 构建配置
-[build]
-command = "cd grennn_web && npm install && npm run build"
 pages_build_output_dir = "grennn_web/dist"
 
 # Pages 静态资源配置
