@@ -7,7 +7,6 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const passport = require('passport');
 const db = require('./models');
-const { connectRedis, isRedisConnected } = require('./utils/redis');
 
 dotenv.config();
 require('./config/passport');
@@ -20,7 +19,13 @@ const app = express();
 
 app.use(cors());
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(morgan('dev'));
+
+// 使用更简洁的日志格式，仅在开发模式下启用详细日志
+const logLevel = process.env.LOG_LEVEL || 'dev';
+if (logLevel !== 'quiet') {
+    app.use(morgan(logLevel === 'simple' ? 'tiny' : 'dev'));
+}
+
 app.use(express.json());
 app.use(passport.initialize());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -42,63 +47,50 @@ const shouldAlterSync = String(process.env.DB_SYNC_ALTER || '').toLowerCase() ==
 
 async function syncDatabase() {
     await db.sequelize.authenticate();
-    console.log('Database connection established.');
+    if (process.env.LOG_LEVEL !== 'quiet') {
+        console.log('Database connected.');
+    }
 
     if (!shouldAlterSync) {
         await db.sequelize.sync({ alter: false });
-        console.log('Database sync completed without alter.');
+        if (process.env.LOG_LEVEL !== 'quiet') {
+            console.log('Database sync done.');
+        }
         return;
     }
 
     try {
         await db.sequelize.sync({ alter: true });
-        console.log('Database sync completed with alter.');
+        if (process.env.LOG_LEVEL !== 'quiet') {
+            console.log('Database sync with alter done.');
+        }
     } catch (err) {
-        console.error('Database sync with alter failed:', err.message);
-        console.warn('Falling back to sync without alter.');
+        if (process.env.LOG_LEVEL !== 'quiet') {
+            console.error('Sync with alter failed:', err.message);
+            console.warn('Falling back to standard sync.');
+        }
         await db.sequelize.sync({ alter: false });
-        console.log('Database sync completed without alter.');
+        if (process.env.LOG_LEVEL !== 'quiet') {
+            console.log('Database sync done.');
+        }
     }
 }
 
 async function startServer() {
     let dbReady = false;
-    let redisReady = false;
 
     try {
         await syncDatabase();
         dbReady = true;
     } catch (err) {
         console.error('Database initialization failed:', err.message);
-        console.warn('Database is unavailable. Starting server with limited database features.');
-    }
-
-    try {
-        const redisEnabled = String(process.env.REDIS_ENABLED || '').toLowerCase() === 'true';
-        if (redisEnabled) {
-            await connectRedis();
-            redisReady = true;
-            console.log('Redis connection established.');
-        } else {
-            console.log('Redis is disabled by configuration.');
-        }
-    } catch (err) {
-        console.error('Redis connection failed:', err.message);
-        console.warn('Redis is unavailable. Starting server without Redis features.');
+        console.warn('Database unavailable.');
     }
 
     app.listen(PORT, () => {
-        const statusParts = [];
-        if (dbReady) {
-            statusParts.push('database');
-        }
-        if (redisReady) {
-            statusParts.push('Redis');
-        }
-
-        const statusText = statusParts.length > 0
-            ? ` (${statusParts.join(', ')})`
-            : ' (database and Redis unavailable)';
+        const statusText = dbReady
+            ? ' (database connected)'
+            : ' (database unavailable)';
 
         console.log(`Server running on port ${PORT}${statusText}`);
     });

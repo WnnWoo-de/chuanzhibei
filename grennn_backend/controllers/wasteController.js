@@ -19,8 +19,8 @@ exports.analyzeImage = async (req, res) => {
         const form = new FormData();
         form.append('file', req.file.buffer, { filename: req.file.originalname });
 
-        // 转发图片给本地 8002 端口的 Python AI 服务
-        const aiResponse = await axios.post('http://127.0.0.1:8002/api/ai/predict', form, {
+        // 转发图片给本地 8003 端口的 Python AI 服务
+        const aiResponse = await axios.post('http://127.0.0.1:8003/api/ai/predict', form, {
             headers: form.getHeaders(),
             timeout: 15000 // 15秒超时保护
         });

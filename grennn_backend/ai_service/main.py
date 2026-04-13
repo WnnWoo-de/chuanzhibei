@@ -56,4 +56,4 @@ async def predict_garbage(file: UploadFile = File(...)):
         return {"status": "error", "message": f"模型调用失败: {str(e)}"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8002)
+    uvicorn.run(app, host="127.0.0.1", port=8003)

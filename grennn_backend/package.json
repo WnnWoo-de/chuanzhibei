@@ -5,13 +5,18 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "concurrently -k -n \"Node,Vue,AI\" -c \"cyan.bold,green.bold,yellow.bold\" \"npm run start:server\" \"npm run start:web\" \"npm run start:ai\"",
+    "dev": "concurrently -k -n \"Node,Vue,AI\" -c \"cyan.bold,green.bold,yellow.bold\" --kill-others-on-fail \"npm run start:server\" \"npm run start:web\" \"npm run start:ai\"",
+    "dev:quiet": "concurrently -k -n \"Node,Vue,AI\" -c \"cyan.bold,green.bold,yellow.bold\" --kill-others-on-fail --prefix \"[{name}]\" \"npm run start:server:quiet\" \"npm run start:web\" \"npm run start:ai\"",
+    "dev:server": "npm run start:server",
+    "dev:web": "cd ../grennn_web && npm run dev",
+    "dev:ai": "cd ai_service && python main.py",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:server": "nodemon server.js",
+    "start:server:quiet": "cross-env LOG_LEVEL=quiet nodemon server.js",
     "start:web": "cd ../grennn_web && npm run dev",
     "start:ai": "cd ai_service && python main.py",
-    "dev:ai": "cd ai_service && python main.py",
-    "dev:all": "concurrently -k -n \"Node,Vue,AI\" -c \"cyan.bold,green.bold,yellow.bold\" \"npm run start:server\" \"npm run start:web\" \"npm run start:ai\""
+    "dev:all": "concurrently -k -n \"Node,Vue,AI\" -c \"cyan.bold,green.bold,yellow.bold\" --kill-others-on-fail --prefix \"[{name}]\" \"npm run start:server\" \"npm run start:web\" \"npm run start:ai\"",
+    "dev:all:quiet": "concurrently -k -n \"Node,Vue,AI\" -c \"cyan.bold,green.bold,yellow.bold\" --kill-others-on-fail --prefix \"[{name}]\" \"npm run start:server:quiet\" \"npm run start:web\" \"npm run start:ai\""
   },
   "keywords": [],
   "author": "",
@@ -33,8 +38,7 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-microsoft": "^2.1.0",
-    "sequelize": "^6.37.8",
-    "redis": "^5.11.0"
+    "sequelize": "^6.37.8"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
