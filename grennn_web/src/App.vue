@@ -37,7 +37,7 @@ const layoutOffsetClass = computed(() => {
   if (isMobile.value) {
     return 'ml-0'
   }
-  return sidebarFull.value ? 'md:ml-64' : 'md:ml-14'
+  return sidebarFull.value ? 'ml-64' : 'ml-14'
 })
 
 /**

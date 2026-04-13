@@ -122,7 +122,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const props = defineProps({
@@ -141,6 +141,19 @@ const router = useRouter()
 const isMini = ref(true)
 const activeNav = ref(route.path)
 
+// 响应式判断移动端
+const isMobile = ref(window.innerWidth < 768)
+
+const handleResize = () => {
+  const isMobileNow = window.innerWidth < 768
+  if (isMobileNow !== isMobile.value) {
+    isMobile.value = isMobileNow
+    if (isMobileNow) {
+      isMini.value = false
+    }
+  }
+}
+
 watch(
   () => route.path,
   (newPath) => {
@@ -149,29 +162,36 @@ watch(
   { immediate: true }
 )
 
-const isMobile = () => window.innerWidth < 768
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+  emit('expand-change', !isMini.value)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
 
 const isSidebarExpanded = computed(() => {
-  if (isMobile()) {
+  if (isMobile.value) {
     return props.isOpen
   }
   return !isMini.value
 })
 
 const isMiniMode = computed(() => {
-  if (isMobile()) return false
+  if (isMobile.value) return false
   return isMini.value
 })
 
 const sidebarClasses = computed(() => {
-  if (isMobile()) {
+  if (isMobile.value) {
     return props.isOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full'
   }
   return isMiniMode.value ? 'w-14 translate-x-0' : 'w-64 translate-x-0'
 })
 
 const toggleButtonClass = computed(() => {
-  if (isMobile()) {
+  if (isMobile.value) {
     return props.isOpen ? 'left-[264px]' : 'left-3'
   }
   return isMini.value ? 'left-[64px]' : 'left-[264px]'
@@ -190,7 +210,7 @@ const expandSidebar = () => {
 }
 
 const toggleSidebarState = () => {
-  if (isMobile()) {
+  if (isMobile.value) {
     emit('toggle')
     return
   }
@@ -222,7 +242,7 @@ const handleNavClick = async (link) => {
     await router.push(link)
   }
 
-  if (isMobile()) {
+  if (isMobile.value) {
     emit('close')
   }
 }
