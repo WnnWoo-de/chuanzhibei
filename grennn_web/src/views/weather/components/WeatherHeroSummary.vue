@@ -1,0 +1,345 @@
+<template>
+  <header class="hero-card">
+    <div class="hero-copy">
+      <div class="hero-kicker">实时天气状态</div>
+      <h1 class="city-name">
+        {{ weather.city.name }}
+        <span v-if="weather.city.adm2 && weather.city.adm2 !== weather.city.name" class="city-adm">
+          {{ weather.city.adm2 }}
+        </span>
+      </h1>
+
+      <div class="hero-temp-row">
+        <div class="hero-icon-breath" :class="glowClass">
+          <WeatherIcon :code="weather.now.icon" :size="72" :alt="weather.now.text" />
+        </div>
+        <div class="temp-display">
+          <transition name="roll-number" mode="out-in">
+            <span :key="`now-temp-${formatTemp(weather.now.temp)}`" class="rolling-number">
+              {{ formatTemp(weather.now.temp) }}
+            </span>
+          </transition>
+          <span class="unit">°</span>
+        </div>
+      </div>
+
+      <div class="hero-status-row">
+        <div class="weather-desc">{{ weather.now.text }}</div>
+        <div class="hero-divider"></div>
+        <div class="hero-feels-like">
+          体感
+          <transition name="roll-number" mode="out-in">
+            <span :key="`feels-${formatTemp(weather.now.feelsLike)}`" class="inline-roll">
+              {{ formatTemp(weather.now.feelsLike) }}
+            </span>
+          </transition>
+          °
+        </div>
+      </div>
+
+      <div class="hero-range-line">
+        <span>
+          最高
+          <transition name="roll-number" mode="out-in">
+            <span :key="`max-${formatTemp(weather.forecast[0]?.tempMax)}`" class="inline-roll">
+              {{ formatTemp(weather.forecast[0]?.tempMax) }}
+            </span>
+          </transition>
+          °
+        </span>
+        <span>
+          最低
+          <transition name="roll-number" mode="out-in">
+            <span :key="`min-${formatTemp(weather.forecast[0]?.tempMin)}`" class="inline-roll">
+              {{ formatTemp(weather.forecast[0]?.tempMin) }}
+            </span>
+          </transition>
+          °
+        </span>
+      </div>
+    </div>
+
+    <div class="hero-side glass-panel">
+      <div class="hero-side-label">当前概览</div>
+      <div class="hero-side-main">{{ summaryText }}</div>
+      <div class="hero-side-sub">湿度 {{ Math.round(weather.now.humidity || 0) }}% · 风速 {{ weather.now.windSpeed || '--' }} km/h</div>
+      <div class="hero-side-pills">
+        <span class="hero-pill">气压 {{ Math.round(weather.now.pressure || 0) }} hPa</span>
+        <span class="hero-pill">能见度 {{ weather.now.vis || '--' }} km</span>
+      </div>
+    </div>
+  </header>
+</template>
+
+<script setup>
+import { computed } from 'vue'
+import WeatherIcon from '@/components/weather/WeatherIcon.vue'
+
+const props = defineProps({
+  weather: {
+    type: Object,
+    required: true,
+  },
+  formatTemp: {
+    type: Function,
+    required: true,
+  },
+})
+
+const glowClass = computed(() => {
+  const text = props.weather?.now?.text || ''
+  if (/雨|雷|雪/.test(text)) return 'is-rainy'
+  if (/晴/.test(text)) return 'is-sunny'
+  return 'is-cloudy'
+})
+
+const summaryText = computed(() => {
+  const text = props.weather?.now?.text || '天气平稳'
+  if (/雨|雷|雪/.test(text)) return '空气湿润，建议备一把伞，出行节奏放缓会更舒适。'
+  if (/晴/.test(text)) return '天空清朗，适合外出活动，午后可适度注意防晒补水。'
+  return '云层柔和，通勤与散步都很合适，整体体感稳定舒缓。'
+})
+</script>
+
+<style scoped>
+.hero-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.72fr);
+  gap: 16px;
+  padding: 22px 24px;
+  border-radius: 32px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.64), rgba(235,243,251,0.72));
+  border: 1px solid rgba(255,255,255,0.86);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.96),
+    0 22px 48px rgba(118,145,181,0.16);
+  backdrop-filter: blur(24px) saturate(135%);
+  -webkit-backdrop-filter: blur(24px) saturate(135%);
+  transition:
+    background 0.6s ease,
+    border-color 0.6s ease,
+    box-shadow 0.35s ease,
+    transform 0.35s ease;
+}
+
+.hero-copy {
+  min-width: 0;
+}
+
+.hero-kicker,
+.hero-side-label {
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(103, 122, 146, 0.7);
+}
+
+.city-name {
+  margin: 8px 0 6px;
+  font-size: clamp(38px, 4.8vw, 70px);
+  line-height: 1.05;
+  font-weight: 500;
+  color: #52667f;
+}
+
+.city-adm {
+  display: block;
+  margin-top: 8px;
+  font-size: 18px;
+  color: rgba(104, 125, 150, 0.78);
+  font-weight: 400;
+}
+
+.hero-temp-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 18px 0 10px;
+}
+
+.hero-icon-breath {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6f87a4;
+  background: rgba(255,255,255,0.6);
+}
+
+.hero-icon-breath::before,
+.hero-icon-breath::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: inherit;
+  opacity: 0.72;
+  filter: blur(10px);
+  animation: breathe 4.8s ease-in-out infinite;
+}
+
+.hero-icon-breath::after {
+  inset: -4px;
+  opacity: 0.34;
+  animation-delay: 1.4s;
+}
+
+.hero-icon-breath.is-sunny::before,
+.hero-icon-breath.is-sunny::after {
+  background: radial-gradient(circle, rgba(255, 209, 117, 0.56) 0%, rgba(255, 196, 110, 0.18) 58%, transparent 74%);
+}
+
+.hero-icon-breath.is-cloudy::before,
+.hero-icon-breath.is-cloudy::after {
+  background: radial-gradient(circle, rgba(202, 222, 252, 0.65) 0%, rgba(181, 204, 238, 0.22) 58%, transparent 74%);
+}
+
+.hero-icon-breath.is-rainy::before,
+.hero-icon-breath.is-rainy::after {
+  background: radial-gradient(circle, rgba(155, 211, 255, 0.58) 0%, rgba(128, 178, 239, 0.2) 58%, transparent 74%);
+}
+
+.temp-display {
+  position: relative;
+  font-size: clamp(84px, 11vw, 144px);
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+  color: #4f627b;
+  font-weight: 250;
+  display: inline-flex;
+  align-items: flex-end;
+}
+
+.rolling-number {
+  display: inline-block;
+  min-width: 1.6em;
+  text-align: right;
+}
+
+.inline-roll {
+  display: inline-block;
+  min-width: 1.4em;
+  text-align: right;
+}
+
+.unit {
+  font-size: 0.34em;
+  vertical-align: top;
+  margin-left: 6px;
+}
+
+.hero-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  color: #5c7089;
+}
+
+.weather-desc {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.hero-divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(117, 141, 168, 0.22);
+}
+
+.hero-feels-like,
+.hero-range-line {
+  color: rgba(102, 122, 146, 0.78);
+  font-size: 15px;
+}
+
+.hero-range-line {
+  margin-top: 14px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hero-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
+  padding: 20px 22px;
+  border-radius: 26px;
+}
+
+.glass-panel {
+  background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(240,246,252,0.76));
+  border: 1px solid rgba(255,255,255,0.88);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.96);
+}
+
+.hero-side-main {
+  margin: 16px 0 12px;
+  font-size: 24px;
+  line-height: 1.45;
+  color: #59708b;
+}
+
+.hero-side-sub {
+  color: rgba(104, 123, 147, 0.88);
+  line-height: 1.65;
+  font-size: 14px;
+}
+
+.hero-side-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.hero-pill {
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.74);
+  color: #5e748f;
+  font-size: 12px;
+  border: 1px solid rgba(229, 237, 246, 0.9);
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.34;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.72;
+  }
+}
+
+.roll-number-enter-active,
+.roll-number-leave-active {
+  transition: transform 0.32s ease, opacity 0.32s ease;
+}
+
+.roll-number-enter-from {
+  transform: translateY(55%);
+  opacity: 0;
+}
+
+.roll-number-leave-to {
+  transform: translateY(-55%);
+  opacity: 0;
+}
+
+@media (max-width: 900px) {
+  .hero-card {
+    grid-template-columns: 1fr;
+    padding: 24px 22px;
+  }
+
+  .hero-side {
+    min-height: auto;
+  }
+}
+</style>
