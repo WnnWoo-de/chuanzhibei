@@ -94,6 +94,12 @@
                 <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
               </router-link>
             </li>
+            <li>
+              <router-link to="/volunteer" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
+                <span>志愿活动</span>
+                <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
+              </router-link>
+            </li>
           </ul>
         </div>
 
@@ -118,7 +124,7 @@
             </li>
             <li>
               <a
-                href="https://github.com/WnnWoo-de/chuanzhibei"
+                href="https://gitee.com/wnnwwnnw/chuanzhibei/tree/main/"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all"
@@ -146,37 +152,13 @@
             <li>
               <!-- 每个链接前带小圆点装饰 -->
               <a
-                href="https://github.com/WnnWoo-de/chuanzhibei"
+                href="https://gitee.com/wnnwwnnw/chuanzhibei/tree/main/"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="group flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all"
               >
                 <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                <span>GitHub</span>
-                <span class="ml-1 -translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://weibo.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="group flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all"
-              >
-                <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                <span>微博</span>
-                <span class="ml-1 -translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://mp.weixin.qq.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="group flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all"
-              >
-                <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                <span>微信公众号</span>
+                <span>Gitee</span>
                 <span class="ml-1 -translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
               </a>
             </li>
