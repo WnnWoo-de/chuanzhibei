@@ -37,12 +37,15 @@ jobs:
         working-directory: grennn_web
         run: npm run build
 
-      - name: Prepare dist directory
+      - name: Verify dist directory
         run: |
-          if [ -d "grennn_web/dist" ]; then
-            cp -r grennn_web/dist dist
-            echo "Dist directory prepared successfully"
+          if [ -d "dist" ]; then
+            echo "Dist directory found"
             ls -la dist
+          else
+            echo "Dist directory NOT found"
+            ls -la
+            exit 1
           fi
 
       - name: Deploy to Cloudflare Pages
