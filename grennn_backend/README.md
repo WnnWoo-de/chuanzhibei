@@ -13,6 +13,10 @@ Green Web 项目的后端服务，基于 Node.js + Express + MySQL 构建。
 npm install
 ```
 
+```bash
+cd "c:\Users\wnnw\Desktop\chuanzhibei-main\grennn_backend\ai_service" && pip install fastapi uvicorn python-multipart openai
+```
+
 ### 1.3 配置环境变量
 复制 `.env.example` (如果有) 或直接编辑 `.env` 文件，填入你的配置信息：
 *   数据库密码
