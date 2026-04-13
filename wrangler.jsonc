@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "chuanzhibei11",
+  "compatibility_date": "2026-04-13",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "grennn_web"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
