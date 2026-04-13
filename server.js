@@ -7,6 +7,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const passport = require('passport');
 const db = require('./models');
+const { connectRedis, isRedisConnected } = require('./utils/redis');
 
 dotenv.config();
 require('./config/passport');
@@ -62,6 +63,7 @@ async function syncDatabase() {
 
 async function startServer() {
     let dbReady = false;
+    let redisReady = false;
 
     try {
         await syncDatabase();
@@ -71,8 +73,34 @@ async function startServer() {
         console.warn('Database is unavailable. Starting server with limited database features.');
     }
 
+    try {
+        const redisEnabled = String(process.env.REDIS_ENABLED || '').toLowerCase() === 'true';
+        if (redisEnabled) {
+            await connectRedis();
+            redisReady = true;
+            console.log('Redis connection established.');
+        } else {
+            console.log('Redis is disabled by configuration.');
+        }
+    } catch (err) {
+        console.error('Redis connection failed:', err.message);
+        console.warn('Redis is unavailable. Starting server without Redis features.');
+    }
+
     app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}${dbReady ? '' : ' (database unavailable)'}`);
+        const statusParts = [];
+        if (dbReady) {
+            statusParts.push('database');
+        }
+        if (redisReady) {
+            statusParts.push('Redis');
+        }
+
+        const statusText = statusParts.length > 0
+            ? ` (${statusParts.join(', ')})`
+            : ' (database and Redis unavailable)';
+
+        console.log(`Server running on port ${PORT}${statusText}`);
     });
 }
 
