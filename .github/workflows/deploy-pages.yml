@@ -1,4 +1,4 @@
-name: Deploy GreenSight Web to Cloudflare Pages
+name: Verify GreenSight Web Build
 
 on:
   push:
@@ -8,16 +8,21 @@ on:
       - 'grennn_web/**'
       - 'wrangler.toml'
       - '.github/workflows/deploy-pages.yml'
+  pull_request:
+    paths:
+      - 'grennn_web/**'
+      - 'wrangler.toml'
+      - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
 concurrency:
-  group: pages-deploy-${{ github.ref }}
+  group: greensight-web-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    name: Deploy
+    name: Build check
 
     steps:
       - name: Checkout
@@ -49,11 +54,11 @@ jobs:
             exit 1
           fi
 
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+      - name: Upload dist artifact
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: chuanzhibei
-          directory: dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          name: greensight-web-dist
+          path: dist
+          if-no-files-found: error
+          retention-days: 7
