@@ -1,0 +1,1774 @@
+<template>
+  <div
+    class="home-view bg-transparent min-h-screen text-[#1a1a1a] font-sans selection:bg-primary selection:text-white overflow-x-hidden"
+  >
+    <!-- Welcome Modal -->
+    <transition name="modal-fade">
+      <div
+        v-if="showWelcomeModal"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        @click.self="closeWelcomeModal"
+      >
+        <div
+          class="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-modal-enter overflow-hidden"
+        >
+          <!-- Close Button -->
+          <button
+            @click="closeWelcomeModal"
+            class="absolute top-6 right-6 flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors z-10"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <!-- Content -->
+          <div class="p-8 pt-12">
+            <!-- Title -->
+            <h2 class="text-2xl font-bold text-center mb-2">
+              欢迎使用<span class="text-green-500">绿我同行</span>
+            </h2>
+            <h3 class="text-lg text-center text-gray-600 mb-4">GreenSight AI</h3>
+
+            <!-- Welcome Text -->
+            <p class="text-center text-gray-600 text-sm mb-8">感谢您访问我们的项目</p>
+
+            <!-- Info Sections -->
+            <div class="space-y-5 mb-8">
+              <!-- Project Statement -->
+              <div class="flex gap-4 p-4 bg-gradient-to-br from-pink-50 to-transparent rounded-lg border border-pink-100">
+                <div class="flex-shrink-0">
+                  <svg class="w-6 h-6 text-pink-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-semibold text-sm mb-1">项目声明</p>
+                  <p class="text-xs text-gray-600">
+                    本项目由 wnnw 开发，用于参加"传智杯"AI-Web 网页开发挑战赛
+                  </p>
+                </div>
+              </div>
+
+              <!-- Project Vision -->
+              <div class="flex gap-4 p-4 bg-gradient-to-br from-green-50 to-transparent rounded-lg border border-green-100">
+                <div class="flex-shrink-0">
+                  <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-semibold text-sm mb-1">项目愿景</p>
+                  <p class="text-xs text-gray-600">
+                    致力于为用户提供全面的健康管理解决方案，关注心脑血管健康，促进健康生活方式
+                  </p>
+                </div>
+              </div>
+
+              <!-- Contribute -->
+              <div class="flex gap-4 p-4 bg-gradient-to-br from-blue-50 to-transparent rounded-lg border border-blue-100">
+                <div class="flex-shrink-0">
+                  <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-semibold text-sm mb-1">参与贡献</p>
+                  <p class="text-xs text-gray-600">
+                    欢迎通过参与项目改进、共同成长。联系我们或提交建议
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3">
+              <button
+                @click="openLicense"
+                class="flex-1 px-4 py-2.5 border-2 border-green-500 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-sm"
+              >
+                查看许可协议
+              </button>
+              <button
+                @click="closeWelcomeModal"
+                class="flex-1 px-4 py-2.5 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
+              >
+                了解并继续
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Hero Section (Carousel) -->
+    <section class="min-h-[100dvh] md:min-h-screen relative flex flex-col justify-center overflow-hidden bg-[#fcfffc] px-4 md:px-6 pt-10 md:pt-20 text-[#1d3a2d]">
+      <div class="absolute inset-0 z-0 overflow-hidden opacity-55 pointer-events-none">
+        <Silk
+          :speed="1.8"
+          :scale="0.85"
+          color="#ffffff"
+          :noiseIntensity="0.5"
+          :rotation="0.12"
+          class-name="h-full w-full"
+        />
+      </div>
+      <div class="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.98),transparent_42%),radial-gradient(circle_at_78%_20%,rgba(220,252,231,0.34),transparent_26%),linear-gradient(135deg,rgba(252,255,252,0.96),rgba(248,252,248,0.84))] pointer-events-none"></div>
+      <!-- Background Grid -->
+      <div
+        class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-[0.07] z-0 px-6"
+      >
+        <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
+        <!-- Mobile grid lines (fewer) -->
+        <div v-for="n in 4" :key="`m-${n}`" class="border-r border-black h-full block md:hidden col-span-3"></div>
+      </div>
+
+      <!-- Hero 装饰背景图形 -->
+      <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <!-- 右上角大圆环 -->
+        <svg class="absolute -right-24 -top-24 w-96 h-96 opacity-[0.025]" viewBox="0 0 200 200" fill="none">
+          <circle cx="100" cy="100" r="80" stroke="currentColor" stroke-width="1"/>
+          <circle cx="100" cy="100" r="60" stroke="currentColor" stroke-width="0.5"/>
+          <circle cx="100" cy="100" r="40" stroke="currentColor" stroke-width="0.5"/>
+        </svg>
+        <!-- 左下角装饰点阵 -->
+        <svg class="absolute left-0 bottom-24 w-48 h-48 opacity-[0.035]" viewBox="0 0 100 100">
+          <g fill="currentColor">
+            <circle v-for="(dot, i) in Array(25)" :key="i" :cx="(i % 5) * 20 + 10" :cy="Math.floor(i / 5) * 20 + 10" r="1.5"/>
+          </g>
+        </svg>
+        <!-- 动态绿色光晕 -->
+        <div
+          class="absolute right-1/4 top-1/3 w-72 h-72 rounded-full opacity-[0.09] blur-3xl transition-all duration-1000"
+          :style="{ backgroundColor: '#86efac', transform: `translate(${currentSlide * 20}px, ${currentSlide * -10}px)` }"
+        ></div>
+        <!-- slide 编号装饰 -->
+        <div class="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-3 opacity-15">
+          <span class="font-mono text-xs">0{{ currentSlide + 1 }} / 0{{ slides.length }}</span>
+          <div class="w-px h-16 bg-current"></div>
+        </div>
+      </div>
+
+      <!-- Hero Badge -->
+      <div class="absolute left-4 top-8 z-20 inline-flex items-center gap-2 md:gap-3 rounded-full border border-white/85 bg-white/98 px-2.5 py-1.5 md:px-3 md:py-2 shadow-[0_20px_50px_rgba(171,190,176,0.16)] backdrop-blur-md md:left-6 md:top-24 scale-90 origin-top-left md:scale-100">
+        <img
+          src="/logo.png"
+          alt="GreenSight logo"
+          class="h-12 w-12 rounded-2xl bg-white p-1 object-contain shadow-sm"
+        />
+        <div>
+          <p class="text-[11px] font-mono uppercase tracking-[0.35em] text-emerald-700/60">Green platform</p>
+          <p class="text-sm font-semibold text-[#163126]">GreenSight-绿我同行</p>
+        </div>
+      </div>
+
+      <!-- Carousel Content -->
+      <div class="relative z-10 flex h-full flex-col justify-center pt-20 sm:pt-20 lg:pt-0">
+        <div class="grid grid-cols-1 items-center gap-5 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
+          <div class="flex flex-col justify-center lg:h-full lg:min-h-[420px] lg:pr-6">
+            <div class="mt-4 sm:mt-2 overflow-hidden lg:-mt-10">
+              <p class="text-[10px] md:text-xs font-mono uppercase tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
+              <div class="mt-3 sm:mt-6 space-y-1.5 sm:space-y-3">
+                <p class="font-mono text-[15px] leading-snug md:leading-tight text-emerald-600 sm:min-h-[3rem] sm:text-2xl">
+                  {{ typedBrandLines[0] }}<span v-if="activeTypingLine === 0" class="typing-caret ml-1 inline-block h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
+                </p>
+                <p class="font-mono text-[15px] leading-snug md:leading-tight text-emerald-600/85 sm:min-h-[3rem] sm:text-2xl">
+                  {{ typedBrandLines[1] }}<span v-if="activeTypingLine === 1" class="typing-caret ml-1 inline-block h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-4 sm:mt-6 pt-1 md:pt-2 lg:mt-6 lg:pt-0">
+              <div class="flex flex-wrap gap-1.5 sm:gap-3">
+                <span class="glass-tag glass-tag--emerald group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-2.5 py-1 md:px-4 md:py-2 text-[10px] md:text-sm font-semibold text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70">
+                  <span class="glass-tag__pulse"></span>
+                  <span class="glass-tag__sheen"></span>
+                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-emerald-200/38 ring-1 ring-emerald-200/50 shadow-[0_0_22px_rgba(52,211,153,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-emerald-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                    <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <circle cx="12" cy="12" r="7.5" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.2v7.6" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8.8 12h6.4" />
+                    </svg>
+                  </span>
+                  <span class="relative z-10">AI 环保助手</span>
+                </span>
+                <span class="glass-tag glass-tag--cyan group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-cyan-100/68 px-2.5 py-1 md:px-4 md:py-2 text-[10px] md:text-sm font-semibold text-cyan-950 shadow-[0_16px_38px_rgba(8,145,178,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-cyan-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-cyan-200/70">
+                  <span class="glass-tag__pulse"></span>
+                  <span class="glass-tag__sheen"></span>
+                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-cyan-200/38 ring-1 ring-cyan-200/50 shadow-[0_0_22px_rgba(34,211,238,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-cyan-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                    <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-cyan-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <circle cx="12" cy="12" r="7.5" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 14.6 10.7 11l2 2 2.8-4.1" />
+                    </svg>
+                  </span>
+                  <span class="relative z-10">碳足迹分析</span>
+                </span>
+                <span class="glass-tag glass-tag--orange group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-orange-100/68 px-2.5 py-1 md:px-4 md:py-2 text-[10px] md:text-sm font-semibold text-orange-950 shadow-[0_16px_38px_rgba(234,88,12,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-orange-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(251,146,60,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-orange-200/70">
+                  <span class="glass-tag__pulse"></span>
+                  <span class="glass-tag__sheen"></span>
+                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-orange-200/38 ring-1 ring-orange-200/50 shadow-[0_0_22px_rgba(251,146,60,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-orange-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                    <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-orange-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <circle cx="12" cy="12" r="7.5" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.6v6.8" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8.6 12h6.8" />
+                      <circle cx="12" cy="12" r="2.3" />
+                    </svg>
+                  </span>
+                  <span class="relative z-10">社区共创</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative">
+            <transition name="hero-fade" mode="out-in">
+              <div
+                :key="currentSlide"
+                class="flex flex-col justify-center pl-0 sm:pl-10 lg:min-h-[420px] lg:pl-14"
+              >
+                <p class="text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] text-emerald-600/50">
+                  0{{ currentSlide + 1 }} / 0{{ slides.length }}
+                </p>
+                <p class="mt-2 text-[10px] sm:mt-6 sm:text-sm font-semibold uppercase tracking-[0.3em] text-emerald-600/60">
+                  {{ slides[currentSlide].subtitle }}
+                </p>
+                <h2
+                  class="mt-2 sm:mt-5 max-w-xl font-bold leading-tight tracking-tight text-[#214336]"
+                  :class="currentSlide === 0 ? 'text-xl md:text-3xl lg:text-4xl' : currentSlide === 1 ? 'text-2xl md:text-4xl lg:text-5xl' : 'text-2xl md:text-5xl lg:text-6xl'"
+                >
+                  {{ slides[currentSlide].title }}
+                </h2>
+                <p class="mt-3 sm:mt-6 max-w-xl text-[13px] md:text-base leading-relaxed text-[#5f7f70] md:text-lg line-clamp-3 md:line-clamp-none">
+                  {{ slides[currentSlide].description }}
+                </p>
+
+                <div class="mt-5 md:mt-10 flex flex-wrap items-center gap-4">
+                  <a
+                    v-if="slides[currentSlide].link.startsWith('#')"
+                    :href="slides[currentSlide].link"
+                    @click.prevent="scrollToSection(slides[currentSlide].link)"
+                    class="inline-flex items-center gap-2 border-b border-emerald-500/70 pb-1 text-sm font-semibold text-emerald-700 transition-colors hover:border-emerald-500 hover:text-emerald-600"
+                  >
+                    {{ slides[currentSlide].cta }}
+                    <span>→</span>
+                  </a>
+                  <router-link
+                    v-else
+                    :to="slides[currentSlide].link"
+                    class="inline-flex items-center gap-2 border-b border-emerald-500/70 pb-1 text-sm font-semibold text-emerald-700 transition-colors hover:border-emerald-500 hover:text-emerald-600"
+                  >
+                    {{ slides[currentSlide].cta }}
+                    <span>→</span>
+                  </router-link>
+                </div>
+
+                <div class="mt-5 sm:mt-12 flex flex-row items-center justify-between gap-4 border-t border-black/10 sm:border-white/80 pt-4 md:pt-6">
+                  <div class="flex gap-1.5 md:gap-2">
+                    <button
+                      v-for="(slide, index) in slides"
+                      :key="index"
+                      @click="setSlide(index)"
+                      class="h-1 sm:h-2 rounded-full transition-all duration-300"
+                      :class="currentSlide === index ? 'w-6 sm:w-10 bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.28)]' : 'w-1 sm:w-2 bg-emerald-200/75 hover:bg-emerald-300'"
+                    ></button>
+                  </div>
+                  <div class="flex items-center gap-1.5 md:gap-3">
+                    <button
+                      @click="prevSlide"
+                      class="flex h-8 w-8 md:h-11 md:w-11 items-center justify-center rounded-full border border-white/85 bg-white/92 text-emerald-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
+                    >
+                      <svg class="h-3.5 w-3.5 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button
+                      @click="toggleAutoPlay"
+                      class="flex h-8 min-w-[64px] md:h-11 md:min-w-[88px] items-center justify-center gap-1 md:gap-2 rounded-full border border-white/85 bg-white/92 px-2.5 md:px-4 text-[11px] md:text-sm font-semibold text-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
+                    >
+                      <svg v-if="!isAutoPlaying" class="h-3 w-3 md:h-4 md:w-4 fill-current" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                      <svg v-else class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                      </svg>
+                      {{ isAutoPlaying ? '暂停' : '播放' }}
+                    </button>
+                    <button
+                      @click="nextSlide"
+                      class="flex h-8 w-8 md:h-11 md:w-11 items-center justify-center rounded-full border border-white/85 bg-white/92 text-emerald-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_14px_30px_rgba(148,163,154,0.16)]"
+                    >
+                      <svg class="h-3.5 w-3.5 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </transition>
+          </div>
+        </div>
+
+        <!-- Scroll Down Indicator -->
+        <div class="hidden md:flex absolute bottom-8 left-1/2 z-0 -translate-x-1/2 scroll-indicator opacity-100 transition-opacity duration-1000">
+          <div class="scroll-indicator-stack flex flex-col items-center gap-1.5">
+            <div class="scroll-mouse-shell flex items-center justify-center rounded-full">
+              <svg
+                class="h-10 w-10 text-emerald-900 animate-breathe"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="7" y="2.5" width="10" height="19" rx="5" />
+                <path d="M12 6.5v4" />
+              </svg>
+            </div>
+            <p class="scroll-indicator-text text-[11px] font-medium tracking-[0.35em] text-emerald-900/75 uppercase">
+              SCROLL/向下滑动
+            </p>
+            <svg
+              class="scroll-arrow h-5 w-5 text-emerald-800"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 2: Quick Access (Core Features) -->
+    <section class="py-24 px-6 border-t border-black/10 relative" id="features">
+      <div class="grid grid-cols-12 gap-4">
+        <!-- Sticky Sidebar -->
+        <div class="col-span-12 md:col-span-3 mb-12 md:mb-0">
+          <div class="sticky top-24">
+            <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-6 animate-on-scroll">核心功能</h2>
+            <p class="text-sm opacity-60 max-w-[200px] animate-on-scroll">
+              核心功能入口<br />
+              探索 Green AI Web 的主要功能模块。
+            </p>
+          </div>
+        </div>
+
+        <!-- Grid Content -->
+        <div class="col-span-12 md:col-span-9">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+            <div
+              v-for="(feature, index) in features"
+              :key="index"
+              class="group relative bg-white aspect-[4/5] md:aspect-square p-8 flex flex-col justify-between border border-black/5 tech-border rounded-3xl transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden animate-on-scroll"
+              :class="{ 'md:mt-24': index % 2 !== 0 }"
+            >
+              <!-- 背景装饰 -->
+              <div
+                class="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-700"
+                :class="feature.gradient"
+              ></div>
+              <div
+                class="absolute -right-8 -bottom-8 w-48 h-48 opacity-[0.02] group-hover:opacity-10 transition-all duration-700 transform group-hover:scale-110 group-hover:-rotate-12 pointer-events-none"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="0.5"
+                  class="w-full h-full"
+                >
+                  <path :d="feature.icon" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+
+              <!-- 顶部元数据 -->
+              <div class="flex justify-between items-start relative z-10">
+                <div
+                  class="font-mono text-xs opacity-40 group-hover:opacity-100 transition-opacity"
+                >
+                  02.{{ index + 1 }}
+                </div>
+                <div
+                  class="w-2 h-2 rounded-full bg-black/10 group-hover:bg-green-500 transition-colors duration-300"
+                ></div>
+              </div>
+
+              <!-- 核心内容区 -->
+              <div class="relative z-10 mt-auto mb-8">
+                <div
+                  class="mb-6 w-12 h-12 rounded-xl bg-gray-50 border border-black/5 flex items-center justify-center group-hover:bg-black group-hover:text-white group-hover:border-black transition-all duration-300 shadow-sm"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    class="w-6 h-6"
+                  >
+                    <path :d="feature.icon" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <h3
+                  class="text-2xl font-bold mb-2 tracking-tight group-hover:translate-x-1 transition-transform duration-300"
+                >
+                  {{ feature.title }}
+                </h3>
+                <p class="font-mono text-[10px] opacity-50 uppercase tracking-wider mb-4">
+                  {{ feature.subtitle }}
+                </p>
+                <p
+                  class="text-sm leading-relaxed text-gray-600 opacity-80 group-hover:opacity-100 transition-opacity border-l-2 border-transparent group-hover:border-primary pl-0 group-hover:pl-3 transition-all duration-300"
+                >
+                  {{ feature.description }}
+                </p>
+              </div>
+
+              <!-- 底部操作栏 -->
+              <div
+                class="relative z-10 pt-4 border-t border-black/5 group-hover:border-black/10 transition-colors flex justify-between items-center"
+              >
+                <router-link
+                  :to="feature.link"
+                  class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:gap-3 transition-all group/btn"
+                >
+                  {{ feature.cta }}
+                  <span
+                    class="text-lg leading-none transform group-hover/btn:translate-x-1 transition-transform"
+                    >→</span
+                  >
+                </router-link>
+                <span
+                  class="opacity-0 group-hover:opacity-100 transition-opacity duration-500 text-[10px] font-mono text-gray-400"
+                  >ACCESS GRANTED</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 4: Dynamic News (Updates) -->
+    <section class="py-24 px-6 border-t border-black/10 relative" id="news">
+      <div class="grid grid-cols-12 gap-4">
+        <!-- Sticky Sidebar -->
+        <div class="col-span-12 md:col-span-3 mb-12 md:mb-0">
+          <div class="sticky top-24">
+            <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-6">动态资讯</h2>
+            <div class="flex gap-2 mt-8">
+              <button
+                @click="prevPage"
+                :disabled="currentPage === 1"
+                class="w-10 h-10 border border-black/20 flex items-center justify-center hover:bg-black hover:text-white disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-current transition-colors"
+              >
+                ←
+              </button>
+              <button
+                @click="nextPage"
+                :disabled="currentPage === totalPages"
+                class="w-10 h-10 border border-black/20 flex items-center justify-center hover:bg-black hover:text-white disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-current transition-colors"
+              >
+                →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- News List -->
+        <div class="col-span-12 md:col-span-9">
+          <div class="flex flex-col">
+            <div
+              v-for="(news, index) in paginatedNews"
+              :key="index"
+              class="group border-b border-black/10 py-6 hover:bg-white transition-colors cursor-pointer px-4 -mx-4"
+            >
+              <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
+                <div class="flex-1">
+                  <div class="flex items-center gap-4 mb-2">
+                    <span class="text-xs font-mono px-2 py-1 bg-black/5 rounded">{{
+                      news.tag
+                    }}</span>
+                    <span class="text-xs text-gray-400 font-mono">{{ news.date }}</span>
+                  </div>
+                  <h3 class="text-xl font-bold group-hover:text-primary transition-colors">
+                    {{ news.title }}
+                  </h3>
+                  <p class="text-sm text-gray-500 mt-2 max-w-2xl">{{ news.excerpt }}</p>
+                </div>
+                <div
+                  class="opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0"
+                >
+                  <span class="text-2xl">→</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 5: Data Dashboard -->
+    <section class="dashboard-section py-24 px-6 border-t border-black/10 relative overflow-hidden" id="dashboard">
+      <div class="dashboard-noise"></div>
+      <div class="dashboard-grid"></div>
+      <div class="dashboard-ambient dashboard-ambient--left"></div>
+      <div class="dashboard-ambient dashboard-ambient--right"></div>
+
+      <div class="grid grid-cols-12 gap-4 relative z-10">
+        <div class="col-span-12 md:col-span-3 mb-12 md:mb-0">
+          <div class="sticky top-24 dashboard-copy">
+            <h2 class="text-4xl md:text-5xl font-bold mt-3 mb-6 text-white">数据看板</h2>
+            <p class="dashboard-copy__text">
+              用更像“环境控制台”的方式展示平台增长、减排效率与社区热度，让每一次绿色行动都像被实时捕捉。
+            </p>
+            <div class="dashboard-breathing-chip mt-8 inline-flex items-center gap-3 rounded-full px-4 py-2 text-sm">
+              <span class="dashboard-breathing-dot"></span>
+              数据流已接入主屏
+            </div>
+            <div class="dashboard-copy__meta mt-10">
+            </div>
+          </div>
+        </div>
+        <div class="col-span-12 md:col-span-9">
+          <div class="grid gap-6 lg:grid-cols-[minmax(0,1.18fr)_minmax(320px,0.82fr)]">
+            <div class="dashboard-panel dashboard-panel--primary rounded-[2rem] p-6 md:p-8">
+              <div class="dashboard-panel__frame"></div>
+              <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between relative z-10">
+                <div>
+                  <p class="dashboard-eyebrow">影响概览</p>
+                  <h3 class="mt-3 text-2xl font-bold text-white">绿色行动趋势主屏</h3>
+                </div>
+                <p class="dashboard-muted">近 6 个月关键指标实时采样</p>
+              </div>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-3 relative z-10">
+                <article
+                  v-for="(metric, index) in dashboardMetrics"
+                  :key="metric.label"
+                  class="dashboard-stat rounded-[1.5rem] p-5"
+                >
+                  <div class="dashboard-stat__glow"></div>
+                  <p class="dashboard-stat__label">{{ metric.label }}</p>
+                  <div class="mt-4 flex items-end gap-2">
+                    <span class="dashboard-stat__value">{{ displayedDashboardMetrics[index] }}</span>
+                    <span class="dashboard-stat__unit">{{ metric.unit }}</span>
+                  </div>
+                  <p class="dashboard-stat__change mt-3">{{ metric.change }}</p>
+                </article>
+              </div>
+
+              <div class="mt-10 relative z-10">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-semibold text-white">月度活跃趋势</p>
+                  <p class="dashboard-muted dashboard-muted--mono">2025 // 运行中</p>
+                </div>
+                <div class="mt-6 grid grid-cols-6 gap-3 md:gap-4 items-end">
+                  <div
+                    v-for="item in dashboardTrend"
+                    :key="item.month"
+                    class="flex flex-col items-center gap-3"
+                  >
+                    <div class="dashboard-bar-track w-full rounded-full">
+                      <div
+                        class="dashboard-bar breathing-light-bar"
+                        :style="{ height: `${item.height}%` }"
+                      >
+                        <span class="dashboard-bar__shine"></span>
+                      </div>
+                    </div>
+                    <div class="text-center">
+                      <p class="dashboard-trend__value">{{ item.value }}</p>
+                      <p class="dashboard-trend__month">{{ item.month }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid gap-6">
+              <div class="dashboard-panel dashboard-panel--ring rounded-[2rem] p-6 md:p-8">
+                <div class="dashboard-panel__frame"></div>
+                <div class="flex items-center justify-between gap-4 relative z-10">
+                  <div>
+                    <p class="dashboard-eyebrow">碳排脉冲</p>
+                    <h3 class="mt-3 text-2xl font-bold text-white">减排呼吸环</h3>
+                  </div>
+                  <div class="dashboard-ring-badge">{{ animatedPulseProgress }}%</div>
+                </div>
+
+                <div class="mt-8 flex items-center justify-center relative z-10">
+                  <div class="dashboard-ring breathing-ring">
+                    <svg viewBox="0 0 120 120" class="h-full w-full -rotate-90">
+                      <circle cx="60" cy="60" r="44" class="dashboard-ring__track" />
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="44"
+                        class="dashboard-ring__progress"
+                        :style="{ strokeDashoffset: animatedPulseOffset }"
+                      />
+                    </svg>
+                    <div class="dashboard-ring__center">
+                      <span class="dashboard-ring__number">{{ animatedPulseProgress }}%</span>
+                      <span class="dashboard-ring__caption">达成率</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-8 grid grid-cols-2 gap-4 relative z-10">
+                  <div class="dashboard-mini-card">
+                    <p class="dashboard-mini-card__label">本周减排</p>
+                    <p class="dashboard-mini-card__value">18.6 吨</p>
+                  </div>
+                  <div class="dashboard-mini-card">
+                    <p class="dashboard-mini-card__label">AI 建议采纳</p>
+                    <p class="dashboard-mini-card__value">92%</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dashboard-panel dashboard-panel--heat rounded-[2rem] p-6 md:p-8">
+                <div class="dashboard-panel__frame"></div>
+                <div class="flex items-center justify-between gap-3 relative z-10">
+                  <div>
+                    <p class="dashboard-eyebrow">社区热度</p>
+                    <h3 class="mt-3 text-2xl font-bold text-white">社区热力分布</h3>
+                  </div>
+                  <span class="dashboard-live-tag">实时</span>
+                </div>
+
+                <div class="mt-8 space-y-4 relative z-10">
+                  <div v-for="zone in dashboardHeatmap" :key="zone.name" class="space-y-2">
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="dashboard-zone__name">{{ zone.name }}</span>
+                      <span class="dashboard-zone__value">{{ zone.value }}%</span>
+                    </div>
+                    <div class="dashboard-heatmap-track">
+                      <div
+                        class="dashboard-heatmap-fill"
+                        :style="{ width: `${zone.value}%`, background: zone.gradient }"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Marquee -->
+    <div class="py-12 border-t border-black/10 overflow-hidden bg-white text-white/80">
+      <div class="flex whitespace-nowrap animate-marquee">
+        <!-- 第一组内容 -->
+        <div class="flex items-center shrink-0">
+          <span class="text-[4vw] font-bold mx-8">绿色 AI WEB</span>
+          <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续</span>
+          <span class="text-[4vw] font-bold mx-8">重构</span>
+          <span class="text-[4vw] font-bold mx-8 text-gray-500">社区</span>
+          <span class="text-[4vw] font-bold mx-8">绿色 AI WEB</span>
+          <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续</span>
+          <span class="text-[4vw] font-bold mx-8">重构</span>
+          <span class="text-[4vw] font-bold mx-8 text-gray-500">社区</span>
+        </div>
+        <!-- 第二组内容 (用于无缝循环) -->
+        <div class="flex items-center shrink-0">
+          <span class="text-[4vw] font-bold mx-8">绿色 AI WEB</span>
+          <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续</span>
+          <span class="text-[4vw] font-bold mx-8">重构</span>
+          <span class="text-[4vw] font-bold mx-8 text-gray-500">社区</span>
+          <span class="text-[4vw] font-bold mx-8">绿色 AI WEB</span>
+          <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续</span>
+          <span class="text-[4vw] font-bold mx-8">重构</span>
+          <span class="text-[4vw] font-bold mx-8 text-gray-500">社区</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Silk from '@/components/effects/Silk.vue'
+
+gsap.registerPlugin(ScrollTrigger)
+
+const router = useRouter()
+
+const dashboardMetrics = [
+  { label: '累计减排', value: 5280, unit: '吨 CO₂e', change: '+28.3%', formatter: 'number' },
+  { label: '活跃用户', value: 125000, unit: '绿色用户', change: '+12.5%', formatter: 'compact' },
+  { label: '旧物重构', value: 8450, unit: '创意方案', change: '+15.7%', formatter: 'number' },
+]
+
+const dashboardTrend = [
+  { month: '1月', value: '2.1k', height: 42 },
+  { month: '2月', value: '2.8k', height: 56 },
+  { month: '3月', value: '3.6k', height: 68 },
+  { month: '4月', value: '4.4k', height: 81 },
+  { month: '5月', value: '5.1k', height: 92 },
+  { month: '6月', value: '5.8k', height: 100 },
+]
+
+const dashboardHeatmap = [
+  { name: '旧物改造话题', value: 86, gradient: 'linear-gradient(90deg, #22d3ee 0%, #06b6d4 52%, #0ea5e9 100%)' },
+  { name: '碳足迹打卡', value: 74, gradient: 'linear-gradient(90deg, #38bdf8 0%, #3b82f6 54%, #6366f1 100%)' },
+  { name: '社区志愿活动', value: 63, gradient: 'linear-gradient(90deg, #2dd4bf 0%, #14b8a6 52%, #0f766e 100%)' },
+  { name: '环保知识学习', value: 58, gradient: 'linear-gradient(90deg, #67e8f9 0%, #22d3ee 50%, #0284c7 100%)' },
+]
+
+const ringCircumference = 2 * Math.PI * 44
+const dashboardPulse = {
+  progress: 78,
+  offset: ringCircumference * (1 - 0.78),
+}
+
+const displayedDashboardMetrics = ref(dashboardMetrics.map((metric) => formatDashboardMetric(0, metric.formatter)))
+const animatedPulseProgress = ref(0)
+const animatedPulseOffset = ref(ringCircumference)
+const hasAnimatedDashboard = ref(false)
+let dashboardAnimationFrame = null
+let dashboardObserver = null
+
+function formatDashboardMetric(value, formatter) {
+  if (formatter === 'compact') {
+    if (value >= 1000) {
+      return `${Math.round(value / 1000)}K`
+    }
+    return `${Math.round(value)}`
+  }
+
+  return new Intl.NumberFormat('zh-CN').format(Math.round(value))
+}
+
+function animateDashboardValues() {
+  if (hasAnimatedDashboard.value) return
+
+  hasAnimatedDashboard.value = true
+  const start = performance.now()
+  const duration = 1800
+
+  const tick = (now) => {
+    const progress = Math.min((now - start) / duration, 1)
+    const eased = 1 - Math.pow(1 - progress, 3)
+
+    displayedDashboardMetrics.value = dashboardMetrics.map((metric) =>
+      formatDashboardMetric(metric.value * eased, metric.formatter),
+    )
+
+    animatedPulseProgress.value = Math.round(dashboardPulse.progress * eased)
+    animatedPulseOffset.value = ringCircumference * (1 - animatedPulseProgress.value / 100)
+
+    if (progress < 1) {
+      dashboardAnimationFrame = requestAnimationFrame(tick)
+      return
+    }
+
+    displayedDashboardMetrics.value = dashboardMetrics.map((metric) =>
+      formatDashboardMetric(metric.value, metric.formatter),
+    )
+    animatedPulseProgress.value = dashboardPulse.progress
+    animatedPulseOffset.value = dashboardPulse.offset
+    dashboardAnimationFrame = null
+  }
+
+  dashboardAnimationFrame = requestAnimationFrame(tick)
+}
+
+const brandLines = [
+  'GreenSight-绿我同行，聚焦绿色生活与 AI 协作体验。',
+  '围绕旧物改造、碳足迹分析、环保问答与社区互动。',
+]
+const typedBrandLines = ref(['', ''])
+const activeTypingLine = ref(0)
+const showWelcomeModal = ref(false)
+let typingInterval = null
+let typingRestartTimeout = null
+
+const startTypewriter = () => {
+  if (typingInterval) clearInterval(typingInterval)
+  if (typingRestartTimeout) clearTimeout(typingRestartTimeout)
+
+  let lineIndex = 0
+  let charIndex = 0
+  typedBrandLines.value = ['', '']
+  activeTypingLine.value = 0
+
+  typingInterval = setInterval(() => {
+    const currentLine = brandLines[lineIndex]
+
+    if (charIndex < currentLine.length) {
+      typedBrandLines.value[lineIndex] += currentLine[charIndex]
+      typedBrandLines.value = [...typedBrandLines.value]
+      charIndex += 1
+      return
+    }
+
+    if (lineIndex < brandLines.length - 1) {
+      lineIndex += 1
+      charIndex = 0
+      activeTypingLine.value = lineIndex
+      return
+    }
+
+    clearInterval(typingInterval)
+    typingInterval = null
+    typingRestartTimeout = setTimeout(() => {
+      startTypewriter()
+    }, 1800)
+  }, 90)
+}
+
+const checkFirstVisit = () => {
+  const hasVisited = localStorage.getItem('greenSightVisited')
+  if (!hasVisited) {
+    // 第一次访问，2秒后显示弹窗
+    setTimeout(() => {
+      showWelcomeModal.value = true
+    }, 2000)
+    localStorage.setItem('greenSightVisited', 'true')
+  }
+}
+
+const closeWelcomeModal = () => {
+  showWelcomeModal.value = false
+}
+
+const openLicense = () => {
+  closeWelcomeModal()
+  router.push('/license')
+}
+
+// --- Carousel Logic ---
+const currentSlide = ref(0)
+const isAutoPlaying = ref(true)
+let autoPlayInterval = null
+
+const slides = [
+  {
+    title: 'GreenSight-绿我同行 AI Web',
+    subtitle: '关于我们',
+    description:
+      'GreenSight-绿我同行 AI Web 以 AI 技术连接旧物改造、碳足迹分析、环保问答与社区互动，打造更轻盈的绿色生活平台。',
+    cta: '开始探索',
+    link: '#features',
+  },
+  {
+    title: 'AI 创意重构',
+    subtitle: '最新活动',
+    description:
+      '参与我们的夏季旧物重构挑战赛！上传你的创意作品，赢取环保积分与独家徽章。AI 助手将全程提供灵感支持。',
+    cta: '立即参与',
+    link: '/community',
+  },
+  {
+    title: '智能助手 2.0',
+    subtitle: '功能更新',
+    description:
+      '全新的 AI 环保助手现已上线。更精准的物品识别，更个性化的改造建议，助您轻松开启绿色生活。',
+    cta: '体验新版',
+    link: '/chat',
+  },
+]
+
+const scrollToSection = (hash) => {
+  const target = document.querySelector(hash)
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
+const nextSlide = () => {
+  currentSlide.value = (currentSlide.value + 1) % slides.length
+}
+
+const prevSlide = () => {
+  currentSlide.value = (currentSlide.value - 1 + slides.length) % slides.length
+}
+
+const setSlide = (index) => {
+  currentSlide.value = index
+  resetAutoPlay()
+}
+
+const toggleAutoPlay = () => {
+  isAutoPlaying.value = !isAutoPlaying.value
+  if (isAutoPlaying.value) {
+    startAutoPlay()
+  } else {
+    stopAutoPlay()
+  }
+}
+
+const startAutoPlay = () => {
+  stopAutoPlay()
+  autoPlayInterval = setInterval(nextSlide, 5000)
+}
+
+const stopAutoPlay = () => {
+  if (autoPlayInterval) clearInterval(autoPlayInterval)
+}
+
+const resetAutoPlay = () => {
+  if (isAutoPlaying.value) startAutoPlay()
+}
+
+// --- Features Data ---
+const features = [
+  {
+    title: '旧物重构',
+    subtitle: 'RECONSTRUCTION',
+    description: '通过 AI 技术将闲置物品重新设计改造，激发创意，延长物品生命周期。上传照片，获取改造建议。',
+    link: '/reconstruction',
+    cta: '开始创意重构',
+    icon: 'M12 3.5 4.5 7.75v8.5L12 20.5l7.5-4.25v-8.5L12 3.5z',
+    gradient: 'from-orange-400 to-pink-400',
+  },
+  {
+    title: 'AI 智能助手',
+    subtitle: 'GREENSIGHT AI',
+    description: '使用 Qwen2.5 AI 模型识别物品、提供改造建议、计算碳足迹。智能化、个性化的绿色生活指导。',
+    link: '/chat',
+    cta: '开启对话',
+    icon: 'M6 7.5h12a2.5 2.5 0 0 1 2.5 2.5v4A2.5 2.5 0 0 1 18 16.5h-6l-4.5 4v-4H6A2.5 2.5 0 0 1 3.5 14v-4A2.5 2.5 0 0 1 6 7.5Z M8 12h.01M12 12h.01M16 12h.01',
+    gradient: 'from-blue-400 to-cyan-400',
+  },
+  {
+    title: '成就系统',
+    subtitle: 'ACHIEVEMENTS',
+    description: '完成环保任务，收集独家徽章与成就。展示你的绿色足迹，激励更多人加入生态保护行动。',
+    link: '/achievements',
+    cta: '查看成就',
+    icon: 'M12 4.25 13.894 8.356 18.25 8.83 15 11.914 15.9 16.25 12 14.07 8.1 16.25 9 11.914 5.75 8.83 10.106 8.356 12 4.25ZM6 3.75v3.5M4.25 5.5h3.5M18 16.75v3.5m-1.75-1.75h3.5',
+    gradient: 'from-yellow-400 to-amber-400',
+  },
+  {
+    title: '活动社区',
+    subtitle: 'COMMUNITY',
+    description: '分享你的环保故事，参与社区讨论与挑战赛。与志同道合的伙伴互动，共同建设绿色社区。',
+    link: '/community',
+    cta: '进入社区',
+    icon: 'M8.5 11.25a2.75 2.75 0 1 1 0-5.5 2.75 2.75 0 0 1 0 5.5Zm7 0a2.75 2.75 0 1 1 0-5.5 2.75 2.75 0 0 1 0 5.5ZM3.75 18.25a4.75 4.75 0 0 1 8.21-3.25M20.25 18.25a4.75 4.75 0 0 0-8.21-3.25M8.5 18.25a3.5 3.5 0 0 1 7 0',
+    gradient: 'from-green-400 to-teal-400',
+  },
+  {
+    title: '志愿活动',
+    subtitle: 'VOLUNTEER',
+    description: '参加线上线下志愿活动，为环保事业贡献力量。积累志愿时数，获得认可与奖励。',
+    link: '/volunteer',
+    cta: '参加志愿',
+    icon: 'M12 20s-6.5-4.35-8.5-8.15C1.6 8.96 3.1 5.75 6.5 5.75c2.05 0 3.14 1.08 4.03 2.3.63-.96 1.98-2.3 4.47-2.3 3.39 0 4.9 3.21 3 6.1C18.5 15.65 12 20 12 20Z',
+    gradient: 'from-red-400 to-rose-400',
+  },
+  {
+    title: '天气查询',
+    subtitle: 'WEATHER',
+    description: '实时查看天气数据与环保指数。了解空气质量，规划户外环保活动。',
+    link: '/weather',
+    cta: '查看天气',
+    icon: 'M7 18.25h9a4.25 4.25 0 1 0-.68-8.445A5.5 5.5 0 0 0 4.75 12a3.25 3.25 0 0 0 2.25 6.25Z',
+    gradient: 'from-violet-400 to-purple-400',
+  },
+]
+
+// --- News Data & Pagination ---
+const newsItems = [
+  {
+    title: 'Green AI Web 2.0 正式发布：全新 AI 识别引擎上线',
+    date: '2025.03.18',
+    tag: '系统公告',
+    excerpt: '全新 UI 设计、更强大的 Qwen2.5 AI 识别引擎以及社区功能全面升级，带来更流畅的绿色生活体验。',
+  },
+  {
+    title: '「春日旧物重构」挑战赛正式启动',
+    date: '2025.03.15',
+    tag: '社区活动',
+    excerpt: '上传你的创意重构作品，赢取环保积分与独家徽章，AI 助手全程提供灵感支持。',
+  },
+  {
+    title: '本周环保达人榜单公布',
+    date: '2025.03.12',
+    tag: '排行榜',
+    excerpt: '恭喜 User888 获得本周「碳中和先锋」称号，累计减排超过 500kg CO₂e！',
+  },
+  {
+    title: '如何正确进行垃圾分类？AI 助手来教你',
+    date: '2025.03.10',
+    tag: '环保知识',
+    excerpt: '详细解析各类垃圾的分类标准与回收利用价值，让环保成为日常习惯。',
+  },
+  {
+    title: '碳足迹分析功能重大升级：接入实时 AI 建议',
+    date: '2025.03.07',
+    tag: '功能更新',
+    excerpt: '全新碳足迹计算器现已接入 Qwen2.5，根据你的数据生成个性化减排方案。',
+  },
+  {
+    title: '社区「闲置物品交换」板块正式上线',
+    date: '2025.03.05',
+    tag: '功能更新',
+    excerpt: '让闲置物品流动起来，减少资源浪费，每一次交换都是对地球的贡献。',
+  },
+]
+
+const currentPage = ref(1)
+const itemsPerPage = 4
+
+const totalPages = computed(() => Math.ceil(newsItems.length / itemsPerPage))
+const paginatedNews = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return newsItems.slice(start, start + itemsPerPage)
+})
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) currentPage.value++
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--
+}
+
+// --- Lifecycle ---
+onMounted(() => {
+  checkFirstVisit()
+  startAutoPlay()
+  startTypewriter()
+
+  // 延迟执行 GSAP 动画，确保 DOM 完全渲染
+  nextTick(() => {
+    // GSAP Animations for Scroll
+    const sections = gsap.utils.toArray('section')
+    if (sections && sections.length > 0) {
+      sections.forEach((section) => {
+        const elements = section.querySelectorAll('.animate-on-scroll')
+        if (elements && elements.length > 0) {
+          gsap.fromTo(
+            elements,
+            {
+              y: 30,
+              opacity: 0,
+            },
+            {
+              scrollTrigger: {
+                trigger: section,
+                start: 'top 85%',
+                toggleActions: 'play none none none',
+              },
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              stagger: 0.1,
+              ease: 'power2.out',
+              clearProps: 'all',
+            },
+          )
+        }
+      })
+    }
+
+    // Features Cards Stagger Animation
+    const featuresSection = document.querySelector('#features')
+    if (featuresSection) {
+      const cards = featuresSection.querySelectorAll('.group.relative')
+      if (cards && cards.length > 0) {
+        gsap.fromTo(
+          cards,
+          {
+            y: 24,
+            opacity: 0,
+          },
+          {
+            scrollTrigger: {
+              trigger: featuresSection,
+              start: 'top 75%',
+              toggleActions: 'play none none none',
+            },
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.08,
+            ease: 'power2.out',
+            clearProps: 'all',
+          },
+        )
+      }
+    }
+
+    // Scroll Down Indicator Fade Out
+    const scrollIndicator = document.querySelector('.scroll-indicator')
+    if (scrollIndicator) {
+      ScrollTrigger.create({
+        trigger: document.body,
+        start: 'top -100px',
+        onEnter: () => gsap.to(scrollIndicator, { opacity: 0, duration: 0.5 }),
+        onLeaveBack: () => gsap.to(scrollIndicator, { opacity: 1, duration: 0.5 }),
+      })
+    }
+
+    const dashboardSection = document.querySelector('#dashboard')
+    if (dashboardSection) {
+      dashboardObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return
+          animateDashboardValues()
+          dashboardObserver?.disconnect()
+          dashboardObserver = null
+        },
+        { threshold: 0.35 },
+      )
+
+      dashboardObserver.observe(dashboardSection)
+    }
+  })
+})
+
+onUnmounted(() => {
+  stopAutoPlay()
+  if (typingInterval) clearInterval(typingInterval)
+  if (typingRestartTimeout) clearTimeout(typingRestartTimeout)
+  if (dashboardAnimationFrame) cancelAnimationFrame(dashboardAnimationFrame)
+  if (dashboardObserver) dashboardObserver.disconnect()
+})
+</script>
+
+<style scoped>
+.home-view {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.home-view::-webkit-scrollbar {
+  display: none;
+}
+
+/* Modal Transition */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.animate-modal-enter {
+  animation: modal-slide-up 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modal-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Slide Fade Transition */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.5s ease;
+}
+
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.hero-fade-enter-active,
+.hero-fade-leave-active {
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.hero-fade-enter-from,
+.hero-fade-leave-to {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.typing-caret {
+  animation: blink-caret 0.9s steps(1) infinite;
+}
+
+@keyframes blink-caret {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  46%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.hero-title {
+  /* Ensure big text doesn't break layout on small screens */
+  word-break: break-word;
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* 父容器含两组完全相同的内容，总宽度 = 2x 单组宽度。
+       移动 -50% 恰好到达第二组开头，视觉上与第一组起点相同，实现无缝循环。 */
+    transform: translateX(-50%);
+  }
+}
+
+/* Breathing Light for Buttons */
+.breathing-light {
+  position: relative;
+  background: transparent;
+  border: none;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+.breathing-light::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: rgba(46, 125, 50, 0.1); /* 浅色主题下的绿色 */
+  border-radius: 4px;
+  opacity: 0;
+  animation: breathe 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* Scroll Indicator Mouse */
+.scroll-indicator-stack {
+  animation: indicator-drift 2.2s ease-in-out infinite;
+}
+
+.scroll-mouse-shell {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+.scroll-mouse-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0.5rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(16, 185, 129, 0.08) 45%, rgba(16, 185, 129, 0) 75%);
+  filter: blur(6px);
+  animation: mouse-glow 2.2s ease-in-out infinite;
+}
+
+.scroll-arrow {
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.22));
+  animation: arrow-drop 1.6s ease-in-out infinite;
+}
+
+.scroll-indicator-text {
+  text-shadow: 0 0 12px rgba(16, 185, 129, 0.12);
+  animation: text-breathe 2s ease-in-out infinite;
+}
+
+/* Scroll Indicator Breathe */
+.animate-breathe {
+  filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.32));
+  animation: breathe-icon 2.2s ease-in-out infinite;
+}
+
+@keyframes indicator-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@keyframes mouse-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes arrow-drop {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translateY(0) scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(6px) scale(1);
+  }
+}
+
+@keyframes text-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(2px);
+  }
+}
+
+@keyframes breathe-icon {
+  0%, 100% {
+    opacity: 0.72;
+    transform: translateY(0) scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.04);
+  }
+}
+
+.dashboard-ambient {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(70px);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.dashboard-ambient--left {
+  top: 5rem;
+  left: -4rem;
+  width: 14rem;
+  height: 14rem;
+  background: radial-gradient(circle, rgba(134, 239, 172, 0.42) 0%, rgba(134, 239, 172, 0) 72%);
+}
+
+.dashboard-ambient--right {
+  right: -3rem;
+  bottom: 2rem;
+  width: 16rem;
+  height: 16rem;
+  background: radial-gradient(circle, rgba(167, 243, 208, 0.4) 0%, rgba(167, 243, 208, 0) 75%);
+}
+
+.dashboard-panel {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(242, 251, 245, 0.92));
+}
+
+.dashboard-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), transparent 42%);
+  pointer-events: none;
+}
+
+.dashboard-panel--soft {
+  background: linear-gradient(145deg, rgba(247, 253, 249, 0.98), rgba(227, 245, 234, 0.94));
+}
+
+.dashboard-breathing-chip {
+  position: relative;
+}
+
+.dashboard-breathing-chip::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.2) 0%, rgba(74, 222, 128, 0) 70%);
+  z-index: -1;
+  animation: dashboard-chip-breathe 2.6s ease-in-out infinite;
+}
+
+.dashboard-breathing-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: #4ade80;
+  box-shadow: 0 0 0 rgba(74, 222, 128, 0.45);
+  animation: dashboard-dot-pulse 2s ease-in-out infinite;
+}
+
+.dashboard-stat {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.dashboard-stat:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(102, 187, 106, 0.14);
+}
+
+.dashboard-stat__glow {
+  position: absolute;
+  inset: auto -20% -55% auto;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(110, 231, 183, 0.26) 0%, rgba(110, 231, 183, 0) 70%);
+}
+
+.dashboard-bar-track {
+  position: relative;
+  height: 15rem;
+  padding: 0.35rem;
+  display: flex;
+  align-items: flex-end;
+  background: linear-gradient(180deg, rgba(236, 253, 245, 0.9), rgba(220, 252, 231, 0.9));
+}
+
+.dashboard-bar {
+  position: relative;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #bbf7d0 0%, #4ade80 45%, #16a34a 100%);
+  box-shadow: 0 18px 40px rgba(74, 222, 128, 0.24);
+  min-height: 2.5rem;
+  transition: transform 0.35s ease;
+}
+
+.dashboard-bar:hover {
+  transform: translateY(-4px);
+}
+
+.breathing-light-bar {
+  animation: dashboard-bar-breathe 2.8s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.dashboard-bar__shine {
+  position: absolute;
+  top: 0.75rem;
+  left: 50%;
+  width: 55%;
+  height: 26%;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0));
+}
+
+.dashboard-ring-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(22, 101, 52, 0.08);
+  font-weight: 700;
+  color: #166534;
+  box-shadow: 0 12px 24px rgba(134, 239, 172, 0.2);
+}
+
+.dashboard-ring {
+  position: relative;
+  width: 16rem;
+  height: 16rem;
+}
+
+.dashboard-ring__track,
+.dashboard-ring__progress {
+  fill: none;
+  stroke-width: 10;
+}
+
+.dashboard-ring__track {
+  stroke: rgba(34, 197, 94, 0.12);
+}
+
+.dashboard-ring__progress {
+  stroke: #22c55e;
+  stroke-linecap: round;
+  stroke-dasharray: 276.46;
+}
+
+.breathing-ring {
+  filter: drop-shadow(0 0 24px rgba(74, 222, 128, 0.24));
+  animation: dashboard-ring-breathe 2.8s ease-in-out infinite;
+}
+
+.dashboard-ring__center {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dashboard-heatmap-track {
+  height: 0.85rem;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.dashboard-heatmap-fill {
+  height: 100%;
+  border-radius: 999px;
+  box-shadow: 0 8px 18px rgba(74, 222, 128, 0.18);
+  animation: dashboard-heat-breathe 3s ease-in-out infinite;
+}
+
+@keyframes dashboard-dot-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.35);
+  }
+  50% {
+    transform: scale(1.18);
+    box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+  }
+}
+
+@keyframes dashboard-chip-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+.dashboard-section :deep(h2),
+.dashboard-section :deep(h3),
+.dashboard-section :deep(p),
+.dashboard-section :deep(span) {
+  color: #000;
+}
+
+.dashboard-section .dashboard-ring__track,
+.dashboard-section .dashboard-ring__progress {
+  color: initial;
+}
+
+@keyframes dashboard-bar-breathe {
+  0%,
+  100% {
+    filter: brightness(1);
+    box-shadow: 0 16px 34px rgba(74, 222, 128, 0.18);
+  }
+  50% {
+    filter: brightness(1.06);
+    box-shadow: 0 22px 46px rgba(74, 222, 128, 0.28);
+  }
+}
+
+@keyframes dashboard-ring-breathe {
+  0%,
+  100% {
+    transform: scale(0.98);
+    opacity: 0.92;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+}
+
+@keyframes dashboard-heat-breathe {
+  0%,
+  100% {
+    filter: saturate(1);
+    opacity: 0.9;
+  }
+  50% {
+    filter: saturate(1.08);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-bar-track {
+    height: 11rem;
+  }
+
+  .dashboard-ring {
+    width: 13rem;
+    height: 13rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-breathing-chip::after,
+  .dashboard-breathing-dot,
+  .breathing-light-bar,
+  .breathing-ring,
+  .dashboard-heatmap-fill,
+  .glass-tag,
+  .glass-tag__pulse,
+  .glass-tag__sheen {
+    animation: none;
+  }
+}
+
+.glass-tag {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  animation: glass-tag-breathe 4.8s ease-in-out infinite;
+}
+
+.glass-tag__icon {
+  flex-shrink: 0;
+}
+
+.glass-tag__pulse {
+  position: absolute;
+  inset: -18%;
+  z-index: 0;
+  border-radius: 999px;
+  opacity: 0.42;
+  pointer-events: none;
+  filter: blur(18px);
+  animation: glass-tag-pulse 4.8s ease-in-out infinite;
+}
+
+.glass-tag--emerald .glass-tag__pulse {
+  background: radial-gradient(circle at 50% 50%, rgba(167, 243, 208, 0.62) 0%, rgba(110, 231, 183, 0.24) 45%, rgba(16, 185, 129, 0) 82%);
+}
+
+.glass-tag--cyan .glass-tag__pulse {
+  background: radial-gradient(circle at 50% 50%, rgba(165, 243, 252, 0.62) 0%, rgba(103, 232, 249, 0.24) 45%, rgba(6, 182, 212, 0) 82%);
+}
+
+.glass-tag--orange .glass-tag__pulse {
+  background: radial-gradient(circle at 50% 50%, rgba(254, 215, 170, 0.62) 0%, rgba(253, 186, 116, 0.24) 45%, rgba(249, 115, 22, 0) 82%);
+}
+
+.glass-tag__sheen {
+  position: absolute;
+  inset: -38% auto auto -42%;
+  z-index: 0;
+  width: 48%;
+  height: 195%;
+  transform: rotate(24deg);
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.04) 12%, rgba(255, 255, 255, 0.2) 26%, rgba(255, 255, 255, 0.82) 50%, rgba(255, 255, 255, 0.24) 68%, rgba(255, 255, 255, 0.06) 82%, transparent 100%);
+  opacity: 0.92;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: glass-tag-sheen 4.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.glass-tag:hover .glass-tag__sheen {
+  animation-duration: 1.85s;
+}
+
+.glass-tag--emerald .glass-tag__sheen {
+  filter: drop-shadow(0 0 18px rgba(110, 231, 183, 0.26));
+}
+
+.glass-tag--cyan .glass-tag__sheen {
+  filter: drop-shadow(0 0 18px rgba(103, 232, 249, 0.26));
+}
+
+.glass-tag--orange .glass-tag__sheen {
+  filter: drop-shadow(0 0 18px rgba(253, 186, 116, 0.26));
+}
+
+@keyframes glass-tag-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    transform: translateY(-1px);
+    filter: brightness(1.035) saturate(1.04);
+  }
+}
+
+@keyframes glass-tag-pulse {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes glass-tag-sheen {
+  0% {
+    transform: translateX(-172%) rotate(24deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.16;
+  }
+  24% {
+    opacity: 0.88;
+  }
+  42% {
+    transform: translateX(300%) rotate(24deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(300%) rotate(24deg);
+    opacity: 0;
+  }
+}
+</style>
+
+
