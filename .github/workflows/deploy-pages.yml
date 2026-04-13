@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'grennn_web/**'
+      - 'wrangler.toml'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
@@ -25,7 +26,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 22.12.0
           cache: 'npm'
           cache-dependency-path: grennn_web/package-lock.json
 
@@ -55,3 +56,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: chuanzhibei
           directory: dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
