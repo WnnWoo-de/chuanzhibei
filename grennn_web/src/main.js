@@ -21,20 +21,25 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 
-const userStore = useUserStore(pinia)
-await userStore.init()
+// 初始化用户状态
+const initApp = async () => {
+  const userStore = useUserStore(pinia)
+  await userStore.init()
 
-if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
-  window.addEventListener('auth:logout', (event) => {
-    const reason = event?.detail?.reason
-    if (reason !== 'expired') return
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('auth:logout', (event) => {
+      const reason = event?.detail?.reason
+      if (reason !== 'expired') return
 
-    const current = router.currentRoute.value
-    if (!current?.meta?.requiresAuth) return
+      const current = router.currentRoute.value
+      if (!current?.meta?.requiresAuth) return
 
-    ElMessage.error('登录已过期，请重新登录')
-    router.replace({ name: 'login', query: { redirect: current.fullPath } })
-  })
+      ElMessage.error('登录已过期，请重新登录')
+      router.replace({ name: 'login', query: { redirect: current.fullPath } })
+    })
+  }
+
+  app.mount('#app')
 }
 
-app.mount('#app')
+initApp()
