@@ -4,7 +4,3 @@ compatibility_date = "2026-04-06"
 
 # Pages 构建配置
 pages_build_output_dir = "dist"
-
-# Pages 静态资源配置
-[assets]
-not_found_handling = "single-page-application"
