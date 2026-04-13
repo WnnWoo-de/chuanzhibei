@@ -108,6 +108,11 @@ const router = createRouter({
       component: () => import('../views/system/LicenseView.vue'),
     },
     {
+      path: '/tech-stack',
+      name: 'tech-stack',
+      component: () => import('../views/system/TechStackView.vue'),
+    },
+    {
       path: '/profile',
       name: 'profile',
       component: () => import('../views/system/ProfileView.vue'),

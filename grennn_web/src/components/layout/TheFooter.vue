@@ -117,10 +117,10 @@
               </a>
             </li>
             <li>
-              <a href="#" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
+              <router-link to="/tech-stack" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
                 <span>技术栈</span>
                 <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
-              </a>
+              </router-link>
             </li>
             <li>
               <a
