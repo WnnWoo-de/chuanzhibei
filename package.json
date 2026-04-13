@@ -8,8 +8,9 @@
     "dev": "nodemon server.js",
     "build": "cd grennn_web && npm install && npm run build",
     "build:github": "cd grennn_web && npm run build:github",
-    "deploy": "cd grennn_web && npm run cf:deploy",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "wrangler deploy",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "preview": "wrangler dev"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +34,7 @@
     "sequelize": "^6.37.8"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "wrangler": "^4.81.1"
   }
 }
