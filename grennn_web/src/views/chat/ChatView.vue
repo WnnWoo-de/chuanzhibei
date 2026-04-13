@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-24 px-6 pb-12 flex flex-col">
+  <div class="bg-transparent h-screen text-[#1a1a1a] font-sans flex flex-col overflow-hidden">
     <!-- 网格背景 -->
     <div
       class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6"
@@ -9,26 +9,29 @@
       <div v-for="n in 4" :key="`m-${n}`" class="border-r border-black h-full block md:hidden col-span-3"></div>
     </div>
 
-    <div class="relative z-10 grid grid-cols-12 gap-6 flex-1 h-[calc(100vh-8rem)]">
+    <div class="relative z-10 grid grid-cols-12 gap-6 flex-1 h-full pt-24 px-6 pb-12">
       <ChatSidebarPanel @clear-chat="clearChat" />
 
       <!-- 聊天界面 -->
-      <div class="col-span-12 md:col-span-9 flex flex-col h-full overflow-hidden pb-4">
+      <div class="col-span-12 md:col-span-9 flex flex-col h-full overflow-hidden">
         <div
           class="bg-white/90 backdrop-blur-md border border-black/10 flex-1 flex flex-col relative overflow-hidden shadow-xl transition-all duration-500 hover:shadow-2xl rounded-2xl h-full"
         >
           <ChatHeaderBar @clear-chat="clearChat" />
 
-          <ChatMessageList
-            ref="chatMessageListRef"
-            :all-prompts="allPrompts"
-            :is-typing="isTyping"
-            :is-writing="isWriting"
-            :messages="messages"
-            :render-markdown="renderChatMarkdown"
-            @copy-message="copyMessage"
-            @quick-prompt="useQuickPrompt"
-          />
+          <!-- 消息列表区域 - 可滚动 -->
+          <div class="flex-1 overflow-hidden flex flex-col">
+            <ChatMessageList
+              ref="chatMessageListRef"
+              :all-prompts="allPrompts"
+              :is-typing="isTyping"
+              :is-writing="isWriting"
+              :messages="messages"
+              :render-markdown="renderChatMarkdown"
+              @copy-message="copyMessage"
+              @quick-prompt="useQuickPrompt"
+            />
+          </div>
 
           <ChatQuickPrompts
             :is-shuffling="isShuffling"
@@ -37,6 +40,7 @@
             @shuffle="shufflePrompts"
           />
 
+          <!-- 输入框 - 固定在底部 -->
           <ChatComposer
             v-model:new-message="newMessage"
             :is-typing="isTyping"

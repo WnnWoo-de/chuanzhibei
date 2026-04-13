@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 border-t border-black/10 bg-white relative z-20">
+  <div class="p-6 border-t border-black/10 bg-white relative z-20 sticky bottom-0">
     <transition name="fade">
       <div v-if="isWriting || isTyping" class="absolute -top-12 left-1/2 -translate-x-1/2">
         <button
@@ -27,17 +27,17 @@
       </div>
     </transition>
 
-    <form class="flex gap-4 relative items-stretch" @submit.prevent="$emit('send')">
+    <form class="flex gap-4 relative items-stretch" @submit.prevent="handleSend">
       <div class="flex-1 relative">
         <textarea
           ref="textareaEl"
-          :model-value="newMessage"
+          v-model="localNewMessage"
           rows="1"
           placeholder="请输入您的问题… (Shift+Enter 换行)"
           class="w-full bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-2xl px-4 py-3 pl-10 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 font-mono text-sm transition-all shadow-sm hover:border-gray-300 resize-none overflow-hidden max-h-32 leading-6"
           :disabled="isTyping || isWriting"
           @input="handleInput"
-          @keydown.enter.exact.prevent="$emit('send')"
+          @keydown.enter.exact.prevent="handleSend"
         ></textarea>
         <div class="absolute left-3 top-3 text-gray-400 font-bold">
           <span class="text-xs">▶</span>
@@ -45,7 +45,7 @@
       </div>
       <button
         type="submit"
-        :disabled="!newMessage.trim() || isTyping || isWriting"
+        :disabled="!localNewMessage.trim() || isTyping || isWriting"
         class="px-8 bg-gradient-to-br from-black to-gray-800 text-white text-xs font-mono uppercase tracking-wider rounded-2xl hover:from-green-600 hover:to-green-700 hover:shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:hover:from-black disabled:hover:to-gray-800 disabled:hover:shadow-none shadow-md flex items-center gap-2 h-full min-h-[46px] font-bold"
       >
         <span>发送</span>
@@ -81,6 +81,7 @@ const props = defineProps({
 
 const emit = defineEmits(['adjust-height', 'regenerate', 'send', 'stop', 'update:newMessage'])
 const textareaEl = ref(null)
+const localNewMessage = ref('')
 
 const syncHeight = async () => {
   await nextTick()
@@ -90,13 +91,25 @@ const syncHeight = async () => {
 }
 
 const handleInput = (event) => {
-  emit('update:newMessage', event.target.value)
+  emit('update:newMessage', localNewMessage.value)
   emit('adjust-height')
 }
 
+const handleSend = () => {
+  emit('update:newMessage', localNewMessage.value)
+  emit('send')
+  // 发送后立即清空本地输入框，确保发送完成时不显示文字
+  localNewMessage.value = ''
+  syncHeight()
+}
+
+// 监听父组件的 newMessage 变化，同步到本地状态
 watch(
   () => props.newMessage,
-  () => {
+  (newVal) => {
+    if (newVal !== localNewMessage.value) {
+      localNewMessage.value = newVal
+    }
     syncHeight()
   },
   { immediate: true },

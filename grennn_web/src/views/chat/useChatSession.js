@@ -20,11 +20,13 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
       if (!isWriting.value) break
       currentText += text[i]
       messageRef.content = currentText
-      if (i % 10 === 0) scrollToBottom()
+      // 每次添加字符都滚动到底部，确保用户能看到最新内容
+      scrollToBottom()
       await new Promise((resolve) => setTimeout(resolve, speed))
     }
 
     isWriting.value = false
+    // 确保最终内容完全可见
     scrollToBottom()
     userStore.saveChat(messages.value)
   }
@@ -80,6 +82,7 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
       time,
     })
 
+    // 确保立即清空输入框，实现类似ChatGPT的效果
     newMessage.value = ''
     isTyping.value = true
 
@@ -140,11 +143,15 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
       isTyping.value = false
       isWriting.value = true
 
+      // 确保添加助手消息后立即滚动到底部
+      scrollToBottom()
+
       await consumeChatCompletionsStream(response.body, {
         signal: abortController.value.signal,
         shouldStop: () => !isWriting.value,
         onDeltaContent: (content) => {
           reactiveAssistantMsg.content += content
+          // 每次添加内容都滚动到底部
           scrollToBottom()
         },
       })
