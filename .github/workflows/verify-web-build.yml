@@ -1,0 +1,64 @@
+name: Verify GreenSight Web Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'grennn_web/**'
+      - 'wrangler.toml'
+      - '.github/workflows/verify-web-build.yml'
+  pull_request:
+    paths:
+      - 'grennn_web/**'
+      - 'wrangler.toml'
+      - '.github/workflows/verify-web-build.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: greensight-web-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build check
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.12.0
+          cache: 'npm'
+          cache-dependency-path: grennn_web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: grennn_web
+        run: npm ci
+
+      - name: Build
+        working-directory: grennn_web
+        run: npm run build
+
+      - name: Verify dist directory
+        run: |
+          if [ -d "dist" ]; then
+            echo "Dist directory found"
+            ls -la dist
+          else
+            echo "Dist directory NOT found"
+            ls -la
+            exit 1
+          fi
+
+      - name: Upload dist artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: greensight-web-dist
+          path: dist
+          if-no-files-found: error
+          retention-days: 7
