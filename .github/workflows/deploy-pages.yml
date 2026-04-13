@@ -37,10 +37,18 @@ jobs:
         working-directory: grennn_web
         run: npm run build
 
+      - name: Prepare dist directory
+        run: |
+          if [ -d "grennn_web/dist" ]; then
+            cp -r grennn_web/dist dist
+            echo "Dist directory prepared successfully"
+            ls -la dist
+          fi
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: chuanzhibei
-          directory: grennn_web/dist
+          directory: dist
