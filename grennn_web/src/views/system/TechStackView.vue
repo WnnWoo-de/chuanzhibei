@@ -56,7 +56,7 @@
                 GreenSight AI 采用现代全栈开发技术，构建了一个功能丰富的环保社区平台。
               </p>
               <p class="text-gray-700">
-                项目融合了前端现代化框架、后端 Node.js 架构和 AI 技术，为用户提供可持续生活方式的解决方案。
+                项目融合了前端现代化框架、后端 Node.js 架构和 AI 技术，FastAPI 作为全链路的数据调度中枢,为用户提供可持续生活方式的解决方案。
               </p>
             </div>
           </section>
@@ -76,6 +76,7 @@
                   <li class="flex items-center gap-2"><span class="text-blue-500">•</span> Tailwind CSS 样式框架</li>
                   <li class="flex items-center gap-2"><span class="text-blue-500">•</span> Pinia 状态管理</li>
                   <li class="flex items-center gap-2"><span class="text-blue-500">•</span> Vue Router 路由管理</li>
+                                    <li class="flex items-center gap-2"><span class="text-blue-500">•</span> Axios HTTP 客户端</li>
                 </ul>
               </div>
 
@@ -107,6 +108,7 @@
                   <li class="flex items-center gap-2"><span class="text-green-500">•</span> Socket.io 实时通信</li>
                   <li class="flex items-center gap-2"><span class="text-green-500">•</span> Helmet 安全中间件</li>
                   <li class="flex items-center gap-2"><span class="text-green-500">•</span> CORS 跨域支持</li>
+                                    <li class="flex items-center gap-2"><span class="text-green-500">•</span> FastAPI 全链路的数据调度中枢</li>
                 </ul>
               </div>
 
@@ -164,6 +166,7 @@
                 <ul class="space-y-2 text-sm text-gray-700">
                   <li class="flex items-center gap-2"><span class="text-pink-500">•</span> Qwen2.5 AI 模型</li>
                   <li class="flex items-center gap-2"><span class="text-pink-500">•</span> 智能对话系统</li>
+                 <li class="flex items-center gap-2"><span class="text-pink-500">•</span> Fastapi 集成 AI 模型</li>
                   <li class="flex items-center gap-2"><span class="text-pink-500">•</span> 自然语言处理</li>
                   <li class="flex items-center gap-2"><span class="text-pink-500">•</span> 文本生成与理解</li>
                 </ul>
