@@ -1,20 +1,8 @@
+# Cloudflare Pages 配置 - 最简单可靠的 Vue 应用部署
 name = "chuanzhibei11"
 compatibility_date = "2026-04-06"
-main = "worker.js"
 
-# 静态资源配置
-[site]
-bucket = "./dist"
-entry-point = "worker.js"
-
-# Workers 路由配置
-[route]
-pattern = "chuanzhibei11.*"
-destination_name = "chuanzhibei11"
-
-[compatibility_flags]
-workers_dev = true
-
-[build]
-command = "npm run build"
-upload_dir = "dist"
+# Pages 静态资源配置
+[assets]
+directory = "./dist"
+not_found_handling = "single-page-application"
