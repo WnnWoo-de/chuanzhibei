@@ -7,12 +7,12 @@ on:
     paths:
       - 'grennn_web/**'
       - 'wrangler.toml'
-      - '.github/workflows/deploy-pages.yml'
+      - '.github/workflows/verify-web-build.yml'
   pull_request:
     paths:
       - 'grennn_web/**'
       - 'wrangler.toml'
-      - '.github/workflows/deploy-pages.yml'
+      - '.github/workflows/verify-web-build.yml'
   workflow_dispatch:
 
 concurrency:
