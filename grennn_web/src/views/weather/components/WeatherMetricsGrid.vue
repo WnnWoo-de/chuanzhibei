@@ -1,6 +1,6 @@
 <template>
   <section class="metrics-grid">
-    <article class="metric-card metric-card--wide hover-float">
+    <article class="metric-card hover-float">
       <div class="metric-header">
         <WeatherUiIcon name="air-quality" class="widget-icon" />
         空气质量地图感知
@@ -285,7 +285,7 @@ defineProps({
 
 .aqi-stage {
   position: relative;
-  height: 168px;
+  height: 120px;
   border-radius: 22px;
   overflow: hidden;
   background:
@@ -302,26 +302,26 @@ defineProps({
 }
 
 .orb-green {
-  width: 180px;
-  height: 180px;
-  right: -12px;
-  top: -34px;
+  width: 120px;
+  height: 120px;
+  right: -8px;
+  top: -24px;
   background: rgba(104, 196, 91, 0.82);
 }
 
 .orb-yellow {
-  width: 210px;
-  height: 210px;
-  left: 30px;
-  top: 42px;
+  width: 140px;
+  height: 140px;
+  left: 20px;
+  top: 28px;
   background: rgba(232, 188, 90, 0.78);
 }
 
 .orb-lime {
-  width: 140px;
-  height: 140px;
-  left: -22px;
-  bottom: -18px;
+  width: 90px;
+  height: 90px;
+  left: -15px;
+  bottom: -12px;
   background: rgba(205, 210, 70, 0.78);
 }
 
@@ -330,8 +330,8 @@ defineProps({
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 92px;
-  height: 92px;
+  width: 70px;
+  height: 70px;
   border-radius: 999px;
   background: rgba(70, 61, 41, 0.72);
   display: flex;
@@ -343,13 +343,13 @@ defineProps({
 
 .aqi-center-value {
   color: #fff;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
 }
 
 .aqi-center-label {
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 11px;
+  margin-top: 2px;
 }
 
 .sun-track {

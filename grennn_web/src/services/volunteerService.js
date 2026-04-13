@@ -249,3 +249,32 @@ export const logVolunteerHours = async (activityId, { hours, reflection } = {}) 
     source: 'mock',
   }
 }
+
+export const cancelVolunteerEnrollment = async (activityId) => {
+  const result = await requestAxios(
+    () => axios.post(`/api/v1/volunteer/activities/${activityId}/cancel-enrollment`),
+    { fallbackMessage: '取消报名失败' },
+  )
+
+  if (result.ok) {
+    return { ok: true, item: result.data?.item || null, message: '', source: 'api' }
+  }
+
+  if (!shouldUseVolunteerMock()) {
+    return { ok: false, item: null, message: result.message, source: 'api' }
+  }
+
+  return {
+    ...updateMockActivity(activityId, (activity) => {
+      if (!activity.enrollment) return null
+
+      return {
+        ...activity,
+        enrolled: Math.max(0, Number(activity.enrolled || 0) - 1),
+        status: 'pending',
+        enrollment: null,
+      }
+    }),
+    source: 'mock',
+  }
+}

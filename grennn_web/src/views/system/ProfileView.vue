@@ -8,104 +8,211 @@
 
     <!-- Main Container -->
     <div class="max-w-4xl mx-auto relative z-10 w-full pb-24">
-      <div class="mb-12">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4 uppercase tracking-tighter">个人中心</h1>
-        <p class="font-mono text-xs uppercase tracking-widest opacity-50">User Profile / Overview</p>
-      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12 items-start">
+        <!-- Left Column: Title -->
+        <div class="lg:col-span-1 mb-12 lg:mb-0">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4 uppercase tracking-tighter text-primary">个人中心</h1>
+          <p class="font-mono text-xs uppercase tracking-widest text-gray-600">User Profile / Overview</p>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:items-stretch">
-        <!-- Left Col: Profile info -->
-        <div class="md:col-span-1 space-y-6 md:h-full">
-          <div class="bg-white/90 backdrop-blur-md border border-black/10 p-6 md:p-8 relative group overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 md:h-full">
-            <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
-            
-            <div class="flex flex-col items-center text-center">
-              <div class="relative mb-6">
-                <!-- Avatar -->
-                <img 
-                  :src="previewAvatar" 
-                  alt="User Avatar"
-                  class="w-24 h-24 rounded-full border-4 border-white shadow-xl object-cover relative z-10"
-                />
-                <!-- Decorative rings -->
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 border border-black/10 rounded-full animate-[spin-slow_8s_linear_infinite]"></div>
-              </div>
-              
-              <h2 class="text-2xl font-bold mb-1">{{ userStore.user?.username || '未命名用户' }}</h2>
-              <p class="text-sm text-gray-500 font-mono mb-6">{{ userStore.user?.email || 'N/A' }}</p>
-              
-              <div class="w-full flex justify-between items-center px-4 py-3 bg-neutral-50 border border-black/5 rounded-lg mb-6">
-                <span class="text-xs font-bold uppercase tracking-widest text-gray-500">环保积分</span>
-                <span class="text-xl font-mono font-bold text-primary">{{ userStore.user?.points || 0 }}</span>
-              </div>
-              
-              <button
-                type="button"
-                class="w-full py-3 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-primary transition-colors flex items-center justify-center gap-2"
-                @click="openEditDialog"
-              >
-                编辑资料 <span class="text-[10px]">→</span>
-              </button>
-            </div>
-          </div>
+          <!-- Sidebar Navigation (below title on mobile, same row on desktop) -->
+          <nav class="space-y-2 mt-8 lg:mt-12">
+            <button
+              v-for="tab in tabs"
+              :key="tab.id"
+              @click="activeTab = tab.id"
+              class="w-full text-left px-4 py-3 flex items-center justify-between group transition-all duration-200 border-l-2"
+              :class="activeTab === tab.id ? 'border-primary bg-white shadow-sm font-bold' : 'border-transparent hover:border-black/20 text-gray-600 hover:text-black'"
+            >
+              <span class="text-sm font-mono tracking-widest">{{ tab.name }}</span>
+              <span class="opacity-0 group-hover:opacity-100 transition-opacity text-xs" :class="activeTab === tab.id ? 'opacity-100 text-primary' : ''">→</span>
+            </button>
+          </nav>
         </div>
 
-        <!-- Right Col: Stats and Activities -->
-        <div class="md:col-span-2 space-y-6">
-          <!-- Overview Cards -->
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-white/90 backdrop-blur-md border border-black/10 p-6 relative overflow-hidden group rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-              <div class="font-mono text-[10px] text-gray-400 mb-4 tracking-widest uppercase">累计减排 / CO₂e</div>
-              <div class="text-3xl font-bold mb-1 group-hover:text-primary transition-colors">{{ (userStore.user?.points * 0.15).toFixed(1) || '0.0' }}<span class="text-base text-gray-400 ml-1">kg</span></div>
-              <p class="text-xs text-gray-500 mt-2 line-clamp-1">相当于种植了 {{ Math.floor((userStore.user?.points || 0) / 100) }} 棵树</p>
-            </div>
-            
-            <div class="bg-white/90 backdrop-blur-md border border-black/10 p-6 relative overflow-hidden group rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-              <div class="font-mono text-[10px] text-gray-400 mb-4 tracking-widest uppercase">已解锁成就 / Badges</div>
-              <div class="text-3xl font-bold mb-1 group-hover:text-primary transition-colors">{{ userStore.badges?.filter(b => b.unlocked).length || 0 }}<span class="text-base text-gray-400 ml-1 opacity-50">/ {{ userStore.badges?.length || 15 }}</span></div>
-              <router-link to="/achievements" class="inline-flex text-xs text-black border-b border-black mt-2 font-bold hover:text-primary hover:border-primary transition-colors">
-                查看所有徽章
-              </router-link>
-            </div>
-          </div>
+        <!-- Profile Content -->
+        <div class="lg:col-span-3 lg:mt-12">
+          <div class="bg-white/95 backdrop-blur-md border border-primary/20 shadow-xl rounded-2xl min-h-[600px]">
+            <!-- Profile Overview -->
+            <div v-if="activeTab === 'overview'" class="p-6 md:p-8 lg:p-8 animate-[fade-in_0.3s_ease]">
+              <div class="mb-6 pb-3 border-b border-primary/10">
+                <h2 class="text-xl font-bold mb-1">个人概览</h2>
+                <p class="text-xs text-gray-600 font-mono uppercase">Profile Overview</p>
+              </div>
 
-          <!-- Recent Activity -->
-          <div class="bg-white/90 backdrop-blur-md border border-black/10 p-6 md:p-8 rounded-2xl shadow-xl">
-            <div class="flex justify-between items-center mb-6">
-              <h3 class="text-lg font-bold">近期活动</h3>
-              <span class="text-xs font-mono px-2 py-1 bg-neutral-100 text-gray-500 uppercase">Activity Log</span>
-            </div>
-            
-            <div v-if="userStore.chatHistory && userStore.chatHistory.length > 0" class="space-y-4">
-              <div v-for="(chat, i) in userStore.chatHistory.slice(-3)" :key="i" class="flex gap-4 p-4 border border-black/5 hover:border-primary/30 transition-colors bg-neutral-50/50">
-                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                  </svg>
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Profile Info Card -->
+                <div class="lg:col-span-1">
+                  <div class="bg-white/95 backdrop-blur-md border border-primary/20 p-5 lg:p-5 relative group overflow-hidden rounded-2xl shadow-lg h-full">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
+
+                    <div class="flex flex-col items-center text-center">
+                      <div class="relative mb-4">
+                        <!-- Avatar -->
+                        <img
+                          :src="previewAvatar"
+                          alt="User Avatar"
+                          class="w-20 h-20 rounded-full border-4 border-white shadow-lg object-cover relative z-10"
+                        />
+                        <!-- Decorative rings -->
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 border border-primary/20 rounded-full animate-[spin-slow_8s_linear_infinite]"></div>
+                      </div>
+
+                      <h2 class="text-lg font-bold mb-1">{{ userStore.user?.username || '未命名用户' }}</h2>
+                      <p class="text-xs text-gray-500 font-mono mb-4">{{ userStore.user?.email || 'N/A' }}</p>
+
+                      <div class="w-full flex justify-between items-center px-3 py-2 bg-green-50 border border-primary/10 rounded-lg mb-4">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-600">环保积分</span>
+                        <span class="text-lg font-mono font-bold text-primary">{{ userStore.user?.points || 0 }}</span>
+                      </div>
+
+                      <button
+                        type="button"
+                        class="w-full py-2 bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-primary/90 hover:shadow-glow transition-colors flex items-center justify-center gap-2"
+                        @click="openEditDialog"
+                      >
+                        编辑资料 <span class="text-[8px]">→</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 class="font-bold text-sm mb-1 line-clamp-1">AI 环保咨询</h4>
-                  <p class="text-xs text-gray-500 line-clamp-1">{{ chat.content }}</p>
-                  <p class="text-[10px] font-mono text-gray-400 mt-2">{{ new Date(chat.timestamp || Date.now()).toLocaleDateString() }}</p>
+
+                <!-- Right Column: Stats -->
+                <div class="lg:col-span-2 space-y-5">
+                  <!-- Overview Cards - First Row -->
+                  <div class="grid grid-cols-2 gap-5">
+                    <div class="bg-white/95 backdrop-blur-md border border-primary/20 p-5 relative overflow-hidden group rounded-2xl shadow-lg hover:shadow-glow transition-all duration-500">
+                      <div class="font-mono text-[10px] text-gray-500 mb-3 tracking-widest uppercase">累计减排 / CO₂e</div>
+                      <div class="text-3xl font-bold mb-1 group-hover:text-primary transition-colors">{{ (userStore.user?.points * 0.15).toFixed(1) || '0.0' }}<span class="text-base text-gray-400 ml-1">kg</span></div>
+                      <p class="text-xs text-gray-600 mt-2 line-clamp-1">相当于种植了 {{ Math.floor((userStore.user?.points || 0) / 100) }} 棵树</p>
+                    </div>
+
+                    <div class="bg-white/95 backdrop-blur-md border border-primary/20 p-5 relative overflow-hidden group rounded-2xl shadow-lg hover:shadow-glow transition-all duration-500">
+                      <div class="font-mono text-[10px] text-gray-500 mb-3 tracking-widest uppercase">已解锁成就 / Badges</div>
+                      <div class="text-3xl font-bold mb-1 group-hover:text-primary transition-colors">{{ userStore.badges?.filter(b => b.unlocked).length || 0 }}<span class="text-base text-gray-400 ml-1 opacity-50">/ {{ userStore.badges?.length || 15 }}</span></div>
+                      <router-link to="/achievements" class="inline-flex text-xs text-primary border-b border-primary mt-2 font-bold hover:text-primary/80 hover:border-primary/80 transition-colors">
+                        查看所有徽章
+                      </router-link>
+                    </div>
+                  </div>
+
+                  <!-- Overview Cards - Second Row -->
+                  <div class="grid grid-cols-2 gap-5">
+                    <div class="bg-white/95 backdrop-blur-md border border-primary/20 p-5 rounded-2xl shadow-lg">
+                      <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                          </svg>
+                        </div>
+                        <h3 class="font-bold text-sm text-gray-800">用户等级</h3>
+                      </div>
+                      <p class="text-lg font-mono text-primary">Lv. {{ getUserLevel(userStore.user?.points || 0) }}</p>
+                      <p class="text-xs text-gray-600 mt-1">继续积累积分提升等级</p>
+                    </div>
+
+                    <div class="bg-white/95 backdrop-blur-md border border-primary/20 p-5 rounded-2xl shadow-lg">
+                      <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <h3 class="font-bold text-sm text-gray-800">社区贡献</h3>
+                      </div>
+                      <p class="text-lg font-mono text-primary">{{ userStore.chatHistory?.length || 0 }}</p>
+                      <p class="text-xs text-gray-600 mt-1">参与环保话题讨论</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="text-center pt-2">
-                <router-link to="/chat" class="text-xs font-bold uppercase tracking-widest text-primary hover:text-black transition-colors">
-                  进入 AI 助手查看更多 →
+            </div>
+
+            <!-- Recent Activity -->
+            <div v-if="activeTab === 'activity'" class="p-6 md:p-10 animate-[fade-in_0.3s_ease]">
+              <div class="mb-8 pb-4 border-b border-primary/10">
+                <h2 class="text-2xl font-bold mb-1">近期活动</h2>
+                <p class="text-xs text-gray-600 font-mono uppercase">Recent Activity</p>
+              </div>
+
+              <div v-if="userStore.chatHistory && userStore.chatHistory.length > 0" class="space-y-4">
+                <div v-for="(chat, i) in userStore.chatHistory.slice(-3)" :key="i" class="flex gap-4 p-4 border border-primary/10 hover:border-primary/30 transition-colors bg-green-50/50 rounded-lg">
+                  <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="font-bold text-sm mb-1 text-gray-800">AI 环保咨询</h4>
+                    <p class="text-xs text-gray-600 line-clamp-1">{{ chat.content }}</p>
+                    <p class="text-[10px] font-mono text-gray-500 mt-2">{{ new Date(chat.timestamp || Date.now()).toLocaleDateString() }}</p>
+                  </div>
+                </div>
+                <div class="text-center pt-2">
+                  <router-link to="/chat" class="text-xs font-bold uppercase tracking-widest text-primary hover:text-primary/80 transition-colors">
+                    进入 AI 助手查看更多 →
+                  </router-link>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-12 px-4 border border-dashed border-primary/20 bg-green-50/30 rounded-lg">
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+                  <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">暂无活动记录，快去探索平台功能吧！</p>
+                <router-link to="/chat" class="inline-flex px-4 py-2 bg-primary text-white text-xs font-bold uppercase hover:bg-primary/90 transition-colors rounded-lg">
+                  探索功能
                 </router-link>
               </div>
             </div>
-            
-            <div v-else class="text-center py-12 px-4 border border-dashed border-black/20">
-              <div class="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
-                <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" stroke="currentColor" stroke-width="1.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+
+            <!-- Account Settings -->
+            <div v-if="activeTab === 'settings'" class="p-6 md:p-10 animate-[fade-in_0.3s_ease]">
+              <div class="mb-8 pb-4 border-b border-primary/10">
+                <h2 class="text-2xl font-bold mb-1">账号设置</h2>
+                <p class="text-xs text-gray-600 font-mono uppercase">Account Settings</p>
               </div>
-              <p class="text-sm text-gray-500 mb-4">暂无活动记录，快去探索平台功能吧！</p>
-              <router-link to="/features" class="inline-flex px-4 py-2 border border-black text-xs font-bold uppercase hover:bg-black hover:text-white transition-colors">
-                探索功能
-              </router-link>
+
+              <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-600">用户名</label>
+                    <input
+                      type="text"
+                      :value="userStore.user?.username || ''"
+                      disabled
+                      class="w-full bg-green-50 border border-primary/10 px-4 py-3 text-sm text-gray-500 cursor-not-allowed rounded-lg"
+                    />
+                  </div>
+                  <div class="space-y-2">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-600">邮箱</label>
+                    <input
+                      type="email"
+                      :value="userStore.user?.email || ''"
+                      disabled
+                      class="w-full bg-green-50 border border-primary/10 px-4 py-3 text-sm text-gray-500 cursor-not-allowed rounded-lg"
+                    />
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <label class="block text-xs font-bold uppercase tracking-widest text-gray-600">环保积分</label>
+                  <div class="w-full bg-green-50 border border-primary/10 px-4 py-3 text-sm rounded-lg">
+                    <span class="font-mono font-bold text-primary">{{ userStore.user?.points || 0 }}</span>
+                  </div>
+                </div>
+
+                <div class="pt-6">
+                  <button
+                    type="button"
+                    class="px-6 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors rounded-lg"
+                    @click="openEditDialog"
+                  >
+                    编辑个人资料
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -137,25 +244,25 @@
         />
 
         <div>
-          <label for="email" class="block text-xs font-mono uppercase mb-2 opacity-60">邮箱</label>
+          <label for="email" class="block text-xs font-mono uppercase mb-2 text-gray-600">邮箱</label>
           <input
             id="email"
             :value="userStore.user?.email || ''"
             type="email"
             disabled
-            class="w-full bg-neutral-100 border-b border-black/20 px-4 py-3 text-sm text-gray-400 cursor-not-allowed"
+            class="w-full bg-green-50 border border-primary/10 px-4 py-3 text-sm text-gray-500 cursor-not-allowed rounded-lg"
           >
         </div>
 
         <div>
-          <label for="avatar" class="block text-xs font-mono uppercase mb-2 opacity-60">头像链接</label>
+          <label for="avatar" class="block text-xs font-mono uppercase mb-2 text-gray-600">头像链接</label>
           <input
             id="avatar"
             v-model="form.avatar"
             type="url"
             placeholder="https://example.com/avatar.jpg"
-            class="w-full bg-neutral-50 border px-4 py-3 text-sm transition-all focus:outline-none focus:border-primary"
-            :class="errors.avatar ? 'border-red-500 text-red-900 placeholder-red-300' : 'border-black/20'"
+            class="w-full bg-green-50 border border-primary/10 px-4 py-3 text-sm transition-all focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 rounded-lg"
+            :class="errors.avatar ? 'border-red-500 text-red-900 placeholder-red-300' : ''"
             @blur="validateAvatar"
           >
           <p v-if="errors.avatar" class="mt-1 text-xs text-red-500 font-mono">{{ errors.avatar }}</p>
@@ -163,16 +270,16 @@
 
         <div>
           <div class="flex items-center justify-between mb-2">
-            <label for="bio" class="block text-xs font-mono uppercase opacity-60">个人简介</label>
-            <span class="text-xs text-gray-400">{{ form.bio.length }}/500</span>
+            <label for="bio" class="block text-xs font-mono uppercase text-gray-600">个人简介</label>
+            <span class="text-xs text-gray-500">{{ form.bio.length }}/500</span>
           </div>
           <textarea
             id="bio"
             v-model="form.bio"
             rows="4"
             placeholder="向社区介绍一下你的环保理念..."
-            class="w-full bg-neutral-50 border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all resize-none"
-            :class="errors.bio ? 'border-red-500 text-red-900 placeholder-red-300' : 'border-black/20'"
+            class="w-full bg-green-50 border border-primary/10 px-4 py-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all resize-none rounded-lg"
+            :class="errors.bio ? 'border-red-500 text-red-900 placeholder-red-300' : ''"
             @blur="validateBio"
           ></textarea>
           <p v-if="errors.bio" class="mt-1 text-xs text-red-500 font-mono">{{ errors.bio }}</p>
@@ -183,7 +290,7 @@
         <div class="flex flex-wrap justify-end gap-3">
           <button
             type="button"
-            class="px-5 py-2.5 border border-black/20 text-xs font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-colors"
+            class="px-5 py-2.5 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest hover:bg-primary/10 transition-colors rounded-lg"
             :disabled="isSaving"
             @click="resetForm"
           >
@@ -191,7 +298,7 @@
           </button>
           <button
             type="button"
-            class="px-6 py-2.5 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-primary transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            class="px-6 py-2.5 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed rounded-lg"
             :disabled="isSaving"
             @click="handleSubmit"
           >
@@ -212,6 +319,28 @@ import { useUserStore } from '@/stores/user'
 const userStore = useUserStore()
 const isSaving = ref(false)
 const showEditDialog = ref(false)
+const activeTab = ref('overview')
+
+/**
+ * 左侧导航标签配置
+ */
+const tabs = [
+  { id: 'overview', name: '概览' },
+  { id: 'activity', name: '活动记录' },
+  { id: 'settings', name: '账号设置' }
+]
+
+/**
+ * 根据积分计算用户等级
+ */
+const getUserLevel = (points) => {
+  const p = Number(points) || 0
+  if (p >= 4000) return 5
+  if (p >= 2000) return 4
+  if (p >= 1000) return 3
+  if (p >= 500) return 2
+  return 1
+}
 
 const form = reactive({
   username: '',
@@ -361,5 +490,27 @@ watch(() => form.bio, () => { if (touched.bio) validateBio() })
 :deep(.profile-edit-dialog .el-dialog) {
   border-radius: 20px;
   overflow: hidden;
+}
+
+:deep(.profile-edit-dialog .el-dialog__header) {
+  background: linear-gradient(to right, #2e7d32, #4caf50);
+  padding: 20px 24px;
+}
+
+:deep(.profile-edit-dialog .el-dialog__title) {
+  color: white;
+  font-weight: bold;
+}
+
+:deep(.profile-edit-dialog .el-dialog__headerbtn .el-dialog__close) {
+  color: white;
+}
+
+:deep(.profile-edit-dialog .el-dialog__body) {
+  padding: 30px 24px;
+}
+
+:deep(.profile-edit-dialog .el-dialog__footer) {
+  padding: 20px 24px 30px;
 }
 </style>
