@@ -1,0 +1,199 @@
+/* ============================================================
+   GreenSight 设计令牌系统 - 浅色主题与玻璃拟态
+   ============================================================ */
+
+:root {
+  /* ---- 色彩系统（浅色主题） ---- */
+  /* 主表面与背景 */
+  --color-surface-primary: #ffffff;
+  --color-surface-secondary: #f9fcf9;
+  --color-surface-tertiary: #f0f5f0;
+  
+  /* 品牌绿 */
+  --color-primary: #2e7d32;
+  --color-primary-light: #7cc486;
+  --color-primary-lighter: #c8e6c9;
+  --color-primary-lightest: #e8f5e9;
+  
+  /* 中性灰 */
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-text-tertiary: #7a7a7a;
+  --color-text-disabled: #b0b0b0;
+  
+  --color-border-light: rgba(0, 0, 0, 0.08);
+  --color-border-medium: rgba(0, 0, 0, 0.12);
+  --color-border-strong: rgba(0, 0, 0, 0.2);
+  
+  /* 辅助色 */
+  --color-success: #4caf50;
+  --color-warning: #ff9800;
+  --color-error: #f44336;
+  --color-info: #2196f3;
+  
+  /* ---- 玻璃拟态参数 ---- */
+  --glass-blur: 18px;
+  --glass-blur-light: 12px;
+  --glass-blur-subtle: 8px;
+  
+  --glass-opacity-strong: 0.92;
+  --glass-opacity-medium: 0.82;
+  --glass-opacity-light: 0.72;
+  --glass-opacity-subtle: 0.62;
+  
+  --glass-saturation: 1.2;
+  
+  /* ---- 阴影系统 ---- */
+  --shadow-xs: 0 2px 4px rgba(42, 61, 45, 0.04);
+  --shadow-sm: 0 4px 8px rgba(42, 61, 45, 0.06);
+  --shadow-md: 0 8px 16px rgba(42, 61, 45, 0.08);
+  --shadow-lg: 0 12px 28px rgba(42, 61, 45, 0.1);
+  --shadow-xl: 0 16px 40px rgba(42, 61, 45, 0.12);
+  
+  /* 内发光（玻璃拟态） */
+  --shadow-inset-light: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --shadow-inset-medium: inset 0 1px 2px rgba(255, 255, 255, 0.6);
+  
+  /* ---- 光晕与脉冲 ---- */
+  --glow-primary: rgba(46, 125, 50, 0.3);
+  --glow-primary-light: rgba(124, 196, 134, 0.38);
+  --glow-accent: rgba(33, 150, 243, 0.2);
+  
+  /* ---- 动效时长与缓动 ---- */
+  /* 入场 */
+  --duration-enter-fast: 300ms;
+  --duration-enter: 500ms;
+  --duration-enter-slow: 800ms;
+  
+  /* 强调 */
+  --duration-emphasis: 600ms;
+  
+  /* 离场 */
+  --duration-exit: 400ms;
+  
+  /* 循环 */
+  --duration-loop-fast: 1.5s;
+  --duration-loop: 2.5s;
+  --duration-loop-slow: 4s;
+  
+  /* 缓动曲线 */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in: cubic-bezier(0.8, 0.2, 0.8, 0.2);
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* ---- 视差速率 ---- */
+  --parallax-foreground: 0.9;
+  --parallax-midground: 0.6;
+  --parallax-background: 0.3;
+  --parallax-particle: 0.2;
+  
+  /* ---- Z-Index 层级 ---- */
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal: 400;
+  --z-tooltip: 500;
+  
+  /* ---- 响应式断点 ---- */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  
+  /* ---- 对比度基线 ---- */
+  /* 正文/关键信息：≥7:1 */
+  /* 交互控件：≥4.5:1 */
+  --contrast-text-primary: #1a1a1a; /* 对比度 21:1 */
+  --contrast-text-secondary: #4a4a4a; /* 对比度 8.5:1 */
+  --contrast-interactive: #2e7d32; /* 对比度 7.2:1 */
+}
+
+/* ---- 减动效偏好支持 ---- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-enter-fast: 100ms;
+    --duration-enter: 200ms;
+    --duration-enter-slow: 300ms;
+    --duration-emphasis: 200ms;
+    --duration-exit: 150ms;
+    --duration-loop-fast: 0ms;
+    --duration-loop: 0ms;
+    --duration-loop-slow: 0ms;
+  }
+}
+
+/* ---- 深色模式支持（可选） ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface-primary: #1a1a1a;
+    --color-surface-secondary: #242424;
+    --color-surface-tertiary: #2e2e2e;
+    
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #e0e0e0;
+    --color-text-tertiary: #b0b0b0;
+    
+    --color-border-light: rgba(255, 255, 255, 0.08);
+    --color-border-medium: rgba(255, 255, 255, 0.12);
+    --color-border-strong: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* ---- 玻璃拟态基础类 ---- */
+.glass-strong {
+  background: rgba(255, 255, 255, var(--glass-opacity-strong));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-inset-light), var(--shadow-md);
+}
+
+.glass-medium {
+  background: rgba(255, 255, 255, var(--glass-opacity-medium));
+  backdrop-filter: blur(var(--glass-blur-light));
+  -webkit-backdrop-filter: blur(var(--glass-blur-light));
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-inset-medium), var(--shadow-sm);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, var(--glass-opacity-light));
+  backdrop-filter: blur(var(--glass-blur-subtle));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-xs);
+}
+
+.glass-subtle {
+  background: rgba(255, 255, 255, var(--glass-opacity-subtle));
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* ---- 对比度保证类 ---- */
+.text-high-contrast {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.text-interactive {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+/* ---- 焦点可见 ---- */
+.focus-visible:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

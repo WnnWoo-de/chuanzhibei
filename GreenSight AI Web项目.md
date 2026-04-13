@@ -24,7 +24,6 @@
 | 认证 | JWT + Passport OAuth | jsonwebtoken ^9.0.3 |
 | 文件上传 | Multer | ^2.1.1 |
 | AI 服务 | GLM（智谱 AI）/ SiliconFlow | — |
-| 缓存 | Redis | ^4.6.0 |
 
 ### 1.3 项目结构
 
@@ -70,8 +69,6 @@ bisai/
     │   ├── init_db.js                # Node.js 初始化脚本
     │   └── mysql.md                  # 数据库完整使用手册
     ├── config/                 # 数据库及第三方认证配置（database.js / passport.js）
-    ├── utils/                  # 工具函数
-    │   └── redis.js              # Redis 连接工具
     └── server.js               # 应用入口
 ```
 
@@ -98,34 +95,19 @@ npm run build      # 生产环境构建
 npm run preview    # 预览生产构建
 ```
 
-## Redis 缓存系统
+## 天气查询
 
-项目新增的 Redis 功能：
+项目中新增的依赖：
 
 ```bash
-npm install redis
+npm install openmeteo
 ```
 
-### Redis 配置
+对应位置：
 
-在 `.env` 文件中添加 Redis 配置：
+- `package.json`
+- `package-lock.json`
 
-```env
-# Redis Configuration
-REDIS_URL=redis://localhost:6379
-REDIS_ENABLED=true
-```
-
-### 启动 Redis 服务
-
-Windows 系统：
-```bash
-# 方法一：使用 Redis 服务
-redis-server --service-start
-
-# 方法二：临时启动（仅用于开发测试）
-redis-server
-```
 
 #### 环境变量配置（`grennn_backend/.env`）
 
@@ -188,6 +170,30 @@ mysql -u root -p密码 -e "USE greenn_web; SHOW TABLES;"
 10. **天气查询**：进入 `/weather`，获取实时天气、5 天预报及空气质量指数（AQI）。
 11. **个人中心**：进入 `/profile`，查看头像、用户名、邮箱、环保积分及历史记录（需登录）。
 12. **账号设置**：进入 `/settings`，修改账号信息、偏好配置（需登录）。
+
+---
+
+## 二、路由结构
+
+| 路径 | 页面名称 | 权限要求 |
+|------|---------|----------|
+| `/` | 首页 | 无 |
+| `/auth/login` | 登录 | 仅游客 |
+| `/auth/register` | 注册 | 仅游客 |
+| `/auth/callback` | OAuth 回调 | 仅游客 |
+| `/reconstruction` | 旧物重构 | 无 |
+| `/chat` | AI 助手对话 | 无 |
+| `/chat/carbon-footprint` | 碳足迹分析 | 无 |
+| `/chat/waste-recognition` | 垃圾识别 | 无 |
+| `/achievements` | 成就系统 | **需登录** |
+| `/community` | 社区动态 | **需登录** |
+| `/volunteer` | 志愿者活动 | **需登录** |
+| `/weather` | 天气查询 | 无 |
+| `/profile` | 个人中心 | **需登录** |
+| `/settings` | 账号设置 | **需登录** |
+| `/:pathMatch(.*)` | 404 Not Found | 无 |
+
+> 路由守卫：未登录访问需鉴权页面时，自动重定向至 `/auth/login?redirect=原路径`；已登录访问 `guestOnly` 页面时，自动跳转至首页。
 
 ---
 
@@ -366,142 +372,7 @@ mysql -u root -p密码 -e "USE greenn_web; SHOW TABLES;"
 
 ---
 
-## 九、Redis 缓存系统
-
-### 9.1 功能说明
-
-项目新增了 Redis 缓存系统，用于：
-- 提升 API 响应速度
-- 减少数据库压力
-- 支持会话管理和数据缓存
-
-### 9.2 配置
-
-Redis 连接配置在 `utils/redis.js` 文件中：
-
-```javascript
-const redis = require('redis');
-
-let client = null;
-let isConnected = false;
-
-async function connectRedis() {
-    try {
-        const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-
-        client = redis.createClient({
-            url: redisUrl
-        });
-
-        client.on('error', (err) => {
-            console.error('Redis Client Error:', err);
-            isConnected = false;
-        });
-
-        client.on('connect', () => {
-            console.log('Redis Client Connecting...');
-        });
-
-        client.on('ready', () => {
-            console.log('Redis Client Ready');
-            isConnected = true;
-        });
-
-        client.on('end', () => {
-            console.log('Redis Client Disconnected');
-            isConnected = false;
-        });
-
-        await client.connect();
-        return client;
-    } catch (err) {
-        console.error('Failed to connect to Redis:', err);
-        isConnected = false;
-        throw err;
-    }
-}
-
-function getRedisClient() {
-    if (!client) {
-        throw new Error('Redis client not initialized. Call connectRedis() first.');
-    }
-    return client;
-}
-
-function isRedisConnected() {
-    return isConnected;
-}
-
-async function disconnectRedis() {
-    if (client) {
-        await client.quit();
-        isConnected = false;
-    }
-}
-
-module.exports = {
-    connectRedis,
-    getRedisClient,
-    isRedisConnected,
-    disconnectRedis
-};
-```
-
-### 9.3 使用方式
-
-Redis 连接会在服务器启动时自动建立：
-
-```javascript
-// server.js
-const { connectRedis, isRedisConnected } = require('./utils/redis');
-
-async function startServer() {
-    let dbReady = false;
-    let redisReady = false;
-
-    try {
-        await syncDatabase();
-        dbReady = true;
-    } catch (err) {
-        console.error('Database initialization failed:', err.message);
-        console.warn('Database is unavailable. Starting server with limited database features.');
-    }
-
-    try {
-        const redisEnabled = String(process.env.REDIS_ENABLED || '').toLowerCase() === 'true';
-        if (redisEnabled) {
-            await connectRedis();
-            redisReady = true;
-            console.log('Redis connection established.');
-        } else {
-            console.log('Redis is disabled by configuration.');
-        }
-    } catch (err) {
-        console.error('Redis connection failed:', err.message);
-        console.warn('Redis is unavailable. Starting server without Redis features.');
-    }
-
-    app.listen(PORT, () => {
-        const statusParts = [];
-        if (dbReady) {
-            statusParts.push('database');
-        }
-        if (redisReady) {
-            statusParts.push('Redis');
-        }
-
-        const statusText = statusParts.length > 0
-            ? ` (${statusParts.join(', ')})`
-            : ' (database and Redis unavailable)';
-
-        console.log(`Server running on port ${PORT}${statusText}`);
-    });
-}
-```
-
----
-
-## 十、相关文档索引
+## 九、相关文档索引
 
 | 文档 | 路径 | 说明 |
 |------|------|------|
@@ -512,3 +383,4 @@ async function startServer() {
 | 天气 API 说明 | `天气api.md` | 和风天气 API 接入指南 |
 | 快速启动指南 | `快速启动指南.md` | 一键启动步骤 |
 | 优化计划 | `grennn_web/.trae/documents/Optimization Plan for National Award Goal.md` | 国奖目标优化计划 |
+ 
