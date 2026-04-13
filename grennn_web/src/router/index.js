@@ -35,12 +35,14 @@ const router = createRouter({
     {
       path: '/auth/login',
       name: 'login',
-      redirect: '/auth',
+      component: () => import('../views/auth/AuthView.vue'),
+      meta: { guestOnly: true },
     },
     {
       path: '/auth/register',
       name: 'register',
-      redirect: '/auth',
+      component: () => import('../views/auth/AuthView.vue'),
+      meta: { guestOnly: true },
     },
     {
       path: '/auth/callback',

@@ -85,6 +85,16 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
+// 根据路由路径设置登录/注册模式
+const updateModeFromRoute = () => {
+  const path = route.path
+  if (path.includes('/register')) {
+    isLogin.value = false
+  } else {
+    isLogin.value = true
+  }
+}
+
 const toggleMode = () => {
   isLogin.value = !isLogin.value
   email.value = ''
@@ -203,6 +213,8 @@ watch(username, () => { if (touched.username) validateName() })
 watch(confirmPassword, () => { if (touched.confirmPassword) validateConfirmPassword() })
 
 onMounted(async () => {
+  updateModeFromRoute()
+
   const queryToken = route.query?.token || route.query?.access_token
   if (typeof queryToken !== 'string' || !queryToken) return
   isLoading.value = true
@@ -213,6 +225,14 @@ onMounted(async () => {
     router.replace(redirect || '/')
   }
 })
+
+// 监听路由变化，实时更新登录/注册模式
+watch(
+  () => route.path,
+  () => {
+    updateModeFromRoute()
+  }
+)
 </script>
 
 <style scoped>
