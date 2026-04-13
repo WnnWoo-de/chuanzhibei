@@ -150,7 +150,7 @@
       </div>
 
       <!-- Hero Badge -->
-      <div class="absolute left-4 top-8 z-20 inline-flex items-center gap-2 md:gap-3 rounded-full border border-white/85 bg-white/98 px-2.5 py-1.5 md:px-3 md:py-2 shadow-[0_20px_50px_rgba(171,190,176,0.16)] backdrop-blur-md md:left-6 md:top-24 scale-90 origin-top-left md:scale-100">
+      <div class="absolute left-4 top-8 z-20 inline-flex items-center gap-2 md:gap-3 rounded-full border border-white/85 bg-white/98 px-2.5 py-1.5 md:px-3 md:py-2 shadow-[0_20px_50px_rgba(171,190,176,0.16)] backdrop-blur-md md:left-4 md:top-6 scale-90 origin-top-left md:scale-100">
         <img
           src="/logo.png"
           alt="GreenSight logo"
