@@ -22,7 +22,18 @@
 
               <form v-if="isLogin" @submit.prevent="handleLogin" class="space-y-6">
                 <BaseInput id="email" v-model="email" type="text" label="邮箱或用户名" placeholder="请输入邮箱或用户名" autocomplete="username" inputmode="text" :error="errors.email" required @blur="validateEmail" />
-                <BaseInput id="password" v-model="password" type="password" label="密码" placeholder="••••••••" :error="errors.password" required @blur="validatePassword" />
+                <div class="space-y-4">
+                  <BaseInput id="password" v-model="password" type="password" label="密码" placeholder="••••••••" :error="errors.password" required @blur="validatePassword" />
+                  <!-- 忘记密码链接 -->
+                  <div class="text-right">
+                    <router-link
+                      :to="{ name: 'forgot-password' }"
+                      class="text-xs text-green-600 hover:text-green-700 hover:underline transition-colors"
+                    >
+                      忘记密码？
+                    </router-link>
+                  </div>
+                </div>
                 <BaseButton type="submit" class="w-full" :is-loading="isLoading">登录</BaseButton>
               </form>
 

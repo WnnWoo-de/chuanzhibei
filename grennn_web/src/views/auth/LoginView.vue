@@ -38,17 +38,28 @@
           />
 
           <!-- 密码输入框 -->
-          <BaseInput
-            id="password"
-            v-model="password"
-            type="password"
-            label="密码"
-            placeholder="••••••••"
-            autocomplete="current-password"
-            :error="errors.password"
-            required
-            @blur="validatePassword"
-          />
+          <div class="space-y-4">
+            <BaseInput
+              id="password"
+              v-model="password"
+              type="password"
+              label="密码"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              :error="errors.password"
+              required
+              @blur="validatePassword"
+            />
+            <!-- 忘记密码链接 -->
+            <div class="text-right">
+              <router-link
+                :to="{ name: 'forgot-password' }"
+                class="text-xs text-green-600 hover:text-green-700 hover:underline transition-colors"
+              >
+                忘记密码？
+              </router-link>
+            </div>
+          </div>
 
           <!-- 提交按钮：加载中显示 spinner -->
           <div>

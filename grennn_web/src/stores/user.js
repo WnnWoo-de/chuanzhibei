@@ -283,6 +283,49 @@ export const useUserStore = defineStore('user', () => {
   }
 
   /**
+   * 验证邮箱是否存在（用于密码重置）
+   * @param {string} email - 邮箱
+   * @param {object} options - { silent: 是否静默（不弹提示） }
+   * @returns {{ ok: boolean, message: string, fieldErrors: object, resetToken?: string }}
+   */
+  const verifyEmail = async (email, { silent } = {}) => {
+    const result = await requestAxios(() => axios.post('/api/v1/auth/verify-email', { email }), {
+      fallbackMessage: '验证邮箱失败',
+    })
+    if (!result.ok) {
+      if (!silent && Object.keys(result.fieldErrors).length === 0) ElMessage.error(result.message)
+      return { ok: false, message: result.message, fieldErrors: result.fieldErrors }
+    }
+
+    if (!silent) ElMessage.success('邮箱验证成功，可继续重置密码')
+    return {
+      ok: true,
+      message: '',
+      resetToken: result.data?.reset_token || 'temp-token' // 临时 token，实际项目中应该由后端生成
+    }
+  }
+
+  /**
+   * 重置密码
+   * @param {string} email - 邮箱
+   * @param {string} newPassword - 新密码
+   * @param {object} options - { silent: 是否静默（不弹提示） }
+   * @returns {{ ok: boolean, message: string, fieldErrors: object }}
+   */
+  const resetPassword = async (email, newPassword, { silent } = {}) => {
+    const result = await requestAxios(() => axios.post('/api/v1/auth/reset-password', { email, password: newPassword }), {
+      fallbackMessage: '重置密码失败',
+    })
+    if (!result.ok) {
+      if (!silent && Object.keys(result.fieldErrors).length === 0) ElMessage.error(result.message)
+      return { ok: false, message: result.message, fieldErrors: result.fieldErrors }
+    }
+
+    if (!silent) ElMessage.success('密码已重置成功，请重新登录')
+    return { ok: true, message: '' }
+  }
+
+  /**
    * 用户登出
    * 清空 Token 和用户信息，触发全局登出事件
    * @param {object} options - { silent: true 为静默登出（Token 过期场景） }
@@ -395,6 +438,8 @@ export const useUserStore = defineStore('user', () => {
     updateProfile,
     login,
     register,
+    verifyEmail,
+    resetPassword,
     logout,
     addPoints,
     unlockBadge,
