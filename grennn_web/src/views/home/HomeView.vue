@@ -673,24 +673,24 @@
       <div class="flex whitespace-nowrap animate-marquee">
         <!-- 第一组内容 -->
         <div class="flex items-center shrink-0">
-          <span class="text-[4vw] font-bold mx-8">绿色 AI WEB</span>
-          <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续</span>
-          <span class="text-[4vw] font-bold mx-8">重构</span>
+          <span class="text-[4vw] font-bold mx-8">GreenSight AI WEB</span>
+          <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续发展</span>
+           <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续绿色生态</span>
+          <span class="text-[4vw] font-bold mx-8">旧物重构</span>
           <span class="text-[4vw] font-bold mx-8 text-gray-500">社区</span>
-          <span class="text-[4vw] font-bold mx-8">绿色 AI WEB</span>
+          <span class="text-[4vw] font-bold mx-8">GreenSight-绿我同行 AI WEB</span>
           <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续</span>
-          <span class="text-[4vw] font-bold mx-8">重构</span>
-          <span class="text-[4vw] font-bold mx-8 text-gray-500">社区</span>
+          <span class="text-[4vw] font-bold mx-8">旧物重构</span>
+          <span class="text-[4vw] font-bold mx-8 text-gray-500">社区活动</span>
         </div>
         <!-- 第二组内容 (用于无缝循环) -->
         <div class="flex items-center shrink-0">
-          <span class="text-[4vw] font-bold mx-8">绿色 AI WEB</span>
+          <span class="text-[4vw] font-bold mx-8">GreenSight AI WEB</span>
           <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续</span>
-          <span class="text-[4vw] font-bold mx-8">重构</span>
           <span class="text-[4vw] font-bold mx-8 text-gray-500">社区</span>
-          <span class="text-[4vw] font-bold mx-8">绿色 AI WEB</span>
+          <span class="text-[4vw] font-bold mx-8">GreenSight-绿我同行 AI WEB</span>
           <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续</span>
-          <span class="text-[4vw] font-bold mx-8">重构</span>
+          <span class="text-[4vw] font-bold mx-8">旧物重构</span>
           <span class="text-[4vw] font-bold mx-8 text-gray-500">社区</span>
         </div>
       </div>
