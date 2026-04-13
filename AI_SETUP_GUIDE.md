@@ -73,3 +73,23 @@ npm run dev
 - 上传图片后，会调用硅基流动的 Qwen2-VL-72B-Instruct 视觉模型进行识别
 - 识别结果会保存到数据库
 - 支持四种分类：可回收物、有害垃圾、厨余垃圾、其他垃圾
+
+-
+
+🌐 测试路径
+路径 1: 使用 FastAPI 文档 (当前页面)
+
+在 http://127.0.0.1:8002/docs 测试
+路径 2: 使用前端页面
+
+访问 http://127.0.0.1:5173
+点击 AI 助手 → AI 识别
+上传图片测试
+路径 3: 使用 Postman 等工具
+
+
+POST http://127.0.0.1:8002/api/ai/predict
+Content-Type: multipart/form-data
+
+Body: file 选择图片
+-
