@@ -150,35 +150,35 @@
       </div>
 
       <!-- Hero Badge -->
-      <div class="absolute left-4 top-8 z-20 inline-flex items-center gap-2 md:gap-3 rounded-full border border-white/85 bg-white/98 px-2.5 py-1.5 md:px-3 md:py-2 shadow-[0_20px_50px_rgba(171,190,176,0.16)] backdrop-blur-md md:left-4 md:top-6 scale-90 origin-top-left md:scale-100">
+      <div class="absolute left-3 sm:left-4 top-6 sm:top-8 z-20 inline-flex items-center gap-1.5 sm:gap-2 md:gap-3 rounded-full border border-white/85 bg-white/98 px-2 py-1 sm:px-2.5 sm:py-1.5 md:px-3 md:py-2 shadow-[0_20px_50px_rgba(171,190,176,0.16)] backdrop-blur-md scale-75 sm:scale-90 md:scale-100 origin-top-left">
         <img
           src="/logo.png"
           alt="GreenSight logo"
-          class="h-12 w-12 rounded-2xl bg-white p-1 object-contain shadow-sm"
+          class="h-9 sm:h-12 w-9 sm:w-12 rounded-xl sm:rounded-2xl bg-white p-0.5 sm:p-1 object-contain shadow-sm"
         />
         <div>
-          <p class="text-[11px] font-mono uppercase tracking-[0.35em] text-emerald-700/60">Green platform</p>
-          <p class="text-sm font-semibold text-[#163126]">GreenSight-绿我同行</p>
+          <p class="text-[9px] sm:text-[11px] font-mono uppercase tracking-[0.3em] sm:tracking-[0.35em] text-emerald-700/60">Green platform</p>
+          <p class="text-xs sm:text-sm font-semibold text-[#163126]">GreenSight-绿我同行</p>
         </div>
       </div>
 
       <!-- Carousel Content -->
       <div class="relative z-10 flex h-full flex-col justify-center pt-20 sm:pt-20 lg:pt-0">
         <div class="grid grid-cols-1 items-center gap-5 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
-          <div class="flex flex-col justify-center lg:h-full lg:min-h-[420px] lg:pr-6">
-            <div class="mt-4 sm:mt-2 overflow-hidden lg:-mt-10">
-              <p class="text-[10px] md:text-xs font-mono uppercase tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
-              <div class="mt-3 sm:mt-6 space-y-1.5 sm:space-y-3">
-                <p class="font-mono text-[15px] leading-snug md:leading-tight text-emerald-600 sm:min-h-[3rem] sm:text-2xl">
-                  {{ typedBrandLines[0] }}<span v-if="activeTypingLine === 0" class="typing-caret ml-1 inline-block h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
+          <div class="flex flex-col justify-center min-h-[280px] sm:min-h-[320px] lg:h-full lg:min-h-[420px] lg:pr-6">
+            <div class="mt-4 sm:mt-2 overflow-hidden flex-1 flex flex-col justify-center">
+              <p class="text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] sm:tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
+              <div class="mt-2 sm:mt-3 sm:mt-6 space-y-1 sm:space-y-1.5 sm:space-y-3">
+                <p class="font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600 min-h-[2.5rem] sm:min-h-[3rem]">
+                  {{ typedBrandLines[0] }}<span v-if="activeTypingLine === 0" class="typing-caret ml-1 inline-block h-3 sm:h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
                 </p>
-                <p class="font-mono text-[15px] leading-snug md:leading-tight text-emerald-600/85 sm:min-h-[3rem] sm:text-2xl">
-                  {{ typedBrandLines[1] }}<span v-if="activeTypingLine === 1" class="typing-caret ml-1 inline-block h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
+                <p class="font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600/85 min-h-[2.5rem] sm:min-h-[3rem]">
+                  {{ typedBrandLines[1] }}<span v-if="activeTypingLine === 1" class="typing-caret ml-1 inline-block h-3 sm:h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
                 </p>
               </div>
             </div>
 
-            <div class="mt-4 sm:mt-6 pt-1 md:pt-2 lg:mt-6 lg:pt-0">
+            <div class="mt-3 sm:mt-4 sm:mt-6 pt-1 md:pt-2 lg:mt-6 lg:pt-0">
               <div class="flex flex-wrap gap-1.5 sm:gap-3">
                 <span class="glass-tag glass-tag--emerald group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-2.5 py-1 md:px-4 md:py-2 text-[10px] md:text-sm font-semibold text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70">
                   <span class="glass-tag__pulse"></span>
@@ -227,25 +227,25 @@
             <transition name="hero-fade" mode="out-in">
               <div
                 :key="currentSlide"
-                class="flex flex-col justify-center pl-0 sm:pl-10 lg:min-h-[420px] lg:pl-14"
+                class="flex flex-col justify-center pl-0 sm:pl-10 min-h-[280px] sm:min-h-[320px] lg:min-h-[420px] lg:pl-14"
               >
-                <p class="text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] text-emerald-600/50">
+                <p class="text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.35em] sm:tracking-[0.4em] text-emerald-600/50">
                   0{{ currentSlide + 1 }} / 0{{ slides.length }}
                 </p>
-                <p class="mt-2 text-[10px] sm:mt-6 sm:text-sm font-semibold uppercase tracking-[0.3em] text-emerald-600/60">
+                <p class="mt-2 sm:mt-6 text-[9px] sm:text-[10px] sm:text-sm font-semibold uppercase tracking-[0.25em] sm:tracking-[0.3em] text-emerald-600/60">
                   {{ slides[currentSlide].subtitle }}
                 </p>
                 <h2
                   class="mt-2 sm:mt-5 max-w-xl font-bold leading-tight tracking-tight text-[#214336]"
-                  :class="currentSlide === 0 ? 'text-xl md:text-3xl lg:text-4xl' : currentSlide === 1 ? 'text-2xl md:text-4xl lg:text-5xl' : 'text-2xl md:text-5xl lg:text-6xl'"
+                  :class="currentSlide === 0 ? 'text-lg sm:text-xl md:text-3xl lg:text-4xl' : currentSlide === 1 ? 'text-xl sm:text-2xl md:text-4xl lg:text-5xl' : 'text-xl sm:text-2xl md:text-5xl lg:text-6xl'"
                 >
                   {{ slides[currentSlide].title }}
                 </h2>
-                <p class="mt-3 sm:mt-6 max-w-xl text-[13px] md:text-base leading-relaxed text-[#5f7f70] md:text-lg line-clamp-3 md:line-clamp-none">
+                <p class="mt-3 sm:mt-6 max-w-xl text-[12px] sm:text-[13px] md:text-base leading-relaxed text-[#5f7f70] md:text-lg line-clamp-3 md:line-clamp-none">
                   {{ slides[currentSlide].description }}
                 </p>
 
-                <div class="mt-5 md:mt-10 flex flex-wrap items-center gap-4">
+                <div class="mt-5 sm:mt-10 flex flex-wrap items-center gap-4">
                   <a
                     v-if="slides[currentSlide].link.startsWith('#')"
                     :href="slides[currentSlide].link"
@@ -805,32 +805,57 @@ const startTypewriter = () => {
 
   let lineIndex = 0
   let charIndex = 0
+  let isPaused = false
+  let isDeleting = false
   typedBrandLines.value = ['', '']
   activeTypingLine.value = 0
 
-  typingInterval = setInterval(() => {
+  const tick = () => {
     const currentLine = brandLines[lineIndex]
 
-    if (charIndex < currentLine.length) {
-      typedBrandLines.value[lineIndex] += currentLine[charIndex]
-      typedBrandLines.value = [...typedBrandLines.value]
-      charIndex += 1
+    if (isPaused) {
       return
     }
 
-    if (lineIndex < brandLines.length - 1) {
-      lineIndex += 1
-      charIndex = 0
-      activeTypingLine.value = lineIndex
+    if (!isDeleting) {
+      // 打字阶段
+      if (charIndex < currentLine.length) {
+        typedBrandLines.value[lineIndex] += currentLine[charIndex]
+        typedBrandLines.value = [...typedBrandLines.value]
+        charIndex += 1
+        return
+      }
+
+      // 打字完成，暂停一段时间后开始删除
+      isPaused = true
+      typingRestartTimeout = setTimeout(() => {
+        isPaused = false
+        isDeleting = true
+      }, 1500)
+      return
+    } else {
+      // 删除阶段
+      if (charIndex > 0) {
+        typedBrandLines.value[lineIndex] = currentLine.substring(0, charIndex - 1)
+        typedBrandLines.value = [...typedBrandLines.value]
+        charIndex -= 1
+        return
+      }
+
+      // 删除完成，暂停一段时间后切换到下一行
+      isPaused = true
+      isDeleting = false
+      typingRestartTimeout = setTimeout(() => {
+        isPaused = false
+        lineIndex = (lineIndex + 1) % brandLines.length
+        charIndex = 0
+        activeTypingLine.value = lineIndex
+      }, 500)
       return
     }
+  }
 
-    clearInterval(typingInterval)
-    typingInterval = null
-    typingRestartTimeout = setTimeout(() => {
-      startTypewriter()
-    }, 1800)
-  }, 90)
+  typingInterval = setInterval(tick, 90)
 }
 
 const checkFirstVisit = () => {
