@@ -1,127 +1,130 @@
 <template>
-  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-24 px-6 pb-12">
-    <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6">
+  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-20 sm:pt-24 px-4 sm:px-6 lg:px-8 pb-10 sm:pb-12">
+    <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-3 sm:gap-4 pointer-events-none opacity-10 z-0 px-4 sm:px-6 lg:px-8">
       <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
       <div v-for="n in 4" :key="`m-${n}`" class="border-r border-black h-full block md:hidden col-span-3"></div>
     </div>
 
-    <div class="relative z-10 mx-auto max-w-[1480px] grid grid-cols-12 gap-6 xl:gap-8">
-      <div class="col-span-12 md:col-span-4 xl:col-span-3">
-        <div class="sticky top-24 space-y-6">
-          <router-link
-            to="/chat"
-            class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-primary transition-opacity mb-8"
-          >
-            <span>&larr; 返回 AI 助手</span>
-          </router-link>
+    <div class="carbon-shell relative z-10 mx-auto max-w-[1520px]">
+      <div class="carbon-page-grid">
+        <aside class="carbon-sidebar">
+          <div class="carbon-sidebar__inner space-y-6">
+            <router-link
+              to="/chat"
+              class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-primary transition-opacity mb-4 sm:mb-6"
+            >
+              <span>&larr; 返回 AI 助手</span>
+            </router-link>
 
-          <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-6">碳足迹<br />速算器</h1>
-          <p class="text-sm opacity-60 max-w-[240px] mb-8 leading-6">
-            用常见生活行为快速估算今日碳排放，并结合可视图与绿色出行建议，帮你更直观地看到减排方向。
-          </p>
+            <div class="carbon-hero-card carbon-card p-6 md:p-7 xl:p-8">
+              <h1 class="text-4xl md:text-5xl xl:text-[3.4rem] font-bold leading-[0.95] mt-2 mb-5">碳足迹<br />速算器</h1>
+              <p class="text-sm opacity-60 max-w-[32rem] xl:max-w-[240px] mb-6 leading-6">
+                用常见生活行为快速估算今日碳排放，并结合可视图与绿色出行建议，帮你更直观地看到减排方向。
+              </p>
 
-          <div class="hidden md:block text-xs font-mono opacity-40 space-y-2">
-            <p>维度：交通 / 用电 / 饮食</p>
-            <p>模型：本地估算</p>
-            <p>单位：kg CO₂e / 日</p>
+              <div class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-3 text-xs font-mono opacity-50">
+                <p class="carbon-meta-pill">维度：交通 / 用电 / 饮食</p>
+                <p class="carbon-meta-pill">模型：本地估算</p>
+                <p class="carbon-meta-pill">单位：kg CO₂e / 日</p>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </aside>
 
-      <div class="col-span-12 md:col-span-8 xl:col-span-9">
-        <div class="grid grid-cols-1 2xl:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] gap-6 xl:gap-8 items-start">
-          <section class="carbon-card carbon-card--form p-6 md:p-8 xl:p-9">
-            <div class="flex items-center justify-between mb-8 gap-4 flex-wrap">
-              <div>
-                <p class="font-mono text-xs uppercase tracking-[0.25em] opacity-40 mb-2">Footprint Input</p>
-                <h2 class="text-2xl font-bold">填写今天的生活数据</h2>
-              </div>
-              <button
-                @click="resetForm"
-                class="px-4 py-2 border border-black/15 text-xs font-mono uppercase hover:bg-black hover:text-white transition-colors rounded-full"
-              >
-                重置
-              </button>
-            </div>
-
-            <div class="space-y-8">
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 auto-rows-fr">
-                <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
-                  <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Commute</p>
-                  <div class="text-2xl font-bold">{{ commuteKm }} km</div>
-                  <p class="text-sm text-black/50 mt-1">{{ commuteModeLabel }}</p>
+        <section class="carbon-main">
+          <div class="carbon-dashboard">
+            <section class="carbon-card carbon-card--form carbon-card--feature p-5 sm:p-6 md:p-8 xl:p-9">
+              <div class="flex items-center justify-between mb-8 gap-4 flex-wrap">
+                <div>
+                  <p class="font-mono text-xs uppercase tracking-[0.25em] opacity-40 mb-2">Footprint Input</p>
+                  <h2 class="text-2xl font-bold">填写今天的生活数据</h2>
                 </div>
-                <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
-                  <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Electricity</p>
-                  <div class="text-2xl font-bold">{{ electricityKwh }} kWh</div>
-                  <p class="text-sm text-black/50 mt-1">家庭日常用电输入</p>
-                </div>
-                <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
-                  <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Diet</p>
-                  <div class="text-2xl font-bold">{{ meatMeals }} 餐</div>
-                  <p class="text-sm text-black/50 mt-1">高碳饮食次数</p>
-                </div>
+                <button
+                  @click="resetForm"
+                  class="px-4 py-2 border border-black/15 text-xs font-mono uppercase hover:bg-black hover:text-white transition-colors rounded-full"
+                >
+                  重置
+                </button>
               </div>
 
-              <div>
-                <div class="flex items-center justify-between mb-3 flex-wrap gap-3">
-                  <label class="font-bold">快速场景</label>
-                  <span class="text-xs font-mono opacity-45">一键套用日常模板</span>
+              <div class="space-y-8">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 auto-rows-fr">
+                  <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
+                    <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Commute</p>
+                    <div class="text-2xl font-bold">{{ commuteKm }} km</div>
+                    <p class="text-sm text-black/50 mt-1">{{ commuteModeLabel }}</p>
+                  </div>
+                  <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
+                    <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Electricity</p>
+                    <div class="text-2xl font-bold">{{ electricityKwh }} kWh</div>
+                    <p class="text-sm text-black/50 mt-1">家庭日常用电输入</p>
+                  </div>
+                  <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
+                    <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Diet</p>
+                    <div class="text-2xl font-bold">{{ meatMeals }} 餐</div>
+                    <p class="text-sm text-black/50 mt-1">高碳饮食次数</p>
+                  </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <button
-                    v-for="preset in carbonPresets"
-                    :key="preset.key"
-                    @click="applyPreset(preset)"
-                    class="transport-option px-3 py-3 text-left rounded-2xl transition-all"
-                    :class="activePresetKey === preset.key ? 'transport-option--active' : 'transport-option--idle'"
-                  >
-                    <p class="text-xs font-mono uppercase tracking-[0.12em] mb-1 text-black/45">{{ preset.label }}</p>
-                    <p class="text-sm text-black/65">{{ preset.desc }}</p>
-                  </button>
+
+                <div>
+                  <div class="flex items-center justify-between mb-3 flex-wrap gap-3">
+                    <label class="font-bold">快速场景</label>
+                    <span class="text-xs font-mono opacity-45">一键套用日常模板</span>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button
+                      v-for="preset in carbonPresets"
+                      :key="preset.key"
+                      @click="applyPreset(preset)"
+                      class="transport-option px-3 py-3 text-left rounded-2xl transition-all"
+                      :class="activePresetKey === preset.key ? 'transport-option--active' : 'transport-option--idle'"
+                    >
+                      <p class="text-xs font-mono uppercase tracking-[0.12em] mb-1 text-black/45">{{ preset.label }}</p>
+                      <p class="text-sm text-black/65">{{ preset.desc }}</p>
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <label class="font-bold">通勤距离</label>
+                    <span class="text-xs font-mono opacity-50">{{ commuteKm }} km</span>
+                  </div>
+                  <input v-model="commuteKm" type="range" min="0" max="80" class="w-full accent-green-700" />
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button
+                      v-for="option in commuteModes"
+                      :key="option.value"
+                      @click="commuteMode = option.value"
+                      class="transport-option px-3 py-3 text-sm rounded-2xl transition-all"
+                      :class="commuteMode === option.value ? 'transport-option--active' : 'transport-option--idle'"
+                    >
+                      {{ option.label }}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <label class="font-bold">家庭用电</label>
+                    <span class="text-xs font-mono opacity-50">{{ electricityKwh }} kWh</span>
+                  </div>
+                  <input v-model="electricityKwh" type="range" min="0" max="30" step="0.5" class="w-full accent-green-700" />
+                </div>
+
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <label class="font-bold">肉类餐食</label>
+                    <span class="text-xs font-mono opacity-50">{{ meatMeals }} 餐</span>
+                  </div>
+                  <input v-model="meatMeals" type="range" min="0" max="6" class="w-full accent-green-700" />
                 </div>
               </div>
+            </section>
 
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <label class="font-bold">通勤距离</label>
-                  <span class="text-xs font-mono opacity-50">{{ commuteKm }} km</span>
-                </div>
-                <input v-model="commuteKm" type="range" min="0" max="80" class="w-full accent-green-700" />
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <button
-                    v-for="option in commuteModes"
-                    :key="option.value"
-                    @click="commuteMode = option.value"
-                    class="transport-option px-3 py-3 text-sm rounded-2xl transition-all"
-                    :class="commuteMode === option.value ? 'transport-option--active' : 'transport-option--idle'"
-                  >
-                    {{ option.label }}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <label class="font-bold">家庭用电</label>
-                  <span class="text-xs font-mono opacity-50">{{ electricityKwh }} kWh</span>
-                </div>
-                <input v-model="electricityKwh" type="range" min="0" max="30" step="0.5" class="w-full accent-green-700" />
-              </div>
-
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <label class="font-bold">肉类餐食</label>
-                  <span class="text-xs font-mono opacity-50">{{ meatMeals }} 餐</span>
-                </div>
-                <input v-model="meatMeals" type="range" min="0" max="6" class="w-full accent-green-700" />
-              </div>
-            </div>
-          </section>
-
-          <div class="stacked-cards space-y-6">
-            <section class="carbon-card carbon-card--result p-6 md:p-8">
-              <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.14),transparent_32%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.10),transparent_28%)]"></div>
+            <div class="stacked-cards carbon-section-stack">
+              <section class="carbon-card carbon-card--result carbon-card--feature p-5 sm:p-6 md:p-8">
+                <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.14),transparent_32%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.10),transparent_28%)]"></div>
 
               <div class="relative z-10">
                 <p class="font-mono text-xs uppercase tracking-[0.25em] text-black/40 mb-2">Daily Result</p>
@@ -173,7 +176,7 @@
               </div>
             </section>
 
-            <section class="carbon-card p-6 md:p-8">
+            <section class="carbon-card carbon-card--feature p-5 sm:p-6 md:p-8">
               <div class="flex items-center justify-between gap-4 flex-wrap mb-6">
                 <div>
                   <p class="font-mono text-xs uppercase tracking-[0.25em] text-black/35 mb-2">Visual Insight</p>
@@ -257,7 +260,7 @@
               </div>
             </section>
 
-            <section class="carbon-card p-6 md:p-8">
+            <section class="carbon-card carbon-card--feature p-5 sm:p-6 md:p-8">
               <div class="flex items-center justify-between gap-4 flex-wrap mb-6">
                 <div>
                   <p class="font-mono text-xs uppercase tracking-[0.25em] text-black/35 mb-2">Weekly Goal</p>
@@ -302,7 +305,7 @@
               </div>
             </section>
 
-            <section class="carbon-card p-6 md:p-8">
+            <section class="carbon-card carbon-card--feature p-5 sm:p-6 md:p-8">
               <div class="flex items-center justify-between gap-4 flex-wrap mb-6">
                 <div>
                   <p class="font-mono text-xs uppercase tracking-[0.25em] text-black/35 mb-2">Green Commute</p>
@@ -401,7 +404,7 @@
               </ul>
             </section>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   </div>
@@ -911,6 +914,44 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.carbon-shell {
+  --carbon-gap: clamp(1rem, 1.3vw, 1.75rem);
+}
+
+.carbon-page-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--carbon-gap);
+  align-items: start;
+}
+
+.carbon-sidebar {
+  min-width: 0;
+}
+
+.carbon-sidebar__inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.carbon-main,
+.carbon-dashboard,
+.carbon-section-stack {
+  min-width: 0;
+}
+
+.carbon-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--carbon-gap);
+  align-items: start;
+}
+
+.carbon-section-stack {
+  display: grid;
+  gap: var(--carbon-gap);
+}
+
 .carbon-card {
   position: relative;
   border: 1px solid rgba(21, 48, 33, 0.1);
@@ -938,6 +979,25 @@ onUnmounted(() => {
 
 .carbon-card--result {
   color: #17201a;
+}
+
+.carbon-card--feature {
+  min-width: 0;
+  height: 100%;
+}
+
+.carbon-hero-card {
+  background:
+    radial-gradient(circle at top right, rgba(74, 222, 128, 0.14), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 250, 245, 0.92));
+}
+
+.carbon-meta-pill {
+  border: 1px solid rgba(21, 48, 33, 0.09);
+  border-radius: 9999px;
+  padding: 0.75rem 0.95rem;
+  background: rgba(255, 255, 255, 0.74);
+  backdrop-filter: blur(8px);
 }
 
 .summary-chip {
@@ -1046,9 +1106,54 @@ onUnmounted(() => {
   }
 }
 
+@media (min-width: 1024px) {
+  .carbon-page-grid {
+    grid-template-columns: minmax(280px, 0.88fr) minmax(0, 1.62fr);
+  }
+
+  .carbon-sidebar__inner {
+    position: sticky;
+    top: 6rem;
+  }
+}
+
 @media (min-width: 1280px) {
+  .carbon-page-grid {
+    grid-template-columns: minmax(300px, 0.82fr) minmax(0, 1.68fr);
+  }
+
+  .carbon-dashboard {
+    grid-template-columns: minmax(0, 1.06fr) minmax(320px, 0.94fr);
+  }
+
+  .carbon-card--form {
+    min-height: 100%;
+  }
+
   .stacked-cards {
-    padding-top: 20px;
+    padding-top: 10px;
+  }
+
+  .stacked-cards > section:nth-child(2) {
+    margin-left: 10px;
+  }
+
+  .stacked-cards > section:nth-child(3) {
+    margin-right: 8px;
+  }
+
+  .stacked-cards > section:nth-child(4) {
+    margin-left: 16px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .carbon-dashboard {
+    grid-template-columns: minmax(0, 1.12fr) minmax(360px, 0.88fr);
+  }
+
+  .stacked-cards {
+    padding-top: 18px;
   }
 
   .stacked-cards > section:nth-child(2) {
@@ -1061,6 +1166,32 @@ onUnmounted(() => {
 
   .stacked-cards > section:nth-child(4) {
     margin-left: 28px;
+  }
+}
+
+@media (max-width: 1279px) {
+  .stacked-cards > section {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .carbon-hero-card {
+    border-radius: 22px;
+  }
+
+  .carbon-meta-pill {
+    border-radius: 18px;
+  }
+
+  .summary-chip,
+  .action-card,
+  .tip-card,
+  .insight-metric-card,
+  .transport-option,
+  .carbon-card {
+    border-radius: 22px;
   }
 }
 
