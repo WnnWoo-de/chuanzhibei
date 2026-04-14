@@ -72,7 +72,7 @@
             </li>
             <li>
               <router-link to="/chat" class="group inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-green-600 transition-all">
-                <span>智能助手</span>
+                <span>GreenSight-AI助手</span>
                 <span class="-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">↗</span>
               </router-link>
             </li>

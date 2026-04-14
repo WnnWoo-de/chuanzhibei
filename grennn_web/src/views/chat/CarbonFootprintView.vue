@@ -1,183 +1,127 @@
 <template>
-  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-20 sm:pt-24 px-4 sm:px-6 lg:px-8 pb-10 sm:pb-12">
-    <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-3 sm:gap-4 pointer-events-none opacity-10 z-0 px-4 sm:px-6 lg:px-8">
+  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-22 px-5 pb-10 xl:px-6">
+    <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6">
       <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
       <div v-for="n in 4" :key="`m-${n}`" class="border-r border-black h-full block md:hidden col-span-3"></div>
     </div>
 
-    <div class="carbon-shell relative z-10 mx-auto max-w-[1520px]">
-      <div class="carbon-page-grid">
-        <aside class="carbon-sidebar">
-          <div class="carbon-sidebar__inner space-y-6">
-            <router-link
-              to="/chat"
-              class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-primary transition-opacity mb-4 sm:mb-6"
-            >
-              <span>&larr; 返回 AI 助手</span>
-            </router-link>
+    <div class="relative z-10 mx-auto max-w-[1480px] grid grid-cols-12 gap-5 xl:gap-6">
+      <div class="col-span-12 md:col-span-4 xl:col-span-3">
+        <div class="sticky top-24 space-y-5">
+          <router-link
+            to="/chat"
+            class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-primary transition-opacity mb-8"
+          >
+            <span>&larr; 返回 AI 助手</span>
+          </router-link>
 
-            <div class="carbon-hero-card carbon-card p-6 md:p-7 xl:p-8">
-              <h1 class="text-4xl md:text-5xl xl:text-[3.4rem] font-bold leading-[0.95] mt-2 mb-5">碳足迹<br />速算器</h1>
-              <p class="text-sm opacity-60 max-w-[32rem] xl:max-w-[240px] mb-6 leading-6">
-                用常见生活行为快速估算今日碳排放，并结合可视图与绿色出行建议，帮你更直观地看到减排方向。
-              </p>
+          <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-6">碳足迹<br />速算器</h1>
+          <p class="text-sm opacity-60 max-w-[240px] mb-8 leading-6">
+            用常见生活行为快速估算今日碳排放，并结合可视图与绿色出行建议，帮你更直观地看到减排方向。
+          </p>
 
-              <div class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-3 text-xs font-mono opacity-50">
-                <p class="carbon-meta-pill">维度：交通 / 用电 / 饮食</p>
-                <p class="carbon-meta-pill">模型：本地估算</p>
-                <p class="carbon-meta-pill">单位：kg CO₂e / 日</p>
+          <div class="hidden md:block text-xs font-mono opacity-40 space-y-2">
+            <p>维度：交通 / 用电 / 饮食</p>
+            <p>模型：本地估算</p>
+            <p>单位：kg CO₂e / 日</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-span-12 md:col-span-8 xl:col-span-9">
+        <div class="carbon-core-layout">
+          <section class="carbon-card carbon-card--form carbon-card--primary p-4 md:p-5 xl:p-5.5">
+            <div class="flex items-center justify-between mb-5 gap-4 flex-wrap">
+              <div>
+                <p class="font-mono text-xs uppercase tracking-[0.25em] opacity-40 mb-2">Footprint Input</p>
+                <h2 class="text-2xl font-bold">填写今天的生活数据</h2>
+              </div>
+              <button
+                @click="resetForm"
+                class="px-4 py-2 border border-black/15 text-xs font-mono uppercase hover:bg-black hover:text-white transition-colors rounded-full"
+              >
+                重置
+              </button>
+            </div>
+
+            <div class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 auto-rows-fr">
+                <div class="summary-chip rounded-[20px] px-3.5 py-3 h-full min-h-[88px] flex flex-col justify-between">
+                  <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Commute</p>
+                  <div class="text-xl font-bold">{{ commuteKm }} km</div>
+                  <p class="text-sm text-black/50 mt-1">{{ commuteModeLabel }}</p>
+                </div>
+                <div class="summary-chip rounded-[20px] px-3.5 py-3 h-full min-h-[88px] flex flex-col justify-between">
+                  <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Electricity</p>
+                  <div class="text-xl font-bold">{{ electricityKwh }} kWh</div>
+                  <p class="text-sm text-black/50 mt-1">家庭日常用电输入</p>
+                </div>
+                <div class="summary-chip rounded-[20px] px-3.5 py-3 h-full min-h-[88px] flex flex-col justify-between">
+                  <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Diet</p>
+                  <div class="text-xl font-bold">{{ meatMeals }} 餐</div>
+                  <p class="text-sm text-black/50 mt-1">高碳饮食次数</p>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-3 flex-wrap gap-3">
+                  <label class="font-bold">快速场景</label>
+                  <span class="text-xs font-mono opacity-45">一键套用日常模板</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <button
+                    v-for="preset in carbonPresets"
+                    :key="preset.key"
+                    @click="applyPreset(preset)"
+                    class="transport-option px-3 py-2 text-left rounded-2xl transition-all"
+                    :class="activePresetKey === preset.key ? 'transport-option--active' : 'transport-option--idle'"
+                  >
+                    <p class="text-xs font-mono uppercase tracking-[0.12em] mb-1 text-black/45">{{ preset.label }}</p>
+                    <p class="text-sm text-black/65">{{ preset.desc }}</p>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <label class="font-bold">通勤距离</label>
+                  <span class="text-xs font-mono opacity-50">{{ commuteKm }} km</span>
+                </div>
+                <input v-model="commuteKm" type="range" min="0" max="80" class="w-full accent-green-700" />
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <button
+                    v-for="option in commuteModes"
+                    :key="option.value"
+                    @click="commuteMode = option.value"
+                    class="transport-option px-3 py-2 text-sm rounded-2xl transition-all"
+                    :class="commuteMode === option.value ? 'transport-option--active' : 'transport-option--idle'"
+                  >
+                    {{ option.label }}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <label class="font-bold">家庭用电</label>
+                  <span class="text-xs font-mono opacity-50">{{ electricityKwh }} kWh</span>
+                </div>
+                <input v-model="electricityKwh" type="range" min="0" max="30" step="0.5" class="w-full accent-green-700" />
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <label class="font-bold">肉类餐食</label>
+                  <span class="text-xs font-mono opacity-50">{{ meatMeals }} 餐</span>
+                </div>
+                <input v-model="meatMeals" type="range" min="0" max="6" class="w-full accent-green-700" />
               </div>
             </div>
-          </div>
-        </aside>
+          </section>
 
-        <section class="carbon-main">
-          <div class="carbon-dashboard">
-            <section class="carbon-card carbon-card--form carbon-card--feature p-5 sm:p-6 md:p-8 xl:p-9">
-              <div class="flex items-center justify-between mb-8 gap-4 flex-wrap">
-                <div>
-                  <p class="font-mono text-xs uppercase tracking-[0.25em] opacity-40 mb-2">Footprint Input</p>
-                  <h2 class="text-2xl font-bold">填写今天的生活数据</h2>
-                </div>
-                <button
-                  @click="resetForm"
-                  class="px-4 py-2 border border-black/15 text-xs font-mono uppercase hover:bg-black hover:text-white transition-colors rounded-full"
-                >
-                  重置
-                </button>
-              </div>
-
-              <div class="space-y-8">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 auto-rows-fr">
-                  <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
-                    <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Commute</p>
-                    <div class="text-2xl font-bold">{{ commuteKm }} km</div>
-                    <p class="text-sm text-black/50 mt-1">{{ commuteModeLabel }}</p>
-                  </div>
-                  <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
-                    <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Electricity</p>
-                    <div class="text-2xl font-bold">{{ electricityKwh }} kWh</div>
-                    <p class="text-sm text-black/50 mt-1">家庭日常用电输入</p>
-                  </div>
-                  <div class="summary-chip rounded-[24px] px-4 py-4 h-full min-h-[138px] flex flex-col justify-between">
-                    <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Diet</p>
-                    <div class="text-2xl font-bold">{{ meatMeals }} 餐</div>
-                    <p class="text-sm text-black/50 mt-1">高碳饮食次数</p>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="flex items-center justify-between mb-3 flex-wrap gap-3">
-                    <label class="font-bold">快速场景</label>
-                    <span class="text-xs font-mono opacity-45">一键套用日常模板</span>
-                  </div>
-                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <button
-                      v-for="preset in carbonPresets"
-                      :key="preset.key"
-                      @click="applyPreset(preset)"
-                      class="transport-option px-3 py-3 text-left rounded-2xl transition-all"
-                      :class="activePresetKey === preset.key ? 'transport-option--active' : 'transport-option--idle'"
-                    >
-                      <p class="text-xs font-mono uppercase tracking-[0.12em] mb-1 text-black/45">{{ preset.label }}</p>
-                      <p class="text-sm text-black/65">{{ preset.desc }}</p>
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="flex items-center justify-between mb-3">
-                    <label class="font-bold">通勤距离</label>
-                    <span class="text-xs font-mono opacity-50">{{ commuteKm }} km</span>
-                  </div>
-                  <input v-model="commuteKm" type="range" min="0" max="80" class="w-full accent-green-700" />
-                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <button
-                      v-for="option in commuteModes"
-                      :key="option.value"
-                      @click="commuteMode = option.value"
-                      class="transport-option px-3 py-3 text-sm rounded-2xl transition-all"
-                      :class="commuteMode === option.value ? 'transport-option--active' : 'transport-option--idle'"
-                    >
-                      {{ option.label }}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="flex items-center justify-between mb-3">
-                    <label class="font-bold">家庭用电</label>
-                    <span class="text-xs font-mono opacity-50">{{ electricityKwh }} kWh</span>
-                  </div>
-                  <input v-model="electricityKwh" type="range" min="0" max="30" step="0.5" class="w-full accent-green-700" />
-                </div>
-
-                <div>
-                  <div class="flex items-center justify-between mb-3">
-                    <label class="font-bold">肉类餐食</label>
-                    <span class="text-xs font-mono opacity-50">{{ meatMeals }} 餐</span>
-                  </div>
-                  <input v-model="meatMeals" type="range" min="0" max="6" class="w-full accent-green-700" />
-                </div>
-              </div>
-            </section>
-
-            <div class="stacked-cards carbon-section-stack">
-              <section class="carbon-card carbon-card--result carbon-card--feature p-5 sm:p-6 md:p-8">
-                <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.14),transparent_32%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.10),transparent_28%)]"></div>
-
-              <div class="relative z-10">
-                <p class="font-mono text-xs uppercase tracking-[0.25em] text-black/40 mb-2">Daily Result</p>
-                <div class="flex items-start justify-between gap-4 mb-6 flex-wrap">
-                  <div>
-                    <h2 class="text-2xl font-bold mb-2">今日碳足迹</h2>
-                    <p class="text-sm text-black/55">主排放来源：{{ dominantSource.label }}</p>
-                  </div>
-                  <div class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-mono uppercase tracking-[0.2em]">
-                    {{ footprintLevel.tag }}
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-6 items-center mb-7">
-                  <div class="mx-auto w-36 h-36 rounded-full border-[10px] border-emerald-100 bg-white shadow-inner flex flex-col items-center justify-center text-center relative">
-                    <div class="absolute inset-2 rounded-full border border-dashed border-emerald-200"></div>
-                    <div class="relative z-10 text-4xl font-bold leading-none text-[#102418]">{{ totalFootprint.toFixed(2) }}</div>
-                    <div class="relative z-10 mt-2 text-[11px] font-mono uppercase tracking-[0.18em] text-black/45">kg CO₂e</div>
-                  </div>
-
-                  <div class="space-y-4">
-                    <div v-for="item in breakdownItems" :key="item.key">
-                      <div class="flex items-center justify-between text-sm mb-2">
-                        <div class="flex items-center gap-2">
-                          <span class="w-2.5 h-2.5 rounded-full" :style="{ backgroundColor: item.color }"></span>
-                          <span>{{ item.label }}</span>
-                        </div>
-                        <span class="font-mono text-black/60">{{ item.value.toFixed(2) }} / {{ item.percent }}%</span>
-                      </div>
-                      <div class="h-2.5 rounded-full bg-black/5 overflow-hidden">
-                        <div
-                          class="h-full rounded-full transition-all duration-500"
-                          :style="{ width: `${item.percent}%`, background: item.gradient }"
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="rounded-2xl p-5 border" :class="levelCardClass">
-                  <div class="flex items-center justify-between gap-4 mb-2">
-                    <h3 class="font-bold">{{ footprintLevel.title }}</h3>
-                    <span class="text-xs font-mono uppercase opacity-70">{{ footprintLevel.tag }}</span>
-                  </div>
-                  <p class="text-sm leading-relaxed opacity-80">
-                    {{ footprintLevel.description }}
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            <section class="carbon-card carbon-card--feature p-5 sm:p-6 md:p-8">
-              <div class="flex items-center justify-between gap-4 flex-wrap mb-6">
+          <div class="carbon-bottom-grid">
+            <section class="carbon-card carbon-card--secondary p-4.5 md:p-5">
+              <div class="flex items-center justify-between gap-4 flex-wrap mb-5">
                 <div>
                   <p class="font-mono text-xs uppercase tracking-[0.25em] text-black/35 mb-2">Visual Insight</p>
                   <h3 class="text-xl font-bold">排放可视图</h3>
@@ -186,10 +130,10 @@
                 <div v-if="latestSavedAt" class="text-xs font-mono text-emerald-700/70">已同步 {{ String(latestSavedAt).slice(0, 16).replace('T', ' ') }}</div>
               </div>
 
-              <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6 items-center">
+              <div class="grid grid-cols-1 lg:grid-cols-[178px_1fr] gap-3 items-center">
                 <div class="flex justify-center">
                   <div
-                    class="relative w-[188px] h-[188px] rounded-full shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)]"
+                    class="relative w-[154px] h-[154px] rounded-full shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)]"
                     :style="{ background: donutGradient }"
                   >
                     <div class="absolute inset-[18px] rounded-full bg-white flex flex-col items-center justify-center text-center shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
@@ -200,7 +144,7 @@
                   </div>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-2.5">
                   <div v-for="item in animatedBreakdownItems" :key="item.key" class="rounded-2xl border border-black/8 bg-[#fbfcfb] p-4">
                     <div class="flex items-center justify-between gap-4 mb-3">
                       <div class="flex items-center gap-2">
@@ -220,14 +164,14 @@
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 auto-rows-fr">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-3 auto-rows-fr">
                 <div
                   v-for="item in animatedBreakdownItems"
                   :key="`${item.key}-metric`"
-                  class="insight-metric-card group relative rounded-[24px] border border-black/8 p-4 md:p-5 overflow-hidden"
+                  class="insight-metric-card group relative rounded-[24px] border border-black/8 p-4 overflow-hidden"
                 >
                   <div class="insight-metric-card__pulse" :style="{ '--pulse-glow': item.glow, '--pulse-color': item.color }"></div>
-                  <div class="relative z-10 flex h-full min-h-[190px] flex-col justify-between">
+                  <div class="relative z-10 flex h-full min-h-[138px] flex-col justify-between">
                     <div>
                       <div class="flex items-start justify-between gap-3 mb-3">
                         <div>
@@ -248,7 +192,7 @@
                 </div>
               </div>
 
-              <div class="mt-6 rounded-2xl bg-[#f5fbf6] border border-emerald-100 p-5">
+              <div class="mt-4 rounded-2xl bg-[#f5fbf6] border border-emerald-100 p-4">
                 <div class="flex items-center justify-between gap-4 mb-3 flex-wrap">
                   <h4 class="font-bold text-[#183222]">减排优先级</h4>
                   <span class="text-xs font-mono uppercase tracking-[0.16em] text-emerald-700/70">Top Action</span>
@@ -260,53 +204,8 @@
               </div>
             </section>
 
-            <section class="carbon-card carbon-card--feature p-5 sm:p-6 md:p-8">
-              <div class="flex items-center justify-between gap-4 flex-wrap mb-6">
-                <div>
-                  <p class="font-mono text-xs uppercase tracking-[0.25em] text-black/35 mb-2">Weekly Goal</p>
-                  <h3 class="text-xl font-bold">本周低碳目标</h3>
-                </div>
-                <div class="text-xs font-mono text-black/40">7 days challenge</div>
-              </div>
-
-              <div class="rounded-[24px] border border-emerald-100 bg-[linear-gradient(135deg,#f7fff9_0%,#effaf3_100%)] p-5 mb-5">
-                <div class="flex items-start justify-between gap-4 flex-wrap mb-3">
-                  <div>
-                    <p class="text-sm text-black/45 mb-2">本周目标进度</p>
-                    <h4 class="text-2xl font-bold text-[#183222]">{{ weeklyGoal.completedDays }}/{{ weeklyGoal.targetDays }} 天低碳达成</h4>
-                  </div>
-                  <div class="px-3 py-2 rounded-full bg-white/80 border border-emerald-200 text-emerald-700 text-xs font-mono uppercase tracking-[0.16em]">
-                    {{ weeklyGoal.progress }}%
-                  </div>
-                </div>
-
-                <div class="h-3 rounded-full bg-white/80 overflow-hidden border border-emerald-100">
-                  <div
-                    class="h-full rounded-full transition-all duration-1000 ease-out bg-[linear-gradient(90deg,#16a34a,#4ade80)]"
-                    :style="{ width: `${weeklyGoal.progress}%` }"
-                  ></div>
-                </div>
-
-                <p class="mt-4 text-sm leading-7 text-[#2a4a35]">{{ weeklyGoal.summary }}</p>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 auto-rows-fr">
-                <div
-                  v-for="item in weeklyGoal.actions"
-                  :key="item.title"
-                  class="action-card rounded-[22px] p-4 h-full min-h-[190px] flex flex-col"
-                >
-                  <div class="w-10 h-10 mb-3 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                    <span class="w-5 h-5 block" v-html="renderIcon(item.icon)"></span>
-                  </div>
-                  <h4 class="font-bold mb-2">{{ item.title }}</h4>
-                  <p class="text-sm text-black/55 leading-6 mt-auto">{{ item.description }}</p>
-                </div>
-              </div>
-            </section>
-
-            <section class="carbon-card carbon-card--feature p-5 sm:p-6 md:p-8">
-              <div class="flex items-center justify-between gap-4 flex-wrap mb-6">
+            <section class="carbon-card carbon-card--secondary p-4.5 md:p-5">
+              <div class="flex items-center justify-between gap-4 flex-wrap mb-5">
                 <div>
                   <p class="font-mono text-xs uppercase tracking-[0.25em] text-black/35 mb-2">Green Commute</p>
                   <h3 class="text-xl font-bold">绿色出行建议</h3>
@@ -330,21 +229,21 @@
                 <div
                   v-for="tip in ecoTravelSuggestions"
                   :key="tip.title"
-                  class="tip-card rounded-[22px] p-4 transition-colors min-h-[132px] flex items-center"
+                  class="tip-card rounded-[22px] p-3.5 transition-colors min-h-[96px] flex items-center"
                 >
                   <div class="flex items-start gap-3">
                     <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
                       <span class="w-5 h-5 block" v-html="renderIcon(tip.icon)"></span>
                     </div>
                     <div>
-                      <h4 class="font-bold mb-1">{{ tip.title }}</h4>
-                      <p class="text-sm leading-6 text-black/60">{{ tip.description }}</p>
+                      <h4 class="font-bold mb-1 text-[15px]">{{ tip.title }}</h4>
+                      <p class="text-sm leading-6 text-black/60 line-clamp-2">{{ tip.description }}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div class="mt-6 rounded-[24px] border border-emerald-200 bg-[linear-gradient(135deg,rgba(244,255,247,0.98),rgba(232,248,236,0.96))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+              <div class="mt-3 rounded-[24px] border border-emerald-200 bg-[linear-gradient(135deg,rgba(244,255,247,0.98),rgba(232,248,236,0.96))] p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
                 <div class="flex items-center justify-between gap-4 flex-wrap mb-3">
                   <div>
                     <p class="text-xs font-mono uppercase tracking-[0.16em] text-emerald-800/60 mb-2">AI Travel Brief</p>
@@ -366,7 +265,7 @@
                 </div>
 
                 <div
-                  class="min-h-[132px] rounded-2xl border border-white/70 bg-white/80 px-4 py-4 text-sm leading-7 text-[#294634] whitespace-pre-line overflow-hidden"
+                  class="min-h-[112px] rounded-2xl border border-white/70 bg-white/80 px-4 py-3.5 text-sm leading-7 text-[#294634] whitespace-pre-line overflow-hidden"
                   :class="{ 'ai-loading-panel': isGeneratingAdvice }"
                 >
                   <template v-if="isGeneratingAdvice && !aiTravelAdvice">
@@ -396,7 +295,7 @@
                 </div>
               </div>
 
-              <ul class="mt-6 space-y-3">
+              <ul class="mt-4 space-y-2">
                 <li v-for="tip in suggestions" :key="tip" class="flex gap-3 text-sm text-black/75 leading-relaxed">
                   <span class="text-green-600">●</span>
                   <span>{{ tip }}</span>
@@ -404,8 +303,7 @@
               </ul>
             </section>
           </div>
-          </div>
-        </section>
+        </div>
       </div>
     </div>
   </div>
@@ -586,71 +484,10 @@ const donutGradient = computed(() => {
 
 const dominantSource = computed(() => [...breakdownItems.value].sort((a, b) => b.value - a.value)[0])
 
-const footprintLevel = computed(() => {
-  if (totalFootprint.value < 4) {
-    return {
-      title: '非常轻盈',
-      tag: 'LOW',
-      description: '今天的生活方式相当绿色，已经明显低于普通城市日常排放水平。',
-    }
-  }
-  if (totalFootprint.value < 9) {
-    return {
-      title: '仍可继续优化',
-      tag: 'MID',
-      description: '整体表现不错，但在出行或饮食结构上还有进一步减排空间。',
-    }
-  }
-  return {
-    title: '排放偏高',
-    tag: 'HIGH',
-    description: '今天的排放主要来自高碳出行或高能耗行为，建议优先调整最重的一项。',
-  }
-})
-
-const levelCardClass = computed(() => {
-  if (totalFootprint.value < 4) return 'bg-green-50 border-green-200 text-green-950'
-  if (totalFootprint.value < 9) return 'bg-amber-50 border-amber-200 text-amber-950'
-  return 'bg-red-50 border-red-200 text-red-950'
-})
-
 const dominantSourceAdvice = computed(() => {
   if (dominantSource.value.key === 'commute') return '如果把部分通勤从私家车切换到公交、骑行或步行，减排会最明显。'
   if (dominantSource.value.key === 'electricity') return '从空调温度、待机设备和照明时长入手，通常能最快降低这一部分排放。'
   return '适当减少高碳肉类频次，增加豆类和蔬菜比例，会让饮食排放更快下降。'
-})
-
-const weeklyGoal = computed(() => {
-  const completedDays = Math.min(7, Math.max(1, Math.round((12 - totalFootprint.value) / 2 + 3)))
-  const targetDays = 7
-  const progress = Math.round((completedDays / targetDays) * 100)
-
-  return {
-    completedDays,
-    targetDays,
-    progress,
-    summary:
-      progress >= 85
-        ? '这一周的低碳状态非常稳定，继续保持绿色出行与节制用电，就有机会把周均排放继续压低。'
-        : '建议把本周目标拆成更容易执行的小动作，例如减少一次开车、少开一小时空调、少吃一顿高碳肉食。',
-    actions: [
-      {
-        icon: 'bus',
-        title: '减少 2 次高碳通勤',
-        description: commuteMode.value === 'car' ? '优先把其中两次驾车替换为公交、地铁或拼车。' : '继续保持当前方式，并尽量延长公共交通或骑行覆盖距离。',
-      },
-      {
-        icon: 'bulb',
-        title: '晚间用电少 1 kWh',
-        description: '从空调温度、待机设备和照明时长入手，是最容易落地的一项。',
-      },
-      {
-        icon: 'leaf',
-        title: '安排 2 餐轻碳饮食',
-        description: '用豆制品、蔬菜和谷物替代部分红肉，能让本周饮食排放更平衡。',
-      },
-    ],
-  }
 })
 
 const ecoTravelSuggestions = computed(() => {
@@ -915,51 +752,28 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.carbon-shell {
-  --carbon-gap: clamp(1rem, 1.3vw, 1.75rem);
-}
-
-.carbon-page-grid {
+.carbon-core-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--carbon-gap);
+  grid-template-columns: minmax(0, 0.92fr);
+  justify-content: start;
+  gap: 16px;
   align-items: start;
 }
 
-.carbon-sidebar {
-  min-width: 0;
-}
-
-.carbon-sidebar__inner {
-  display: flex;
-  flex-direction: column;
-}
-
-.carbon-main,
-.carbon-dashboard,
-.carbon-section-stack {
-  min-width: 0;
-}
-
-.carbon-dashboard {
+.carbon-bottom-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--carbon-gap);
-  align-items: start;
-}
-
-.carbon-section-stack {
-  display: grid;
-  gap: var(--carbon-gap);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  width: min(100%, 1120px);
 }
 
 .carbon-card {
   position: relative;
   border: 1px solid rgba(21, 48, 33, 0.1);
-  border-radius: 24px;
+  border-radius: 22px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.93), rgba(248, 252, 249, 0.9));
   backdrop-filter: blur(14px);
-  box-shadow: 0 12px 30px rgba(20, 40, 28, 0.08);
+  box-shadow: 0 10px 24px rgba(20, 40, 28, 0.07);
   overflow: hidden;
 }
 
@@ -978,34 +792,23 @@ onUnmounted(() => {
     rgba(255, 255, 255, 0.9);
 }
 
-.carbon-card--result {
-  color: #17201a;
+.carbon-card--primary {
+  min-height: 100%;
 }
 
-.carbon-card--feature {
-  min-width: 0;
-  height: 100%;
-}
-
-.carbon-hero-card {
-  background:
-    radial-gradient(circle at top right, rgba(74, 222, 128, 0.14), transparent 32%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 250, 245, 0.92));
-}
-
-.carbon-meta-pill {
-  border: 1px solid rgba(21, 48, 33, 0.09);
-  border-radius: 9999px;
-  padding: 0.75rem 0.95rem;
-  background: rgba(255, 255, 255, 0.74);
-  backdrop-filter: blur(8px);
+.carbon-card--secondary {
+  min-height: 0;
 }
 
 .summary-chip {
   border: 1px solid rgba(21, 48, 33, 0.09);
-  border-radius: 24px;
+  border-radius: 22px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(243, 249, 245, 0.94));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.tip-card {
+  min-height: 104px;
 }
 
 .transport-option {
@@ -1036,11 +839,10 @@ onUnmounted(() => {
   position: relative;
 }
 
-.action-card,
 .tip-card,
 .insight-metric-card {
   border: 1px solid rgba(21, 48, 33, 0.08);
-  border-radius: 24px;
+  border-radius: 22px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(244, 250, 246, 0.9));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
@@ -1100,6 +902,17 @@ onUnmounted(() => {
   gap: 4px;
 }
 
+@media (max-width: 1279px) {
+  .carbon-bottom-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .carbon-core-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (hover: none) {
   .insight-metric-card__detail {
     opacity: 1;
@@ -1107,92 +920,21 @@ onUnmounted(() => {
   }
 }
 
-@media (min-width: 1024px) {
-  .carbon-page-grid {
-    grid-template-columns: minmax(280px, 0.88fr) minmax(0, 1.62fr);
-  }
-
-  .carbon-sidebar__inner {
-    position: sticky;
-    top: 6rem;
-  }
-}
-
 @media (min-width: 1280px) {
-  .carbon-page-grid {
-    grid-template-columns: minmax(300px, 0.82fr) minmax(0, 1.68fr);
-  }
-
-  .carbon-dashboard {
-    grid-template-columns: minmax(0, 1.06fr) minmax(320px, 0.94fr);
-  }
-
-  .carbon-card--form {
+  .carbon-bottom-grid > section {
     min-height: 100%;
   }
 
   .stacked-cards {
-    padding-top: 10px;
+    padding-top: 0;
   }
 
   .stacked-cards > section:nth-child(2) {
-    margin-left: 10px;
+    margin-left: 0;
   }
 
   .stacked-cards > section:nth-child(3) {
-    margin-right: 8px;
-  }
-
-  .stacked-cards > section:nth-child(4) {
-    margin-left: 16px;
-  }
-}
-
-@media (min-width: 1536px) {
-  .carbon-dashboard {
-    grid-template-columns: minmax(0, 1.12fr) minmax(360px, 0.88fr);
-  }
-
-  .stacked-cards {
-    padding-top: 18px;
-  }
-
-  .stacked-cards > section:nth-child(2) {
-    margin-left: 18px;
-  }
-
-  .stacked-cards > section:nth-child(3) {
-    margin-right: 14px;
-  }
-
-  .stacked-cards > section:nth-child(4) {
-    margin-left: 28px;
-  }
-}
-
-@media (max-width: 1279px) {
-  .stacked-cards > section {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-}
-
-@media (max-width: 767px) {
-  .carbon-hero-card {
-    border-radius: 22px;
-  }
-
-  .carbon-meta-pill {
-    border-radius: 18px;
-  }
-
-  .summary-chip,
-  .action-card,
-  .tip-card,
-  .insight-metric-card,
-  .transport-option,
-  .carbon-card {
-    border-radius: 22px;
+    margin-right: 0;
   }
 }
 

@@ -34,7 +34,7 @@ const handleResize = () => {
 }
 
 const layoutOffsetClass = computed(() => {
-  if (isMobile.value) {
+  if (showIntro.value || isMobile.value) {
     return 'ml-0'
   }
   return sidebarFull.value ? 'ml-64' : 'ml-14'
@@ -46,6 +46,8 @@ const layoutOffsetClass = computed(() => {
  */
 const handleIntroComplete = () => {
   showIntro.value = false
+  document.documentElement.dataset.appIntroDone = 'true'
+  window.dispatchEvent(new CustomEvent('app-intro-complete'))
 }
 
 /**
@@ -91,20 +93,25 @@ watch(() => route.path, () => {
   <TheIntro v-if="showIntro" @complete="handleIntroComplete" />
 
   <!-- 左侧导航栏组件 -->
-  <TheSidebar
-    :is-open="sidebarOpen"
-    @toggle="sidebarOpen = !sidebarOpen"
-    @close="sidebarOpen = false"
-    @expand-change="(v) => { sidebarFull = v }"
-  />
+  <Transition name="shell-fade">
+    <TheSidebar
+      v-if="!showIntro"
+      :is-open="sidebarOpen"
+      @toggle="sidebarOpen = !sidebarOpen"
+      @close="sidebarOpen = false"
+      @expand-change="(v) => { sidebarFull = v }"
+    />
+  </Transition>
 
   <!-- 主内容区：根据侧边栏状态动态调整左边距 -->
   <div
-    class="min-h-screen flex flex-col bg-transparent relative z-10 selection:bg-primary selection:text-white transition-all duration-300"
+    class="min-h-screen flex flex-col bg-transparent relative z-10 selection:bg-primary selection:text-white transition-all duration-[900ms] ease-out"
     :class="layoutOffsetClass"
   >
     <!-- 顶部导航栏 -->
-    <TheNavbar />
+    <Transition name="shell-fade">
+      <TheNavbar v-if="!showIntro" />
+    </Transition>
 
     <!-- 路由视图主体，包含页面切换淡入淡出动画 -->
     <main class="flex-grow pt-14 md:pt-16">
@@ -130,5 +137,16 @@ watch(() => route.path, () => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.shell-fade-enter-active,
+.shell-fade-leave-active {
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.shell-fade-enter-from,
+.shell-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-18px);
 }
 </style>

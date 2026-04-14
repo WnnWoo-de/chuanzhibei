@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 // 声明向父组件抛出的事件：动画完成后触发 complete
 const emit = defineEmits(['complete'])
@@ -60,15 +60,30 @@ const emit = defineEmits(['complete'])
 const introContainer = ref(null)
 // 计数器数字元素的 DOM 引用（用于 GSAP 数字递增动画）
 const counterRef = ref(null)
+const fallbackTimer = ref(null)
+
+const finishIntro = () => {
+  if (fallbackTimer.value) {
+    window.clearTimeout(fallbackTimer.value)
+    fallbackTimer.value = null
+  }
+  document.body.style.overflow = ''
+  emit('complete')
+}
 
 onMounted(async () => {
-  // 兜底：即使动画库加载失败，也不会一直白屏
-  const fallbackTimer = window.setTimeout(() => {
-    emit('complete')
-  }, 1200)
+  // 兜底：仅在动画库加载失败或异常卡住时结束，避免正常播放中途提前跳过
+  fallbackTimer.value = window.setTimeout(() => {
+    finishIntro()
+  }, 6000)
 
   try {
     const { default: gsap } = await import('gsap')
+
+    if (fallbackTimer.value) {
+      window.clearTimeout(fallbackTimer.value)
+      fallbackTimer.value = null
+    }
 
     // 锁定 body 滚动，防止动画播放期间页面被滚动
     document.body.style.overflow = 'hidden'
@@ -76,11 +91,8 @@ onMounted(async () => {
     // 创建 GSAP 时间轴，动画播放完毕后触发 complete 回调
     const tl = gsap.timeline({
       onComplete: () => {
-        window.clearTimeout(fallbackTimer)
-        // 解锁 body 滚动
-        document.body.style.overflow = ''
         // 通知父组件（App.vue）开场动画已完成，隐藏 TheIntro
-        emit('complete')
+        finishIntro()
       }
     })
 
@@ -165,11 +177,18 @@ onMounted(async () => {
         ease: 'power4.inOut'
       }, '-=0.2')
   } catch (error) {
-    window.clearTimeout(fallbackTimer)
     document.body.style.overflow = ''
-    emit('complete')
+    finishIntro()
     void error
   }
+})
+
+onUnmounted(() => {
+  if (fallbackTimer.value) {
+    window.clearTimeout(fallbackTimer.value)
+    fallbackTimer.value = null
+  }
+  document.body.style.overflow = ''
 })
 </script>
 

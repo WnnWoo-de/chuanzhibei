@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="homeRootRef"
     class="home-view bg-transparent min-h-screen text-[#1a1a1a] font-sans selection:bg-primary selection:text-white overflow-x-hidden"
   >
     <!-- Welcome Modal -->
@@ -150,7 +151,7 @@
       </div>
 
       <!-- Hero Badge -->
-      <div class="absolute left-3 sm:left-4 top-6 sm:top-8 z-20 inline-flex items-center gap-1.5 sm:gap-2 md:gap-3 rounded-full border border-white/85 bg-white/98 px-2 py-1 sm:px-2.5 sm:py-1.5 md:px-3 md:py-2 shadow-[0_20px_50px_rgba(171,190,176,0.16)] backdrop-blur-md scale-75 sm:scale-90 md:scale-100 origin-top-left">
+      <div class="hero-badge absolute left-3 sm:left-4 top-6 sm:top-8 z-20 inline-flex items-center gap-1.5 sm:gap-2 md:gap-3 rounded-full border border-white/85 bg-white/98 px-2 py-1 sm:px-2.5 sm:py-1.5 md:px-3 md:py-2 shadow-[0_20px_50px_rgba(171,190,176,0.16)] backdrop-blur-md scale-75 sm:scale-90 md:scale-100 origin-top-left">
         <img
           src="/logo.png"
           alt="GreenSight logo"
@@ -163,17 +164,18 @@
       </div>
 
       <!-- Carousel Content -->
-      <div class="relative z-10 flex h-full flex-col justify-center pt-20 sm:pt-20 lg:pt-0">
+      <div class="relative z-10 flex h-full flex-col justify-center pt-20 sm:pt-20 lg:pt-0 hero-orbit" :style="heroParallaxStyle">
         <div class="grid grid-cols-1 items-center gap-5 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
-          <div class="flex flex-col min-h-[280px] sm:min-h-[320px] lg:h-full lg:min-h-[420px] lg:pr-6">
+          <div class="flex flex-col min-h-[280px] sm:min-h-[320px] lg:h-full lg:min-h-[420px] lg:pr-6 hero-brand-block">
+            <div class="hero-brand-glow" aria-hidden="true"></div>
             <div class="mt-4 sm:mt-2 overflow-hidden flex-1 flex flex-col">
               <div class="flex flex-col justify-center flex-1">
-                <p class="text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] sm:tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
+                <p class="hero-line hero-line--eyebrow text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] sm:tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
                 <div class="mt-2 sm:mt-3 sm:mt-6 space-y-1 sm:space-y-1.5 sm:space-y-3">
-                  <p class="font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600 min-h-[2.5rem] sm:min-h-[3rem]">
+                  <p class="hero-line hero-line--body font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600 min-h-[2.5rem] sm:min-h-[3rem]">
                     {{ typedBrandLines[0] }}<span v-if="activeTypingLine === 0" class="typing-caret ml-1 inline-block h-3 sm:h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
                   </p>
-                  <p class="font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600/85 min-h-[2.5rem] sm:min-h-[3rem]">
+                  <p class="hero-line hero-line--body hero-line--body-soft font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600/85 min-h-[2.5rem] sm:min-h-[3rem]">
                     {{ typedBrandLines[1] }}<span v-if="activeTypingLine === 1" class="typing-caret ml-1 inline-block h-3 sm:h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
                   </p>
                 </div>
@@ -181,7 +183,7 @@
             </div>
 
             <div class="mt-auto pt-5 sm:pt-8 lg:pb-[6.75rem]">
-              <div class="flex flex-wrap gap-1.5 sm:gap-3">
+              <div class="flex flex-wrap gap-1.5 sm:gap-3 hero-chip-row">
                 <span class="glass-tag glass-tag--emerald group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-2.5 md:px-4 py-1 md:py-2 text-[10px] md:text-sm font-semibold leading-none text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70">
                   <span class="glass-tag__pulse"></span>
                   <span class="glass-tag__sheen"></span>
@@ -225,29 +227,30 @@
             </div>
           </div>
 
-          <div class="relative">
+          <div class="relative hero-slide-panel">
+            <div class="hero-slide-glow-trail" :style="heroGlowTrailStyle" aria-hidden="true"></div>
             <transition name="hero-fade" mode="out-in">
               <div
                 :key="currentSlide"
-                class="flex flex-col justify-center pl-0 sm:pl-10 min-h-[280px] sm:min-h-[320px] lg:min-h-[420px] lg:pl-14"
+                class="hero-slide-card flex flex-col justify-center pl-0 sm:pl-10 min-h-[280px] sm:min-h-[320px] lg:min-h-[420px] lg:pl-14"
               >
-                <p class="text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.35em] sm:tracking-[0.4em] text-emerald-600/50">
+                <p class="hero-copy hero-copy--meta text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.35em] sm:tracking-[0.4em] text-emerald-600/50">
                   0{{ currentSlide + 1 }} / 0{{ slides.length }}
                 </p>
-                <p class="mt-2 sm:mt-6 text-[9px] sm:text-[10px] sm:text-sm font-semibold uppercase tracking-[0.25em] sm:tracking-[0.3em] text-emerald-600/60">
+                <p class="hero-copy hero-copy--subtitle mt-2 sm:mt-6 text-[9px] sm:text-[10px] sm:text-sm font-semibold uppercase tracking-[0.25em] sm:tracking-[0.3em] text-emerald-600/60">
                   {{ slides[currentSlide].subtitle }}
                 </p>
                 <h2
-                  class="mt-2 sm:mt-5 max-w-xl font-bold leading-tight tracking-tight text-[#214336]"
+                  class="hero-copy hero-copy--title mt-2 sm:mt-5 max-w-xl font-bold leading-tight tracking-tight text-[#214336]"
                   :class="currentSlide === 0 ? 'text-lg sm:text-xl md:text-3xl lg:text-4xl' : currentSlide === 1 ? 'text-xl sm:text-2xl md:text-4xl lg:text-5xl' : 'text-xl sm:text-2xl md:text-5xl lg:text-6xl'"
                 >
                   {{ slides[currentSlide].title }}
                 </h2>
-                <p class="mt-3 sm:mt-6 max-w-xl text-[12px] sm:text-[13px] md:text-base leading-relaxed text-[#5f7f70] md:text-lg line-clamp-3 md:line-clamp-none">
+                <p class="hero-copy hero-copy--description mt-3 sm:mt-6 max-w-xl text-[12px] sm:text-[13px] md:text-base leading-relaxed text-[#5f7f70] md:text-lg line-clamp-3 md:line-clamp-none">
                   {{ slides[currentSlide].description }}
                 </p>
 
-                <div class="mt-5 sm:mt-10 flex flex-wrap items-center gap-4">
+                <div class="hero-copy hero-copy--cta mt-5 sm:mt-10 flex flex-wrap items-center gap-4">
                   <a
                     v-if="slides[currentSlide].link.startsWith('#')"
                     :href="slides[currentSlide].link"
@@ -267,7 +270,7 @@
                   </router-link>
                 </div>
 
-                <div class="mt-5 sm:mt-12 flex flex-row items-center justify-between gap-4 border-t border-black/10 sm:border-white/80 pt-4 md:pt-6">
+                <div class="hero-controls mt-5 sm:mt-12 flex flex-row items-center justify-between gap-4 pt-4 md:pt-6">
                   <div class="flex gap-1.5 md:gap-2">
                     <button
                       v-for="(slide, index) in slides"
@@ -352,7 +355,7 @@
     </section>
 
     <!-- Chapter 2: Quick Access (Core Features) -->
-    <section class="py-24 px-6 border-t border-black/10 relative" id="features">
+    <section class="relay-section py-24 px-6 border-t border-black/10 relative" id="features">
       <div class="grid grid-cols-12 gap-4">
         <!-- Sticky Sidebar -->
         <div class="col-span-12 md:col-span-3 mb-12 md:mb-0">
@@ -461,7 +464,7 @@
     </section>
 
     <!-- Chapter 4: Dynamic News (Updates) -->
-    <section class="py-24 px-6 border-t border-black/10 relative" id="news">
+    <section class="relay-section py-24 px-6 border-t border-black/10 relative" id="news">
       <div class="grid grid-cols-12 gap-4">
         <!-- Sticky Sidebar -->
         <div class="col-span-12 md:col-span-3 mb-12 md:mb-0">
@@ -520,7 +523,7 @@
     </section>
 
     <!-- Chapter 5: Data Dashboard -->
-    <section class="dashboard-section py-24 px-6 border-t border-black/10 relative overflow-hidden" id="dashboard">
+    <section class="relay-section dashboard-section py-24 px-6 border-t border-black/10 relative overflow-hidden" id="dashboard">
       <div class="dashboard-noise"></div>
       <div class="dashboard-grid"></div>
       <div class="dashboard-ambient dashboard-ambient--left"></div>
@@ -710,6 +713,16 @@ import Silk from '@/components/effects/Silk.vue'
 gsap.registerPlugin(ScrollTrigger)
 
 const router = useRouter()
+const homeRootRef = ref(null)
+let heroEntranceTimeline = null
+
+const heroParallaxStyle = computed(() => ({
+  transform: `translate3d(0, ${currentSlide.value * -8}px, 0)`,
+}))
+
+const heroGlowTrailStyle = computed(() => ({
+  background: `radial-gradient(circle at ${18 + currentSlide.value * 28}% ${32 + currentSlide.value * 10}%, rgba(74, 222, 128, 0.24), transparent 34%), radial-gradient(circle at ${72 - currentSlide.value * 14}% ${68 - currentSlide.value * 12}%, rgba(34, 211, 238, 0.18), transparent 28%)`,
+}))
 
 const dashboardMetrics = [
   { label: '累计减排', value: 5280, unit: '吨 CO₂e', change: '+28.3%', formatter: 'number' },
@@ -1055,6 +1068,99 @@ const newsItems = [
 const currentPage = ref(1)
 const itemsPerPage = 4
 
+const playHomeEntrance = () => {
+  if (!homeRootRef.value || heroEntranceTimeline) return
+
+  const heroSection = homeRootRef.value.querySelector('section')
+  if (!heroSection) return
+
+  const badge = heroSection.querySelector('.hero-badge')
+  const brandBlock = heroSection.querySelector('.hero-brand-block')
+  const heroLines = heroSection.querySelectorAll('.hero-line')
+  const chipRow = heroSection.querySelector('.hero-chip-row')
+  const chipItems = heroSection.querySelectorAll('.glass-tag')
+  const slidePanel = heroSection.querySelector('.hero-slide-panel')
+  const slideCopies = heroSection.querySelectorAll('.hero-copy')
+  const controls = heroSection.querySelector('.hero-controls')
+  const scrollIndicator = heroSection.querySelector('.scroll-indicator')
+
+  heroEntranceTimeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+  heroEntranceTimeline
+    .set([badge, brandBlock, heroLines, chipRow, chipItems, slidePanel, slideCopies, controls, scrollIndicator], {
+      willChange: 'transform, opacity, filter',
+    })
+    .fromTo(
+      heroSection,
+      { opacity: 0, scale: 1.015, filter: 'blur(14px)' },
+      { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.05, clearProps: 'filter' },
+    )
+    .fromTo(
+      badge,
+      { y: -28, opacity: 0, scale: 0.94 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.72 },
+      '-=0.72',
+    )
+    .fromTo(
+      brandBlock,
+      { y: 36, opacity: 0, filter: 'blur(10px)' },
+      { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.95 },
+      '-=0.44',
+    )
+    .fromTo(
+      heroLines,
+      { y: 26, opacity: 0, filter: 'blur(6px)' },
+      { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.72, stagger: 0.14 },
+      '-=0.72',
+    )
+    .fromTo(
+      chipRow,
+      { y: 24, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.78 },
+      '-=0.54',
+    )
+    .fromTo(
+      chipItems,
+      { y: 18, opacity: 0, scale: 0.96 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.56, stagger: 0.08 },
+      '-=0.56',
+    )
+    .fromTo(
+      slidePanel,
+      { x: 42, opacity: 0, filter: 'blur(10px)' },
+      { x: 0, opacity: 1, filter: 'blur(0px)', duration: 0.9 },
+      '-=0.78',
+    )
+    .fromTo(
+      slideCopies,
+      { x: 18, opacity: 0 },
+      { x: 0, opacity: 1, duration: 0.52, stagger: 0.1 },
+      '-=0.64',
+    )
+    .fromTo(
+      controls,
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.64 },
+      '-=0.26',
+    )
+    .fromTo(
+      scrollIndicator,
+      { y: 12, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.85, clearProps: 'all' },
+      '-=0.08',
+    )
+    .add(() => {
+      heroEntranceTimeline = null
+    })
+}
+
+const handleAppIntroComplete = () => {
+  nextTick(() => {
+    playHomeEntrance()
+  })
+}
+
+
 const totalPages = computed(() => Math.ceil(newsItems.length / itemsPerPage))
 const paginatedNews = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
@@ -1074,6 +1180,12 @@ onMounted(() => {
   checkFirstVisit()
   startAutoPlay()
   startTypewriter()
+
+  window.addEventListener('app-intro-complete', handleAppIntroComplete)
+
+  if (document.documentElement.dataset.appIntroDone === 'true') {
+    handleAppIntroComplete()
+  }
 
   // 延迟执行 GSAP 动画，确保 DOM 完全渲染
   nextTick(() => {
@@ -1135,6 +1247,36 @@ onMounted(() => {
       }
     }
 
+    // Relay Sections Sequential Entrance
+    const relaySections = gsap.utils.toArray('.relay-section')
+    relaySections.forEach((section, index) => {
+      const relayTargets = section.querySelectorAll('h2, p, .group.relative, .dashboard-panel, .group.border-b')
+      if (!relayTargets.length) return
+
+      gsap.fromTo(
+        relayTargets,
+        {
+          y: 42,
+          opacity: 0,
+          filter: 'blur(10px)',
+        },
+        {
+          scrollTrigger: {
+            trigger: section,
+            start: index === 0 ? 'top 82%' : 'top 78%',
+            toggleActions: 'play none none none',
+          },
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.95,
+          stagger: 0.08,
+          ease: 'power3.out',
+          clearProps: 'all',
+        },
+      )
+    })
+
     // Scroll Down Indicator Fade Out
     const scrollIndicator = document.querySelector('.scroll-indicator')
     if (scrollIndicator) {
@@ -1169,6 +1311,11 @@ onUnmounted(() => {
   if (typingRestartTimeout) clearTimeout(typingRestartTimeout)
   if (dashboardAnimationFrame) cancelAnimationFrame(dashboardAnimationFrame)
   if (dashboardObserver) dashboardObserver.disconnect()
+  if (heroEntranceTimeline) {
+    heroEntranceTimeline.kill()
+    heroEntranceTimeline = null
+  }
+  window.removeEventListener('app-intro-complete', handleAppIntroComplete)
 })
 </script>
 
@@ -1247,6 +1394,112 @@ onUnmounted(() => {
   46%,
   100% {
     opacity: 0;
+  }
+}
+
+.hero-orbit {
+  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-brand-block {
+  position: relative;
+}
+
+.hero-brand-glow {
+  position: absolute;
+  inset: 6% -8% auto auto;
+  width: clamp(10rem, 18vw, 15rem);
+  height: clamp(10rem, 18vw, 15rem);
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.22) 0%, rgba(74, 222, 128, 0.08) 42%, rgba(74, 222, 128, 0) 72%);
+  filter: blur(18px);
+  opacity: 0.9;
+  pointer-events: none;
+  animation: brand-glow-float 6s ease-in-out infinite;
+}
+
+.hero-line {
+  display: block;
+  transform-origin: left center;
+}
+
+.hero-line--eyebrow {
+  text-shadow: 0 0 16px rgba(16, 185, 129, 0.1);
+}
+
+.hero-line--body-soft {
+  opacity: 0.82;
+}
+
+.hero-slide-panel {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-slide-glow-trail {
+  position: absolute;
+  inset: 8% -6% 10% 18%;
+  border-radius: 2.5rem;
+  filter: blur(24px);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 0;
+  transition: background 0.8s ease, transform 0.8s ease;
+  animation: glow-trail-drift 7s ease-in-out infinite;
+}
+
+.hero-slide-card {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-copy {
+  will-change: transform, opacity;
+}
+
+.hero-copy--title {
+  text-shadow: 0 12px 28px rgba(31, 63, 49, 0.08);
+}
+
+.hero-copy--description {
+  text-wrap: pretty;
+}
+
+.relay-section {
+  position: relative;
+}
+
+.relay-section::before {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.02));
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+@keyframes brand-glow-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(10px, -14px, 0) scale(1.06);
+  }
+}
+
+@keyframes glow-trail-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(12px, -8px, 0) scale(1.04);
+    opacity: 1;
   }
 }
 
