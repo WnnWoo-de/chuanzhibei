@@ -16,6 +16,7 @@
 | 前端路由 | Vue Router | ^4.6.3 |
 | 状态管理 | Pinia | ^3.0.4 |
 | UI 组件库 | Element Plus | ^2.11.9 |
+| HttP请求 | Asiox| ^2.11.9 |
 | CSS 框架 | Tailwind CSS | ^4.1.17 |
 | 动画 | GSAP | ^3.13.0 |
 | 后端框架 | Node.js + Express | Express ^5.2.1 |
@@ -25,6 +26,7 @@
 | 文件上传 | Multer | ^2.1.1 |
 | AI 服务 | GLM（智谱 AI）/ SiliconFlow | — |
 | 缓存 | Redis | ^4.6.0 |
+| AI识别 |Fast API| ^2.1.1 |
 
 ### 1.3 项目结构
 
