@@ -31,14 +31,14 @@
       <div class="col-span-12 md:col-span-8 xl:col-span-9">
         <div class="carbon-core-layout">
           <section class="carbon-card carbon-card--form carbon-card--primary p-4 md:p-5 xl:p-5.5">
-            <div class="flex items-center justify-between mb-5 gap-4 flex-wrap">
+            <div class="carbon-card__header mb-4">
               <div>
-                <p class="font-mono text-xs uppercase tracking-[0.25em] opacity-40 mb-2">Footprint Input</p>
-                <h2 class="text-2xl font-bold">填写今天的生活数据</h2>
+                <p class="carbon-card__eyebrow">Footprint Input</p>
+                <h2 class="carbon-card__title">填写今天的生活数据</h2>
               </div>
               <button
                 @click="resetForm"
-                class="px-4 py-2 border border-black/15 text-xs font-mono uppercase hover:bg-black hover:text-white transition-colors rounded-full"
+                class="carbon-card__action px-4 py-2 border border-black/15 text-xs font-mono uppercase hover:bg-black hover:text-white transition-colors rounded-full"
               >
                 重置
               </button>
@@ -121,19 +121,21 @@
 
           <div class="carbon-bottom-grid">
             <section class="carbon-card carbon-card--secondary p-4.5 md:p-5">
-              <div class="flex items-center justify-between gap-4 flex-wrap mb-5">
+              <div class="carbon-card__header mb-4">
                 <div>
-                  <p class="font-mono text-xs uppercase tracking-[0.25em] text-black/35 mb-2">Visual Insight</p>
-                  <h3 class="text-xl font-bold">排放可视图</h3>
+                  <p class="carbon-card__eyebrow">Visual Insight</p>
+                  <h3 class="carbon-card__title">排放可视图</h3>
                 </div>
-                <div class="text-xs font-mono text-black/40">今日结构占比</div>
-                <div v-if="latestSavedAt" class="text-xs font-mono text-emerald-700/70">已同步 {{ String(latestSavedAt).slice(0, 16).replace('T', ' ') }}</div>
+                <div class="carbon-card__meta-stack">
+                  <div class="carbon-card__meta">今日结构占比</div>
+                  <div v-if="latestSavedAt" class="carbon-card__meta carbon-card__meta--success">已同步 {{ String(latestSavedAt).slice(0, 16).replace('T', ' ') }}</div>
+                </div>
               </div>
 
-              <div class="grid grid-cols-1 lg:grid-cols-[178px_1fr] gap-3 items-center">
+              <div class="grid grid-cols-1 xl:grid-cols-[190px_1fr] gap-4 items-stretch">
                 <div class="flex justify-center">
                   <div
-                    class="relative w-[154px] h-[154px] rounded-full shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)]"
+                    class="relative w-[164px] h-[164px] rounded-full shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)]"
                     :style="{ background: donutGradient }"
                   >
                     <div class="absolute inset-[18px] rounded-full bg-white flex flex-col items-center justify-center text-center shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
@@ -144,7 +146,7 @@
                   </div>
                 </div>
 
-                <div class="space-y-2.5">
+                <div class="space-y-2 h-full flex flex-col justify-between">
                   <div v-for="item in animatedBreakdownItems" :key="item.key" class="rounded-2xl border border-black/8 bg-[#fbfcfb] p-4">
                     <div class="flex items-center justify-between gap-4 mb-3">
                       <div class="flex items-center gap-2">
@@ -164,14 +166,14 @@
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-3 auto-rows-fr">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 mt-3 auto-rows-fr">
                 <div
                   v-for="item in animatedBreakdownItems"
                   :key="`${item.key}-metric`"
                   class="insight-metric-card group relative rounded-[24px] border border-black/8 p-4 overflow-hidden"
                 >
                   <div class="insight-metric-card__pulse" :style="{ '--pulse-glow': item.glow, '--pulse-color': item.color }"></div>
-                  <div class="relative z-10 flex h-full min-h-[138px] flex-col justify-between">
+                  <div class="relative z-10 flex h-full min-h-[126px] flex-col justify-between">
                     <div>
                       <div class="flex items-start justify-between gap-3 mb-3">
                         <div>
@@ -205,15 +207,15 @@
             </section>
 
             <section class="carbon-card carbon-card--secondary p-4.5 md:p-5">
-              <div class="flex items-center justify-between gap-4 flex-wrap mb-5">
+              <div class="carbon-card__header mb-4">
                 <div>
-                  <p class="font-mono text-xs uppercase tracking-[0.25em] text-black/35 mb-2">Green Commute</p>
-                  <h3 class="text-xl font-bold">绿色出行建议</h3>
+                  <p class="carbon-card__eyebrow">Green Commute</p>
+                  <h3 class="carbon-card__title">绿色出行建议</h3>
                 </div>
                 <button
                   @click="generateAiTravelAdvice"
                   :disabled="isGeneratingAdvice || adviceCooldown > 0"
-                  class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-[linear-gradient(135deg,#103d22,#1f7a3a)] px-4 py-2 text-xs font-mono uppercase tracking-[0.16em] text-white shadow-[0_12px_28px_rgba(22,163,74,0.22)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(22,163,74,0.3)] disabled:cursor-not-allowed disabled:opacity-60"
+                  class="carbon-card__action inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-[linear-gradient(135deg,#103d22,#1f7a3a)] px-4 py-2 text-xs font-mono uppercase tracking-[0.16em] text-white shadow-[0_12px_28px_rgba(22,163,74,0.22)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(22,163,74,0.3)] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <span class="w-4 h-4 block" :class="{ 'animate-spin': isGeneratingAdvice }" v-html="renderIcon('leaf')"></span>
                   <span class="inline-flex items-center gap-1.5">
@@ -225,11 +227,11 @@
                 </button>
               </div>
 
-              <div class="space-y-3">
+              <div class="space-y-2.5 md:grid md:grid-cols-2 md:gap-2.5 md:space-y-0 items-stretch">
                 <div
                   v-for="tip in ecoTravelSuggestions"
                   :key="tip.title"
-                  class="tip-card rounded-[22px] p-3.5 transition-colors min-h-[96px] flex items-center"
+                  class="tip-card rounded-[22px] p-3.5 transition-colors min-h-[88px] flex items-center"
                 >
                   <div class="flex items-start gap-3">
                     <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
@@ -265,7 +267,7 @@
                 </div>
 
                 <div
-                  class="min-h-[112px] rounded-2xl border border-white/70 bg-white/80 px-4 py-3.5 text-sm leading-7 text-[#294634] whitespace-pre-line overflow-hidden"
+                  class="min-h-[96px] rounded-2xl border border-white/70 bg-white/80 px-4 py-3.5 text-sm leading-7 text-[#294634] whitespace-pre-line overflow-hidden"
                   :class="{ 'ai-loading-panel': isGeneratingAdvice }"
                 >
                   <template v-if="isGeneratingAdvice && !aiTravelAdvice">
@@ -754,15 +756,14 @@ onUnmounted(() => {
 <style scoped>
 .carbon-core-layout {
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr);
-  justify-content: start;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   align-items: start;
 }
 
 .carbon-bottom-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 16px;
   width: min(100%, 1120px);
 }
@@ -798,6 +799,53 @@ onUnmounted(() => {
 
 .carbon-card--secondary {
   min-height: 0;
+}
+
+.carbon-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  min-height: 64px;
+}
+
+.carbon-card__eyebrow {
+  margin-bottom: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: rgba(26, 26, 26, 0.35);
+}
+
+.carbon-card__title {
+  font-size: 1.25rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #121912;
+}
+
+.carbon-card__meta-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.carbon-card__meta {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: rgba(26, 26, 26, 0.42);
+  white-space: nowrap;
+}
+
+.carbon-card__meta--success {
+  color: rgba(4, 120, 87, 0.72);
+}
+
+.carbon-card__action {
+  min-height: 36px;
 }
 
 .summary-chip {
@@ -911,6 +959,10 @@ onUnmounted(() => {
   .carbon-core-layout {
     grid-template-columns: 1fr;
   }
+
+  .carbon-card__meta-stack {
+    align-items: flex-start;
+  }
 }
 
 @media (hover: none) {
@@ -923,18 +975,6 @@ onUnmounted(() => {
 @media (min-width: 1280px) {
   .carbon-bottom-grid > section {
     min-height: 100%;
-  }
-
-  .stacked-cards {
-    padding-top: 0;
-  }
-
-  .stacked-cards > section:nth-child(2) {
-    margin-left: 0;
-  }
-
-  .stacked-cards > section:nth-child(3) {
-    margin-right: 0;
   }
 }
 
