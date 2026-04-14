@@ -10,6 +10,7 @@ import '../node_modules/qweather-icons/font/qweather-icons.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { ElMessage } from 'element-plus'
+import { registerSW } from 'virtual:pwa-register'
 
 import App from './App.vue'
 import router from './router'
@@ -17,6 +18,10 @@ import { useUserStore } from '@/stores/user'
 
 const app = createApp(App)
 const pinia = createPinia()
+
+const updateSW = registerSW({
+  immediate: true,
+})
 
 app.use(pinia)
 app.use(router)
@@ -40,6 +45,7 @@ const initApp = async () => {
   }
 
   app.mount('#app')
+  updateSW()
 }
 
 initApp()
