@@ -113,12 +113,10 @@ watch(() => route.path, () => {
       <TheNavbar v-if="!showIntro" />
     </Transition>
 
-    <!-- 路由视图主体，包含页面切换淡入淡出动画 -->
+    <!-- 路由视图主体：切换页面时直接渲染，避免重复触发进场动画 -->
     <main class="flex-grow pt-14 md:pt-16">
       <RouterView v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" />
-        </transition>
+        <component :is="Component" />
       </RouterView>
     </main>
 
@@ -128,17 +126,6 @@ watch(() => route.path, () => {
 </template>
 
 <style>
-/* 路由切换淡入淡出过渡动画 */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
 .shell-fade-enter-active,
 .shell-fade-leave-active {
   transition: opacity 0.9s ease, transform 0.9s ease;
