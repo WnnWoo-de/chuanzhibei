@@ -1,312 +1,173 @@
 <template>
-  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-22 px-5 pb-10 xl:px-6">
+  <div class="bg-transparent min-h-screen pt-10 px-6 pb-12">
     <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6">
       <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
-      <div v-for="n in 4" :key="`m-${n}`" class="border-r border-black h-full block md:hidden col-span-3"></div>
     </div>
 
-    <div class="relative z-10 mx-auto max-w-[1480px] grid grid-cols-12 gap-5 xl:gap-6">
-      <div class="col-span-12 md:col-span-4 xl:col-span-3">
-        <div class="sticky top-24 space-y-5">
-          <router-link
-            to="/chat"
-            class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-primary transition-opacity mb-8"
-          >
-            <span>&larr; 返回 AI 助手</span>
-          </router-link>
+    <div class="carbon-back-link-wrap relative z-10 mx-auto max-w-[1680px] mb-2">
+      <router-link
+        to="/chat"
+        class="carbon-back-link inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-primary transition-opacity"
+      >
+        <span>&larr; 返回 AI 助手</span>
+      </router-link>
+    </div>
 
-          <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-6">碳足迹<br />速算器</h1>
-          <p class="text-sm opacity-60 max-w-[240px] mb-8 leading-6">
-            用常见生活行为快速估算今日碳排放，并结合可视图与绿色出行建议，帮你更直观地看到减排方向。
-          </p>
-
-          <div class="hidden md:block text-xs font-mono opacity-40 space-y-2">
-            <p>维度：交通 / 用电 / 饮食</p>
-            <p>模型：本地估算</p>
-            <p>单位：kg CO₂e / 日</p>
-          </div>
+    <div class="carbon-page__grid relative z-10 mx-auto max-w-[1680px]">
+      <section class="carbon-panel carbon-panel--input carbon-rotate-reveal carbon-rotate-reveal--panel-1">
+        <div class="carbon-panel__heading-wrap">
+          <h2 class="carbon-panel__heading">数据输入</h2>
         </div>
-      </div>
 
-      <div class="col-span-12 md:col-span-8 xl:col-span-9">
-        <div class="carbon-core-layout">
-          <section class="carbon-card carbon-card--form carbon-card--primary p-4 md:p-5 xl:p-5.5">
-            <div class="carbon-card__header mb-4">
-              <div>
-                <p class="carbon-card__eyebrow">Footprint Input</p>
-                <h2 class="carbon-card__title">填写今天的生活数据</h2>
-              </div>
+        <div class="space-y-5">
+          <div class="carbon-field">
+            <label class="carbon-field__label">交通方式：</label>
+            <select v-model="commuteMode" class="carbon-field__control">
+              <option v-for="option in commuteModes" :key="option.value" :value="option.value">{{ option.label }}</option>
+            </select>
+          </div>
+
+          <div class="carbon-field">
+            <label class="carbon-field__label">通勤距离：</label>
+            <div class="carbon-field__range-wrap">
+              <input v-model="commuteKm" type="range" min="0" max="80" class="carbon-field__range" />
+              <div class="carbon-field__hint">{{ commuteKm }} km</div>
+            </div>
+          </div>
+
+          <div class="carbon-field">
+            <label class="carbon-field__label">能源使用：</label>
+            <input v-model="electricityKwh" type="number" min="0" max="30" step="0.5" class="carbon-field__control" />
+          </div>
+
+          <div class="carbon-field">
+            <label class="carbon-field__label">肉类餐食：</label>
+            <input v-model="meatMeals" type="number" min="0" max="6" step="1" class="carbon-field__control" />
+          </div>
+
+          <div class="carbon-field">
+            <label class="carbon-field__label">快速场景：</label>
+            <div class="grid grid-cols-1 gap-2">
               <button
-                @click="resetForm"
-                class="carbon-card__action px-4 py-2 border border-black/15 text-xs font-mono uppercase hover:bg-black hover:text-white transition-colors rounded-full"
+                v-for="preset in carbonPresets"
+                :key="preset.key"
+                @click="applyPreset(preset)"
+                class="carbon-preset"
+                :class="activePresetKey === preset.key ? 'carbon-preset--active' : ''"
               >
-                重置
+                <span class="carbon-preset__title">{{ preset.label }}</span>
+                <span class="carbon-preset__desc">{{ preset.desc }}</span>
               </button>
             </div>
+          </div>
 
-            <div class="space-y-4">
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 auto-rows-fr">
-                <div class="summary-chip rounded-[20px] px-3.5 py-3 h-full min-h-[88px] flex flex-col justify-between">
-                  <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Commute</p>
-                  <div class="text-xl font-bold">{{ commuteKm }} km</div>
-                  <p class="text-sm text-black/50 mt-1">{{ commuteModeLabel }}</p>
-                </div>
-                <div class="summary-chip rounded-[20px] px-3.5 py-3 h-full min-h-[88px] flex flex-col justify-between">
-                  <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Electricity</p>
-                  <div class="text-xl font-bold">{{ electricityKwh }} kWh</div>
-                  <p class="text-sm text-black/50 mt-1">家庭日常用电输入</p>
-                </div>
-                <div class="summary-chip rounded-[20px] px-3.5 py-3 h-full min-h-[88px] flex flex-col justify-between">
-                  <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Diet</p>
-                  <div class="text-xl font-bold">{{ meatMeals }} 餐</div>
-                  <p class="text-sm text-black/50 mt-1">高碳饮食次数</p>
-                </div>
-              </div>
+          <button @click="resetForm" class="carbon-submit">重置数据</button>
+        </div>
+      </section>
 
-              <div>
-                <div class="flex items-center justify-between mb-3 flex-wrap gap-3">
-                  <label class="font-bold">快速场景</label>
-                  <span class="text-xs font-mono opacity-45">一键套用日常模板</span>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <button
-                    v-for="preset in carbonPresets"
-                    :key="preset.key"
-                    @click="applyPreset(preset)"
-                    class="transport-option px-3 py-2 text-left rounded-2xl transition-all"
-                    :class="activePresetKey === preset.key ? 'transport-option--active' : 'transport-option--idle'"
-                  >
-                    <p class="text-xs font-mono uppercase tracking-[0.12em] mb-1 text-black/45">{{ preset.label }}</p>
-                    <p class="text-sm text-black/65">{{ preset.desc }}</p>
-                  </button>
-                </div>
-              </div>
+      <section class="carbon-panel carbon-panel--result carbon-rotate-reveal carbon-rotate-reveal--panel-2">
+        <div class="carbon-panel__heading-wrap">
+          <h2 class="carbon-panel__heading">计算结果展示</h2>
+        </div>
 
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <label class="font-bold">通勤距离</label>
-                  <span class="text-xs font-mono opacity-50">{{ commuteKm }} km</span>
-                </div>
-                <input v-model="commuteKm" type="range" min="0" max="80" class="w-full accent-green-700" />
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <button
-                    v-for="option in commuteModes"
-                    :key="option.value"
-                    @click="commuteMode = option.value"
-                    class="transport-option px-3 py-2 text-sm rounded-2xl transition-all"
-                    :class="commuteMode === option.value ? 'transport-option--active' : 'transport-option--idle'"
-                  >
-                    {{ option.label }}
-                  </button>
-                </div>
-              </div>
+        <div class="carbon-result-stack">
+          <div class="carbon-chart-card carbon-rotate-reveal carbon-rotate-reveal--chart">
+            <div class="carbon-legend">
+              <span v-for="item in animatedBreakdownItems" :key="`${item.key}-legend`" class="carbon-legend__item">
+                <span class="carbon-legend__dot" :style="{ backgroundColor: item.color }"></span>
+                {{ item.label }}
+              </span>
+            </div>
 
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <label class="font-bold">家庭用电</label>
-                  <span class="text-xs font-mono opacity-50">{{ electricityKwh }} kWh</span>
+            <div class="flex justify-center py-3">
+              <div :key="donutAnimationKey" class="carbon-donut-wrap">
+                <div class="carbon-donut-ring relative w-[270px] h-[270px] rounded-full" :style="{ background: donutGradient }">
+                  <div class="absolute inset-[42px] rounded-full bg-white flex flex-col items-center justify-center text-center shadow-[0_8px_20px_rgba(15,23,42,0.08)]">
+                    <div class="text-sm text-black/50 mb-1">总碳足迹</div>
+                    <div class="text-4xl font-bold leading-none">{{ totalFootprint.toFixed(2) }}</div>
+                    <div class="mt-2 text-sm text-black/55">kg CO₂e</div>
+                  </div>
                 </div>
-                <input v-model="electricityKwh" type="range" min="0" max="30" step="0.5" class="w-full accent-green-700" />
-              </div>
-
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <label class="font-bold">肉类餐食</label>
-                  <span class="text-xs font-mono opacity-50">{{ meatMeals }} 餐</span>
-                </div>
-                <input v-model="meatMeals" type="range" min="0" max="6" class="w-full accent-green-700" />
               </div>
             </div>
-          </section>
+          </div>
 
-          <div class="carbon-bottom-grid">
-            <section class="carbon-card carbon-card--secondary p-4.5 md:p-5">
-              <div class="carbon-card__header mb-4">
-                <div>
-                  <p class="carbon-card__eyebrow">Visual Insight</p>
-                  <h3 class="carbon-card__title">排放可视图</h3>
+          <div class="carbon-chart-card carbon-chart-card--bars carbon-rotate-reveal carbon-rotate-reveal--bars">
+            <div class="carbon-bars space-y-4">
+              <div v-for="item in animatedBreakdownItems" :key="`${item.key}-bar`" class="carbon-bar-row">
+                <div class="carbon-bar-row__head">
+                  <span>{{ item.label }}</span>
+                  <span>{{ item.percent }}%</span>
                 </div>
-                <div class="carbon-card__meta-stack">
-                  <div class="carbon-card__meta">今日结构占比</div>
-                  <div v-if="latestSavedAt" class="carbon-card__meta carbon-card__meta--success">已同步 {{ String(latestSavedAt).slice(0, 16).replace('T', ' ') }}</div>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 xl:grid-cols-[190px_1fr] gap-4 items-stretch">
-                <div class="flex justify-center">
-                  <div
-                    class="relative w-[164px] h-[164px] rounded-full shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)]"
-                    :style="{ background: donutGradient }"
-                  >
-                    <div class="absolute inset-[18px] rounded-full bg-white flex flex-col items-center justify-center text-center shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
-                      <div class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">TODAY</div>
-                      <div class="text-4xl font-bold leading-none">{{ totalFootprint.toFixed(2) }}</div>
-                      <div class="mt-2 text-sm text-black/45">kg CO₂e</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="space-y-2 h-full flex flex-col justify-between">
-                  <div v-for="item in animatedBreakdownItems" :key="item.key" class="rounded-2xl border border-black/8 bg-[#fbfcfb] p-4">
-                    <div class="flex items-center justify-between gap-4 mb-3">
-                      <div class="flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full" :style="{ backgroundColor: item.color }"></span>
-                        <span class="font-medium">{{ item.label }}</span>
-                      </div>
-                      <span class="text-sm font-mono text-black/55">{{ item.value.toFixed(2) }} kg · {{ item.percent }}%</span>
-                    </div>
-
-                    <div class="relative h-3 rounded-full bg-black/5 overflow-hidden">
-                      <div
-                        class="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
-                        :style="{ width: `${item.percent}%`, background: item.gradient, boxShadow: item.glow }"
-                      ></div>
-                    </div>
-                  </div>
+                <div class="carbon-bar-row__track">
+                  <div class="carbon-bar-row__fill carbon-bar-row__fill--breathing" :style="{ width: `${item.percent}%`, background: item.gradient, '--bar-glow': item.glow }"></div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 mt-3 auto-rows-fr">
-                <div
-                  v-for="item in animatedBreakdownItems"
-                  :key="`${item.key}-metric`"
-                  class="insight-metric-card group relative rounded-[24px] border border-black/8 p-4 overflow-hidden"
-                >
-                  <div class="insight-metric-card__pulse" :style="{ '--pulse-glow': item.glow, '--pulse-color': item.color }"></div>
-                  <div class="relative z-10 flex h-full min-h-[126px] flex-col justify-between">
-                    <div>
-                      <div class="flex items-start justify-between gap-3 mb-3">
-                        <div>
-                          <p class="text-xs font-mono uppercase tracking-[0.16em] text-black/35 mb-2">{{ item.shortLabel }}</p>
-                          <p class="text-sm font-medium text-black/70">{{ item.label }}</p>
-                        </div>
-                        <span class="insight-metric-card__dot" :style="{ '--dot-color': item.color, '--dot-glow': item.glow }"></span>
-                      </div>
-                      <div class="text-3xl font-bold mb-1">{{ item.percent }}%</div>
-                      <p class="text-sm text-black/50">{{ item.value.toFixed(2) }} kg CO₂e</p>
-                    </div>
-
-                    <div class="insight-metric-card__detail mt-5 rounded-2xl border border-white/70 px-4 py-3">
-                      <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-black/35 mb-2">Hover Insight</p>
-                      <p class="text-sm leading-6 text-[#294634]">{{ item.detail }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-4 rounded-2xl bg-[#f5fbf6] border border-emerald-100 p-4">
-                <div class="flex items-center justify-between gap-4 mb-3 flex-wrap">
-                  <h4 class="font-bold text-[#183222]">减排优先级</h4>
-                  <span class="text-xs font-mono uppercase tracking-[0.16em] text-emerald-700/70">Top Action</span>
-                </div>
-                <p class="text-sm leading-7 text-[#294634]">
-                  建议优先关注 <span class="font-bold">{{ dominantSource.label }}</span>，它当前占今日总排放
-                  <span class="font-bold">{{ dominantSource.percent }}%</span>。{{ dominantSourceAdvice }}
-                </p>
-              </div>
-            </section>
-
-            <section class="carbon-card carbon-card--secondary p-4.5 md:p-5">
-              <div class="carbon-card__header mb-4">
-                <div>
-                  <p class="carbon-card__eyebrow">Green Commute</p>
-                  <h3 class="carbon-card__title">绿色出行建议</h3>
-                </div>
-                <button
-                  @click="generateAiTravelAdvice"
-                  :disabled="isGeneratingAdvice || adviceCooldown > 0"
-                  class="carbon-card__action inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-[linear-gradient(135deg,#103d22,#1f7a3a)] px-4 py-2 text-xs font-mono uppercase tracking-[0.16em] text-white shadow-[0_12px_28px_rgba(22,163,74,0.22)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(22,163,74,0.3)] disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <span class="w-4 h-4 block" :class="{ 'animate-spin': isGeneratingAdvice }" v-html="renderIcon('leaf')"></span>
-                  <span class="inline-flex items-center gap-1.5">
-                    <span>{{ isGeneratingAdvice ? '生成中' : adviceCooldown > 0 ? `${adviceCooldown}s 后可重试` : 'AI 出行建议' }}</span>
-                    <span v-if="isGeneratingAdvice" class="ai-dot-wave" aria-hidden="true">
-                      <span></span><span></span><span></span>
-                    </span>
-                  </span>
-                </button>
-              </div>
-
-              <div class="space-y-2.5 md:grid md:grid-cols-2 md:gap-2.5 md:space-y-0 items-stretch">
-                <div
-                  v-for="tip in ecoTravelSuggestions"
-                  :key="tip.title"
-                  class="tip-card rounded-[22px] p-3.5 transition-colors min-h-[88px] flex items-center"
-                >
-                  <div class="flex items-start gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                      <span class="w-5 h-5 block" v-html="renderIcon(tip.icon)"></span>
-                    </div>
-                    <div>
-                      <h4 class="font-bold mb-1 text-[15px]">{{ tip.title }}</h4>
-                      <p class="text-sm leading-6 text-black/60 line-clamp-2">{{ tip.description }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-3 rounded-[24px] border border-emerald-200 bg-[linear-gradient(135deg,rgba(244,255,247,0.98),rgba(232,248,236,0.96))] p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
-                <div class="flex items-center justify-between gap-4 flex-wrap mb-3">
-                  <div>
-                    <p class="text-xs font-mono uppercase tracking-[0.16em] text-emerald-800/60 mb-2">AI Travel Brief</p>
-                    <h4 class="font-bold text-[#183222]">AI 生成出行建议</h4>
-                  </div>
-                  <div class="flex items-center gap-2 flex-wrap justify-end">
-                    <button
-                      v-if="aiTravelAdvice"
-                      @click="copyAiTravelAdvice"
-                      class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/90 px-3 py-1.5 text-[11px] font-mono uppercase tracking-[0.16em] text-emerald-700 transition-all hover:border-emerald-300 hover:bg-emerald-50"
-                    >
-                      <span class="w-3.5 h-3.5 block" v-html="renderIcon('pin')"></span>
-                      <span>{{ copiedAdvice ? '已复制' : '复制建议' }}</span>
-                    </button>
-                    <span class="rounded-full border border-emerald-200 bg-white/80 px-3 py-1 text-[11px] font-mono uppercase tracking-[0.16em] text-emerald-700/80">
-                      {{ commuteModeLabel }} · {{ commuteKm }} km
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  class="min-h-[96px] rounded-2xl border border-white/70 bg-white/80 px-4 py-3.5 text-sm leading-7 text-[#294634] whitespace-pre-line overflow-hidden"
-                  :class="{ 'ai-loading-panel': isGeneratingAdvice }"
-                >
-                  <template v-if="isGeneratingAdvice && !aiTravelAdvice">
-                    <div class="flex items-start gap-3">
-                      <div class="ai-radar shrink-0 mt-1">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <div class="font-mono text-[11px] uppercase tracking-[0.22em] text-emerald-700/70 mb-2">AI Analyzing Route</div>
-                        <div class="ai-typing-text">正在根据你的通勤方式、距离与交通排放生成个性化低碳出行建议</div>
-                        <div class="mt-4 space-y-2.5" aria-hidden="true">
-                          <div class="ai-skeleton-line w-[92%]"></div>
-                          <div class="ai-skeleton-line w-[78%]"></div>
-                          <div class="ai-skeleton-line w-[85%]"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </template>
-                  <template v-else-if="aiTravelAdvice">
-                    <div :class="{ 'ai-streaming-text': isGeneratingAdvice }">{{ displayedAiTravelAdvice }}</div>
-                  </template>
-                  <template v-else>
-                    点击右上角按钮，生成基于当前通勤方式、距离和交通排放的 AI 个性化出行建议。
-                  </template>
-                </div>
-              </div>
-
-              <ul class="mt-4 space-y-2">
-                <li v-for="tip in suggestions" :key="tip" class="flex gap-3 text-sm text-black/75 leading-relaxed">
-                  <span class="text-green-600">●</span>
-                  <span>{{ tip }}</span>
-                </li>
-              </ul>
-            </section>
+          <div class="carbon-summary carbon-rotate-reveal carbon-rotate-reveal--summary">
+            <p class="mb-3">您的碳足迹为：<strong>{{ totalFootprint.toFixed(2) }} kg CO₂e。</strong> 以下是详细分析：</p>
+            <ul class="space-y-2">
+              <li v-for="item in animatedBreakdownItems" :key="`${item.key}-summary`">
+                {{ item.label }}占比：{{ item.percent }}%
+              </li>
+            </ul>
+            <p v-if="latestSavedAt" class="carbon-summary__meta">最近同步：{{ String(latestSavedAt).slice(0, 16).replace('T', ' ') }}</p>
           </div>
         </div>
-      </div>
+      </section>
+
+      <section class="carbon-panel carbon-panel--advice carbon-rotate-reveal carbon-rotate-reveal--panel-3">
+        <div class="carbon-panel__heading-wrap">
+          <h2 class="carbon-panel__heading carbon-panel__heading--green">环保建议</h2>
+        </div>
+
+        <div class="carbon-advice-block">
+          <p><strong>减排重点：</strong>优先关注{{ dominantSource.label }}，当前占比 {{ dominantSource.percent }}%。{{ dominantSourceAdvice }}</p>
+        </div>
+
+        <div class="carbon-advice-block space-y-3">
+          <div v-for="tip in suggestions" :key="tip" class="carbon-advice-item">
+            <span>{{ tip }}</span>
+          </div>
+        </div>
+
+        <div class="carbon-advice-block space-y-3">
+          <div v-for="tip in ecoTravelSuggestions" :key="tip.title" class="carbon-advice-item carbon-advice-item--icon">
+            <span class="carbon-advice-item__icon" v-html="renderIcon(tip.icon)"></span>
+            <div>
+              <p class="font-semibold text-[#23452f]">{{ tip.title }}</p>
+              <p class="text-sm leading-6 text-[#476252]">{{ tip.description }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="carbon-ai-box carbon-rotate-reveal carbon-rotate-reveal--ai-box">
+          <div class="flex items-center justify-between gap-3 mb-3 flex-wrap">
+            <h3 class="font-semibold text-[#23452f]">AI 出行建议</h3>
+            <button
+              @click="generateAiTravelAdvice"
+              :disabled="isGeneratingAdvice || adviceCooldown > 0"
+              class="carbon-ai-box__button"
+            >
+              {{ isGeneratingAdvice ? '生成中' : adviceCooldown > 0 ? `${adviceCooldown}s 后可重试` : '生成建议' }}
+            </button>
+          </div>
+
+          <div class="carbon-ai-box__content" :class="{ 'ai-loading-panel': isGeneratingAdvice }">
+            <template v-if="isGeneratingAdvice && !aiTravelAdvice">
+              正在根据你的通勤方式、距离与交通排放生成个性化低碳出行建议...
+            </template>
+            <template v-else-if="aiTravelAdvice">
+              <div :class="{ 'ai-streaming-text': isGeneratingAdvice }">{{ displayedAiTravelAdvice }}</div>
+            </template>
+            <template v-else>
+              点击按钮生成基于当前通勤方式和排放结果的 AI 个性化建议。
+            </template>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </template>
@@ -330,6 +191,7 @@ const isGeneratingAdvice = ref(false)
 const adviceCooldown = ref(0)
 const copiedAdvice = ref(false)
 const activePresetKey = ref('default')
+const donutAnimationKey = ref(0)
 const typewriterTimer = ref(null)
 const cooldownTimer = ref(null)
 const copyResetTimer = ref(null)
@@ -402,6 +264,10 @@ const updateActivePreset = () => {
     )
   })
   activePresetKey.value = matched?.key || 'custom'
+}
+
+const replayDonutAnimation = () => {
+  donutAnimationKey.value += 1
 }
 
 const applyPreset = (preset) => {
@@ -737,6 +603,7 @@ const resetForm = () => {
 
 watch([commuteKm, electricityKwh, meatMeals, commuteMode], () => {
   updateActivePreset()
+  replayDonutAnimation()
   if (!userStore.isLoggedIn) return
   persistCarbonRecord().catch(() => {})
 })
@@ -754,384 +621,514 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.carbon-core-layout {
+.carbon-page__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
-  align-items: start;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
 }
 
-.carbon-bottom-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-  width: min(100%, 1120px);
-}
-
-.carbon-card {
-  position: relative;
-  border: 1px solid rgba(21, 48, 33, 0.1);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.93), rgba(248, 252, 249, 0.9));
-  backdrop-filter: blur(14px);
-  box-shadow: 0 10px 24px rgba(20, 40, 28, 0.07);
+.carbon-panel {
+  min-height: calc(100vh - 10.5rem);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(245, 251, 247, 0.88));
+  border: 1px solid rgba(71, 121, 84, 0.16);
+  border-radius: 28px;
+  box-shadow: 0 18px 38px rgba(27, 48, 30, 0.08);
+  backdrop-filter: blur(10px);
+  padding: 22px 24px 26px;
   overflow: hidden;
 }
 
-.carbon-card::after {
+.carbon-panel--input,
+.carbon-panel--result,
+.carbon-panel--advice {
+  border-right: 1px solid rgba(71, 121, 84, 0.16);
+}
+
+.carbon-panel--advice {
+  background: linear-gradient(180deg, rgba(244, 252, 245, 0.92), rgba(236, 248, 238, 0.9));
+  border-left: 1px solid rgba(71, 121, 84, 0.16);
+}
+
+.carbon-panel__heading-wrap {
+  border-bottom: 1px solid rgba(74, 154, 88, 0.22);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.carbon-panel__heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2f3b30;
+}
+
+.carbon-panel__heading--green {
+  color: #3a8b37;
+}
+
+.carbon-field {
+  display: grid;
+  gap: 8px;
+}
+
+.carbon-field__label {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #47554a;
+}
+
+.carbon-field__control {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid #d3d8d0;
+  background: #fff;
+  padding: 0 14px;
+  font-size: 1rem;
+  color: #273229;
+}
+
+.carbon-field__range-wrap {
+  border: 1px solid #d3d8d0;
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px 14px;
+}
+
+.carbon-field__range {
+  width: 100%;
+  accent-color: #45a049;
+}
+
+.carbon-field__hint {
+  margin-top: 8px;
+  font-size: 0.92rem;
+  color: #607063;
+}
+
+.carbon-preset {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid #d9dfd7;
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 12px;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.carbon-preset:hover,
+.carbon-preset--active {
+  border-color: #47a652;
+  background: #f4fcf4;
+}
+
+.carbon-preset__title {
+  font-weight: 700;
+  color: #334334;
+}
+
+.carbon-preset__desc {
+  font-size: 0.86rem;
+  color: #657366;
+}
+
+.carbon-submit {
+  width: 100%;
+  min-height: 48px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #42b549, #3f9444);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.carbon-result-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.carbon-back-link-wrap {
+  animation: rotate-reveal-left 0.72s cubic-bezier(0.22, 0.85, 0.24, 1) both;
+  transform-origin: left center;
+}
+
+.carbon-back-link {
+  animation: link-float-in 0.95s ease-out both;
+}
+
+.carbon-rotate-reveal {
+  opacity: 0;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+.carbon-rotate-reveal--panel-1 {
+  animation: rotate-reveal-left 0.82s cubic-bezier(0.22, 0.85, 0.24, 1) 0.08s both;
+  transform-origin: left center;
+}
+
+.carbon-rotate-reveal--panel-2 {
+  animation: rotate-reveal-center 0.9s cubic-bezier(0.22, 0.85, 0.24, 1) 0.16s both;
+  transform-origin: center center;
+}
+
+.carbon-rotate-reveal--panel-3 {
+  animation: rotate-reveal-right 0.92s cubic-bezier(0.22, 0.85, 0.24, 1) 0.24s both;
+  transform-origin: right center;
+}
+
+.carbon-rotate-reveal--chart {
+  animation: rotate-reveal-center 0.85s cubic-bezier(0.22, 0.85, 0.24, 1) 0.3s both;
+  transform-origin: center center;
+}
+
+.carbon-rotate-reveal--bars {
+  animation: rotate-reveal-left 0.82s cubic-bezier(0.22, 0.85, 0.24, 1) 0.42s both;
+  transform-origin: left center;
+}
+
+.carbon-rotate-reveal--summary {
+  animation: rotate-reveal-right 0.82s cubic-bezier(0.22, 0.85, 0.24, 1) 0.52s both;
+  transform-origin: right center;
+}
+
+.carbon-rotate-reveal--ai-box {
+  animation: rotate-reveal-right 0.9s cubic-bezier(0.22, 0.85, 0.24, 1) 0.36s both;
+  transform-origin: right center;
+}
+
+.carbon-chart-card {
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 249, 245, 0.92));
+  border: 1px solid rgba(71, 121, 84, 0.12);
+  box-shadow: 0 12px 26px rgba(14, 29, 18, 0.07);
+  padding: 14px 16px 18px;
+}
+
+.carbon-donut-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: donut-enter 0.78s cubic-bezier(0.16, 0.84, 0.24, 1);
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.carbon-donut-ring {
+  animation: donut-spin-in 0.95s cubic-bezier(0.16, 0.84, 0.24, 1), donut-breathe 4.2s ease-in-out 1s infinite;
+  box-shadow: 0 18px 36px rgba(42, 115, 57, 0.08);
+  will-change: transform, opacity, filter;
+}
+
+.carbon-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  font-size: 0.86rem;
+  color: #606e61;
+  margin-bottom: 8px;
+}
+
+.carbon-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.carbon-legend__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.carbon-bar-row__head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #445446;
+  margin-bottom: 6px;
+}
+
+.carbon-bar-row__track {
+  height: 18px;
+  border-radius: 999px;
+  background: #eef1eb;
+  overflow: hidden;
+  position: relative;
+}
+
+.carbon-bar-row__fill {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.5s ease;
+}
+
+.carbon-bar-row__fill--breathing {
+  position: relative;
+  animation: bar-breathe 2.8s ease-in-out infinite;
+  box-shadow: var(--bar-glow);
+}
+
+.carbon-bar-row__fill--breathing::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.52);
-  pointer-events: none;
+  background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.34), rgba(255,255,255,0.08));
+  mix-blend-mode: screen;
+  animation: bar-sheen 2.2s linear infinite;
 }
 
-.carbon-card--form {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(245, 251, 247, 0.9)),
-    rgba(255, 255, 255, 0.9);
+.carbon-summary {
+  font-size: 0.98rem;
+  line-height: 1.8;
+  color: #374538;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(241, 248, 243, 0.92));
+  border: 1px solid rgba(71, 121, 84, 0.12);
+  box-shadow: 0 12px 26px rgba(14, 29, 18, 0.06);
+  padding: 16px 18px;
 }
 
-.carbon-card--primary {
-  min-height: 100%;
+.carbon-summary__meta {
+  margin-top: 12px;
+  font-size: 0.88rem;
+  color: #6a796c;
 }
 
-.carbon-card--secondary {
-  min-height: 0;
+.carbon-advice-block {
+  margin-bottom: 18px;
+  color: #304633;
+  line-height: 1.9;
 }
 
-.carbon-card__header {
+.carbon-advice-item {
+  font-size: 1rem;
+}
+
+.carbon-advice-item--icon {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  min-height: 64px;
+  gap: 10px;
 }
 
-.carbon-card__eyebrow {
-  margin-bottom: 6px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.25em;
-  color: rgba(26, 26, 26, 0.35);
-}
-
-.carbon-card__title {
-  font-size: 1.25rem;
-  line-height: 1.2;
-  font-weight: 700;
-  color: #121912;
-}
-
-.carbon-card__meta-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
-.carbon-card__meta {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-  font-size: 11px;
-  color: rgba(26, 26, 26, 0.42);
-  white-space: nowrap;
-}
-
-.carbon-card__meta--success {
-  color: rgba(4, 120, 87, 0.72);
-}
-
-.carbon-card__action {
-  min-height: 36px;
-}
-
-.summary-chip {
-  border: 1px solid rgba(21, 48, 33, 0.09);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(243, 249, 245, 0.94));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
-}
-
-.tip-card {
-  min-height: 104px;
-}
-
-.transport-option {
-  border: 1px solid rgba(21, 48, 33, 0.11);
-  border-radius: 20px;
-  min-height: 54px;
-}
-
-.transport-option--idle {
-  color: #587262;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(241, 247, 243, 0.97));
-}
-
-.transport-option--idle:hover {
-  border-color: rgba(74, 222, 128, 0.35);
-  background: linear-gradient(180deg, rgba(250, 255, 251, 1), rgba(236, 247, 239, 1));
-  transform: translateY(-1px);
-}
-
-.transport-option--active {
-  color: #4f6358;
-  border-color: rgba(74, 222, 128, 0.4);
-  background: linear-gradient(135deg, rgba(242, 251, 245, 1), rgba(228, 246, 235, 1) 68%, rgba(214, 247, 231, 0.95) 100%);
-  box-shadow: 0 8px 18px rgba(134, 239, 172, 0.2);
-}
-
-.stacked-cards {
-  position: relative;
-}
-
-.tip-card,
-.insight-metric-card {
-  border: 1px solid rgba(21, 48, 33, 0.08);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(244, 250, 246, 0.9));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
-}
-
-.tip-card:hover {
-  background: linear-gradient(180deg, rgba(247, 252, 248, 1), rgba(238, 247, 241, 0.98));
-}
-
-.insight-metric-card {
-  isolation: isolate;
-  transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
-}
-
-.insight-metric-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(34, 197, 94, 0.14);
-  box-shadow: 0 14px 28px rgba(18, 40, 28, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.74);
-}
-
-.insight-metric-card__pulse {
-  position: absolute;
-  inset: -12%;
-  border-radius: 24px;
-  background:
-    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--pulse-color) 12%, transparent), transparent 58%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(239, 248, 241, 0.32));
-  opacity: 0.72;
-  animation: insight-breathe 4.2s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.insight-metric-card__dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 9999px;
+.carbon-advice-item__icon {
+  width: 20px;
+  height: 20px;
+  color: #4aa556;
   flex-shrink: 0;
-  background: var(--dot-color);
-  box-shadow: var(--dot-glow);
-  animation: signal-breathe 2.8s ease-in-out infinite;
+  margin-top: 3px;
 }
 
-.insight-metric-card__detail {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(239, 248, 241, 0.92));
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.24s ease, transform 0.24s ease;
+.carbon-advice-item__icon :deep(svg) {
+  width: 100%;
+  height: 100%;
 }
 
-.insight-metric-card:hover .insight-metric-card__detail {
-  opacity: 1;
-  transform: translateY(0);
+.carbon-ai-box {
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(239, 248, 241, 0.92));
+  border: 1px solid rgba(87, 170, 92, 0.18);
+  box-shadow: 0 12px 24px rgba(24, 54, 30, 0.06);
+  padding: 16px;
 }
 
-.ai-dot-wave {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+.carbon-ai-box__button {
+  border: none;
+  border-radius: 999px;
+  background: #45a049;
+  color: #fff;
+  padding: 8px 14px;
+  font-size: 0.86rem;
+  font-weight: 700;
 }
 
-@media (max-width: 1279px) {
-  .carbon-bottom-grid {
-    grid-template-columns: 1fr;
-    width: 100%;
-  }
-
-  .carbon-core-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .carbon-card__meta-stack {
-    align-items: flex-start;
-  }
+.carbon-ai-box__button:disabled {
+  opacity: 0.6;
 }
 
-@media (hover: none) {
-  .insight-metric-card__detail {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (min-width: 1280px) {
-  .carbon-bottom-grid > section {
-    min-height: 100%;
-  }
-}
-
-.ai-dot-wave span {
-  width: 4px;
-  height: 4px;
-  border-radius: 9999px;
-  background: currentColor;
-  opacity: 0.35;
-  animation: ai-dot-bounce 1s infinite ease-in-out;
-}
-
-.ai-dot-wave span:nth-child(2) {
-  animation-delay: 0.16s;
-}
-
-.ai-dot-wave span:nth-child(3) {
-  animation-delay: 0.32s;
+.carbon-ai-box__content {
+  min-height: 110px;
+  border-radius: 10px;
+  background: rgba(248, 252, 248, 0.9);
+  border: 1px solid rgba(100, 155, 108, 0.16);
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #335036;
+  white-space: pre-line;
 }
 
 .ai-loading-panel {
   position: relative;
+  overflow: hidden;
 }
 
 .ai-loading-panel::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(110deg, transparent 0%, rgba(34, 197, 94, 0.09) 35%, transparent 70%);
+  background: linear-gradient(110deg, transparent 0%, rgba(34, 197, 94, 0.08) 35%, transparent 70%);
   transform: translateX(-100%);
   animation: ai-panel-sheen 1.8s linear infinite;
-}
-
-.ai-radar {
-  position: relative;
-  width: 20px;
-  height: 20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ai-radar span {
-  position: absolute;
-  border: 1px solid rgba(22, 163, 74, 0.35);
-  border-radius: 9999px;
-  animation: ai-ripple 1.8s infinite ease-out;
-}
-
-.ai-radar span:nth-child(1) {
-  width: 8px;
-  height: 8px;
-  background: rgba(159, 202, 175, 0.8);
-  border-color: transparent;
-  animation: none;
-}
-
-.ai-radar span:nth-child(2) {
-  width: 20px;
-  height: 20px;
-}
-
-.ai-radar span:nth-child(3) {
-  width: 20px;
-  height: 20px;
-  animation-delay: 0.9s;
-}
-
-.ai-typing-text,
-.ai-streaming-text {
-  position: relative;
 }
 
 .ai-streaming-text {
   animation: ai-text-fade-in 0.28s ease-out;
 }
 
-.ai-typing-text::after,
-.ai-streaming-text::after {
-  content: '▋';
-  display: inline-block;
-  margin-left: 3px;
-  color: #718b7b;
-  animation: ai-caret-blink 0.9s step-end infinite;
+@media (max-width: 1200px) {
+  .carbon-page__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .carbon-panel {
+    min-height: auto;
+  }
 }
 
-.ai-skeleton-line {
-  height: 10px;
-  border-radius: 9999px;
-  background: linear-gradient(90deg, rgba(209, 250, 229, 0.55) 0%, rgba(134, 239, 172, 0.9) 50%, rgba(209, 250, 229, 0.55) 100%);
-  background-size: 200% 100%;
-  animation: ai-skeleton-shimmer 1.4s linear infinite;
-}
-
-@keyframes insight-breathe {
+@keyframes bar-breathe {
   0%,
   100% {
-    transform: scale(0.97);
-    opacity: 0.68;
-    filter: saturate(0.96);
+    filter: saturate(0.95) brightness(0.96);
+    transform: scaleY(0.98);
   }
   50% {
-    transform: scale(1.03);
-    opacity: 1;
-    filter: saturate(1.08);
+    filter: saturate(1.08) brightness(1.05);
+    transform: scaleY(1);
   }
 }
 
-@keyframes signal-breathe {
+@keyframes link-float-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate-reveal-left {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) rotateY(-14deg) rotateX(8deg) translateX(-28px) scale(0.94);
+    filter: blur(5px);
+  }
+  65% {
+    opacity: 1;
+    transform: perspective(1200px) rotateY(2deg) rotateX(-1deg) translateX(0) scale(1.01);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) rotateY(0) rotateX(0) translateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes rotate-reveal-center {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) rotateX(16deg) rotateZ(-2deg) translateY(20px) scale(0.92);
+    filter: blur(6px);
+  }
+  65% {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(-2deg) rotateZ(0.6deg) translateY(0) scale(1.015);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(0) rotateZ(0) translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes rotate-reveal-right {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) rotateY(14deg) rotateX(8deg) translateX(28px) scale(0.94);
+    filter: blur(5px);
+  }
+  65% {
+    opacity: 1;
+    transform: perspective(1200px) rotateY(-2deg) rotateX(-1deg) translateX(0) scale(1.01);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) rotateY(0) rotateX(0) translateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes donut-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes donut-spin-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+    filter: saturate(0.9) brightness(0.96);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.045);
+    filter: saturate(1.04) brightness(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: saturate(1) brightness(1);
+  }
+}
+
+@keyframes donut-breathe {
   0%,
   100% {
-    transform: scale(0.92);
-    opacity: 0.78;
+    transform: translateY(0) scale(1);
+    filter: saturate(0.99);
+    box-shadow: 0 18px 36px rgba(42, 115, 57, 0.08);
   }
   50% {
-    transform: scale(1.18);
-    opacity: 1;
+    transform: translateY(-2px) scale(1.012);
+    filter: saturate(1.04);
+    box-shadow: 0 22px 42px rgba(42, 115, 57, 0.12);
   }
 }
 
-@keyframes ai-dot-bounce {
-  0%,
-  80%,
-  100% {
-    opacity: 0.35;
-    transform: translateY(0) scale(0.85);
+@keyframes bar-sheen {
+  0% {
+    transform: translateX(-100%);
   }
-  40% {
-    opacity: 1;
-    transform: translateY(-2px) scale(1);
+  100% {
+    transform: translateX(100%);
   }
 }
 
 @keyframes ai-panel-sheen {
   to {
     transform: translateX(100%);
-  }
-}
-
-@keyframes ai-ripple {
-  0% {
-    transform: scale(0.45);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1.25);
-    opacity: 0;
-  }
-}
-
-@keyframes ai-caret-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
   }
 }
 
@@ -1145,13 +1142,7 @@ onUnmounted(() => {
     filter: blur(0);
   }
 }
-
-@keyframes ai-skeleton-shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
 </style>
+
+
+

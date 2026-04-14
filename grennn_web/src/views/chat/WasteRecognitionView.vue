@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-24 px-6 pb-12 flex flex-col">
+  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-20 px-6 pb-12 flex flex-col">
     <!-- Grid Background -->
     <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6">
       <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
