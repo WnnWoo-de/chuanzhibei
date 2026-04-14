@@ -225,13 +225,12 @@
             </div>
           </div>
 
-          <div class="relative flex flex-col min-h-[280px] sm:min-h-[320px] lg:min-h-[420px]">
+          <div class="relative">
             <transition name="hero-fade" mode="out-in">
               <div
                 :key="currentSlide"
-                class="flex flex-col pl-0 sm:pl-10 lg:pl-14 h-full"
+                class="flex flex-col justify-center pl-0 sm:pl-10 min-h-[280px] sm:min-h-[320px] lg:min-h-[420px] lg:pl-14"
               >
-                <div class="flex flex-col justify-center flex-1">
                 <p class="text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.35em] sm:tracking-[0.4em] text-emerald-600/50">
                   0{{ currentSlide + 1 }} / 0{{ slides.length }}
                 </p>
@@ -248,10 +247,7 @@
                   {{ slides[currentSlide].description }}
                 </p>
 
-              </div>
-
-              <div class="mt-3 sm:mt-4 sm:mt-6">
-                <div class="flex flex-wrap items-center gap-4">
+                <div class="mt-5 sm:mt-10 flex flex-wrap items-center gap-4">
                   <a
                     v-if="slides[currentSlide].link.startsWith('#')"
                     :href="slides[currentSlide].link"
