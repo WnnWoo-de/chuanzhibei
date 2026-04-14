@@ -165,20 +165,22 @@
       <!-- Carousel Content -->
       <div class="relative z-10 flex h-full flex-col justify-center pt-20 sm:pt-20 lg:pt-0">
         <div class="grid grid-cols-1 items-center gap-5 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
-          <div class="flex flex-col justify-center min-h-[280px] sm:min-h-[320px] lg:h-full lg:min-h-[420px] lg:pr-6">
-            <div class="mt-4 sm:mt-2 overflow-hidden flex-1 flex flex-col justify-center">
-              <p class="text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] sm:tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
-              <div class="mt-2 sm:mt-3 sm:mt-6 space-y-1 sm:space-y-1.5 sm:space-y-3">
-                <p class="font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600 min-h-[2.5rem] sm:min-h-[3rem]">
-                  {{ typedBrandLines[0] }}<span v-if="activeTypingLine === 0" class="typing-caret ml-1 inline-block h-3 sm:h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
-                </p>
-                <p class="font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600/85 min-h-[2.5rem] sm:min-h-[3rem]">
-                  {{ typedBrandLines[1] }}<span v-if="activeTypingLine === 1" class="typing-caret ml-1 inline-block h-3 sm:h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
-                </p>
+          <div class="flex flex-col min-h-[280px] sm:min-h-[320px] lg:h-full lg:min-h-[420px] lg:pr-6">
+            <div class="mt-4 sm:mt-2 overflow-hidden flex-1 flex flex-col">
+              <div class="flex flex-col justify-center flex-1">
+                <p class="text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] sm:tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
+                <div class="mt-2 sm:mt-3 sm:mt-6 space-y-1 sm:space-y-1.5 sm:space-y-3">
+                  <p class="font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600 min-h-[2.5rem] sm:min-h-[3rem]">
+                    {{ typedBrandLines[0] }}<span v-if="activeTypingLine === 0" class="typing-caret ml-1 inline-block h-3 sm:h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
+                  </p>
+                  <p class="font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600/85 min-h-[2.5rem] sm:min-h-[3rem]">
+                    {{ typedBrandLines[1] }}<span v-if="activeTypingLine === 1" class="typing-caret ml-1 inline-block h-3 sm:h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div class="mt-3 sm:mt-4 sm:mt-6 pt-1 md:pt-2 lg:mt-6 lg:pt-0">
+            <div class="mt-3 sm:mt-4 sm:mt-6">
               <div class="flex flex-wrap gap-1.5 sm:gap-3">
                 <span class="glass-tag glass-tag--emerald group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-2.5 md:px-4 pb-1 text-[10px] md:text-sm font-semibold text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70">
                   <span class="glass-tag__pulse"></span>
@@ -223,12 +225,13 @@
             </div>
           </div>
 
-          <div class="relative">
+          <div class="relative flex flex-col min-h-[280px] sm:min-h-[320px] lg:min-h-[420px]">
             <transition name="hero-fade" mode="out-in">
               <div
                 :key="currentSlide"
-                class="flex flex-col justify-center pl-0 sm:pl-10 min-h-[280px] sm:min-h-[320px] lg:min-h-[420px] lg:pl-14"
+                class="flex flex-col pl-0 sm:pl-10 lg:pl-14 h-full"
               >
+                <div class="flex flex-col justify-center flex-1">
                 <p class="text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.35em] sm:tracking-[0.4em] text-emerald-600/50">
                   0{{ currentSlide + 1 }} / 0{{ slides.length }}
                 </p>
@@ -245,7 +248,10 @@
                   {{ slides[currentSlide].description }}
                 </p>
 
-                <div class="mt-5 sm:mt-10 flex flex-wrap items-center gap-4">
+              </div>
+
+              <div class="mt-3 sm:mt-4 sm:mt-6">
+                <div class="flex flex-wrap items-center gap-4">
                   <a
                     v-if="slides[currentSlide].link.startsWith('#')"
                     :href="slides[currentSlide].link"
