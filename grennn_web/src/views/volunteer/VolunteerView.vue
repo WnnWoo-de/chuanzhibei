@@ -157,10 +157,7 @@ const totalCapacity = computed(() => activities.reduce((sum, item) => sum + item
 
 <style scoped>
 .activity-page {
-  background:
-    radial-gradient(circle at 15% 10%, rgba(34, 197, 94, 0.13), transparent 35%),
-    radial-gradient(circle at 85% 25%, rgba(59, 130, 246, 0.12), transparent 32%),
-    linear-gradient(180deg, #f7faf7 0%, #f4f8ff 55%, #f8fafc 100%);
+  background: transparent;
 }
 
 .hero-panel {
