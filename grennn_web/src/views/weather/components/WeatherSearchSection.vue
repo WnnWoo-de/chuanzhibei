@@ -46,6 +46,10 @@
 import { Location } from '@element-plus/icons-vue'
 
 defineProps({
+  searchCity: {
+    type: String,
+    default: '',
+  },
   loading: {
     type: Boolean,
     default: false,
