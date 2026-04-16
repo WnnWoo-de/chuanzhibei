@@ -19,7 +19,7 @@ const normalizeSuggestions = (suggestions) => {
             carbon_reduction:
                 typeof item?.carbon_reduction === 'string' && item.carbon_reduction.trim()
                     ? item.carbon_reduction.trim()
-                    : '',
+                    : '不适用',
         }))
         .filter((item) => item.title);
 };
@@ -55,16 +55,29 @@ exports.analyzeImage = async (req, res) => {
                 ? payload.analysis_id.trim()
                 : `rec_${Date.now()}`,
             image_url: `/uploads/${req.file.filename}`,
+            item_name: typeof payload.item_name === 'string' && payload.item_name.trim()
+                ? payload.item_name.trim()
+                : '未识别物品',
             material: typeof payload.material === 'string' && payload.material.trim()
                 ? payload.material.trim()
-                : '材质识别中',
+                : '未识别',
             integrity: typeof payload.integrity === 'string' && payload.integrity.trim()
                 ? payload.integrity.trim()
-                : '待评估',
+                : '不适用',
             carbon_reduction:
                 typeof payload.carbon_reduction === 'string' && payload.carbon_reduction.trim()
                     ? payload.carbon_reduction.trim()
-                    : '0 kg CO₂e',
+                    : '不适用',
+            reconstructable: Boolean(payload.reconstructable),
+            confidence: typeof payload.confidence === 'string' && payload.confidence.trim()
+                ? payload.confidence.trim()
+                : '低',
+            reason: typeof payload.reason === 'string' && payload.reason.trim()
+                ? payload.reason.trim()
+                : '暂未获得可靠判断依据',
+            disposal_advice: typeof payload.disposal_advice === 'string' && payload.disposal_advice.trim()
+                ? payload.disposal_advice.trim()
+                : '请结合材质与当地回收要求分类处理',
             suggestions: normalizeSuggestions(payload.suggestions),
         };
 

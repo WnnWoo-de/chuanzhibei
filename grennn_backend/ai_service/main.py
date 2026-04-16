@@ -67,31 +67,45 @@ async def analyze_reconstruction(payload: dict):
             return {"status": "error", "message": "缺少图片数据"}
 
         prompt = """
-        你是一名旧物改造顾问。请分析图片中的旧物，并为用户生成可执行的重构建议。
+        你是一名谨慎的旧物重构分析助手。你的第一任务是准确识别图片中的主要物品，
+        第二任务才是判断它是否适合进行旧物重构。禁止为了满足格式而编造不合理的结果。
+
         请严格输出 JSON，不要包含 Markdown、解释文本或多余字段。
         输出字段必须完全遵守以下结构：
         {
           "analysis_id": "rec_xxx",
-          "material": "识别为：木质类材质",
-          "integrity": "良好 (B+)",
-          "carbon_reduction": "12.5 kg CO₂e",
+          "item_name": "物品名称",
+          "material": "主要材质或包装材质",
+          "integrity": "完整/破损/一次性用品/不适用",
+          "carbon_reduction": "仅在适合重构时给出如 3.2 kg CO₂e，否则返回 不适用",
+          "reconstructable": true,
+          "confidence": "高/中/低",
+          "reason": "为什么适合或不适合重构",
+          "disposal_advice": "如果不适合重构，给出回收/分类处理建议；适合则返回可进入手工改造",
           "suggestions": [
             {
-              "title": "复古花架",
+              "title": "方案名称",
               "description": "一句话说明改造思路",
               "steps": ["步骤1", "步骤2", "步骤3"],
               "difficulty": "简单",
               "duration": "1-2 小时",
-              "carbon_reduction": "4.1 kg CO₂e"
+              "carbon_reduction": "1.2 kg CO₂e"
             }
           ]
         }
-        要求：
-        1. suggestions 返回 3 条方案。
-        2. material、integrity、carbon_reduction 必须是适合前端直接展示的中文字符串。
-        3. difficulty 仅可使用：简单、中等、较难。
-        4. steps 每条方案给出 3 到 5 步。
-        5. 如果图片不清晰，也要给出尽可能合理的旧物重构建议。
+
+        严格要求：
+        1. 先识别物品，不确定时 item_name 可写“纸巾包装（待确认）”这类保守表述。
+        2. 如果是纸巾、抽纸、食品包装、塑料袋、一次性用品、湿污纸类等通常不适合旧物重构的物品，
+           必须返回 reconstructable=false。
+        3. reconstructable=false 时：
+           - suggestions 必须返回空数组
+           - carbon_reduction 必须返回“不适用”
+           - integrity 可返回“一次性用品”或“不适用”
+           - disposal_advice 必须给出明确处理建议
+        4. reconstructable=true 时，suggestions 返回 2 到 3 条真正合理、与识别物品匹配的方案。
+        5. 不要把纸类包装、抽纸、塑料包装识别成木质、金属、玻璃等明显错误材质。
+        6. 若图像不足以支持高置信识别，confidence 返回“低”，并采用保守结论，不要强行生成改造方案。
         """
 
         image_url = f"data:{mime_type};base64,{image_base64}"
@@ -106,7 +120,7 @@ async def analyze_reconstruction(payload: dict):
                     ],
                 }
             ],
-            temperature=0.3,
+            temperature=0.1,
         )
 
         result_json = clean_json_text(response.choices[0].message.content)

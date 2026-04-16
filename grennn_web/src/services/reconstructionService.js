@@ -8,26 +8,41 @@ import { requestAxios } from '@/utils/api'
 
 /**
  * 将后端 AI 分析结果映射为前端展示所需的数据结构
- * 若后端返回字段缺失，则使用预设的默认值
  * @param {object} data - 后端 /api/v1/reconstruction/analyze 的响应数据
- * @returns {{ meta: object, suggestions: Array|null }}
+ * @returns {{ meta: object, suggestions: Array, summary: object }}
  */
 export const mapAnalyzeResult = (data) => {
   const meta = {
-    material: '98.5% 木质',
-    integrity: '良好 (B+)',
-    carbonReduction: '12.5 kg CO₂e',
+    itemName: '未识别物品',
+    material: '未识别',
+    integrity: '不适用',
+    carbonReduction: '不适用',
+    confidence: '低',
+    reconstructable: false,
+    reason: '暂未获得可靠判断依据',
+    disposalAdvice: '请结合材质与当地回收要求分类处理',
   }
 
+  const itemName = data?.item_name || data?.itemName
   const material = data?.material
   const integrity = data?.integrity
   const carbonReduction = data?.carbon_reduction || data?.carbonReduction
+  const confidence = data?.confidence
+  const reason = data?.reason
+  const disposalAdvice = data?.disposal_advice || data?.disposalAdvice
 
+  if (typeof itemName === 'string' && itemName.trim()) meta.itemName = itemName.trim()
   if (typeof material === 'string' && material.trim()) meta.material = material.trim()
   if (typeof integrity === 'string' && integrity.trim()) meta.integrity = integrity.trim()
   if (typeof carbonReduction === 'string' && carbonReduction.trim()) {
     meta.carbonReduction = carbonReduction.trim()
   }
+  if (typeof confidence === 'string' && confidence.trim()) meta.confidence = confidence.trim()
+  if (typeof reason === 'string' && reason.trim()) meta.reason = reason.trim()
+  if (typeof disposalAdvice === 'string' && disposalAdvice.trim()) {
+    meta.disposalAdvice = disposalAdvice.trim()
+  }
+  meta.reconstructable = Boolean(data?.reconstructable)
 
   const suggestionsRaw = data?.suggestions
   const suggestions = Array.isArray(suggestionsRaw)
@@ -45,9 +60,16 @@ export const mapAnalyzeResult = (data) => {
           duration: String(s?.duration || '').trim() || '2-4 小时',
         }))
         .filter((s) => s.title)
-    : null
+    : []
 
-  return { meta, suggestions }
+  return {
+    meta,
+    suggestions,
+    summary: {
+      isReconstructable: meta.reconstructable,
+      hasSuggestions: suggestions.length > 0,
+    },
+  }
 }
 
 /**

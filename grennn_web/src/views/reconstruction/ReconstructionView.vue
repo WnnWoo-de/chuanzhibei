@@ -132,23 +132,42 @@
                   </div>
                 </div>
 
-                <!-- Analysis Data (Fake) -->
                 <transition name="fade">
                   <div
                     v-if="analysisComplete"
-                    class="mt-6 p-4 bg-gray-50 border border-black/5 rounded text-xs font-mono space-y-2"
+                    class="mt-6 p-4 bg-gray-50 border border-black/5 rounded text-xs font-mono space-y-3"
                   >
-                    <div class="flex justify-between">
-                      <span class="opacity-50">材质识别:</span>
-                      <span>{{ analysisMeta.material }}</span>
+                    <div class="flex justify-between gap-4">
+                      <span class="opacity-50">物品识别:</span>
+                      <span class="text-right">{{ analysisMeta.itemName }}</span>
                     </div>
-                    <div class="flex justify-between">
-                      <span class="opacity-50">结构完整性:</span>
-                      <span>{{ analysisMeta.integrity }}</span>
+                    <div class="flex justify-between gap-4">
+                      <span class="opacity-50">主要材质:</span>
+                      <span class="text-right">{{ analysisMeta.material }}</span>
                     </div>
-                    <div class="flex justify-between">
+                    <div class="flex justify-between gap-4">
+                      <span class="opacity-50">完整性:</span>
+                      <span class="text-right">{{ analysisMeta.integrity }}</span>
+                    </div>
+                    <div class="flex justify-between gap-4">
+                      <span class="opacity-50">识别置信度:</span>
+                      <span class="text-right">{{ analysisMeta.confidence }}</span>
+                    </div>
+                    <div class="flex justify-between gap-4">
+                      <span class="opacity-50">重构可行性:</span>
+                      <span :class="analysisMeta.reconstructable ? 'text-primary font-bold' : 'text-amber-600 font-bold'">
+                        {{ analysisMeta.reconstructable ? '适合重构' : '不建议重构' }}
+                      </span>
+                    </div>
+                    <div class="flex justify-between gap-4">
                       <span class="opacity-50">预估碳减排:</span>
-                      <span class="text-primary font-bold">{{ analysisMeta.carbonReduction }}</span>
+                      <span class="text-right" :class="analysisMeta.reconstructable ? 'text-primary font-bold' : 'text-gray-500'">
+                        {{ analysisMeta.carbonReduction }}
+                      </span>
+                    </div>
+                    <div class="pt-3 border-t border-black/5 space-y-2 leading-relaxed">
+                      <p><span class="opacity-50">判断依据:</span> {{ analysisMeta.reason }}</p>
+                      <p><span class="opacity-50">处理建议:</span> {{ analysisMeta.disposalAdvice }}</p>
                     </div>
                   </div>
                 </transition>
@@ -160,9 +179,13 @@
               <div v-if="analysisComplete" class="border-t border-black/10 pt-6">
                 <h4 class="font-bold mb-4 flex items-center gap-2">
                   <el-icon class="text-primary"><MagicStick /></el-icon>
-                  重构建议
+                  {{ analysisMeta.reconstructable ? '重构建议' : '处理建议' }}
                 </h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                <div
+                  v-if="suggestions.length > 0"
+                  class="grid grid-cols-1 md:grid-cols-3 gap-4"
+                >
                   <div
                     v-for="(suggestion, idx) in suggestions"
                     :key="idx"
@@ -184,6 +207,14 @@
                       查看图纸 <el-icon><ArrowRight /></el-icon>
                     </button>
                   </div>
+                </div>
+
+                <div
+                  v-else
+                  class="rounded-2xl border border-amber-200 bg-amber-50/80 px-5 py-4 text-sm leading-relaxed text-amber-900"
+                >
+                  <p class="font-semibold mb-1">当前物品不适合进行旧物重构</p>
+                  <p>{{ analysisMeta.disposalAdvice }}</p>
                 </div>
 
                 <div class="mt-8 flex justify-between items-center">
@@ -401,9 +432,14 @@ const openStepsDialog = (suggestion) => {
   showStepsDialog.value = true
 }
 const analysisMeta = ref({
-  material: '98.5% 木质',
-  integrity: '良好 (B+)',
-  carbonReduction: '12.5 kg CO₂e',
+  itemName: '等待识别',
+  material: '等待识别',
+  integrity: '不适用',
+  carbonReduction: '不适用',
+  confidence: '低',
+  reconstructable: false,
+  reason: '上传图片后开始分析',
+  disposalAdvice: '识别完成后将显示处理建议',
 })
 
 const analysisSteps = ref([
@@ -413,19 +449,7 @@ const analysisSteps = ref([
   { text: '生成创意重构方案...', completed: false, active: false },
 ])
 
-const suggestions = ref([
-  {
-    title: '现代花架',
-    description: '保留框架结构，添加木板作为置物层，适合放置多肉植物。',
-    difficulty: '简单',
-  },
-  {
-    title: '悬挂花盆',
-    description: '利用椅背制作壁挂式花盆架，节省空间且美观。',
-    difficulty: '中等',
-  },
-  { title: '工具收纳', description: '改造为园艺工具收纳架，实用性强。', difficulty: '简单' },
-])
+const suggestions = ref([])
 
 const cases = ref([
   {
@@ -575,10 +599,16 @@ const startAnalysis = async () => {
   showAnalysis.value = true
   analysisComplete.value = false
   analysisMeta.value = {
-    material: '98.5% 木质',
-    integrity: '良好 (B+)',
-    carbonReduction: '12.5 kg CO₂e',
+    itemName: '分析中',
+    material: '分析中',
+    integrity: '分析中',
+    carbonReduction: '不适用',
+    confidence: '低',
+    reconstructable: false,
+    reason: 'AI 正在识别物品并判断是否适合重构',
+    disposalAdvice: '请稍候，分析完成后显示建议',
   }
+  suggestions.value = []
 
   // Reset steps
   analysisSteps.value.forEach((step) => {
@@ -612,17 +642,30 @@ const startAnalysis = async () => {
     if (result.ok) {
       const mapped = mapAnalyzeResult(result.data)
       analysisMeta.value = mapped.meta
-      if (Array.isArray(mapped.suggestions) && mapped.suggestions.length > 0) {
-        suggestions.value = mapped.suggestions
-      }
+      suggestions.value = mapped.suggestions
+      ElMessage.success(
+        mapped.summary.isReconstructable
+          ? '识别完成，已生成重构建议'
+          : '识别完成，该物品更适合分类处理',
+      )
     } else {
-      ElMessage.warning('后端分析不可用，已使用模拟结果')
+      analysisMeta.value = {
+        itemName: '识别失败',
+        material: '未识别',
+        integrity: '不适用',
+        carbonReduction: '不适用',
+        confidence: '低',
+        reconstructable: false,
+        reason: result.message || '后端分析失败',
+        disposalAdvice: '请更换更清晰的图片后重试',
+      }
+      suggestions.value = []
+      ElMessage.warning(result.message || '分析失败，请稍后重试')
     }
   }
 
   analysisComplete.value = true
   userStore.addPoints(50) // Reward user
-  ElMessage.success('分析完成！获得 50 积分')
 }
 
 /** 关闭分析区域并重置所有分析状态 */
