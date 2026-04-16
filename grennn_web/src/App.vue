@@ -14,8 +14,16 @@ import './styles/design-tokens.css'                          // 设计令牌系�
 const TheIntro = defineAsyncComponent(() => import('./components/layout/TheIntro.vue'))
 const Silk = defineAsyncComponent(() => import('./components/effects/Silk.vue'))
 
-// 是否显示开场动画（首次进入页面时显示）
-const showIntro = ref(true)
+const INTRO_DONE_KEY = 'app_intro_done'
+
+const hasCompletedIntro = () => {
+  if (typeof window === 'undefined') return false
+  return sessionStorage.getItem(INTRO_DONE_KEY) === 'true'
+    || document.documentElement.dataset.appIntroDone === 'true'
+}
+
+// 是否显示开场动画（仅首次进入应用时显示）
+const showIntro = ref(!hasCompletedIntro())
 
 // 控制侧边栏展开状态
 const sidebarOpen = ref(false)
@@ -47,6 +55,7 @@ const layoutOffsetClass = computed(() => {
 const handleIntroComplete = () => {
   showIntro.value = false
   document.documentElement.dataset.appIntroDone = 'true'
+  sessionStorage.setItem(INTRO_DONE_KEY, 'true')
   window.dispatchEvent(new CustomEvent('app-intro-complete'))
 }
 
@@ -61,6 +70,11 @@ const handleKeydown = (e) => {
 
 // 组件挂载时注册键盘监听
 onMounted(() => {
+  if (hasCompletedIntro()) {
+    document.documentElement.dataset.appIntroDone = 'true'
+    showIntro.value = false
+  }
+
   handleResize()
   window.addEventListener('keydown', handleKeydown)
   window.addEventListener('resize', handleResize)
