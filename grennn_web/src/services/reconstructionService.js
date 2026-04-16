@@ -79,39 +79,36 @@ export const mapAnalyzeResult = (data) => {
  * @returns {{ ok: boolean, message: string, data: object|null }}
  */
 export const analyzeReconstruction = async (file) => {
-  if (!file) return { ok: false, message: '缺少文件', data: null }
+  if (!file) return { ok: false, message: '缺少文件', data: null, status: 0 }
 
-  const formData = new FormData()
-  formData.append('file', file)
+  const buildFormData = () => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return formData
+  }
 
-  const requestConfigs = [
-    { url: '/api/v1/reconstruction/analyze', needsAuth: true },
-    { url: '/api/v1/reconstruction/analyze', needsAuth: false },
-  ]
-
+  const endpoints = ['/api/v1/reconstruction/analyze', '/api/reconstruction/analyze']
   let lastResult = null
 
-  for (const config of requestConfigs) {
+  for (const endpoint of endpoints) {
     const result = await requestAxios(
-      () =>
-        axios.post(config.url, formData, {
-          headers: config.needsAuth
-            ? undefined
-            : {
-                Authorization: '',
-              },
-        }),
+      () => axios.post(endpoint, buildFormData()),
       { fallbackMessage: '分析失败' },
     )
 
-    if (result.ok) return { ok: true, message: '', data: result.data }
+    if (result.ok) {
+      return { ok: true, message: '', data: result.data, status: result.status || 200 }
+    }
 
     lastResult = result
-    if (result.status !== 401 && result.status !== 403 && result.status !== 404) {
-      break
-    }
+    if (result.status !== 404) break
   }
 
-  return { ok: false, message: lastResult?.message || '分析失败', data: null }
+  return {
+    ok: false,
+    message: lastResult?.message || '分析失败',
+    data: null,
+    status: lastResult?.status || 0,
+  }
 }
 

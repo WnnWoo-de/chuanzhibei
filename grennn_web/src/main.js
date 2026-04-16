@@ -19,9 +19,19 @@ import { useUserStore } from '@/stores/user'
 const app = createApp(App)
 const pinia = createPinia()
 
-const updateSW = registerSW({
-  immediate: true,
-})
+const isLocalDevHost =
+  typeof window !== 'undefined' &&
+  ['localhost', '127.0.0.1'].includes(window.location.hostname)
+
+const unregisterServiceWorkers = async () => {
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return
+  try {
+    const registrations = await navigator.serviceWorker.getRegistrations()
+    await Promise.all(registrations.map((registration) => registration.unregister()))
+  } catch (err) {
+    void err
+  }
+}
 
 app.use(pinia)
 app.use(router)
@@ -44,8 +54,18 @@ const initApp = async () => {
     })
   }
 
+  if (isLocalDevHost) {
+    await unregisterServiceWorkers()
+  }
+
   app.mount('#app')
-  updateSW()
+
+  if (!isLocalDevHost) {
+    const updateSW = registerSW({
+      immediate: true,
+    })
+    updateSW()
+  }
 }
 
 initApp()

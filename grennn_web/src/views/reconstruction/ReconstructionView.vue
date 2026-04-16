@@ -219,7 +219,12 @@
 
                 <div class="mt-8 flex justify-between items-center">
                   <p class="text-xs text-gray-400">
-                    完成分析获得 <span class="text-primary font-bold">+50</span> 积分
+                    <template v-if="userStore.isLoggedIn">
+                      完成分析获得 <span class="text-primary font-bold">+50</span> 积分
+                    </template>
+                    <template v-else>
+                      登录后可获得 <span class="text-primary font-bold">+50</span> 积分奖励
+                    </template>
                   </p>
                   <button
                     @click="closeAnalysis"
@@ -651,8 +656,13 @@ const startAnalysis = async () => {
     } else {
       const failureMessage =
         result.status === 404
-          ? '分析接口未找到，请确认当前启动的是包含旧物重构接口的后端服务'
+          ? '分析接口未找到。请先强制刷新页面（Ctrl+F5）或清除旧缓存，再确认 Node 后端已重启。'
           : result.message || '后端分析失败'
+
+      const disposalAdvice =
+        result.status === 401 || result.status === 403
+          ? '系统已切换为游客可分析模式，请刷新页面或重启后端后重试'
+          : '请确认后端与 FastAPI 服务已启动，再重新上传图片'
 
       analysisMeta.value = {
         itemName: '识别失败',
@@ -662,7 +672,7 @@ const startAnalysis = async () => {
         confidence: '低',
         reconstructable: false,
         reason: failureMessage,
-        disposalAdvice: '请确认后端与 FastAPI 服务已启动，再重新上传图片',
+        disposalAdvice,
       }
       suggestions.value = []
       ElMessage.warning(failureMessage)
@@ -670,7 +680,9 @@ const startAnalysis = async () => {
   }
 
   analysisComplete.value = true
-  userStore.addPoints(50) // Reward user
+  if (userStore.isLoggedIn) {
+    userStore.addPoints(50) // Reward logged-in user only
+  }
 }
 
 /** 关闭分析区域并重置所有分析状态 */

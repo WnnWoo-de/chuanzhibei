@@ -35,6 +35,7 @@ app.use('/api/v1/users',          require('./routes/user'));
 app.use('/api/v1/chat',           require('./routes/chat'));
 app.use('/api/v1/community',      require('./routes/community'));
 app.use('/api/v1/reconstruction', require('./routes/reconstruction'));
+app.use('/api/reconstruction',    require('./routes/reconstruction'));
 app.use('/api/v1/upload',         require('./routes/upload'));
 app.use('/api/v1/weather',        require('./routes/weather'));
 app.use('/api/v1/achievements',   require('./routes/achievement'));
