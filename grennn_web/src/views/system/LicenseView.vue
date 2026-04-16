@@ -134,11 +134,23 @@ SOFTWARE.</pre>
               <p class="text-gray-700">
                 <strong>致力于为用户打造更低碳、更可持续的绿色生活方式</strong>，通过 AI 技术和社区协作：
               </p>
-              <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                <li>倡导节能减排理念，帮助用户建立日常环保习惯</li>
-                <li>提供垃圾分类、碳足迹与绿色出行等实用支持</li>
-                <li>连接更多关注生态与可持续发展的环保社区</li>
-                <li>用技术激发公众参与，让每个人都能成为绿色行动者</li>
+              <ul class="space-y-3 text-gray-700">
+                <li class="flex items-start gap-3">
+                  <span class="mt-1 text-green-600">🌿</span>
+                  <span>倡导节能减排理念，帮助用户建立日常环保习惯</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="mt-1 text-green-600">♻️</span>
+                  <span>提供垃圾分类、碳足迹与绿色出行等实用支持</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="mt-1 text-green-600">🤝</span>
+                  <span>连接更多关注生态与可持续发展的环保社区</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="mt-1 text-green-600">💚</span>
+                  <span>用技术激发公众参与，让每个人都能成为绿色行动者</span>
+                </li>
               </ul>
             </div>
           </section>

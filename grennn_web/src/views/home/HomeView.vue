@@ -61,7 +61,7 @@
                 <div>
                   <p class="font-semibold text-sm mb-1">项目愿景</p>
                   <p class="text-xs text-gray-600">
-                    致力于为用户提供全面的健康管理解决方案，关注心脑血管健康，促进健康生活方式
+                    致力于打造低碳、可持续的绿色生活平台，推动环保行动融入每一天
                   </p>
                 </div>
               </div>
