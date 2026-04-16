@@ -649,6 +649,11 @@ const startAnalysis = async () => {
           : '识别完成，该物品更适合分类处理',
       )
     } else {
+      const failureMessage =
+        result.status === 404
+          ? '分析接口未找到，请确认当前启动的是包含旧物重构接口的后端服务'
+          : result.message || '后端分析失败'
+
       analysisMeta.value = {
         itemName: '识别失败',
         material: '未识别',
@@ -656,11 +661,11 @@ const startAnalysis = async () => {
         carbonReduction: '不适用',
         confidence: '低',
         reconstructable: false,
-        reason: result.message || '后端分析失败',
-        disposalAdvice: '请更换更清晰的图片后重试',
+        reason: failureMessage,
+        disposalAdvice: '请确认后端与 FastAPI 服务已启动，再重新上传图片',
       }
       suggestions.value = []
-      ElMessage.warning(result.message || '分析失败，请稍后重试')
+      ElMessage.warning(failureMessage)
     }
   }
 

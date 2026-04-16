@@ -84,12 +84,34 @@ export const analyzeReconstruction = async (file) => {
   const formData = new FormData()
   formData.append('file', file)
 
-  const result = await requestAxios(
-    () => axios.post('/api/v1/reconstruction/analyze', formData),
-    { fallbackMessage: '分析失败' },
-  )
+  const requestConfigs = [
+    { url: '/api/v1/reconstruction/analyze', needsAuth: true },
+    { url: '/api/v1/reconstruction/analyze', needsAuth: false },
+  ]
 
-  if (!result.ok) return { ok: false, message: result.message, data: null }
-  return { ok: true, message: '', data: result.data }
+  let lastResult = null
+
+  for (const config of requestConfigs) {
+    const result = await requestAxios(
+      () =>
+        axios.post(config.url, formData, {
+          headers: config.needsAuth
+            ? undefined
+            : {
+                Authorization: '',
+              },
+        }),
+      { fallbackMessage: '分析失败' },
+    )
+
+    if (result.ok) return { ok: true, message: '', data: result.data }
+
+    lastResult = result
+    if (result.status !== 401 && result.status !== 403 && result.status !== 404) {
+      break
+    }
+  }
+
+  return { ok: false, message: lastResult?.message || '分析失败', data: null }
 }
 
