@@ -12,12 +12,29 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
 
   scrollBehavior(to, from, savedPosition) {
-    void to
-    void from
     if (savedPosition) {
-      return savedPosition
+      return new Promise((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => resolve(savedPosition))
+        })
+      })
     }
-    return { top: 0 }
+
+    const hashTarget = typeof to.hash === 'string' ? to.hash.trim() : ''
+
+    return new Promise((resolve) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (hashTarget) {
+            resolve({ el: hashTarget, top: 88, behavior: 'smooth' })
+            return
+          }
+
+          const staysOnSamePath = to.path === from.path && to.fullPath !== from.fullPath
+          resolve({ top: staysOnSamePath ? window.scrollY : 0, behavior: 'smooth' })
+        })
+      })
+    })
   },
 
   routes: [

@@ -215,6 +215,17 @@ const toggleSidebarState = () => {
     return
   }
 
+  if (document.startViewTransition) {
+    document.startViewTransition(() => {
+      if (isMini.value) {
+        expandSidebar()
+      } else {
+        collapseSidebar()
+      }
+    })
+    return
+  }
+
   if (isMini.value) {
     expandSidebar()
   } else {
@@ -230,6 +241,14 @@ const scrollToAnchor = (link) => {
 
 const handleNavClick = async (link) => {
   activeNav.value = link
+
+  if (!link.startsWith('#') && route.path !== link) {
+    window.dispatchEvent(new CustomEvent('app-route-transition-hint', {
+      detail: {
+        source: isMiniMode.value ? 'mini-sidebar' : 'sidebar',
+      },
+    }))
+  }
 
   if (link.startsWith('#')) {
     if (route.path !== '/') {
