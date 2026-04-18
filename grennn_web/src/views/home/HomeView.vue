@@ -103,7 +103,7 @@
     </transition>
 
     <!-- Hero Section (Carousel) -->
-    <section class="min-h-[100dvh] md:min-h-screen relative flex flex-col justify-center overflow-hidden bg-[#fcfffc] px-4 md:px-6 pt-10 md:pt-20 text-[#1d3a2d]">
+    <section class="min-h-[100dvh] md:min-h-screen relative flex flex-col justify-start md:justify-center overflow-x-hidden overflow-y-visible md:overflow-hidden bg-[#fcfffc] px-4 md:px-6 pt-10 md:pt-20 pb-14 sm:pb-16 md:pb-0 text-[#1d3a2d]">
       <div class="absolute inset-0 z-0 overflow-hidden opacity-55 pointer-events-none">
         <Silk
           :speed="1.8"
@@ -164,8 +164,8 @@
       </div>
 
       <!-- Carousel Content -->
-      <div class="relative z-10 flex h-full flex-col justify-center pt-20 sm:pt-20 lg:pt-0 hero-orbit" :style="heroParallaxStyle">
-        <div class="grid grid-cols-1 items-center gap-5 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
+      <div class="relative z-10 flex h-full flex-col justify-start md:justify-center pt-20 sm:pt-20 lg:pt-0 hero-orbit">
+        <div class="grid grid-cols-1 items-start gap-6 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
           <div class="flex flex-col min-h-[280px] sm:min-h-[320px] lg:h-full lg:min-h-[420px] lg:pr-6 hero-brand-block">
             <div class="hero-brand-glow" aria-hidden="true"></div>
             <div class="mt-4 sm:mt-2 overflow-hidden flex-1 flex flex-col">
@@ -182,7 +182,7 @@
               </div>
             </div>
 
-            <div class="mt-auto pt-5 sm:pt-8 lg:pb-[6.75rem]">
+            <div class="mt-6 sm:mt-auto pt-3 sm:pt-8 lg:pb-[6.75rem]">
               <div class="flex flex-wrap gap-2 sm:gap-3 hero-chip-row">
                 <span class="glass-tag glass-tag--emerald group inline-flex min-w-0 flex-1 sm:flex-none items-center gap-1.5 sm:gap-2 rounded-2xl sm:rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-3 sm:px-3.5 md:px-4 py-2 sm:py-1.5 md:py-2 text-[11px] sm:text-xs md:text-sm font-semibold leading-tight text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70 sm:max-w-none max-w-[calc(50%-0.25rem)]">
                   <span class="glass-tag__pulse"></span>
