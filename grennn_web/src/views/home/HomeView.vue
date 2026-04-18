@@ -2,6 +2,7 @@
   <div
     ref="homeRootRef"
     class="home-view bg-transparent min-h-screen text-[#1a1a1a] font-sans selection:bg-primary selection:text-white overflow-x-hidden"
+    :class="{ 'home-view--tablet-optimized': isTabletLikeDevice }"
   >
     <!-- Welcome Modal -->
     <transition name="modal-fade">
@@ -12,6 +13,9 @@
       >
         <div
           class="relative max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl animate-modal-enter sm:max-h-[min(720px,calc(100dvh-3rem))]"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="welcome-modal-title"
         >
           <!-- Close Button -->
           <button
@@ -27,7 +31,7 @@
           <!-- Content -->
           <div class="max-h-[calc(100dvh-2rem)] overflow-y-auto p-5 pt-12 sm:max-h-[min(720px,calc(100dvh-3rem))] sm:p-8 sm:pt-12">
             <!-- Title -->
-            <h2 class="text-center text-xl font-bold sm:text-2xl">
+            <h2 id="welcome-modal-title" class="text-center text-xl font-bold sm:text-2xl">
               欢迎使用<span class="text-green-500">绿我同行</span>
             </h2>
             <h3 class="mb-4 text-center text-base text-gray-600 sm:text-lg">GreenSight AI</h3>
@@ -82,6 +86,11 @@
                 </div>
               </div>
             </div>
+
+            <label class="mb-4 flex cursor-pointer items-center gap-3 rounded-lg border border-black/5 bg-neutral-50 px-3 py-2 text-sm text-gray-600">
+              <input v-model="dismissWelcomeForToday" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-green-500 focus:ring-green-500" />
+              <span>今日不再显示</span>
+            </label>
 
             <!-- Buttons -->
             <div class="flex flex-col gap-3 sm:flex-row">
@@ -708,8 +717,23 @@ const router = useRouter()
 const homeRootRef = ref(null)
 let heroEntranceTimeline = null
 
+const detectTabletLikeDevice = () => {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false
+
+  const userAgent = navigator.userAgent || ''
+  const platform = navigator.platform || ''
+  const touchPoints = navigator.maxTouchPoints || 0
+  const isTabletUA = /iPad|Tablet/.test(userAgent)
+  const isTouchMac = platform === 'MacIntel' && touchPoints > 1
+  const isTouchTabletViewport = touchPoints > 1 && window.innerWidth >= 768 && window.innerWidth <= 1366
+
+  return isTabletUA || isTouchMac || isTouchTabletViewport
+}
+
+const isTabletLikeDevice = ref(detectTabletLikeDevice())
+
 const heroParallaxStyle = computed(() => ({
-  transform: `translate3d(0, ${currentSlide.value * -8}px, 0)`,
+  transform: isTabletLikeDevice.value ? 'none' : `translate3d(0, ${currentSlide.value * -8}px, 0)`,
 }))
 
 const heroGlowTrailStyle = computed(() => ({
@@ -803,8 +827,29 @@ const brandLines = [
 const typedBrandLines = ref(['', ''])
 const activeTypingLine = ref(0)
 const showWelcomeModal = ref(false)
+const dismissWelcomeForToday = ref(false)
 let typingInterval = null
 let typingRestartTimeout = null
+let welcomeModalTimer = null
+
+const WELCOME_MODAL_SEEN_KEY = 'greenSightVisited'
+const WELCOME_MODAL_DISMISS_DATE_KEY = 'greenSightWelcomeDismissDate'
+
+const getTodayKey = () => new Date().toISOString().slice(0, 10)
+
+const syncBodyScrollLock = () => {
+  document.body.style.overflow = showWelcomeModal.value ? 'hidden' : ''
+}
+
+const handleWelcomeModalKeydown = (event) => {
+  if (event.key === 'Escape' && showWelcomeModal.value) {
+    closeWelcomeModal()
+  }
+}
+
+const handleDeviceProfileChange = () => {
+  isTabletLikeDevice.value = detectTabletLikeDevice()
+}
 
 const startTypewriter = () => {
   if (typingInterval) clearInterval(typingInterval)
@@ -866,18 +911,27 @@ const startTypewriter = () => {
 }
 
 const checkFirstVisit = () => {
-  const hasVisited = localStorage.getItem('greenSightVisited')
-  if (!hasVisited) {
-    // 第一次访问，2秒后显示弹窗
-    setTimeout(() => {
+  const hasVisited = localStorage.getItem(WELCOME_MODAL_SEEN_KEY)
+  const dismissedDate = localStorage.getItem(WELCOME_MODAL_DISMISS_DATE_KEY)
+  const todayKey = getTodayKey()
+
+  if (!hasVisited && dismissedDate !== todayKey) {
+    welcomeModalTimer = window.setTimeout(() => {
       showWelcomeModal.value = true
+      syncBodyScrollLock()
     }, 2000)
-    localStorage.setItem('greenSightVisited', 'true')
+    localStorage.setItem(WELCOME_MODAL_SEEN_KEY, 'true')
   }
 }
 
 const closeWelcomeModal = () => {
   showWelcomeModal.value = false
+
+  if (dismissWelcomeForToday.value) {
+    localStorage.setItem(WELCOME_MODAL_DISMISS_DATE_KEY, getTodayKey())
+  }
+
+  syncBodyScrollLock()
 }
 
 const openLicense = () => {
@@ -1172,6 +1226,8 @@ onMounted(() => {
   checkFirstVisit()
   startAutoPlay()
   startTypewriter()
+  window.addEventListener('keydown', handleWelcomeModalKeydown)
+  window.addEventListener('resize', handleDeviceProfileChange)
 
   window.addEventListener('app-intro-complete', handleAppIntroComplete)
 
@@ -1301,12 +1357,16 @@ onUnmounted(() => {
   stopAutoPlay()
   if (typingInterval) clearInterval(typingInterval)
   if (typingRestartTimeout) clearTimeout(typingRestartTimeout)
+  if (welcomeModalTimer) clearTimeout(welcomeModalTimer)
   if (dashboardAnimationFrame) cancelAnimationFrame(dashboardAnimationFrame)
   if (dashboardObserver) dashboardObserver.disconnect()
   if (heroEntranceTimeline) {
     heroEntranceTimeline.kill()
     heroEntranceTimeline = null
   }
+  document.body.style.overflow = ''
+  window.removeEventListener('keydown', handleWelcomeModalKeydown)
+  window.removeEventListener('resize', handleDeviceProfileChange)
   window.removeEventListener('app-intro-complete', handleAppIntroComplete)
 })
 </script>
@@ -1918,6 +1978,37 @@ onUnmounted(() => {
     width: 13rem;
     height: 13rem;
   }
+}
+
+.home-view--tablet-optimized .hero-orbit,
+.home-view--tablet-optimized .hero-slide-glow-trail,
+.home-view--tablet-optimized .hero-brand-glow,
+.home-view--tablet-optimized .glass-tag,
+.home-view--tablet-optimized .glass-tag__pulse,
+.home-view--tablet-optimized .glass-tag__sheen,
+.home-view--tablet-optimized .scroll-indicator-stack,
+.home-view--tablet-optimized .scroll-mouse-shell::before,
+.home-view--tablet-optimized .scroll-arrow,
+.home-view--tablet-optimized .scroll-indicator-text,
+.home-view--tablet-optimized .animate-breathe {
+  animation: none !important;
+}
+
+.home-view--tablet-optimized .hero-orbit,
+.home-view--tablet-optimized .hero-slide-glow-trail,
+.home-view--tablet-optimized .glass-tag {
+  transition: none !important;
+}
+
+.home-view--tablet-optimized .hero-brand-glow,
+.home-view--tablet-optimized .hero-slide-glow-trail {
+  filter: blur(12px);
+  opacity: 0.55;
+}
+
+.home-view--tablet-optimized .glass-tag {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
