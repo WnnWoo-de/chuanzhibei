@@ -1928,6 +1928,34 @@ onUnmounted(() => {
   }
 }
 
+.hero-chip-row {
+  align-items: flex-start;
+}
+
+.hero-chip-row .glass-tag {
+  flex: 0 0 auto;
+  min-width: max-content;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .hero-chip-row {
+    gap: 0.75rem;
+  }
+
+  .hero-chip-row .glass-tag {
+    padding-inline: 0.9rem;
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-chip-row .glass-tag {
+    min-width: 0;
+    white-space: normal;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dashboard-breathing-chip::after,
   .dashboard-breathing-dot,
