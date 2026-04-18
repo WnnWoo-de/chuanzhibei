@@ -103,7 +103,7 @@
     </transition>
 
     <!-- Hero Section (Carousel) -->
-    <section class="min-h-[100dvh] md:min-h-screen relative flex flex-col justify-center overflow-hidden bg-[#fcfffc] px-4 md:px-6 pt-10 md:pt-20 text-[#1d3a2d]">
+    <section class="hero-section min-h-[100dvh] md:min-h-screen relative flex flex-col justify-center overflow-hidden bg-[#fcfffc] px-4 md:px-6 pt-10 md:pt-20 text-[#1d3a2d]">
       <div class="absolute inset-0 z-0 overflow-hidden opacity-55 pointer-events-none">
         <Silk
           :speed="1.8"
@@ -182,7 +182,7 @@
               </div>
             </div>
 
-            <div class="mt-auto pt-5 sm:pt-8 lg:pb-[6.75rem]">
+            <div class="mt-auto pt-5 sm:pt-8 hero-chip-wrap lg:pb-[6.75rem]">
               <div class="flex flex-wrap gap-1.5 sm:gap-3 hero-chip-row">
                 <span class="glass-tag glass-tag--emerald group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-2.5 md:px-4 py-1 md:py-2 text-[10px] md:text-sm font-semibold leading-none text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70">
                   <span class="glass-tag__pulse"></span>
@@ -1401,6 +1401,35 @@ onUnmounted(() => {
   transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.hero-section {
+  overflow: hidden;
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .hero-section {
+    overflow: visible;
+    min-height: auto;
+    padding-bottom: 5.5rem;
+  }
+
+  .hero-orbit {
+    height: auto;
+    padding-top: 6.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .hero-brand-block {
+    min-height: auto;
+    padding-bottom: 1.5rem;
+  }
+
+  .hero-slide-card {
+    min-height: auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
 .hero-brand-block {
   position: relative;
 }
@@ -1930,6 +1959,12 @@ onUnmounted(() => {
 
 .hero-chip-row {
   align-items: flex-start;
+}
+
+.hero-chip-wrap {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 0.75rem;
 }
 
 .hero-chip-row .glass-tag {
