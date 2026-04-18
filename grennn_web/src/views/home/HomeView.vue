@@ -7,16 +7,17 @@
     <transition name="modal-fade">
       <div
         v-if="showWelcomeModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 z-[260] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm sm:p-6"
         @click.self="closeWelcomeModal"
       >
         <div
-          class="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-modal-enter overflow-hidden"
+          class="relative max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl animate-modal-enter sm:max-h-[min(720px,calc(100dvh-3rem))]"
         >
           <!-- Close Button -->
           <button
             @click="closeWelcomeModal"
-            class="absolute top-6 right-6 flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors z-10"
+            class="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/90 text-gray-600 shadow-sm transition-all hover:bg-gray-100 hover:text-black sm:right-6 sm:top-6"
+            aria-label="关闭欢迎弹窗"
           >
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -24,27 +25,27 @@
           </button>
 
           <!-- Content -->
-          <div class="p-8 pt-12">
+          <div class="max-h-[calc(100dvh-2rem)] overflow-y-auto p-5 pt-12 sm:max-h-[min(720px,calc(100dvh-3rem))] sm:p-8 sm:pt-12">
             <!-- Title -->
-            <h2 class="text-2xl font-bold text-center mb-2">
+            <h2 class="text-center text-xl font-bold sm:text-2xl">
               欢迎使用<span class="text-green-500">绿我同行</span>
             </h2>
-            <h3 class="text-lg text-center text-gray-600 mb-4">GreenSight AI</h3>
+            <h3 class="mb-4 text-center text-base text-gray-600 sm:text-lg">GreenSight AI</h3>
 
             <!-- Welcome Text -->
-            <p class="text-center text-gray-600 text-sm mb-8">感谢您访问我们的项目</p>
+            <p class="mb-6 text-center text-sm text-gray-600 sm:mb-8">感谢您访问我们的项目</p>
 
             <!-- Info Sections -->
-            <div class="space-y-5 mb-8">
+            <div class="mb-6 space-y-4 sm:mb-8 sm:space-y-5">
               <!-- Project Statement -->
-              <div class="flex gap-4 p-4 bg-gradient-to-br from-pink-50 to-transparent rounded-lg border border-pink-100">
+              <div class="flex gap-3 rounded-lg border border-pink-100 bg-gradient-to-br from-pink-50 to-transparent p-4 sm:gap-4">
                 <div class="flex-shrink-0">
                   <svg class="w-6 h-6 text-pink-500" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
                 <div>
-                  <p class="font-semibold text-sm mb-1">项目声明</p>
+                  <p class="mb-1 text-sm font-semibold">项目声明</p>
                   <p class="text-xs text-gray-600">
                     本项目由 wnnw 开发，用于参加"传智杯"AI-Web 网页开发挑战赛
                   </p>
@@ -52,14 +53,14 @@
               </div>
 
               <!-- Project Vision -->
-              <div class="flex gap-4 p-4 bg-gradient-to-br from-green-50 to-transparent rounded-lg border border-green-100">
+              <div class="flex gap-3 rounded-lg border border-green-100 bg-gradient-to-br from-green-50 to-transparent p-4 sm:gap-4">
                 <div class="flex-shrink-0">
                   <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                   </svg>
                 </div>
                 <div>
-                  <p class="font-semibold text-sm mb-1">项目愿景</p>
+                  <p class="mb-1 text-sm font-semibold">项目愿景</p>
                   <p class="text-xs text-gray-600">
                     致力于打造低碳、可持续的绿色生活平台，推动环保行动融入每一天
                   </p>
@@ -67,14 +68,14 @@
               </div>
 
               <!-- Contribute -->
-              <div class="flex gap-4 p-4 bg-gradient-to-br from-blue-50 to-transparent rounded-lg border border-blue-100">
+              <div class="flex gap-3 rounded-lg border border-blue-100 bg-gradient-to-br from-blue-50 to-transparent p-4 sm:gap-4">
                 <div class="flex-shrink-0">
                   <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                 </div>
                 <div>
-                  <p class="font-semibold text-sm mb-1">参与贡献</p>
+                  <p class="mb-1 text-sm font-semibold">参与贡献</p>
                   <p class="text-xs text-gray-600">
                     欢迎通过参与项目改进、共同成长。联系我们或提交建议
                   </p>
@@ -83,16 +84,16 @@
             </div>
 
             <!-- Buttons -->
-            <div class="flex gap-3">
+            <div class="flex flex-col gap-3 sm:flex-row">
               <button
                 @click="openLicense"
-                class="flex-1 px-4 py-2.5 border-2 border-green-500 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-sm"
+                class="flex-1 rounded-lg border-2 border-green-500 px-4 py-2.5 text-sm font-semibold text-green-600 transition-colors hover:bg-green-50"
               >
                 查看许可协议
               </button>
               <button
                 @click="closeWelcomeModal"
-                class="flex-1 px-4 py-2.5 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
+                class="flex-1 rounded-lg bg-green-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-600"
               >
                 了解并继续
               </button>
