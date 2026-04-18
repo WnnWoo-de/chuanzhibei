@@ -2,26 +2,21 @@
   <div
     ref="homeRootRef"
     class="home-view bg-transparent min-h-screen text-[#1a1a1a] font-sans selection:bg-primary selection:text-white overflow-x-hidden"
-    :class="{ 'home-view--tablet-optimized': isTabletLikeDevice }"
   >
     <!-- Welcome Modal -->
     <transition name="modal-fade">
       <div
         v-if="showWelcomeModal"
-        class="fixed inset-0 z-[260] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm sm:p-6"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
         @click.self="closeWelcomeModal"
       >
         <div
-          class="relative max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl animate-modal-enter sm:max-h-[min(720px,calc(100dvh-3rem))]"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="welcome-modal-title"
+          class="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-modal-enter overflow-hidden"
         >
           <!-- Close Button -->
           <button
             @click="closeWelcomeModal"
-            class="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/90 text-gray-600 shadow-sm transition-all hover:bg-gray-100 hover:text-black sm:right-6 sm:top-6"
-            aria-label="关闭欢迎弹窗"
+            class="absolute top-6 right-6 flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors z-10"
           >
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -29,27 +24,27 @@
           </button>
 
           <!-- Content -->
-          <div class="max-h-[calc(100dvh-2rem)] overflow-y-auto p-5 pt-12 sm:max-h-[min(720px,calc(100dvh-3rem))] sm:p-8 sm:pt-12">
+          <div class="p-8 pt-12">
             <!-- Title -->
-            <h2 id="welcome-modal-title" class="text-center text-xl font-bold sm:text-2xl">
+            <h2 class="text-2xl font-bold text-center mb-2">
               欢迎使用<span class="text-green-500">绿我同行</span>
             </h2>
-            <h3 class="mb-4 text-center text-base text-gray-600 sm:text-lg">GreenSight AI</h3>
+            <h3 class="text-lg text-center text-gray-600 mb-4">GreenSight AI</h3>
 
             <!-- Welcome Text -->
-            <p class="mb-6 text-center text-sm text-gray-600 sm:mb-8">感谢您访问我们的项目</p>
+            <p class="text-center text-gray-600 text-sm mb-8">感谢您访问我们的项目</p>
 
             <!-- Info Sections -->
-            <div class="mb-6 space-y-4 sm:mb-8 sm:space-y-5">
+            <div class="space-y-5 mb-8">
               <!-- Project Statement -->
-              <div class="flex gap-3 rounded-lg border border-pink-100 bg-gradient-to-br from-pink-50 to-transparent p-4 sm:gap-4">
+              <div class="flex gap-4 p-4 bg-gradient-to-br from-pink-50 to-transparent rounded-lg border border-pink-100">
                 <div class="flex-shrink-0">
                   <svg class="w-6 h-6 text-pink-500" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
                 <div>
-                  <p class="mb-1 text-sm font-semibold">项目声明</p>
+                  <p class="font-semibold text-sm mb-1">项目声明</p>
                   <p class="text-xs text-gray-600">
                     本项目由 wnnw 开发，用于参加"传智杯"AI-Web 网页开发挑战赛
                   </p>
@@ -57,14 +52,14 @@
               </div>
 
               <!-- Project Vision -->
-              <div class="flex gap-3 rounded-lg border border-green-100 bg-gradient-to-br from-green-50 to-transparent p-4 sm:gap-4">
+              <div class="flex gap-4 p-4 bg-gradient-to-br from-green-50 to-transparent rounded-lg border border-green-100">
                 <div class="flex-shrink-0">
                   <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                   </svg>
                 </div>
                 <div>
-                  <p class="mb-1 text-sm font-semibold">项目愿景</p>
+                  <p class="font-semibold text-sm mb-1">项目愿景</p>
                   <p class="text-xs text-gray-600">
                     致力于打造低碳、可持续的绿色生活平台，推动环保行动融入每一天
                   </p>
@@ -72,14 +67,14 @@
               </div>
 
               <!-- Contribute -->
-              <div class="flex gap-3 rounded-lg border border-blue-100 bg-gradient-to-br from-blue-50 to-transparent p-4 sm:gap-4">
+              <div class="flex gap-4 p-4 bg-gradient-to-br from-blue-50 to-transparent rounded-lg border border-blue-100">
                 <div class="flex-shrink-0">
                   <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                 </div>
                 <div>
-                  <p class="mb-1 text-sm font-semibold">参与贡献</p>
+                  <p class="font-semibold text-sm mb-1">参与贡献</p>
                   <p class="text-xs text-gray-600">
                     欢迎通过参与项目改进、共同成长。联系我们或提交建议
                   </p>
@@ -87,22 +82,17 @@
               </div>
             </div>
 
-            <label class="mb-4 flex cursor-pointer items-center gap-3 rounded-lg border border-black/5 bg-neutral-50 px-3 py-2 text-sm text-gray-600">
-              <input v-model="dismissWelcomeForToday" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-green-500 focus:ring-green-500" />
-              <span>今日不再显示</span>
-            </label>
-
             <!-- Buttons -->
-            <div class="flex flex-col gap-3 sm:flex-row">
+            <div class="flex gap-3">
               <button
                 @click="openLicense"
-                class="flex-1 rounded-lg border-2 border-green-500 px-4 py-2.5 text-sm font-semibold text-green-600 transition-colors hover:bg-green-50"
+                class="flex-1 px-4 py-2.5 border-2 border-green-500 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-sm"
               >
                 查看许可协议
               </button>
               <button
                 @click="closeWelcomeModal"
-                class="flex-1 rounded-lg bg-green-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-600"
+                class="flex-1 px-4 py-2.5 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
               >
                 了解并继续
               </button>
@@ -113,8 +103,17 @@
     </transition>
 
     <!-- Hero Section (Carousel) -->
-    <section class="min-h-[100dvh] lg:min-h-screen relative flex flex-col justify-start lg:justify-center overflow-x-hidden overflow-y-visible lg:overflow-hidden bg-[#fcfffc] px-4 md:px-6 pt-10 md:pt-20 pb-20 md:pb-24 lg:pb-0 text-[#1d3a2d]">
-      <div class="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(circle_at_20%_18%,rgba(187,247,208,0.18),transparent_0_28%),radial-gradient(circle_at_82%_24%,rgba(165,243,252,0.1),transparent_0_24%),linear-gradient(135deg,rgba(255,255,255,0.3),rgba(240,253,244,0.18))]"></div>
+    <section class="min-h-[100dvh] md:min-h-screen relative flex flex-col justify-center overflow-hidden bg-[#fcfffc] px-4 md:px-6 pt-10 md:pt-20 text-[#1d3a2d]">
+      <div class="absolute inset-0 z-0 overflow-hidden opacity-55 pointer-events-none">
+        <Silk
+          :speed="1.8"
+          :scale="0.85"
+          color="#ffffff"
+          :noiseIntensity="0.5"
+          :rotation="0.12"
+          class-name="h-full w-full"
+        />
+      </div>
       <div class="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.98),transparent_42%),radial-gradient(circle_at_78%_20%,rgba(220,252,231,0.34),transparent_26%),linear-gradient(135deg,rgba(252,255,252,0.96),rgba(248,252,248,0.84))] pointer-events-none"></div>
       <!-- Background Grid -->
       <div
@@ -165,12 +164,12 @@
       </div>
 
       <!-- Carousel Content -->
-      <div class="relative z-10 mx-auto flex w-full max-w-[1180px] flex-col justify-start lg:justify-center pt-20 sm:pt-20 lg:pt-0 hero-orbit" :style="heroParallaxStyle">
-        <div class="grid grid-cols-1 items-start gap-6 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
-          <div class="flex flex-col min-h-[280px] sm:min-h-[320px] md:pb-8 lg:h-full lg:min-h-[420px] lg:pr-6 hero-brand-block">
+      <div class="relative z-10 flex h-full flex-col justify-center pt-20 sm:pt-20 lg:pt-0 hero-orbit" :style="heroParallaxStyle">
+        <div class="grid grid-cols-1 items-center gap-5 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
+          <div class="flex flex-col min-h-[280px] sm:min-h-[320px] lg:h-full lg:min-h-[420px] lg:pr-6 hero-brand-block">
             <div class="hero-brand-glow" aria-hidden="true"></div>
-            <div class="mt-4 sm:mt-2 overflow-visible flex flex-col">
-              <div class="flex flex-col justify-center">
+            <div class="mt-4 sm:mt-2 overflow-hidden flex-1 flex flex-col">
+              <div class="flex flex-col justify-center flex-1">
                 <p class="hero-line hero-line--eyebrow text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] sm:tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
                 <div class="mt-2 sm:mt-3 sm:mt-6 space-y-1 sm:space-y-1.5 sm:space-y-3">
                   <p class="hero-line hero-line--body font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600 min-h-[2.5rem] sm:min-h-[3rem]">
@@ -183,38 +182,38 @@
               </div>
             </div>
 
-            <div class="mt-8 md:mt-10 lg:mt-auto pt-3 lg:pt-8 lg:pb-[6.75rem]">
-              <div class="flex flex-wrap gap-2 sm:gap-3 hero-chip-row">
-                <span class="glass-tag glass-tag--emerald group inline-flex min-w-0 flex-1 sm:flex-none items-center gap-1.5 sm:gap-2 rounded-2xl sm:rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-3 sm:px-3.5 md:px-4 py-2 sm:py-1.5 md:py-2 text-[11px] sm:text-xs md:text-sm font-semibold leading-tight text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70 sm:max-w-none max-w-[calc(50%-0.25rem)]">
+            <div class="mt-auto pt-5 sm:pt-8 lg:pb-[6.75rem]">
+              <div class="flex flex-wrap gap-1.5 sm:gap-3 hero-chip-row">
+                <span class="glass-tag glass-tag--emerald group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-2.5 md:px-4 py-1 md:py-2 text-[10px] md:text-sm font-semibold leading-none text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70">
                   <span class="glass-tag__pulse"></span>
                   <span class="glass-tag__sheen"></span>
-                  <span class="glass-tag__icon relative flex h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-200/38 ring-1 ring-emerald-200/50 shadow-[0_0_22px_rgba(52,211,153,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
-                    <span class="absolute h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-emerald-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-emerald-200/38 ring-1 ring-emerald-200/50 shadow-[0_0_22px_rgba(52,211,153,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-emerald-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
                     <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                       <circle cx="12" cy="12" r="7.5" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.2v7.6" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M8.8 12h6.4" />
                     </svg>
                   </span>
-                  <span class="relative z-10 min-w-0 break-words">AI 环保助手</span>
+                  <span class="relative z-10">AI 环保助手</span>
                 </span>
-                <span class="glass-tag glass-tag--cyan group inline-flex min-w-0 flex-1 sm:flex-none items-center gap-1.5 sm:gap-2 rounded-2xl sm:rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-cyan-100/68 px-3 sm:px-3.5 md:px-4 py-2 sm:py-1.5 md:py-2 text-[11px] sm:text-xs md:text-sm font-semibold leading-tight text-cyan-950 shadow-[0_16px_38px_rgba(8,145,178,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-cyan-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-cyan-200/70 sm:max-w-none max-w-[calc(50%-0.25rem)]">
+                <span class="glass-tag glass-tag--cyan group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-cyan-100/68 px-2.5 md:px-4 py-1 md:py-2 text-[10px] md:text-sm font-semibold leading-none text-cyan-950 shadow-[0_16px_38px_rgba(8,145,178,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-cyan-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-cyan-200/70">
                   <span class="glass-tag__pulse"></span>
                   <span class="glass-tag__sheen"></span>
-                  <span class="glass-tag__icon relative flex h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 items-center justify-center rounded-full bg-cyan-200/38 ring-1 ring-cyan-200/50 shadow-[0_0_22px_rgba(34,211,238,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
-                    <span class="absolute h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-cyan-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-cyan-200/38 ring-1 ring-cyan-200/50 shadow-[0_0_22px_rgba(34,211,238,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-cyan-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
                     <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-cyan-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                       <circle cx="12" cy="12" r="7.5" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 14.6 10.7 11l2 2 2.8-4.1" />
                     </svg>
                   </span>
-                  <span class="relative z-10 min-w-0 break-words">碳足迹分析</span>
+                  <span class="relative z-10">碳足迹分析</span>
                 </span>
-                <span class="glass-tag glass-tag--orange group inline-flex min-w-0 w-full sm:w-auto sm:flex-none items-center gap-1.5 sm:gap-2 rounded-2xl sm:rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-orange-100/68 px-3 sm:px-3.5 md:px-4 py-2 sm:py-1.5 md:py-2 text-[11px] sm:text-xs md:text-sm font-semibold leading-tight text-orange-950 shadow-[0_16px_38px_rgba(234,88,12,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-orange-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(251,146,60,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-orange-200/70">
+                <span class="glass-tag glass-tag--orange group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-orange-100/68 px-2.5 md:px-4 py-1 md:py-2 text-[10px] md:text-sm font-semibold leading-none text-orange-950 shadow-[0_16px_38px_rgba(234,88,12,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-orange-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(251,146,60,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-orange-200/70">
                   <span class="glass-tag__pulse"></span>
                   <span class="glass-tag__sheen"></span>
-                  <span class="glass-tag__icon relative flex h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 items-center justify-center rounded-full bg-orange-200/38 ring-1 ring-orange-200/50 shadow-[0_0_22px_rgba(251,146,60,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
-                    <span class="absolute h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-orange-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-orange-200/38 ring-1 ring-orange-200/50 shadow-[0_0_22px_rgba(251,146,60,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-orange-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
                     <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-orange-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                       <circle cx="12" cy="12" r="7.5" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.6v6.8" />
@@ -222,7 +221,7 @@
                       <circle cx="12" cy="12" r="2.3" />
                     </svg>
                   </span>
-                  <span class="relative z-10 min-w-0 break-words">社区共创</span>
+                  <span class="relative z-10">社区共创</span>
                 </span>
               </div>
             </div>
@@ -717,23 +716,8 @@ const router = useRouter()
 const homeRootRef = ref(null)
 let heroEntranceTimeline = null
 
-const detectTabletLikeDevice = () => {
-  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false
-
-  const userAgent = navigator.userAgent || ''
-  const platform = navigator.platform || ''
-  const touchPoints = navigator.maxTouchPoints || 0
-  const isTabletUA = /iPad|Tablet/.test(userAgent)
-  const isTouchMac = platform === 'MacIntel' && touchPoints > 1
-  const isTouchTabletViewport = touchPoints > 1 && window.innerWidth >= 768 && window.innerWidth <= 1366
-
-  return isTabletUA || isTouchMac || isTouchTabletViewport
-}
-
-const isTabletLikeDevice = ref(detectTabletLikeDevice())
-
 const heroParallaxStyle = computed(() => ({
-  transform: isTabletLikeDevice.value ? 'none' : `translate3d(0, ${currentSlide.value * -8}px, 0)`,
+  transform: `translate3d(0, ${currentSlide.value * -8}px, 0)`,
 }))
 
 const heroGlowTrailStyle = computed(() => ({
@@ -827,29 +811,8 @@ const brandLines = [
 const typedBrandLines = ref(['', ''])
 const activeTypingLine = ref(0)
 const showWelcomeModal = ref(false)
-const dismissWelcomeForToday = ref(false)
 let typingInterval = null
 let typingRestartTimeout = null
-let welcomeModalTimer = null
-
-const WELCOME_MODAL_SEEN_KEY = 'greenSightVisited'
-const WELCOME_MODAL_DISMISS_DATE_KEY = 'greenSightWelcomeDismissDate'
-
-const getTodayKey = () => new Date().toISOString().slice(0, 10)
-
-const syncBodyScrollLock = () => {
-  document.body.style.overflow = showWelcomeModal.value ? 'hidden' : ''
-}
-
-const handleWelcomeModalKeydown = (event) => {
-  if (event.key === 'Escape' && showWelcomeModal.value) {
-    closeWelcomeModal()
-  }
-}
-
-const handleDeviceProfileChange = () => {
-  isTabletLikeDevice.value = detectTabletLikeDevice()
-}
 
 const startTypewriter = () => {
   if (typingInterval) clearInterval(typingInterval)
@@ -911,27 +874,18 @@ const startTypewriter = () => {
 }
 
 const checkFirstVisit = () => {
-  const hasVisited = localStorage.getItem(WELCOME_MODAL_SEEN_KEY)
-  const dismissedDate = localStorage.getItem(WELCOME_MODAL_DISMISS_DATE_KEY)
-  const todayKey = getTodayKey()
-
-  if (!hasVisited && dismissedDate !== todayKey) {
-    welcomeModalTimer = window.setTimeout(() => {
+  const hasVisited = localStorage.getItem('greenSightVisited')
+  if (!hasVisited) {
+    // 第一次访问，2秒后显示弹窗
+    setTimeout(() => {
       showWelcomeModal.value = true
-      syncBodyScrollLock()
     }, 2000)
-    localStorage.setItem(WELCOME_MODAL_SEEN_KEY, 'true')
+    localStorage.setItem('greenSightVisited', 'true')
   }
 }
 
 const closeWelcomeModal = () => {
   showWelcomeModal.value = false
-
-  if (dismissWelcomeForToday.value) {
-    localStorage.setItem(WELCOME_MODAL_DISMISS_DATE_KEY, getTodayKey())
-  }
-
-  syncBodyScrollLock()
 }
 
 const openLicense = () => {
@@ -1226,8 +1180,6 @@ onMounted(() => {
   checkFirstVisit()
   startAutoPlay()
   startTypewriter()
-  window.addEventListener('keydown', handleWelcomeModalKeydown)
-  window.addEventListener('resize', handleDeviceProfileChange)
 
   window.addEventListener('app-intro-complete', handleAppIntroComplete)
 
@@ -1357,16 +1309,12 @@ onUnmounted(() => {
   stopAutoPlay()
   if (typingInterval) clearInterval(typingInterval)
   if (typingRestartTimeout) clearTimeout(typingRestartTimeout)
-  if (welcomeModalTimer) clearTimeout(welcomeModalTimer)
   if (dashboardAnimationFrame) cancelAnimationFrame(dashboardAnimationFrame)
   if (dashboardObserver) dashboardObserver.disconnect()
   if (heroEntranceTimeline) {
     heroEntranceTimeline.kill()
     heroEntranceTimeline = null
   }
-  document.body.style.overflow = ''
-  window.removeEventListener('keydown', handleWelcomeModalKeydown)
-  window.removeEventListener('resize', handleDeviceProfileChange)
   window.removeEventListener('app-intro-complete', handleAppIntroComplete)
 })
 </script>
@@ -1978,37 +1926,6 @@ onUnmounted(() => {
     width: 13rem;
     height: 13rem;
   }
-}
-
-.home-view--tablet-optimized .hero-orbit,
-.home-view--tablet-optimized .hero-slide-glow-trail,
-.home-view--tablet-optimized .hero-brand-glow,
-.home-view--tablet-optimized .glass-tag,
-.home-view--tablet-optimized .glass-tag__pulse,
-.home-view--tablet-optimized .glass-tag__sheen,
-.home-view--tablet-optimized .scroll-indicator-stack,
-.home-view--tablet-optimized .scroll-mouse-shell::before,
-.home-view--tablet-optimized .scroll-arrow,
-.home-view--tablet-optimized .scroll-indicator-text,
-.home-view--tablet-optimized .animate-breathe {
-  animation: none !important;
-}
-
-.home-view--tablet-optimized .hero-orbit,
-.home-view--tablet-optimized .hero-slide-glow-trail,
-.home-view--tablet-optimized .glass-tag {
-  transition: none !important;
-}
-
-.home-view--tablet-optimized .hero-brand-glow,
-.home-view--tablet-optimized .hero-slide-glow-trail {
-  filter: blur(12px);
-  opacity: 0.55;
-}
-
-.home-view--tablet-optimized .glass-tag {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
