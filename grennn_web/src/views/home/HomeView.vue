@@ -104,16 +104,7 @@
 
     <!-- Hero Section (Carousel) -->
     <section class="min-h-[100dvh] lg:min-h-screen relative flex flex-col justify-start lg:justify-center overflow-x-hidden overflow-y-visible lg:overflow-hidden bg-[#fcfffc] px-4 md:px-6 pt-10 md:pt-20 pb-14 sm:pb-16 lg:pb-0 text-[#1d3a2d]">
-      <div class="absolute inset-0 z-0 overflow-hidden opacity-55 pointer-events-none">
-        <Silk
-          :speed="1.8"
-          :scale="0.85"
-          color="#ffffff"
-          :noiseIntensity="0.5"
-          :rotation="0.12"
-          class-name="h-full w-full"
-        />
-      </div>
+      <div class="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(circle_at_20%_18%,rgba(187,247,208,0.18),transparent_0_28%),radial-gradient(circle_at_82%_24%,rgba(165,243,252,0.1),transparent_0_24%),linear-gradient(135deg,rgba(255,255,255,0.3),rgba(240,253,244,0.18))]"></div>
       <div class="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.98),transparent_42%),radial-gradient(circle_at_78%_20%,rgba(220,252,231,0.34),transparent_26%),linear-gradient(135deg,rgba(252,255,252,0.96),rgba(248,252,248,0.84))] pointer-events-none"></div>
       <!-- Background Grid -->
       <div
@@ -164,7 +155,7 @@
       </div>
 
       <!-- Carousel Content -->
-      <div class="relative z-10 mx-auto flex h-full w-full max-w-[1180px] flex-col justify-start lg:justify-center pt-20 sm:pt-20 lg:pt-0 hero-orbit">
+      <div class="relative z-10 mx-auto flex h-full w-full max-w-[1180px] flex-col justify-start lg:justify-center pt-20 sm:pt-20 lg:pt-0 hero-orbit" :style="heroParallaxStyle">
         <div class="grid grid-cols-1 items-start gap-6 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
           <div class="flex flex-col min-h-[280px] sm:min-h-[320px] lg:h-full lg:min-h-[420px] lg:pr-6 hero-brand-block">
             <div class="hero-brand-glow" aria-hidden="true"></div>
