@@ -183,37 +183,37 @@
             </div>
 
             <div class="mt-auto pt-5 sm:pt-8 lg:pb-[6.75rem]">
-              <div class="flex flex-wrap gap-1.5 sm:gap-3 hero-chip-row">
-                <span class="glass-tag glass-tag--emerald group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-2.5 md:px-4 py-1 md:py-2 text-[10px] md:text-sm font-semibold leading-none text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70">
+              <div class="flex flex-wrap gap-2 sm:gap-3 hero-chip-row">
+                <span class="glass-tag glass-tag--emerald group inline-flex min-w-0 flex-1 sm:flex-none items-center gap-1.5 sm:gap-2 rounded-2xl sm:rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-emerald-100/66 px-3 sm:px-3.5 md:px-4 py-2 sm:py-1.5 md:py-2 text-[11px] sm:text-xs md:text-sm font-semibold leading-tight text-emerald-950 shadow-[0_16px_38px_rgba(15,118,110,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-emerald-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-emerald-200/70 sm:max-w-none max-w-[calc(50%-0.25rem)]">
                   <span class="glass-tag__pulse"></span>
                   <span class="glass-tag__sheen"></span>
-                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-emerald-200/38 ring-1 ring-emerald-200/50 shadow-[0_0_22px_rgba(52,211,153,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
-                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-emerald-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                  <span class="glass-tag__icon relative flex h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-200/38 ring-1 ring-emerald-200/50 shadow-[0_0_22px_rgba(52,211,153,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-emerald-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
                     <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                       <circle cx="12" cy="12" r="7.5" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.2v7.6" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M8.8 12h6.4" />
                     </svg>
                   </span>
-                  <span class="relative z-10">AI 环保助手</span>
+                  <span class="relative z-10 min-w-0 break-words">AI 环保助手</span>
                 </span>
-                <span class="glass-tag glass-tag--cyan group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-cyan-100/68 px-2.5 md:px-4 py-1 md:py-2 text-[10px] md:text-sm font-semibold leading-none text-cyan-950 shadow-[0_16px_38px_rgba(8,145,178,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-cyan-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-cyan-200/70">
+                <span class="glass-tag glass-tag--cyan group inline-flex min-w-0 flex-1 sm:flex-none items-center gap-1.5 sm:gap-2 rounded-2xl sm:rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-cyan-100/68 px-3 sm:px-3.5 md:px-4 py-2 sm:py-1.5 md:py-2 text-[11px] sm:text-xs md:text-sm font-semibold leading-tight text-cyan-950 shadow-[0_16px_38px_rgba(8,145,178,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-cyan-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-cyan-200/70 sm:max-w-none max-w-[calc(50%-0.25rem)]">
                   <span class="glass-tag__pulse"></span>
                   <span class="glass-tag__sheen"></span>
-                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-cyan-200/38 ring-1 ring-cyan-200/50 shadow-[0_0_22px_rgba(34,211,238,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
-                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-cyan-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                  <span class="glass-tag__icon relative flex h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 items-center justify-center rounded-full bg-cyan-200/38 ring-1 ring-cyan-200/50 shadow-[0_0_22px_rgba(34,211,238,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-cyan-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
                     <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-cyan-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                       <circle cx="12" cy="12" r="7.5" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 14.6 10.7 11l2 2 2.8-4.1" />
                     </svg>
                   </span>
-                  <span class="relative z-10">碳足迹分析</span>
+                  <span class="relative z-10 min-w-0 break-words">碳足迹分析</span>
                 </span>
-                <span class="glass-tag glass-tag--orange group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-orange-100/68 px-2.5 md:px-4 py-1 md:py-2 text-[10px] md:text-sm font-semibold leading-none text-orange-950 shadow-[0_16px_38px_rgba(234,88,12,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-orange-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(251,146,60,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-orange-200/70">
+                <span class="glass-tag glass-tag--orange group inline-flex min-w-0 w-full sm:w-auto sm:flex-none items-center gap-1.5 sm:gap-2 rounded-2xl sm:rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-orange-100/68 px-3 sm:px-3.5 md:px-4 py-2 sm:py-1.5 md:py-2 text-[11px] sm:text-xs md:text-sm font-semibold leading-tight text-orange-950 shadow-[0_16px_38px_rgba(234,88,12,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-orange-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(251,146,60,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-orange-200/70">
                   <span class="glass-tag__pulse"></span>
                   <span class="glass-tag__sheen"></span>
-                  <span class="glass-tag__icon relative flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-orange-200/38 ring-1 ring-orange-200/50 shadow-[0_0_22px_rgba(251,146,60,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
-                    <span class="absolute h-2 w-2 sm:h-3.5 sm:w-3.5 rounded-full bg-orange-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
+                  <span class="glass-tag__icon relative flex h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 items-center justify-center rounded-full bg-orange-200/38 ring-1 ring-orange-200/50 shadow-[0_0_22px_rgba(251,146,60,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]">
+                    <span class="absolute h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-orange-200/95 blur-[5px] transition-transform duration-300 group-hover:scale-125 group-hover:blur-[6px]"></span>
                     <svg class="relative z-10 h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-orange-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                       <circle cx="12" cy="12" r="7.5" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.6v6.8" />
@@ -221,7 +221,7 @@
                       <circle cx="12" cy="12" r="2.3" />
                     </svg>
                   </span>
-                  <span class="relative z-10">社区共创</span>
+                  <span class="relative z-10 min-w-0 break-words">社区共创</span>
                 </span>
               </div>
             </div>
