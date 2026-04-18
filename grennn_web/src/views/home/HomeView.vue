@@ -165,10 +165,10 @@
 
       <!-- Carousel Content -->
       <div class="relative z-10 flex h-full flex-col justify-center pt-20 sm:pt-20 lg:pt-0 hero-orbit" :style="heroParallaxStyle">
-        <div class="grid grid-cols-1 items-center gap-5 sm:gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
-          <div class="flex flex-col min-h-[280px] sm:min-h-[320px] lg:h-full lg:min-h-[420px] lg:pr-6 hero-brand-block">
+        <div class="hero-layout-grid grid grid-cols-1 items-center gap-5 sm:gap-10 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:items-end md:gap-8 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
+          <div class="hero-brand-block flex flex-col min-h-[280px] sm:min-h-[320px] md:min-h-[420px] md:justify-between lg:h-full lg:min-h-[420px] lg:pr-6">
             <div class="hero-brand-glow" aria-hidden="true"></div>
-            <div class="mt-4 sm:mt-2 overflow-hidden flex-1 flex flex-col">
+            <div class="mt-4 sm:mt-2 overflow-hidden flex-1 flex flex-col md:justify-end">
               <div class="flex flex-col justify-center flex-1">
                 <p class="hero-line hero-line--eyebrow text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] sm:tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
                 <div class="mt-2 sm:mt-3 sm:mt-6 space-y-1 sm:space-y-1.5 sm:space-y-3">
@@ -1407,26 +1407,119 @@ onUnmounted(() => {
 
 @media (min-width: 768px) and (max-width: 1100px) {
   .hero-section {
-    overflow: visible;
-    min-height: auto;
-    padding-bottom: 5.5rem;
+    overflow: hidden;
+    min-height: calc(100dvh - 4rem);
+    padding-top: 5.25rem;
+    padding-bottom: 2.75rem;
   }
 
   .hero-orbit {
-    height: auto;
-    padding-top: 6.5rem;
-    padding-bottom: 2.5rem;
+    height: 100%;
+    justify-content: flex-end;
+    padding-top: 2.5rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .hero-layout-grid {
+    min-height: 540px;
+    align-items: end;
   }
 
   .hero-brand-block {
-    min-height: auto;
-    padding-bottom: 1.5rem;
+    min-height: 500px;
+    padding-right: 1rem;
+    padding-bottom: 0.35rem;
+  }
+
+  .hero-brand-block > .mt-4 {
+    justify-content: flex-end;
+  }
+
+  .hero-line--eyebrow {
+    font-size: 0.62rem;
+    letter-spacing: 0.52em;
+  }
+
+  .hero-line--body,
+  .hero-line--body-soft {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    min-height: 2.75rem;
+  }
+
+  .hero-chip-wrap {
+    margin-top: 0;
+    padding-top: 1.5rem;
+    padding-bottom: 1.25rem;
+    transform: translateY(-1rem);
+  }
+
+  .hero-chip-row {
+    gap: 0.75rem;
+  }
+
+  .hero-chip-row .glass-tag {
+    padding-inline: 0.95rem;
+    padding-block: 0.55rem;
+    font-size: 0.86rem;
+    box-shadow: 0 14px 26px rgba(15, 118, 110, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.92), inset 0 -10px 24px rgba(255, 255, 255, 0.22);
+  }
+
+  .hero-slide-panel {
+    display: flex;
+    align-items: flex-end;
+    min-height: 500px;
+    padding-left: 1rem;
+  }
+
+  .hero-slide-glow-trail {
+    inset: 16% -4% 8% 10%;
+    filter: blur(28px);
+    opacity: 0.72;
   }
 
   .hero-slide-card {
-    min-height: auto;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    min-height: 500px;
+    justify-content: flex-end;
+    padding-top: 4rem;
+    padding-bottom: 0.25rem;
+    padding-left: 1.5rem;
+  }
+
+  .hero-copy--meta {
+    font-size: 0.62rem;
+    letter-spacing: 0.4em;
+  }
+
+  .hero-copy--subtitle {
+    margin-top: 0.85rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+  }
+
+  .hero-copy--title {
+    margin-top: 1rem;
+    max-width: 32rem;
+    font-size: 3rem !important;
+    line-height: 1.08;
+  }
+
+  .hero-copy--description {
+    margin-top: 1.25rem;
+    max-width: 30rem;
+    font-size: 1.02rem;
+    line-height: 1.9;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+  }
+
+  .hero-copy--cta {
+    margin-top: 1.5rem;
+  }
+
+  .hero-controls {
+    margin-top: 2.25rem;
+    padding-top: 0;
   }
 }
 
@@ -1588,6 +1681,12 @@ onUnmounted(() => {
   50% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .hero-section .scroll-indicator {
+    bottom: 1.25rem;
   }
 }
 
