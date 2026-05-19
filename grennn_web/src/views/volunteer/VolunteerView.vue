@@ -1,777 +1,320 @@
 <template>
-  <div class="vol-root bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-24 px-6 pb-16">
-    <!-- Ambient glows -->
-    <div class="fixed top-32 right-0 w-[28rem] h-[28rem] rounded-full pointer-events-none blur-3xl opacity-[0.04]" style="background:radial-gradient(circle,#3b82f6,transparent)"></div>
-    <div class="fixed bottom-0 left-16 w-80 h-80 rounded-full pointer-events-none blur-3xl opacity-[0.05]" style="background:radial-gradient(circle,#93c5fd,transparent)"></div>
-    <!-- Grid background -->
-    <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-[0.06] z-0 px-6">
-      <div v-for="n in 12" :key="n" class="border-r border-primary h-full"></div>
+  <div class="activity-page min-h-screen pt-24 pb-16 px-6 md:px-8">
+    <div class="mx-auto max-w-7xl">
+      <!-- 顶部展示区 -->
+      <section class="hero-panel rounded-3xl p-6 md:p-10 mb-8">
+        <p class="hero-kicker">VOLUNTEER SHOWCASE</p>
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+          <div>
+            <h1 class="hero-title">城市绿色志愿活动展</h1>
+            <p class="hero-desc">
+              本页面为静态前端展示，用于预览近期公益活动信息、活动主题与参与方式。
+            </p>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 w-full lg:w-auto">
+            <div class="stat-card">
+              <p class="stat-label">活动数量</p>
+              <p class="stat-value">{{ activities.length }}</p>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">总名额</p>
+              <p class="stat-value">{{ totalCapacity }}</p>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">主题类型</p>
+              <p class="stat-value">{{ categories.length }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 分类标签 -->
+      <section class="mb-6 flex flex-wrap gap-2">
+        <span
+          v-for="category in categories"
+          :key="category"
+          class="category-chip"
+        >
+          {{ category }}
+        </span>
+      </section>
+
+      <!-- 活动卡片列表 -->
+      <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <article
+          v-for="activity in activities"
+          :key="activity.id"
+          class="activity-card"
+        >
+          <div class="card-top">
+            <span class="card-tag">{{ activity.category }}</span>
+            <span class="card-code">ACT-{{ String(activity.id).padStart(3, '0') }}</span>
+          </div>
+
+          <h3 class="card-title">{{ activity.title }}</h3>
+          <p class="card-desc">{{ activity.description }}</p>
+
+          <ul class="card-meta">
+            <li>📅 {{ activity.date }}</li>
+            <li>📍 {{ activity.location }}</li>
+            <li>👥 {{ activity.capacity }} 人名额</li>
+            <li>⏱ 预计 {{ activity.duration }}</li>
+          </ul>
+
+          <div class="card-footer">
+            <span class="point-pill">+{{ activity.points }} 积分</span>
+            <button class="preview-btn" type="button">仅展示</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- 说明 -->
+      <section class="mt-8 notice-panel rounded-2xl p-4 md:p-5">
+        <p>
+          当前为静态演示页面，不包含实际报名、登录、后端接口交互。可作为比赛演示或视觉确认版本。
+        </p>
+      </section>
     </div>
-
-    <div class="relative z-10 grid grid-cols-12 gap-6 lg:gap-10">
-      <!-- ══════ LEFT SIDEBAR ══════ -->
-      <aside class="col-span-12 md:col-span-3">
-        <div class="sticky top-24 space-y-5">
-
-          <!-- Page header -->
-          <div class="animate-fade-in-up">
-            <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/60 mb-2">04. VOLUNTEER</p>
-            <h1 class="text-5xl font-bold leading-none tracking-tighter mb-3">{{ langText.volunteer.titleLine1 }}<br>{{ langText.volunteer.titleLine2 }}</h1>
-            <p class="text-sm text-gray-500 leading-relaxed max-w-[200px]">{{ langText.volunteer.subtitle }}</p>
-          </div>
-
-          <!-- Points card -->
-          <div class="vol-points-card animate-fade-in-up delay-100">
-            <div class="absolute -right-8 -top-8 w-40 h-40 rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(147,197,253,0.35),transparent)"></div>
-            <div class="absolute right-4 bottom-4 w-20 h-20 rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(255,255,255,0.5),transparent)"></div>
-            <div class="relative z-10 flex items-start justify-between mb-4">
-              <div>
-                <p class="font-mono text-[9px] uppercase tracking-[0.22em] text-blue-500/60 mb-1">MY POINTS</p>
-                <p class="text-5xl font-bold tabular-nums tracking-tighter text-blue-900">{{ totalPoints }}</p>
-                <p class="font-mono text-[9px] text-blue-500/50 mt-0.5">{{ langText.volunteer.myPoints }}</p>
-              </div>
-              <div class="relative w-14 h-14 shrink-0">
-                <svg viewBox="0 0 40 40" class="w-14 h-14 -rotate-90">
-                  <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(96,165,250,0.2)" stroke-width="3"/>
-                  <circle cx="20" cy="20" r="16" fill="none" stroke="#3b82f6" stroke-width="3"
-                    stroke-dasharray="100.5"
-                    :stroke-dashoffset="100.5 * (1 - Math.min(totalPoints / 5000, 1))"
-                    stroke-linecap="round"
-                    style="transition: stroke-dashoffset 1.2s cubic-bezier(0.19,1,0.22,1)"/>
-                </svg>
-                <span class="absolute inset-0 flex items-center justify-center font-mono text-[9px] text-blue-700 font-bold">{{ Math.round(Math.min(totalPoints/5000,1)*100) }}%</span>
-              </div>
-            </div>
-            <div class="relative z-10 border-t border-blue-300/40 pt-4 grid grid-cols-2 gap-3">
-              <div class="bg-white/50 rounded-xl p-3 backdrop-blur-sm">
-                <p class="font-mono text-[8px] uppercase tracking-[0.18em] text-blue-500/60 mb-1">{{ langText.volunteer.volunteerHours }}</p>
-                <p class="text-2xl font-bold text-blue-900">{{ myVolunteerHours }}<span class="text-xs text-blue-500/50 ml-1">h</span></p>
-              </div>
-              <div class="bg-white/50 rounded-xl p-3 backdrop-blur-sm">
-                <p class="font-mono text-[8px] uppercase tracking-[0.18em] text-blue-500/60 mb-1">{{ langText.volunteer.joined }}</p>
-                <p class="text-2xl font-bold text-blue-900">{{ myJoinedCount }}<span class="text-xs text-blue-500/50 ml-1">{{ langText.volunteer.times }}</span></p>
-              </div>
-            </div>
-          </div>
-
-          <!-- My Activities -->
-          <div class="vol-sidebar-card animate-fade-in-up delay-200">
-            <div class="vol-sidebar-card__header">
-              <span>{{ langText.volunteer.myActivities }}</span>
-              <div class="vol-sidebar-card__icon"><el-icon><Calendar /></el-icon></div>
-            </div>
-            <div v-if="myActivities.length === 0" class="text-center py-5">
-              <div class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-2"><span class="text-base">📋</span></div>
-              <p class="text-xs text-gray-400 font-mono">{{ langText.volunteer.noActivities }}</p>
-            </div>
-            <ul v-else class="space-y-2">
-              <li v-for="act in myActivities" :key="act.id"
-                class="group flex items-start justify-between gap-2 p-2 rounded-xl hover:bg-black/[0.03] transition-colors">
-                <div class="flex-1 min-w-0">
-                  <p class="font-semibold text-xs truncate group-hover:text-primary transition-colors">{{ act.title }}</p>
-                  <p class="font-mono text-[10px] text-gray-400 mt-0.5">{{ act.date }}</p>
-                </div>
-                <span class="shrink-0 text-[9px] font-mono font-bold px-2 py-0.5 rounded-full" :class="statusClass(act.status)">{{ statusLabel(act.status) }}</span>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Volunteer Leaderboard -->
-          <div class="vol-sidebar-card animate-fade-in-up delay-300">
-            <div class="vol-sidebar-card__header">
-              <span>{{ langText.volunteer.leaderboard }}</span>
-              <div class="vol-sidebar-card__icon vol-sidebar-card__icon--gold"><el-icon><TrophyBase /></el-icon></div>
-            </div>
-            <ul class="space-y-1">
-              <li v-for="(u, i) in volunteerLeaderboard" :key="i"
-                class="flex items-center justify-between text-xs hover:bg-black/[0.03] -mx-1 px-2 py-2 rounded-xl transition-colors cursor-default">
-                <div class="flex items-center gap-2.5">
-                  <span class="w-6 text-center shrink-0" :class="i < 3 ? 'text-sm' : 'font-mono text-[10px] text-gray-400'">
-                    {{ i < 3 ? ['🥇','🥈','🥉'][i] : i + 1 }}
-                  </span>
-                  <span class="font-bold truncate max-w-[85px]">{{ u.name }}</span>
-                </div>
-                <span class="font-mono font-bold text-primary tabular-nums">{{ u.hours }}<span class="text-[9px] text-primary/50 ml-0.5">h</span></span>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Points rules -->
-          <div class="vol-rules-card animate-fade-in-up delay-400">
-            <div class="flex items-center gap-2 mb-3">
-              <div class="w-1.5 h-1.5 rounded-full bg-primary animate-ping-slow"></div>
-              <p class="font-mono text-[9px] uppercase tracking-[0.2em] text-primary font-bold">{{ langText.volunteer.rules }}</p>
-            </div>
-            <ul class="space-y-2">
-              <li class="flex items-start gap-2 text-xs text-gray-500"><span class="mt-1.5 w-1 h-1 rounded-full bg-primary/60 shrink-0"></span>{{ langText.volunteer.rule1 }}</li>
-              <li class="flex items-start gap-2 text-xs text-gray-500"><span class="mt-1.5 w-1 h-1 rounded-full bg-primary/60 shrink-0"></span>{{ langText.volunteer.rule2 }}</li>
-              <li class="flex items-start gap-2 text-xs text-gray-500"><span class="mt-1.5 w-1 h-1 rounded-full bg-primary/60 shrink-0"></span>{{ langText.volunteer.rule3 }}</li>
-            </ul>
-          </div>
-
-        </div>
-      </aside>
-      <!-- ══════ RIGHT MAIN CONTENT ══════ -->
-      <main class="col-span-12 md:col-span-9">
-
-        <!-- Search + Filter bar -->
-        <div class="flex flex-col sm:flex-row gap-3 mb-8 animate-fade-in-up">
-          <div class="flex-1">
-            <el-input v-model="searchQuery" :placeholder="langText.volunteer.searchPlaceholder" clearable :prefix-icon="Search" />
-          </div>
-          <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-            <button v-for="cat in categories" :key="cat.value" @click="activeCategory = cat.value"
-              class="vol-filter-btn shrink-0" :class="activeCategory === cat.value ? 'vol-filter-btn--active' : ''">
-              <span>{{ cat.icon }}</span><span>{{ cat.label }}</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Redeem banner -->
-        <div class="vol-redeem-banner mb-8 animate-fade-in-up delay-200">
-          <div class="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-[0.12]" style="background:radial-gradient(circle,#4ADE80,transparent)"></div>
-          <div class="absolute right-28 bottom-0 w-28 h-28 rounded-full opacity-[0.06]" style="background:radial-gradient(circle,#4ADE80,transparent)"></div>
-          <div class="relative z-10">
-            <p class="font-mono text-[9px] uppercase tracking-[0.2em] text-blue-500/60 mb-1">{{ langText.volunteer.redeemTitle }}</p>
-            <h3 class="text-lg font-bold text-blue-900 mb-1">{{ langText.volunteer.redeemHeading }}</h3>
-            <p class="text-xs text-blue-700/60 max-w-xs leading-relaxed">{{ langText.volunteer.redeemDesc }}</p>
-          </div>
-          <router-link to="/achievements" class="vol-redeem-btn shrink-0 relative z-10">{{ langText.volunteer.redeemBtn }}</router-link>
-        </div>
-
-        <!-- Activity cards -->
-        <transition-group name="card-list" tag="div" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          <div v-for="activity in filteredActivities" :key="activity.id" class="vol-activity-card group">
-            <div class="h-[3px] w-full absolute top-0 left-0 rounded-t-2xl" :class="categoryAccent(activity.category)"></div>
-            <div class="p-6 flex flex-col flex-1">
-              <div class="absolute top-5 right-5 font-mono text-[9px] text-primary/20 select-none">ACT #{{ String(activity.id).padStart(3,'0') }}</div>
-              <div class="flex items-center gap-2 mb-4">
-                <span class="vol-category-badge" :class="categoryBadgeClass(activity.category)">{{ activity.category }}</span>
-                <span v-if="activity.urgent" class="vol-urgent-badge">⚡ {{ langText.volunteer.urgent }}</span>
-              </div>
-              <h3 class="text-base font-bold mb-2 group-hover:text-primary transition-colors duration-300 leading-snug pr-4">{{ activity.title }}</h3>
-              <p class="text-sm text-gray-500 leading-relaxed mb-5 flex-1 line-clamp-2">{{ activity.description }}</p>
-              <div class="grid grid-cols-2 gap-2 mb-4">
-                <div class="vol-meta-cell">
-                  <el-icon class="text-primary shrink-0" :size="11"><Calendar /></el-icon>
-                  <span class="font-mono truncate text-[11px]">{{ activity.date }}</span>
-                </div>
-                <div class="vol-meta-cell">
-                  <el-icon class="text-primary shrink-0" :size="11"><Location /></el-icon>
-                  <span class="truncate text-[11px]">{{ activity.location }}</span>
-                </div>
-                <div class="vol-meta-cell">
-                  <el-icon class="text-primary shrink-0" :size="11"><Timer /></el-icon>
-                  <span class="text-[11px]">志愿 <strong class="text-black">{{ activity.hours }}</strong>h</span>
-                </div>
-                <div class="vol-meta-cell vol-meta-cell--points">
-                  <span class="text-primary font-bold text-sm tabular-nums">+{{ activity.points }}</span>
-                  <span class="font-mono text-[9px] text-primary/60">{{ langText.volunteer.pointsLabel }}</span>
-                </div>
-              </div>
-              <div class="mb-5">
-                <div class="flex justify-between font-mono text-[10px] mb-1.5">
-                  <span class="text-gray-400">{{ langText.volunteer.enrollProgress }}</span>
-                  <span :class="activity.enrolled >= activity.capacity ? 'text-red-400 font-bold' : 'text-gray-400'">{{ activity.enrolled }} / {{ activity.capacity }}</span>
-                </div>
-                <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full rounded-full transition-all duration-700" :class="enrollmentColor(activity)"
-                    :style="{width: Math.min(100,(activity.enrolled/activity.capacity)*100)+'%'}"></div>
-                </div>
-              </div>
-              <div class="flex gap-2 pt-4 border-t border-primary/8">
-                <button v-if="!isJoined(activity.id)" @click="openRegisterDialog(activity)"
-                  :disabled="activity.enrolled >= activity.capacity"
-                  class="flex-1 py-2.5 text-xs font-mono uppercase tracking-widest border rounded-xl transition-all duration-200"
-                  :class="activity.enrolled >= activity.capacity
-                    ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50'
-                    : 'border-blue-400 text-blue-700 bg-blue-50/60 hover:bg-blue-400 hover:text-white hover:border-blue-400 shadow-sm hover:shadow-[0_4px_14px_rgba(96,165,250,0.4)]'"
-                >{{ activity.enrolled >= activity.capacity ? langText.volunteer.full : langText.volunteer.registerNow }}</button>
-                <button v-else @click="openLogHoursDialog(activity)"
-                  class="flex-1 py-2.5 text-xs font-mono uppercase tracking-widest border border-primary text-primary hover:bg-primary hover:text-white transition-all duration-200 rounded-xl"
-                >{{ langText.volunteer.registered }}</button>
-                <button @click="openDetailDialog(activity)"
-                  class="px-4 py-2.5 text-xs font-mono uppercase tracking-widest border border-gray-200 text-gray-500 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all duration-200 rounded-xl"
-                >{{ langText.volunteer.detail }}</button>
-              </div>
-            </div>
-          </div>
-        </transition-group>
-
-        <div v-if="filteredActivities.length === 0" class="text-center py-20">
-          <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-            <el-icon :size="28" class="text-gray-300"><Sunrise /></el-icon>
-          </div>
-          <p class="text-gray-400 font-mono text-sm">{{ langText.volunteer.noMatch }}</p>
-        </div>
-
-      </main>
-    </div>
-
-    <!-- ══════ REGISTER DIALOG ══════ -->
-    <el-dialog v-model="showRegisterDialog" :title="langText.volunteer.registerDialog.title" :width="520" align-center>
-      <div v-if="selectedActivity" class="space-y-5">
-        <div class="bg-gray-50 border border-black/5 p-4 rounded-xl">
-          <h4 class="font-bold mb-2 text-sm">{{ selectedActivity.title }}</h4>
-          <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500 font-mono">
-            <span>📅 {{ selectedActivity.date }}</span>
-            <span>📍 {{ selectedActivity.location }}</span>
-            <span>⏱ {{ selectedActivity.hours }}h</span>
-            <span class="text-primary font-bold">+{{ selectedActivity.points }} {{ langText.volunteer.pointsLabel }}</span>
-          </div>
-        </div>
-        <div class="space-y-3">
-          <div>
-            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-1">{{ langText.volunteer.registerDialog.phoneLabel }}</label>
-            <el-input v-model="registerForm.phone" :placeholder="langText.volunteer.registerDialog.phonePlaceholder" />
-          </div>
-          <div>
-            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-1">{{ langText.volunteer.registerDialog.noteLabel }}</label>
-            <el-input v-model="registerForm.note" type="textarea" :rows="2" :placeholder="langText.volunteer.registerDialog.notePlaceholder" />
-          </div>
-          <div class="flex items-center gap-2 text-xs text-gray-500">
-            <el-checkbox v-model="registerForm.agreed" />
-            <span>{{ langText.volunteer.registerDialog.agreement }}</span>
-          </div>
-        </div>
-        <div class="flex justify-end gap-2 pt-2">
-          <button @click="showRegisterDialog = false" class="border border-gray-200 px-6 py-2 text-sm hover:bg-gray-50 transition-colors rounded-lg">{{ langText.volunteer.registerDialog.cancel }}</button>
-          <button @click="submitRegister" class="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-6 py-2 text-sm font-medium hover:from-blue-300 hover:to-blue-400 hover:shadow-[0_4px_14px_rgba(96,165,250,0.45)] hover:-translate-y-0.5 transition-all duration-200 rounded-lg">{{ langText.volunteer.registerDialog.confirm }}</button>
-        </div>
-      </div>
-    </el-dialog>
-
-    <!-- ══════ LOG HOURS DIALOG ══════ -->
-    <el-dialog v-model="showLogHoursDialog" :title="langText.volunteer.logHoursDialog.title" :width="480" align-center>
-      <div v-if="selectedActivity" class="space-y-5">
-        <div class="bg-gray-50 border border-black/5 p-4 rounded-xl">
-          <h4 class="font-bold text-sm mb-1">{{ selectedActivity.title }}</h4>
-          <p class="text-xs text-gray-400 font-mono">{{ langText.volunteer.logHoursDialog.planHours }}{{ selectedActivity.hours }}h</p>
-        </div>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-2">{{ langText.volunteer.logHoursDialog.actualLabel }}</label>
-            <div class="flex items-center gap-4">
-              <el-slider v-model="logForm.hours" :min="0.5" :max="selectedActivity.hours + 2" :step="0.5" class="flex-1" />
-              <span class="font-bold text-xl w-12 text-right tabular-nums">{{ logForm.hours }}h</span>
-            </div>
-          </div>
-          <div class="bg-primary/5 border border-primary/20 p-4 rounded-xl text-center">
-            <p class="text-xs font-mono opacity-60 mb-1">{{ langText.volunteer.logHoursDialog.earnLabel }}</p>
-            <p class="text-3xl font-bold text-primary tabular-nums">+{{ earnedPoints }}</p>
-            <p class="text-xs opacity-50 mt-1 font-mono">{{ logForm.hours }}h × {{ selectedActivity.pointsPerHour }} {{ langText.volunteer.logHoursDialog.perHour }}</p>
-          </div>
-          <div>
-            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-1">{{ langText.volunteer.logHoursDialog.reflectionLabel }}</label>
-            <el-input v-model="logForm.reflection" type="textarea" :rows="3" :placeholder="langText.volunteer.logHoursDialog.reflectionPlaceholder" maxlength="200" show-word-limit />
-          </div>
-        </div>
-        <div class="flex justify-end gap-2 pt-2">
-          <button @click="showLogHoursDialog = false" class="border border-gray-200 px-6 py-2 text-sm hover:bg-gray-50 transition-colors rounded-lg">{{ langText.volunteer.logHoursDialog.cancel }}</button>
-          <button @click="submitLogHours" class="bg-primary text-white px-6 py-2 text-sm hover:bg-green-700 transition-colors rounded-lg">{{ langText.volunteer.logHoursDialog.submit }}</button>
-        </div>
-      </div>
-    </el-dialog>
-
-    <!-- ══════ DETAIL DIALOG ══════ -->
-    <el-dialog v-model="showDetailDialog" :title="langText.volunteer.detailDialog.title" :width="560" align-center>
-      <div v-if="selectedActivity" class="space-y-5">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <div class="flex items-center gap-2 mb-2">
-              <span class="vol-category-badge" :class="categoryBadgeClass(selectedActivity.category)">{{ selectedActivity.category }}</span>
-              <span v-if="selectedActivity.urgent" class="text-[10px] font-mono uppercase px-2 py-1 rounded-full bg-red-100 text-red-600">{{ langText.volunteer.urgent }}</span>
-            </div>
-            <h3 class="text-xl font-bold">{{ selectedActivity.title }}</h3>
-          </div>
-          <div class="text-right shrink-0">
-            <p class="text-2xl font-bold text-primary tabular-nums">+{{ selectedActivity.points }}</p>
-            <p class="text-xs font-mono opacity-50">{{ langText.volunteer.detailDialog.pointsReward }}</p>
-          </div>
-        </div>
-        <p class="text-sm text-gray-600 leading-relaxed">{{ selectedActivity.description }}</p>
-        <div class="grid grid-cols-2 gap-3">
-          <div class="bg-gray-50 p-3 rounded-xl border border-black/5">
-            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">{{ langText.volunteer.detailDialog.activityTime }}</p>
-            <p class="text-sm font-bold">{{ selectedActivity.date }}</p>
-          </div>
-          <div class="bg-gray-50 p-3 rounded-xl border border-black/5">
-            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">{{ langText.volunteer.detailDialog.activityLocation }}</p>
-            <p class="text-sm font-bold">{{ selectedActivity.location }}</p>
-          </div>
-          <div class="bg-gray-50 p-3 rounded-xl border border-black/5">
-            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">{{ langText.volunteer.detailDialog.volunteerDuration }}</p>
-            <p class="text-sm font-bold">{{ selectedActivity.hours }} {{ langText.volunteer.detailDialog.hours }}</p>
-          </div>
-          <div class="bg-gray-50 p-3 rounded-xl border border-black/5">
-            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">{{ langText.volunteer.detailDialog.remainingSlots }}</p>
-            <p class="text-sm font-bold">{{ selectedActivity.capacity - selectedActivity.enrolled }} {{ langText.volunteer.detailDialog.people }}</p>
-          </div>
-        </div>
-        <div class="bg-gray-50 p-3 rounded-xl border border-black/5">
-          <p class="text-[10px] font-mono uppercase opacity-40 mb-1">{{ langText.volunteer.detailDialog.activityNotes }}</p>
-          <p class="text-sm text-gray-600">{{ selectedActivity.notes || langText.volunteer.detailDialog.defaultNotes }}</p>
-        </div>
-        <div class="flex justify-end gap-2">
-          <button @click="showDetailDialog = false" class="border border-gray-200 px-6 py-2 text-sm hover:bg-gray-50 transition-colors rounded-lg">{{ langText.volunteer.detailDialog.close }}</button>
-          <button
-            v-if="!isJoined(selectedActivity.id) && selectedActivity.enrolled < selectedActivity.capacity"
-            @click="() => { showDetailDialog = false; openRegisterDialog(selectedActivity) }"
-            class="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-6 py-2 text-sm font-medium hover:from-blue-300 hover:to-blue-400 hover:shadow-[0_4px_14px_rgba(96,165,250,0.45)] hover:-translate-y-0.5 transition-all duration-200 rounded-lg"
-          >{{ langText.volunteer.registerNow }}</button>
-        </div>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
-// ============================================================
-// views/volunteer/VolunteerView.vue - 志愿活动页面
-// 功能：浏览志愿活动、报名参与、记录志愿时长并换取积分
-// ============================================================
-import { ref, computed, onMounted } from 'vue'
-import { Calendar, Location, Timer, Sunrise, Search, TrophyBase } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
-import { useUserStore } from '@/stores/user'
-import { langText } from '@/language'
+import { computed } from 'vue'
 
-const userStore = useUserStore()
-const searchQuery = ref('')
-const activeCategory = ref('全部')
-const showRegisterDialog = ref(false)
-const showLogHoursDialog = ref(false)
-const showDetailDialog = ref(false)
-const selectedActivity = ref(null)
-const registerForm = ref({ phone: '', note: '', agreed: false })
-const logForm = ref({ hours: 2, reflection: '' })
-const joinedIds = ref(JSON.parse(localStorage.getItem('volunteer_joined') || '[]'))
-const volunteerLogs = ref(JSON.parse(localStorage.getItem('volunteer_logs') || '[]'))
+const activities = [
+  {
+    id: 1,
+    title: '滨江塑料清理行动',
+    category: '社区清洁',
+    date: '2026-04-12 08:30',
+    location: '南城滨江公园 3 号入口',
+    duration: '3 小时',
+    capacity: 60,
+    points: 90,
+    description: '沿江步道分段清理塑料废弃物，完成分类回收并进行数据登记。',
+  },
+  {
+    id: 2,
+    title: '城市树木认养与养护日',
+    category: '环境保护',
+    date: '2026-04-16 09:00',
+    location: '青禾生态公园中庭',
+    duration: '4 小时',
+    capacity: 45,
+    points: 120,
+    description: '开展树木认养、松土浇灌和病虫害排查，建立社区绿植成长档案。',
+  },
+  {
+    id: 3,
+    title: '银龄数字助学课堂',
+    category: '关爱老人',
+    date: '2026-04-18 14:00',
+    location: '东湖街道长者服务中心',
+    duration: '2.5 小时',
+    capacity: 30,
+    points: 80,
+    description: '帮助老人学习手机支付、防诈骗设置和线上挂号等日常数字技能。',
+  },
+  {
+    id: 4,
+    title: '旧物改造公开工坊',
+    category: '教育支持',
+    date: '2026-04-21 13:30',
+    location: '创益社区青年空间',
+    duration: '3.5 小时',
+    capacity: 50,
+    points: 110,
+    description: '面向青少年开展旧物重构实践，制作可重复使用的生活用品。',
+  },
+  {
+    id: 5,
+    title: '社区垃圾分类巡讲',
+    category: '环境保护',
+    date: '2026-04-24 19:00',
+    location: '和风花园 A 区广场',
+    duration: '2 小时',
+    capacity: 40,
+    points: 70,
+    description: '志愿者入户发放分类手册，进行分类问答与投放点位示范教学。',
+  },
+  {
+    id: 6,
+    title: '周末河道守护计划',
+    category: '社区清洁',
+    date: '2026-04-27 08:00',
+    location: '北岸生态湿地码头',
+    duration: '4 小时',
+    capacity: 35,
+    points: 130,
+    description: '分组开展河道漂浮物打捞、岸线巡检与环保宣传拍摄任务。',
+  },
+]
 
-const totalPoints = computed(() => Number(userStore.user?.points) || 0)
-const myVolunteerHours = computed(() => volunteerLogs.value.reduce((s, l) => s + (l.hours || 0), 0))
-const myJoinedCount = computed(() => joinedIds.value.length)
-const isJoined = (id) => joinedIds.value.includes(id)
-const myActivities = computed(() => activities.value.filter(a => joinedIds.value.includes(a.id)))
-
-const categories = computed(() => [
-  { label: langText.value.volunteer.categories.all, value: '全部', icon: '📋' },
-  { label: langText.value.volunteer.categories.environment, value: '环境保护', icon: '🌳' },
-  { label: langText.value.volunteer.categories.community, value: '社区清洁', icon: '🧹' },
-  { label: langText.value.volunteer.categories.education, value: '教育支持', icon: '📚' },
-  { label: langText.value.volunteer.categories.elderly, value: '关爱老人', icon: '🤝' },
-])
-
-const activities = computed(() => {
-  const t = langText.value.volunteer
-  const base = [
-    { date:'2026-04-05 09:00', hours:3, points:90, pointsPerHour:30, enrolled:18, capacity:30, urgent:false, status:'confirmed' },
-    { date:'2026-04-12 08:30', hours:4, points:160, pointsPerHour:40, enrolled:25, capacity:25, urgent:true, status:'confirmed' },
-    { date:'2026-04-19 14:00', hours:2, points:80, pointsPerHour:40, enrolled:8, capacity:15, urgent:false, status:'pending' },
-    { date:'2026-04-26 09:00', hours:3, points:90, pointsPerHour:30, enrolled:12, capacity:40, urgent:false, status:'pending' },
-    { date:'2026-05-03 10:00', hours:2, points:60, pointsPerHour:30, enrolled:6, capacity:10, urgent:false, status:'pending' },
-    { date:'2026-05-10 09:30', hours:2, points:50, pointsPerHour:25, enrolled:5, capacity:20, urgent:false, status:'pending' },
-  ]
-  return t.activities.map((item, i) => ({ id: i + 1, ...item, ...base[i] }))
-})
-
-const volunteerLeaderboard = ref([
-  { name: 'EcoWarrior', hours: 48 },
-  { name: 'GreenStar', hours: 36 },
-  { name: 'Sarah J.', hours: 29 },
-  { name: 'Mike Chen', hours: 21 },
-  { name: 'Emma W.', hours: 18 },
-])
-
-const filteredActivities = computed(() => {
-  let list = activities.value
-  if (activeCategory.value !== '全部') list = list.filter(a => a.category === activeCategory.value)
-  if (searchQuery.value.trim()) {
-    const q = searchQuery.value.toLowerCase()
-    list = list.filter(a => a.title.toLowerCase().includes(q) || a.location.toLowerCase().includes(q))
-  }
-  return list
-})
-
-const earnedPoints = computed(() => !selectedActivity.value ? 0 : Math.round(logForm.value.hours * selectedActivity.value.pointsPerHour))
-
-const statusClass = (s) => ({ pending:'bg-yellow-100 text-yellow-700', confirmed:'bg-green-100 text-green-700', completed:'bg-blue-100 text-blue-700' }[s] || 'bg-gray-100 text-gray-500')
-const statusLabel = (s) => ({ pending: langText.value.volunteer.status.pending, confirmed: langText.value.volunteer.status.confirmed, completed: langText.value.volunteer.status.completed }[s] || s)
-const categoryBadgeClass = (c) => ({ '环境保护':'bg-green-100 text-green-700', '社区清洁':'bg-blue-100 text-blue-700', '教育支持':'bg-purple-100 text-purple-700', '关爱老人':'bg-orange-100 text-orange-700' }[c] || 'bg-gray-100 text-gray-600')
-const enrollmentColor = (a) => { const r = a.enrolled/a.capacity; return r>=1?'bg-red-400':r>=0.8?'bg-orange-400':'bg-primary' }
-const categoryAccent = (cat) => ({ '环境保护':'bg-gradient-to-r from-green-400 to-emerald-500', '社区清洁':'bg-gradient-to-r from-blue-400 to-sky-500', '教育支持':'bg-gradient-to-r from-purple-400 to-violet-500', '关爱老人':'bg-gradient-to-r from-orange-400 to-amber-500' }[cat] || 'bg-gradient-to-r from-gray-300 to-gray-400')
-
-const openRegisterDialog = (a) => { selectedActivity.value = a; registerForm.value = { phone:'', note:'', agreed:false }; showRegisterDialog.value = true }
-const openLogHoursDialog = (a) => { selectedActivity.value = a; logForm.value = { hours: a.hours, reflection:'' }; showLogHoursDialog.value = true }
-const openDetailDialog = (a) => { selectedActivity.value = a; showDetailDialog.value = true }
-
-const submitRegister = () => {
-  if (!registerForm.value.phone.trim()) { ElMessage.warning(langText.value.volunteer.messages.phoneRequired); return }
-  if (!registerForm.value.agreed) { ElMessage.warning(langText.value.volunteer.messages.agreementRequired); return }
-  const act = selectedActivity.value
-  if (!joinedIds.value.includes(act.id)) {
-    joinedIds.value.push(act.id)
-    act.enrolled = Math.min(act.enrolled + 1, act.capacity)
-    act.status = 'confirmed'
-    localStorage.setItem('volunteer_joined', JSON.stringify(joinedIds.value))
-  }
-  showRegisterDialog.value = false
-  ElMessage.success(langText.value.volunteer.messages.registerSuccess)
-}
-
-const submitLogHours = () => {
-  const pts = earnedPoints.value
-  volunteerLogs.value.push({ activityId: selectedActivity.value.id, title: selectedActivity.value.title, hours: logForm.value.hours, points: pts, date: new Date().toISOString().split('T')[0] })
-  localStorage.setItem('volunteer_logs', JSON.stringify(volunteerLogs.value))
-  userStore.addPoints(pts)
-  const userName = userStore.user?.name || userStore.user?.username || '我'
-  const idx = volunteerLeaderboard.value.findIndex(u => u.name === userName)
-  if (idx >= 0) volunteerLeaderboard.value[idx].hours += logForm.value.hours
-  else volunteerLeaderboard.value.push({ name: userName, hours: logForm.value.hours })
-  volunteerLeaderboard.value.sort((a, b) => b.hours - a.hours)
-  showLogHoursDialog.value = false
-  ElMessage.success(langText.value.volunteer.messages.logSuccess.replace('{pts}', pts))
-}
-
-onMounted(async () => { await userStore.init() })
+const categories = [...new Set(activities.map((item) => item.category))]
+const totalCapacity = computed(() => activities.reduce((sum, item) => sum + item.capacity, 0))
 </script>
 
 <style scoped>
-/* ── Points Card ── */
-.vol-points-card {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(145deg, #eff6ff 0%, #dbeafe 45%, #bfdbfe 100%);
-  border: 1px solid rgba(96, 165, 250, 0.35);
-  border-radius: 1.25rem;
-  padding: 1.25rem;
-  box-shadow: 0 16px 40px rgba(96,165,250,0.18), 0 0 0 1px rgba(255,255,255,0.7) inset;
-}
-
-/* ── Sidebar Card ── */
-.vol-sidebar-card {
-  background: rgba(255,255,255,0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0,0,0,0.07);
-  border-radius: 1.25rem;
-  padding: 1.1rem 1.25rem;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-}
-
-.vol-sidebar-card__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  margin-bottom: 0.9rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid rgba(0,0,0,0.07);
-}
-
-.vol-sidebar-card__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 0.5rem;
-  background: rgba(46,125,50,0.08);
-  color: #2E7D32;
-}
-
-.vol-sidebar-card__icon--gold {
-  background: rgba(234,179,8,0.1);
-  color: #b45309;
-}
-
-/* ── Rules Card ── */
-.vol-rules-card {
-  border: 1px solid rgba(46,125,50,0.18);
-  background: linear-gradient(135deg, rgba(46,125,50,0.04) 0%, rgba(74,222,128,0.03) 100%);
-  border-radius: 1.25rem;
-  padding: 1rem 1.1rem;
-}
-
-/* ── Filter Buttons ── */
-.vol-filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.45rem 0.75rem;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 0.6rem;
-  background: rgba(255,255,255,0.8);
-  backdrop-filter: blur(8px);
-  transition: all 0.2s var(--ease-expo);
-  color: #555;
-}
-.vol-filter-btn:hover {
-  border-color: rgba(0,0,0,0.3);
-  background: rgba(255,255,255,1);
-  color: #111;
-  transform: translateY(-1px);
-}
-.vol-filter-btn--active {
-  background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
-  border-color: #60a5fa;
-  color: #1e3a8a;
-  box-shadow: 0 4px 14px rgba(96,165,250,0.4);
-}
-.vol-filter-btn--active:hover {
-  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
-  color: #1e3a8a;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(96,165,250,0.45);
-}
-
-/* ── Redeem Banner ── */
-.vol-redeem-banner {
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 40%, #bfdbfe 100%);
-  border-radius: 1.25rem;
-  padding: 1.5rem;
-  box-shadow: 0 12px 32px rgba(96,165,250,0.15), 0 0 0 1px rgba(255,255,255,0.9) inset;
-  border: 1px solid rgba(96,165,250,0.3);
-}
-@media (min-width: 640px) {
-  .vol-redeem-banner {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.vol-redeem-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.6rem 1.25rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  border: 1px solid rgba(59,130,246,0.4);
-  border-radius: 0.75rem;
-  background: rgba(255,255,255,0.75);
-  color: #1d4ed8;
-  white-space: nowrap;
-  backdrop-filter: blur(8px);
-  transition: all 0.25s var(--ease-expo);
-  box-shadow: 0 2px 8px rgba(59,130,246,0.1);
-}
-.vol-redeem-btn:hover {
-  background: rgba(255,255,255,0.98);
-  border-color: rgba(59,130,246,0.7);
-  box-shadow: 0 6px 18px rgba(59,130,246,0.2);
-  transform: translateY(-1px);
-  color: #1e40af;
-}
-
-/* ── Activity Card ── */
-.vol-activity-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0,0,0,0.07);
-  border-radius: 1.25rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  overflow: hidden;
-  transition: transform 0.4s var(--ease-expo), box-shadow 0.4s ease, border-color 0.3s ease;
-}
-.vol-activity-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 48px rgba(46,125,50,0.12), 0 4px 16px rgba(0,0,0,0.06);
-  border-color: rgba(46,125,50,0.25);
-}
-
-/* ── Category Badge ── */
-.vol-category-badge {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 0.2rem 0.6rem;
-  border-radius: 9999px;
-}
-
-.vol-urgent-badge {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  padding: 0.2rem 0.55rem;
-  border-radius: 9999px;
-  background: #fef2f2;
-  color: #ef4444;
-  border: 1px solid #fecaca;
-  animation: pulse 2s cubic-bezier(0,0,0.2,1) infinite;
-}
-
-/* ── Meta cell ── */
-.vol-meta-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: #f9fafb;
-  border-radius: 0.6rem;
-  padding: 0.45rem 0.6rem;
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-.vol-meta-cell--points {
-  justify-content: center;
-  background: rgba(46,125,50,0.07);
-}
-
-:global(:root[data-theme='dark']) .vol-root {
-  background: #1f1f1f !important;
-  color: #ffffff !important;
-}
-
-:global(:root[data-theme='dark']) .vol-root .fixed.grid {
-  opacity: 0.08 !important;
-}
-
-:global(:root[data-theme='dark']) .vol-root .border-primary {
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-:global(:root[data-theme='dark']) .vol-root h1,
-:global(:root[data-theme='dark']) .vol-root h2,
-:global(:root[data-theme='dark']) .vol-root h3,
-:global(:root[data-theme='dark']) .vol-root h4,
-:global(:root[data-theme='dark']) .vol-root strong,
-:global(:root[data-theme='dark']) .vol-root .font-bold {
-  color: #f8fff9 !important;
-}
-
-:global(:root[data-theme='dark']) .vol-root p,
-:global(:root[data-theme='dark']) .vol-root span,
-:global(:root[data-theme='dark']) .vol-root li {
-  color: #dcefe2;
-}
-
-:global(:root[data-theme='dark']) .vol-points-card,
-:global(:root[data-theme='dark']) .vol-sidebar-card,
-:global(:root[data-theme='dark']) .vol-rules-card,
-:global(:root[data-theme='dark']) .vol-redeem-banner,
-:global(:root[data-theme='dark']) .vol-activity-card {
-  background: #2b2b2b !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  box-shadow: none !important;
-}
-
-:global(:root[data-theme='dark']) .vol-points-card::before,
-:global(:root[data-theme='dark']) .vol-redeem-banner::before,
-:global(:root[data-theme='dark']) .vol-activity-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+.activity-page {
   background: transparent;
 }
 
-:global(:root[data-theme='dark']) .vol-sidebar-card__header {
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #f8fff9 !important;
+.hero-panel {
+  border: 1px solid rgba(46, 125, 50, 0.2);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.06);
 }
 
-:global(:root[data-theme='dark']) .vol-sidebar-card__icon,
-:global(:root[data-theme='dark']) .vol-sidebar-card__icon--gold {
-  background: #3a3a3a !important;
-  color: #ffffff !important;
+.hero-kicker {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: #2e7d32;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-:global(:root[data-theme='dark']) .vol-filter-btn {
-  background: #333333 !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #ffffff !important;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.26);
+.hero-title {
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1.1;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #14221a;
 }
 
-:global(:root[data-theme='dark']) .vol-filter-btn:hover,
-:global(:root[data-theme='dark']) .vol-filter-btn--active {
-  background: #4a4a4a !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  color: #ffffff !important;
+.hero-desc {
+  color: #4b5563;
+  max-width: 640px;
 }
 
-:global(:root[data-theme='dark']) .vol-redeem-btn,
-:global(:root[data-theme='dark']) .vol-activity-card button {
-  background: #333333 !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-  color: #f8fff9 !important;
+.stat-card {
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.88);
+  min-width: 90px;
 }
 
-:global(:root[data-theme='dark']) .vol-redeem-btn:hover,
-:global(:root[data-theme='dark']) .vol-activity-card button:hover {
-  background: #4a4a4a !important;
-  border-color: rgba(255, 255, 255, 0.22) !important;
-  color: #ffffff !important;
+.stat-label {
+  color: #6b7280;
+  font-size: 12px;
+  margin-bottom: 3px;
 }
 
-:global(:root[data-theme='dark']) .vol-category-badge,
-:global(:root[data-theme='dark']) .vol-urgent-badge {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #f8fff9 !important;
+.stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1f2937;
 }
 
-:global(:root[data-theme='dark']) .vol-meta-cell {
-  background: #333333 !important;
-  color: #dcefe2 !important;
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(46, 125, 50, 0.18);
+  background: rgba(46, 125, 50, 0.08);
+  color: #1b5e20;
+  font-size: 12px;
+  font-weight: 700;
 }
 
-:global(:root[data-theme='dark']) .vol-meta-cell--points {
-  background: #3a3a3a !important;
+.activity-card {
+  border-radius: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  padding: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-:global(:root[data-theme='dark']) .vol-root .el-input__wrapper {
-  background: #2b2b2b !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: none !important;
+.activity-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(34, 197, 94, 0.16);
 }
 
-:global(:root[data-theme='dark']) .vol-root .el-input__inner {
-  color: #f8fff9 !important;
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
-:global(:root[data-theme='dark']) .vol-root .el-input__inner::placeholder {
-  color: rgba(220, 239, 226, 0.8) !important;
+.card-tag {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1d4ed8;
+  background: #dbeafe;
 }
 
-/* ── Card list transition ── */
-.card-list-move,
-.card-list-enter-active,
-.card-list-leave-active {
-  transition: all 0.4s var(--ease-expo);
+.card-code {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
 }
-.card-list-enter-from {
-  opacity: 0;
-  transform: translateY(16px) scale(0.98);
+
+.card-title {
+  font-size: 20px;
+  line-height: 1.25;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #111827;
 }
-.card-list-leave-to {
-  opacity: 0;
-  transform: scale(0.96);
+
+.card-desc {
+  color: #4b5563;
+  line-height: 1.6;
+  min-height: 48px;
+  margin-bottom: 12px;
+}
+
+.card-meta {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: #334155;
+}
+
+.card-footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.12);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.point-pill {
+  border-radius: 999px;
+  padding: 4px 12px;
+  color: #14532d;
+  background: #dcfce7;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.preview-btn {
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+.notice-panel {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #475569;
+  font-size: 14px;
 }
 </style>
