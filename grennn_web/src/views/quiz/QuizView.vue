@@ -8,8 +8,8 @@
       <header class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section class="quiz-hero">
           <p class="quiz-kicker">GREEN DAILY QUIZ</p>
-          <h1>绿色生活问答</h1>
-          <p class="quiz-hero__copy">每天 5 道题，学习环保知识，获得绿色积分。</p>
+          <h1>{{ langText.quiz.title }}</h1>
+          <p class="quiz-hero__copy">{{ langText.quiz.subtitle }}</p>
           <div class="mt-5 grid grid-cols-2 gap-2 md:grid-cols-4">
             <div v-for="item in statCards" :key="item.label" class="quiz-stat">
               <span>{{ item.label }}</span>
@@ -22,9 +22,9 @@
           <div class="flex items-start justify-between gap-4">
             <div>
               <p class="quiz-kicker">TODAY REWARD</p>
-              <h2>今日奖励</h2>
+              <h2>{{ langText.quiz.todayReward }}</h2>
             </div>
-            <router-link to="/store" class="quiz-link-btn">去兑换</router-link>
+            <router-link to="/store" class="quiz-link-btn">{{ langText.quiz.goToRedeem }}</router-link>
           </div>
           <div class="mt-4 divide-y divide-black/5">
             <div v-for="rule in rewardRules" :key="rule.title" class="quiz-rule">
@@ -72,9 +72,9 @@
               <div v-if="submitted" class="quiz-explain" :class="isCurrentCorrect ? 'quiz-explain--right' : 'quiz-explain--wrong'">
                 <div class="flex items-start justify-between gap-4">
                   <div>
-                    <p class="font-bold">{{ isCurrentCorrect ? '回答正确' : '继续学习' }}</p>
+                    <p class="font-bold">{{ isCurrentCorrect ? langText.quiz.correctAnswer : langText.quiz.keepLearning }}</p>
                     <p class="mt-1 text-sm leading-relaxed text-gray-600">
-                      正确答案：{{ currentQuestion.answer.join('、') }}。{{ currentQuestion.explanation }}
+                      {{ langText.quiz.correctAnswerLabel }}：{{ currentQuestion.answer.join('、') }}。{{ currentQuestion.explanation }}
                     </p>
                   </div>
                   <span>{{ isCurrentCorrect ? '+10' : '+3' }}</span>
@@ -83,11 +83,11 @@
             </transition>
 
             <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-between">
-              <button type="button" class="quiz-ghost-btn" @click="resetToday">重置今日演示</button>
+              <button type="button" class="quiz-ghost-btn" @click="resetToday">{{ langText.quiz.resetDemo }}</button>
               <div class="flex gap-3">
-                <button type="button" class="quiz-secondary-btn" :disabled="submitted || selectedAnswers.length === 0" @click="submitAnswer">提交答案</button>
+                <button type="button" class="quiz-secondary-btn" :disabled="submitted || selectedAnswers.length === 0" @click="submitAnswer">{{ langText.quiz.submitAnswer }}</button>
                 <button type="button" class="quiz-primary-btn" :disabled="!submitted" @click="nextQuestion">
-                  {{ isLastQuestion ? '完成今日问答' : '下一题' }}
+                  {{ isLastQuestion ? langText.quiz.finishToday : langText.quiz.nextQuestion }}
                 </button>
               </div>
             </div>
@@ -96,28 +96,28 @@
           <transition name="fade-up">
             <div v-if="isTodayCompleted" class="quiz-complete">
               <p class="quiz-kicker">DAILY QUIZ COMPLETED</p>
-              <h2>今日问答已完成</h2>
+              <h2>{{ langText.quiz.completedTitle }}</h2>
               <p class="quiz-complete__desc">
-                本次答对 {{ correctCount }} / {{ quizQuestions.length }} 题，今日共获得
-                <strong>+{{ todayTotalEarned }}</strong> 绿色积分。
+                {{ langText.quiz.completedDesc1 }} {{ correctCount }} / {{ quizQuestions.length }} {{ langText.quiz.completedDesc2 }}
+                <strong>+{{ todayTotalEarned }}</strong> {{ langText.quiz.completedDesc3 }}
               </p>
               <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div class="quiz-result-cell">
-                  <span>答题得分</span>
+                  <span>{{ langText.quiz.scoreResult }}</span>
                   <strong>+{{ todayEarned }}</strong>
                 </div>
                 <div class="quiz-result-cell">
-                  <span>完成奖励</span>
+                  <span>{{ langText.quiz.completionReward }}</span>
                   <strong>+{{ completionBonus }}</strong>
                 </div>
                 <div class="quiz-result-cell">
-                  <span>正确率</span>
+                  <span>{{ langText.quiz.accuracy }}</span>
                   <strong>{{ Math.round((correctCount / quizQuestions.length) * 100) }}%</strong>
                 </div>
               </div>
               <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
-                <button type="button" class="quiz-ghost-btn" @click="resetToday">重新演示</button>
-                <router-link to="/store" class="quiz-primary-btn text-center">去兑换商城</router-link>
+                <button type="button" class="quiz-ghost-btn" @click="resetToday">{{ langText.quiz.replay }}</button>
+                <router-link to="/store" class="quiz-primary-btn text-center">{{ langText.quiz.goToStore }}</router-link>
               </div>
             </div>
           </transition>
@@ -126,7 +126,7 @@
         <aside class="space-y-4">
           <section class="quiz-side-card">
             <div class="mb-4 flex items-center justify-between">
-              <h3>分类挑战</h3>
+              <h3>{{ langText.quiz.categoryChallenge }}</h3>
               <span class="text-xs font-mono text-primary">{{ completedCategories }}/6</span>
             </div>
             <div class="divide-y divide-black/5">
@@ -138,21 +138,21 @@
                 @click="jumpToCategory(category.name)"
               >
                 <span>{{ category.name }}</span>
-                <b>{{ category.done ? '已完成' : category.count + ' 题' }}</b>
+                <b>{{ category.done ? langText.quiz.completedLabel : category.count + ' ' + langText.quiz.questionsLabel }}</b>
               </button>
             </div>
           </section>
 
           <section class="quiz-side-card">
             <div class="mb-4 flex items-center justify-between">
-              <h3>历史成绩</h3>
+              <h3>{{ langText.quiz.historyTitle }}</h3>
               <span class="text-xs font-mono text-gray-400">RECENT</span>
             </div>
             <div class="divide-y divide-black/5">
               <div v-for="record in visibleRecords" :key="record.date" class="quiz-record">
                 <div>
                   <strong>{{ record.date }}</strong>
-                  <span>{{ record.correctCount }}/{{ record.totalCount }} 正确</span>
+                  <span>{{ record.correctCount }}/{{ record.totalCount }} {{ langText.quiz.correctLabel }}</span>
                 </div>
                 <b>+{{ record.earnedPoints }}</b>
               </div>
@@ -168,6 +168,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { langText } from '@/language'
 import { fetchQuizQuestions, fetchQuizRecords, saveQuizRecord } from '@/services/quizService'
 
 const POINTS_KEY = 'green_reward_points'
@@ -188,22 +189,13 @@ const completionBonus = ref(0)
 const answers = ref([])
 const quizRecords = ref(JSON.parse(localStorage.getItem(RECORDS_KEY) || '[]'))
 
-const quizQuestions = ref([
-  { id: 1, category: '垃圾分类', type: 'single', question: '以下哪种垃圾属于可回收物？', options: [{ label: 'A', text: '废旧报纸' }, { label: 'B', text: '剩菜剩饭' }, { label: 'C', text: '用过的纸巾' }, { label: 'D', text: '烟蒂' }], answer: ['A'], explanation: '废旧报纸属于可回收物，回收后可以重新制浆造纸。' },
-  { id: 2, category: '低碳出行', type: 'single', question: '短距离出行时，以下哪种方式更低碳？', options: [{ label: 'A', text: '开私家车' }, { label: 'B', text: '步行或骑自行车' }, { label: 'C', text: '怠速停车等待' }, { label: 'D', text: '单人长距离开车' }], answer: ['B'], explanation: '步行和骑行几乎不产生直接碳排放，适合短距离通勤。' },
-  { id: 3, category: '节水节电', type: 'judge', question: '离开房间随手关灯可以减少不必要的电力消耗。', options: [{ label: 'A', text: '正确' }, { label: 'B', text: '错误' }], answer: ['A'], explanation: '随手关灯是最容易坚持的节能行为之一，也能降低家庭用电成本。' },
-  { id: 4, category: '绿色饮食', type: 'single', question: '以下哪种行为更符合绿色饮食理念？', options: [{ label: 'A', text: '按需点餐，减少浪费' }, { label: 'B', text: '每餐大量剩饭' }, { label: 'C', text: '频繁使用一次性餐具' }, { label: 'D', text: '只购买过度包装食品' }], answer: ['A'], explanation: '按需点餐可以减少食物浪费，也能降低生产和处理过程中的资源消耗。' },
-  { id: 5, category: '旧物利用', type: 'multiple', question: '以下哪些做法属于旧物利用？', options: [{ label: 'A', text: '把旧玻璃瓶改造成花瓶' }, { label: 'B', text: '修补旧衣服继续穿' }, { label: 'C', text: '还能用的物品直接丢弃' }, { label: 'D', text: '旧纸箱改成收纳盒' }], answer: ['A', 'B', 'D'], explanation: '旧物利用可以延长物品生命周期，减少新资源消耗和废弃物产生。' },
-])
+const quizQuestions = ref(
+  langText.value.quiz.questions.map((q, i) => ({ id: i + 1, ...q })),
+)
 
-const rewardRules = [
-  { title: '答对 1 题', desc: '即时反馈并写入积分', points: '+10' },
-  { title: '答错学习解析', desc: '完成知识复盘也有奖励', points: '+3' },
-  { title: '完成每日 5 题', desc: '提交全部题目后自动发放', points: '+20' },
-  { title: '全部答对', desc: '触发满分额外奖励', points: '+50' },
-]
+const rewardRules = computed(() => langText.value.quiz.rewardRules)
 
-const categories = computed(() => ['垃圾分类', '低碳出行', '节水节电', '绿色饮食', '旧物利用', '生态保护'].map((name) => ({
+const categories = computed(() => langText.value.quiz.categoryNames.map((name) => ({
   name,
   count: quizQuestions.value.filter((q) => q.category === name).length || 8,
   done: answers.value.some((a) => quizQuestions.value.find((q) => q.id === a.id)?.category === name),
@@ -226,12 +218,15 @@ const visibleRecords = computed(() => [
   { date: '2026-05-16', correctCount: 4, totalCount: 5, earnedPoints: 70 },
 ].slice(0, 4))
 
-const statCards = computed(() => [
-  { label: '当前积分', value: greenPoints.value },
-  { label: '今日完成', value: `${answers.value.length} / ${quizQuestions.value.length}` },
-  { label: '连续答题', value: '7 天' },
-  { label: '今日正确率', value: answers.value.length ? `${Math.round((correctCount.value / answers.value.length) * 100)}%` : '0%' },
-])
+const statCards = computed(() => {
+  const t = langText.value.quiz.statLabels
+  return [
+    { label: t.currentPoints, value: greenPoints.value },
+    { label: t.todayCompleted, value: `${answers.value.length} / ${quizQuestions.value.length}` },
+    { label: t.streak, value: t.streakValue },
+    { label: t.todayAccuracy, value: answers.value.length ? `${Math.round((correctCount.value / answers.value.length) * 100)}%` : '0%' },
+  ]
+})
 
 watch(greenPoints, (value) => {
   localStorage.setItem(POINTS_KEY, String(value))
@@ -244,7 +239,7 @@ const awardPoints = (amount) => {
 }
 
 const sameAnswer = (left, right) => left.slice().sort().join('|') === right.slice().sort().join('|')
-const typeLabel = (type) => ({ single: '单选', multiple: '多选', judge: '判断' }[type] || '选择')
+const typeLabel = (type) => langText.value.quiz.typeLabels[type] || type
 
 const toggleOption = (label) => {
   if (currentQuestion.value.type === 'multiple') {
@@ -270,7 +265,8 @@ const submitAnswer = () => {
   answers.value.push({ id: currentQuestion.value.id, correct, points })
   awardPoints(points)
   submitted.value = true
-  ElMessage.success(correct ? `回答正确，获得 +${points} 积分` : `已学习解析，获得 +${points} 积分`)
+  const t = langText.value.quiz.messages
+  ElMessage.success(correct ? t.correctPoints.replace('{points}', points) : t.learnedPoints.replace('{points}', points))
 }
 
 const finishToday = () => {
@@ -290,7 +286,7 @@ const finishToday = () => {
   localStorage.setItem(RECORDS_KEY, JSON.stringify(quizRecords.value))
   if (userStore.isLoggedIn) saveQuizRecord(record)
   isTodayCompleted.value = true
-  ElMessage.success(`今日问答完成，额外获得 +${bonus} 积分`)
+  ElMessage.success(langText.value.quiz.messages.todayComplete.replace('{bonus}', bonus))
 }
 
 const nextQuestion = () => {
@@ -316,7 +312,7 @@ const resetToday = () => {
   isTodayCompleted.value = false
   completionBonus.value = 0
   answers.value = []
-  ElMessage.info('已重置今日问答演示')
+  ElMessage.info(langText.value.quiz.messages.resetDone)
 }
 
 onMounted(async () => {

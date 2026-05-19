@@ -13,18 +13,18 @@
             <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-3">
               <div>
                 <p class="font-mono text-[10px] uppercase tracking-[0.24em] text-primary/70 mb-2">05. COMMUNITY FEED</p>
-                <h1 class="text-[2rem] md:text-[2.35rem] lg:text-[2.7rem] font-bold leading-[0.98] tracking-tight">绿色社区</h1>
-                <p class="text-[13px] text-gray-500 mt-1">看重点动态，发真实行动，参与社区协作。</p>
+                <h1 class="text-[2rem] md:text-[2.35rem] lg:text-[2.7rem] font-bold leading-[0.98] tracking-tight">{{ langText.community.title }}</h1>
+                <p class="text-[13px] text-gray-500 mt-1">{{ langText.community.subtitle }}</p>
               </div>
 
               <div class="flex flex-wrap gap-2">
                 <button @click="showPostDialog = true" class="community-hero__cta community-hero__cta--primary">
                   <el-icon><Edit /></el-icon>
-                  发布动态
+                  {{ langText.community.publishPost }}
                 </button>
                 <router-link to="/volunteer" class="community-hero__cta community-hero__cta--secondary">
                   <el-icon><ArrowRight /></el-icon>
-                  志愿活动
+                  {{ langText.community.volunteerActivity }}
                 </router-link>
               </div>
             </div>
@@ -45,7 +45,7 @@
               <div class="flex items-center justify-between gap-3 mb-3">
                 <div>
                   <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/65 mb-1">COMMUNITY PULSE</p>
-                  <h2 class="text-base font-bold leading-tight">此刻重点</h2>
+                  <h2 class="text-base font-bold leading-tight">{{ langText.community.pulse.title }}</h2>
                 </div>
                 <div class="w-8 h-8 rounded-lg bg-white/75 border border-white/60 shadow-sm flex items-center justify-center text-primary">
                   <el-icon :size="16"><DataAnalysis /></el-icon>
@@ -54,15 +54,15 @@
 
               <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2">
                 <div class="community-pulse-row">
-                  <span>热门主题</span>
+                  <span>{{ langText.community.pulse.hotTopic }}</span>
                   <strong>{{ hottestTopic }}</strong>
                 </div>
                 <div class="community-pulse-row">
-                  <span>精选动态</span>
-                  <strong>{{ featuredPosts.length }} 条</strong>
+                  <span>{{ langText.community.pulse.featured }}</span>
+                  <strong>{{ featuredPosts.length }} {{ langText.community.pulse.postsCount }}</strong>
                 </div>
                 <div class="community-pulse-row">
-                  <span>本周挑战</span>
+                  <span>{{ langText.community.pulse.weeklyChallenge }}</span>
                   <strong>{{ weeklyChallenge.reward }}</strong>
                 </div>
               </div>
@@ -78,32 +78,32 @@
               <div class="flex items-center justify-between gap-4 mb-3">
                 <div>
                   <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/65 mb-1">MY COMMUNITY</p>
-                  <h3 class="text-lg font-bold">我的参与面板</h3>
+                  <h3 class="text-lg font-bold">{{ langText.community.myPanel.title }}</h3>
                 </div>
                 <div class="community-avatar-badge">{{ currentUserName.slice(0, 1) }}</div>
               </div>
               <div class="grid grid-cols-3 gap-2.5 mb-3">
                 <div class="community-side-stat">
-                  <span>积分</span>
+                  <span>{{ langText.community.myPanel.points }}</span>
                   <strong>{{ currentUserPoints }}</strong>
                 </div>
                 <div class="community-side-stat">
-                  <span>发帖</span>
+                  <span>{{ langText.community.myPanel.posts }}</span>
                   <strong>{{ myPostCount }}</strong>
                 </div>
                 <div class="community-side-stat">
-                  <span>互动</span>
+                  <span>{{ langText.community.myPanel.interactions }}</span>
                   <strong>{{ myInteractionCount }}</strong>
                 </div>
               </div>
               <p class="text-[13px] text-gray-600 leading-relaxed">
-                记录真实行动会更容易获得互动，也能把积分和成就系统串起来。
+                {{ langText.community.myPanel.description }}
               </p>
             </div>
 
             <div class="community-glass">
               <div class="flex items-center justify-between mb-3">
-                <h3 class="font-mono text-xs uppercase tracking-[0.22em] text-black/70">贡献榜</h3>
+                <h3 class="font-mono text-xs uppercase tracking-[0.22em] text-black/70">{{ langText.community.leaderboard.title }}</h3>
                 <el-icon class="text-primary"><TrophyBase /></el-icon>
               </div>
 
@@ -119,7 +119,7 @@
                     </span>
                     <div class="min-w-0">
                       <p class="truncate font-semibold text-sm">{{ user.name }}</p>
-                      <p class="text-[11px] text-gray-400 font-mono">{{ index === 0 ? '社区先锋' : '绿色参与者' }}</p>
+                      <p class="text-[11px] text-gray-400 font-mono">{{ index === 0 ? langText.community.leaderboard.pioneer : langText.community.leaderboard.participant }}</p>
                     </div>
                   </div>
                   <span class="font-mono font-bold text-primary">{{ user.points }}</span>
@@ -142,8 +142,8 @@
                 <div class="community-progress-bar" :style="{ width: `${weeklyChallenge.progress}%` }"></div>
               </div>
               <div class="flex items-center justify-between text-xs font-mono text-emerald-900/70">
-                <span>完成度 {{ weeklyChallenge.progress }}%</span>
-                <span>奖励 {{ weeklyChallenge.reward }}</span>
+                <span>{{ langText.community.challenge.completionLabel }} {{ weeklyChallenge.progress }}%</span>
+                <span>{{ langText.community.challenge.rewardLabel }} {{ weeklyChallenge.reward }}</span>
               </div>
             </div>
 
@@ -160,7 +160,7 @@
                 <p>{{ upcomingEvent.location }}</p>
                 <p>{{ upcomingEvent.description }}</p>
               </div>
-              <router-link to="/volunteer" class="community-inline-link">去报名活动 <el-icon><ArrowRight /></el-icon></router-link>
+              <router-link to="/volunteer" class="community-inline-link">{{ langText.community.upcomingEvent.registerLink }} <el-icon><ArrowRight /></el-icon></router-link>
             </div>
           </div>
         </aside>
@@ -169,7 +169,7 @@
           <section class="community-glass">
             <div class="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between mb-3">
               <div class="flex-1">
-                <el-input v-model="searchQuery" placeholder="搜索用户、动态内容或环保主题..." clearable :prefix-icon="Search" />
+                <el-input v-model="searchQuery" :placeholder="langText.community.searchPlaceholder" clearable :prefix-icon="Search" />
               </div>
               <div class="community-segment">
                 <button
@@ -200,7 +200,7 @@
           <section class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <article v-for="post in featuredPosts" :key="`featured-${post.id}`" class="community-highlight-card">
               <div class="flex items-center justify-between gap-3 mb-3">
-                <span class="community-highlight-card__tag">精选动态</span>
+                <span class="community-highlight-card__tag">{{ langText.community.featuredTag }}</span>
                 <span class="text-xs font-mono text-black/35">HOT</span>
               </div>
               <div class="flex items-center gap-3 mb-3">
@@ -213,8 +213,8 @@
               <p class="text-[15px] font-semibold leading-6 mb-2.5 line-clamp-3">{{ post.content }}</p>
               <div class="flex flex-wrap gap-1.5 text-xs">
                 <span class="community-chip">{{ post.impact }}</span>
-                <span class="community-chip">{{ post.likes }} 赞</span>
-                <span class="community-chip">{{ post.comments }} 评论</span>
+                <span class="community-chip">{{ post.likes }} {{ langText.community.likes }}</span>
+                <span class="community-chip">{{ post.comments }} {{ langText.community.commentsLabel }}</span>
               </div>
             </article>
           </section>
@@ -231,9 +231,9 @@
             <div class="flex items-center justify-between gap-4">
               <div>
                 <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/65 mb-1">COMMUNITY LOGS</p>
-                <h2 class="text-xl md:text-2xl font-bold">社区动态流</h2>
+                <h2 class="text-xl md:text-2xl font-bold">{{ langText.community.feedTitle }}</h2>
               </div>
-              <p class="text-xs md:text-sm text-gray-500">{{ filteredPosts.length }} 条可见内容</p>
+              <p class="text-xs md:text-sm text-gray-500">{{ filteredPosts.length }} {{ langText.community.visibleCount }}</p>
             </div>
 
             <template v-if="isLoading">
@@ -270,7 +270,7 @@
                         <h3 class="font-bold truncate">{{ post.user }}</h3>
                         <span class="community-post__topic">{{ post.topic }}</span>
                       </div>
-                      <p class="text-xs font-mono text-gray-400">{{ post.time }} · 约 {{ post.readMinutes }} 分钟阅读</p>
+                      <p class="text-xs font-mono text-gray-400">{{ post.time }} · {{ langText.community.readMinutes.replace('{min}', post.readMinutes) }}</p>
                     </div>
                   </div>
                   <span class="font-mono text-[11px] text-black/25 shrink-0">LOG #{{ String(index + 1).padStart(2, '0') }}</span>
@@ -295,7 +295,7 @@
                 </div>
 
                 <div v-if="post.commentList && post.commentList.length > 0" class="community-quote mb-4">
-                  <p class="text-xs font-mono uppercase tracking-[0.16em] text-black/40 mb-2">最新评论</p>
+                  <p class="text-xs font-mono uppercase tracking-[0.16em] text-black/40 mb-2">{{ langText.community.latestComment }}</p>
                   <p class="text-sm text-gray-600 leading-relaxed">
                     <strong class="text-black">{{ post.commentList[post.commentList.length - 1].user }}</strong>
                     ：{{ post.commentList[post.commentList.length - 1].content }}
@@ -321,12 +321,12 @@
                     </button>
                     <button @click="sharePost(post)" class="community-action-btn">
                       <el-icon><Share /></el-icon>
-                      <span>分享</span>
+                      <span>{{ langText.community.share }}</span>
                     </button>
                   </div>
 
                   <button @click="toggleExpand(post)" class="community-inline-link shrink-0">
-                    {{ post.expanded ? '收起全文' : '阅读全文' }}
+                    {{ post.expanded ? langText.community.collapse : langText.community.readMore }}
                     <el-icon><ArrowRight /></el-icon>
                   </button>
                 </div>
@@ -338,10 +338,10 @@
                   :disabled="isLoadingMore"
                   class="community-load-more"
                 >
-                  <span v-if="!isLoadingMore">加载更多社区内容</span>
+                  <span v-if="!isLoadingMore">{{ langText.community.loadMore }}</span>
                   <span v-else class="inline-flex items-center gap-2">
                     <span class="inline-block w-4 h-4 border-2 border-t-transparent border-black rounded-full animate-spin"></span>
-                    加载中
+                    {{ langText.community.loading }}
                   </span>
                 </button>
               </div>
@@ -351,9 +351,9 @@
               <div class="community-empty__icon">
                 <el-icon :size="28"><Search /></el-icon>
               </div>
-              <h3 class="text-lg font-bold mb-2">没有找到匹配的社区内容</h3>
-              <p class="text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
-                可以换个关键词，或者切回“全部”话题看看其他环保行动记录。
+              <h3 class=”text-lg font-bold mb-2”>{{ langText.community.emptyTitle }}</h3>
+              <p class=”text-sm text-gray-500 max-w-md mx-auto leading-relaxed”>
+                {{ langText.community.emptyDesc }}
               </p>
             </div>
           </section>
@@ -361,13 +361,13 @@
       </div>
     </div>
 
-    <el-dialog v-model="showPostDialog" title="发布动态" :width="560" align-center>
+    <el-dialog v-model="showPostDialog" :title="langText.community.postDialog.title" :width="560" align-center>
       <div class="space-y-4">
         <div>
-          <p class="text-xs font-mono uppercase tracking-[0.16em] text-black/45 mb-2">选择主题</p>
+          <p class="text-xs font-mono uppercase tracking-[0.16em] text-black/45 mb-2">{{ langText.community.postDialog.selectTopic }}</p>
           <div class="flex flex-wrap gap-1.5">
             <button
-              v-for="topic in topicOptions.filter((item) => item !== '全部')"
+              v-for="topic in topicOptions.filter((item) => item !== langText.community.topics.all)"
               :key="`new-${topic}`"
               @click="newPost.topic = topic"
               class="community-topic-pill"
@@ -381,24 +381,24 @@
           v-model="newPost.content"
           type="textarea"
           :rows="4"
-          placeholder="分享你今天做的一件绿色小事、一次社区行动，或者一条旧物改造心得..."
+          :placeholder="langText.community.postDialog.placeholder"
           maxlength="500"
           show-word-limit
         />
         <div class="community-quote">
-          <p class="text-xs font-mono uppercase tracking-[0.16em] text-black/40 mb-2">发帖建议</p>
+          <p class="text-xs font-mono uppercase tracking-[0.16em] text-black/40 mb-2">{{ langText.community.postDialog.tipTitle }}</p>
           <p class="text-sm text-gray-600 leading-relaxed">
-            具体一点会更容易获得互动，比如写明你做了什么、为什么这样做、结果有什么变化。
+            {{ langText.community.postDialog.tip }}
           </p>
         </div>
         <div class="flex justify-end gap-3">
-          <button @click="resetPostDialog" class="community-dialog-btn community-dialog-btn--secondary">取消</button>
-          <button @click="publishPost" class="community-dialog-btn community-dialog-btn--primary">发布动态</button>
+          <button @click="resetPostDialog" class="community-dialog-btn community-dialog-btn--secondary">{{ langText.community.postDialog.cancel }}</button>
+          <button @click="publishPost" class="community-dialog-btn community-dialog-btn--primary">{{ langText.community.postDialog.publish }}</button>
         </div>
       </div>
     </el-dialog>
 
-    <el-dialog v-model="showCommentDialog" title="评论列表" :width="560" align-center>
+    <el-dialog v-model="showCommentDialog" :title="langText.community.commentDialog.title" :width="560" align-center>
       <div v-if="activePost" class="space-y-4">
         <div class="community-quote">
           <p class="text-sm font-semibold mb-1">{{ activePost.user }}</p>
@@ -412,12 +412,12 @@
           </div>
         </div>
         <div v-else class="text-center text-gray-400 py-5 text-sm">
-          暂无评论，快来留下第一条互动吧。
+          {{ langText.community.commentDialog.noComments }}
         </div>
 
         <div class="flex gap-2 pt-2 border-t border-gray-100">
-          <el-input v-model="newComment" placeholder="写下你的评论..." size="small" />
-          <button @click="submitComment" class="community-dialog-btn community-dialog-btn--primary whitespace-nowrap">发送</button>
+          <el-input v-model="newComment" :placeholder="langText.community.commentDialog.placeholder" size="small" />
+          <button @click="submitComment" class="community-dialog-btn community-dialog-btn--primary whitespace-nowrap">{{ langText.community.commentDialog.send }}</button>
         </div>
       </div>
     </el-dialog>
@@ -456,6 +456,7 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { langText } from '@/language'
 import { createCommunityPost, fetchCommunityPosts, likeCommunityPost } from '@/services/communityService'
 
 import communityImage1 from '@/assets/images/community_1.png'
@@ -471,37 +472,44 @@ const showLightbox = ref(false)
 const lightboxImage = ref('')
 const activePost = ref(null)
 const newComment = ref('')
-const newPost = ref({ content: '', topic: '社区活动' })
+const newPost = ref({ content: '', topic: langText.value.community.topics.communityActivity })
 const isRemoteFeed = ref(false)
 const page = ref(1)
 const canLoadMore = ref(true)
 const searchQuery = ref('')
-const activeTopic = ref('全部')
+const activeTopic = ref(langText.value.community.topics.all)
 const feedMode = ref('latest')
 
-const topicOptions = ['全部', '垃圾分类', '低碳出行', '旧物改造', '社区活动', '绿色饮食']
-const feedModes = [
-  { label: '最新', value: 'latest' },
-  { label: '热门', value: 'hot' },
-]
+const topicOptions = computed(() => [
+  langText.value.community.topics.all,
+  langText.value.community.topics.wasteSorting,
+  langText.value.community.topics.lowCarbon,
+  langText.value.community.topics.upcycling,
+  langText.value.community.topics.communityActivity,
+  langText.value.community.topics.greenDiet,
+])
+const feedModes = computed(() => [
+  { label: langText.value.community.feedModes.latest, value: 'latest' },
+  { label: langText.value.community.feedModes.hot, value: 'hot' },
+])
 
-const weeklyChallenge = {
-  title: '一周无一次性塑料',
-  description: '连续 7 天记录你减少一次性塑料制品使用的小行动，完成后可获得额外绿色积分。',
-  reward: '+120 积分',
+const weeklyChallenge = computed(() => ({
+  title: langText.value.community.challenge.title,
+  description: langText.value.community.challenge.description,
+  reward: langText.value.community.challenge.reward,
   progress: 68,
-}
+}))
 
-const upcomingEvent = {
-  title: '周末社区净街行动',
-  time: '本周六 09:00 - 11:30',
-  location: '城南公园集合点',
-  description: '清洁步道、垃圾分类讲解、旧物交换角同步开放。',
-}
+const upcomingEvent = computed(() => ({
+  title: langText.value.community.upcomingEvent.title,
+  time: langText.value.community.upcomingEvent.time,
+  location: langText.value.community.upcomingEvent.location,
+  description: langText.value.community.upcomingEvent.description,
+}))
 
 const currentUserName = computed(() => {
   const name = userStore.user?.name || userStore.user?.username
-  return typeof name === 'string' && name.trim() ? name.trim() : '我'
+  return typeof name === 'string' && name.trim() ? name.trim() : ''
 })
 
 const currentUserPoints = computed(() => {
@@ -524,24 +532,25 @@ const leaderboard = computed(() => {
 
 const inferTopic = (content = '') => {
   const text = String(content)
-  if (/牛仔|改造|旧物|缝纫|托特|围裙|手作/.test(text)) return '旧物改造'
-  if (/回收|垃圾|分类|塑料|电池/.test(text)) return '垃圾分类'
-  if (/骑行|步行|公交|低碳|通勤/.test(text)) return '低碳出行'
-  if (/饮食|剩饭|餐具|食物|打包/.test(text)) return '绿色饮食'
-  return '社区活动'
+  const t = langText.value.community.topics
+  if (/牛仔|改造|旧物|缝纫|托特|围裙|手作|jeans|upcycle|old/i.test(text)) return t.upcycling
+  if (/回收|垃圾|分类|塑料|电池|recycl|waste|sort/i.test(text)) return t.wasteSorting
+  if (/骑行|步行|公交|低碳|通勤|bike|walk|low.carbon/i.test(text)) return t.lowCarbon
+  if (/饮食|剩饭|餐具|食物|打包|diet|food|meal/i.test(text)) return t.greenDiet
+  return t.communityActivity
 }
 
-const topicMetaMap = {
-  '垃圾分类': { badge: '分类实践', impact: '减少误投放', mission: '把正确分类变成日常' },
-  '低碳出行': { badge: '低碳路线', impact: '减少通勤排放', mission: '把移动方式变轻' },
-  '旧物改造': { badge: '再生灵感', impact: '延长物品寿命', mission: '让旧物再工作一次' },
-  '社区活动': { badge: '社区联动', impact: '放大公共影响', mission: '让更多人一起行动' },
-  '绿色饮食': { badge: '绿色餐桌', impact: '减少浪费和包装', mission: '把吃饭也过得更环保' },
-}
+const topicMetaMap = computed(() => ({
+  [langText.value.community.topics.wasteSorting]: langText.value.community.topicMeta.wasteSorting,
+  [langText.value.community.topics.lowCarbon]: langText.value.community.topicMeta.lowCarbon,
+  [langText.value.community.topics.upcycling]: langText.value.community.topicMeta.upcycling,
+  [langText.value.community.topics.communityActivity]: langText.value.community.topicMeta.communityActivity,
+  [langText.value.community.topics.greenDiet]: langText.value.community.topicMeta.greenDiet,
+}))
 
 const decoratePost = (rawPost = {}) => {
   const topic = rawPost.topic || inferTopic(rawPost.fullContent || rawPost.content)
-  const meta = topicMetaMap[topic] || topicMetaMap['社区活动']
+  const meta = topicMetaMap.value[topic] || topicMetaMap.value[langText.value.community.topics.communityActivity]
   const fullContent = rawPost.fullContent || rawPost.content || ''
   const content = rawPost.content || fullContent
 
@@ -561,86 +570,47 @@ const decoratePost = (rawPost = {}) => {
   }
 }
 
-const posts = ref([
-  decoratePost({
-    id: 1,
-    user: 'Sarah Jenkins',
-    time: '2 HOURS AGO',
-    topic: '旧物改造',
-    content: '刚刚把旧牛仔裤改造成托特包，AI 的建议非常棒！缝纫过程比想象中简单，成品很满意~',
-    fullContent: '刚刚把旧牛仔裤改造成托特包，AI 的建议非常棒！缝纫过程比想象中简单，成品很满意~ 真的推荐大家试试，不要把旧衣服扔了。我还加了一些刺绣装饰，感觉独一无二。下次准备挑战改造成围裙！',
-    image: communityImage2,
-    likes: 24,
-    comments: 5,
-    liked: false,
-    avatarColor1: '#4F46E5',
-    avatarColor2: '#7C3AED',
-    commentList: [
-      { user: 'GreenLife', content: '太棒了！求教程链接。' },
-      { user: 'EcoWarrior', content: '颜色搭配很好看！' },
-    ],
-  }),
-  decoratePost({
-    id: 2,
-    user: 'David Li',
-    time: '5 HOURS AGO',
-    topic: '垃圾分类',
-    content: '完成了本周的回收挑战！成功将家庭塑料垃圾减少了40%。小改变，大影响！',
-    fullContent: '完成了本周的回收挑战！成功将家庭塑料垃圾减少了40%。小改变，大影响！主要通过自带购物袋、购买散装蔬菜、使用玻璃保鲜盒替代塑料袋来实现。其实并不难，习惯了就很自然。大家一起加油！',
-    image: null,
-    likes: 156,
-    comments: 12,
-    liked: true,
-    avatarColor1: '#10B981',
-    avatarColor2: '#059669',
-    commentList: [],
-  }),
-  decoratePost({
-    id: 3,
-    user: 'Green Community',
-    time: '1 DAY AGO',
-    topic: '社区活动',
-    content: '周末清洁活动招募志愿者！地点：中央公园。让我们一起为环境做贡献！',
-    fullContent: '周末清洁活动招募志愿者！地点：中央公园。让我们一起为环境做贡献！集合时间：周六上午9点。请自带水壶和手套。我们会提供垃圾袋和工具。报名请私信或评论！',
-    image: communityImage1,
-    likes: 89,
-    comments: 34,
-    liked: false,
-    avatarColor1: '#F59E0B',
-    avatarColor2: '#D97706',
-    commentList: [],
-  }),
-  decoratePost({
-    id: 4,
-    user: 'Emma Watson',
-    time: '2 DAYS AGO',
-    topic: '绿色饮食',
-    content: '分享我的零废弃生活必备工具！已经坚持使用可重复用品三个月了，感觉太好了~',
-    fullContent: '分享我的零废弃生活必备工具！已经坚持使用可重复用品三个月了，感觉太好了~ 1. 不锈钢吸管 2. 蜂蜡保鲜布 3. 硅胶折叠杯 4. 竹制牙刷。这些小东西不仅环保，而且更有质感。',
-    image: communityImage3,
-    likes: 234,
-    comments: 67,
-    liked: false,
-    avatarColor1: '#EC4899',
-    avatarColor2: '#DB2777',
-    commentList: [],
-  }),
-])
+const sampleImages = [communityImage2, null, communityImage1, communityImage3]
+const sampleColors = [
+  { avatarColor1: '#4F46E5', avatarColor2: '#7C3AED' },
+  { avatarColor1: '#10B981', avatarColor2: '#059669' },
+  { avatarColor1: '#F59E0B', avatarColor2: '#D97706' },
+  { avatarColor1: '#EC4899', avatarColor2: '#DB2777' },
+]
+const sampleExtras = [
+  { id: 1, time: '2 HOURS AGO', likes: 24, comments: 5, liked: false },
+  { id: 2, time: '5 HOURS AGO', likes: 156, comments: 12, liked: true },
+  { id: 3, time: '1 DAY AGO', likes: 89, comments: 34, liked: false },
+  { id: 4, time: '2 DAYS AGO', likes: 234, comments: 67, liked: false },
+]
+
+const posts = ref(
+  langText.value.community.samplePosts.map((item, i) =>
+    decoratePost({
+      ...item,
+      ...sampleExtras[i],
+      image: sampleImages[i],
+      ...sampleColors[i],
+    }),
+  ),
+)
 
 const heroStats = computed(() => {
+  const t = langText.value.community.stats
   const totalLikes = posts.value.reduce((sum, post) => sum + Number(post.likes || 0), 0)
   const totalComments = posts.value.reduce((sum, post) => sum + Number(post.comments || 0), 0)
 
   return [
-    { label: '社区日志', value: posts.value.length, hint: '正在被看见的绿色行动' },
-    { label: '互动总量', value: totalLikes + totalComments, hint: '点赞和评论持续增长' },
-    { label: '活跃话题', value: topicOptions.length - 1, hint: '覆盖生活与社区场景' },
+    { label: t.dailyLogs, value: posts.value.length, hint: t.dailyLogsHint },
+    { label: t.interactions, value: totalLikes + totalComments, hint: t.interactionsHint },
+    { label: t.activeTopics, value: topicOptions.value.length - 1, hint: t.activeTopicsHint },
   ]
 })
 
 const hottestTopic = computed(() => {
-  const stats = topicOptions
-    .filter((topic) => topic !== '全部')
+  const allLabel = langText.value.community.topics.all
+  const stats = topicOptions.value
+    .filter((topic) => topic !== allLabel)
     .map((topic) => ({
       topic,
       score: posts.value
@@ -649,7 +619,7 @@ const hottestTopic = computed(() => {
     }))
     .sort((a, b) => b.score - a.score)
 
-  return stats[0]?.topic || '社区活动'
+  return stats[0]?.topic || langText.value.community.topics.communityActivity
 })
 
 const featuredPosts = computed(() => {
@@ -659,15 +629,19 @@ const featuredPosts = computed(() => {
 })
 
 const topicOverview = computed(() => {
-  return topicOptions
-    .filter((topic) => topic !== '全部')
+  const allLabel = langText.value.community.topics.all
+  return topicOptions.value
+    .filter((topic) => topic !== allLabel)
     .slice(0, 4)
     .map((topic) => {
       const related = posts.value.filter((post) => post.topic === topic)
+      const likes = related.reduce((sum, post) => sum + post.likes, 0)
       return {
         label: topic,
         value: related.length,
-        hint: related.length > 0 ? `${related.reduce((sum, post) => sum + post.likes, 0)} 次点赞关注` : '等待第一条记录',
+        hint: related.length > 0
+          ? langText.value.community.overviewLikes.replace('{count}', likes)
+          : langText.value.community.overviewEmpty,
       }
     })
 })
@@ -686,7 +660,7 @@ const filteredPosts = computed(() => {
   const keyword = searchQuery.value.trim().toLowerCase()
   let list = [...posts.value]
 
-  if (activeTopic.value !== '全部') {
+  if (activeTopic.value !== langText.value.community.topics.all) {
     list = list.filter((post) => post.topic === activeTopic.value)
   }
 
@@ -723,7 +697,7 @@ const toggleLike = async (post) => {
 
   if (post.liked) {
     ElMessage.success({
-      message: '点赞成功',
+      message: langText.value.community.messages.likeSuccess,
       duration: 1000,
       icon: StarFilled,
     })
@@ -750,7 +724,7 @@ const openComments = (post) => {
 const submitComment = () => {
   if (!newComment.value.trim()) return
   if (!userStore.user) {
-    ElMessage.error('登录状态无效，请重新登录')
+    ElMessage.error(langText.value.community.messages.loginInvalid)
     return
   }
 
@@ -761,7 +735,7 @@ const submitComment = () => {
       content: newComment.value,
     })
     activePost.value.comments += 1
-    ElMessage.success('评论成功')
+    ElMessage.success(langText.value.community.messages.commentSuccess)
     newComment.value = ''
   }
 }
@@ -774,16 +748,16 @@ const sharePost = async (post) => {
   const url = `${window.location.origin}/community?post=${post.id}`
   try {
     await navigator.clipboard.writeText(url)
-    ElMessage.success('链接已复制到剪贴板')
+    ElMessage.success(langText.value.community.messages.linkCopied)
   } catch (err) {
     console.error(err)
-    ElMessage.error('复制失败')
+    ElMessage.error(langText.value.community.messages.copyFailed)
   }
 }
 
 const resetPostDialog = () => {
   showPostDialog.value = false
-  newPost.value = { content: '', topic: '社区活动' }
+  newPost.value = { content: '', topic: langText.value.community.topics.communityActivity }
 }
 
 const loadMore = async () => {
@@ -808,14 +782,15 @@ const loadMore = async () => {
   }
 
   setTimeout(() => {
+    const lm = langText.value.community.loadMorePost
     posts.value.push(
       decoratePost({
         id: Date.now(),
         user: 'Mike Johnson',
         time: '3 DAYS AGO',
-        topic: '绿色饮食',
-        content: '今天学习了如何制作环保酵素，过程很简单，而且对环境友好！',
-        fullContent: '今天学习了如何制作环保酵素，过程很简单，而且对环境友好！只需要果皮、红糖和水。比例是 3:1:10。发酵三个月就可以用了，可以用来洗碗、浇花，甚至疏通下水道。',
+        topic: lm.topic,
+        content: lm.content,
+        fullContent: lm.fullContent,
         image: null,
         likes: 45,
         comments: 8,
@@ -827,22 +802,22 @@ const loadMore = async () => {
       }),
     )
     isLoadingMore.value = false
-    ElMessage.success('加载成功')
+    ElMessage.success(langText.value.community.messages.loadSuccess)
   }, 1000)
 }
 
 const publishPost = async () => {
   if (!newPost.value.content.trim()) {
-    ElMessage.warning('请输入动态内容')
+    ElMessage.warning(langText.value.community.messages.contentRequired)
     return
   }
   if (!userStore.user) {
-    ElMessage.error('登录状态无效，请重新登录')
+    ElMessage.error(langText.value.community.messages.loginInvalid)
     return
   }
 
   const content = newPost.value.content
-  const topic = newPost.value.topic || '社区活动'
+  const topic = newPost.value.topic || langText.value.community.topics.communityActivity
   const result = await createCommunityPost({ content, imageUrls: [] })
   if (result.ok) {
     posts.value.unshift(
@@ -855,7 +830,7 @@ const publishPost = async () => {
     )
     isRemoteFeed.value = true
     resetPostDialog()
-    ElMessage.success('发布成功')
+    ElMessage.success(langText.value.community.messages.publishSuccess)
     return
   }
 
@@ -880,7 +855,7 @@ const publishPost = async () => {
 
   userStore.addPoints(10)
   resetPostDialog()
-  ElMessage.success('发布成功！获得 10 积分')
+  ElMessage.success(langText.value.community.messages.publishSuccessPoints)
 }
 
 onMounted(async () => {

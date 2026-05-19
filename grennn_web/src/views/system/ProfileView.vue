@@ -11,16 +11,16 @@
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10 items-start">
         <!-- Left Column: Title -->
         <div class="lg:col-span-1 mb-12 lg:mb-0">
-          <h1 class="text-4xl md:text-5xl font-bold mb-4 uppercase tracking-tighter text-primary">个人中心</h1>
-          <p class="font-mono text-xs uppercase tracking-widest text-gray-600">User Profile / Overview</p>
+          <h1 class="text-4xl md:text-5xl font-bold mb-4 uppercase tracking-tighter text-primary">{{ langText.profile.title }}</h1>
+          <p class="font-mono text-xs uppercase tracking-widest text-gray-600">{{ langText.profile.subtitle }}</p>
 
           <div class="profile-side-card mt-8">
-            <span>参赛版档案</span>
+            <span>{{ langText.profile.competitionProfile }}</span>
             <strong>{{ profileCompleteness }}%</strong>
             <div class="profile-side-card__bar">
               <i :style="{ width: `${profileCompleteness}%` }"></i>
             </div>
-            <p>资料、积分、成就、活动记录统一沉淀，形成可展示的绿色成长档案。</p>
+            <p>{{ langText.profile.profileDesc }}</p>
           </div>
 
           <!-- Sidebar Navigation (below title on mobile, same row on desktop) -->
@@ -44,24 +44,24 @@
             <!-- Profile Overview -->
             <div v-if="activeTab === 'overview'" class="p-6 md:p-8 lg:p-8 animate-[fade-in_0.3s_ease]">
               <div class="mb-6 pb-3 border-b border-primary/10">
-                <h2 class="text-xl font-bold mb-1">个人概览</h2>
-                <p class="text-xs text-gray-600 font-mono uppercase">Profile Overview</p>
+                <h2 class="text-xl font-bold mb-1">{{ langText.profile.overview }}</h2>
+                <p class="text-xs text-gray-600 font-mono uppercase">{{ langText.profile.overviewEn }}</p>
               </div>
 
               <section class="profile-hero mb-6">
                 <div class="profile-hero__content">
                   <p class="profile-kicker">GREEN CITIZEN PROFILE</p>
-                  <h3>{{ userStore.user?.username || '绿色行动者' }}</h3>
+                  <h3>{{ userStore.user?.username || langText.profile.greenActor }}</h3>
                   <p class="profile-hero__bio">{{ profileBio }}</p>
                   <div class="profile-tags">
                     <span>Lv. {{ userLevel }} {{ levelTitle }}</span>
-                    <span>{{ displayPoints }} 积分</span>
-                    <span>{{ actionCount }} 次绿色记录</span>
+                    <span>{{ displayPoints }} {{ langText.profile.points }}</span>
+                    <span>{{ actionCount }} {{ langText.profile.greenRecords }}</span>
                   </div>
                 </div>
                 <div class="profile-level-panel">
                   <div class="profile-level-panel__top">
-                    <span>距离下一等级</span>
+                    <span>{{ langText.profile.nextLevel }}</span>
                     <strong>{{ nextLevelRemain }}</strong>
                   </div>
                   <div class="profile-progress" aria-label="等级进度">
@@ -93,22 +93,22 @@
                         <div class="profile-avatar__ring"></div>
                       </div>
 
-                      <h2 class="profile-user-name">{{ userStore.user?.username || '未命名用户' }}</h2>
+                      <h2 class="profile-user-name">{{ userStore.user?.username || langText.profile.unnamedUser }}</h2>
                       <p class="profile-user-email">{{ userStore.user?.email || 'N/A' }}</p>
 
                       <div class="w-full flex justify-between items-center px-3 py-2 bg-green-50 border border-primary/10 rounded-lg mb-4">
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-600">环保积分</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-600">{{ langText.profile.ecoPoints }}</span>
                         <span class="text-lg font-mono font-bold text-primary">{{ displayPoints }}</span>
                       </div>
 
                       <div class="profile-mini-stats mb-4">
                         <div>
                           <strong>{{ carbonReduction }}</strong>
-                          <span>kg 减排</span>
+                          <span>kg {{ langText.profile.carbonReduction }}</span>
                         </div>
                         <div>
                           <strong>{{ unlockedBadgeCount }}</strong>
-                          <span>徽章</span>
+                          <span>{{ langText.profile.badgesLabel }}</span>
                         </div>
                       </div>
 
@@ -117,7 +117,7 @@
                         class="w-full py-2 bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-primary/90 hover:shadow-glow transition-colors flex items-center justify-center gap-2"
                         @click="openEditDialog"
                       >
-                        编辑资料 <span class="text-[8px]">→</span>
+                        {{ langText.profile.editProfile }} <span class="text-[8px]">→</span>
                       </button>
                     </div>
                   </div>
@@ -128,16 +128,16 @@
                   <!-- Overview Cards - First Row -->
                   <div class="grid grid-cols-2 gap-5">
                     <div class="bg-white/95 backdrop-blur-md border border-primary/20 p-5 relative overflow-hidden group rounded-2xl shadow-lg hover:shadow-glow transition-all duration-500">
-                      <div class="font-mono text-[10px] text-gray-500 mb-3 tracking-widest uppercase">累计减排 / CO₂e</div>
+                      <div class="font-mono text-[10px] text-gray-500 mb-3 tracking-widest uppercase">{{ langText.profile.carbonReduction }} / CO₂e</div>
                       <div class="text-3xl font-bold mb-1 group-hover:text-primary transition-colors">{{ carbonReduction }}<span class="text-base text-gray-400 ml-1">kg</span></div>
-                      <p class="text-xs text-gray-600 mt-2 line-clamp-1">相当于种植了 {{ Math.floor(displayPoints / 100) }} 棵树</p>
+                      <p class="text-xs text-gray-600 mt-2 line-clamp-1">{{ langText.profile.treeEquivalent }} {{ Math.floor(displayPoints / 100) }} {{ langText.profile.treesSuffix }}</p>
                     </div>
 
                     <div class="bg-white/95 backdrop-blur-md border border-primary/20 p-5 relative overflow-hidden group rounded-2xl shadow-lg hover:shadow-glow transition-all duration-500">
-                      <div class="font-mono text-[10px] text-gray-500 mb-3 tracking-widest uppercase">已解锁成就 / Badges</div>
+                      <div class="font-mono text-[10px] text-gray-500 mb-3 tracking-widest uppercase">{{ langText.profile.unlockedBadges }} / Badges</div>
                       <div class="text-3xl font-bold mb-1 group-hover:text-primary transition-colors">{{ userStore.badges?.filter(b => b.unlocked).length || 0 }}<span class="text-base text-gray-400 ml-1 opacity-50">/ {{ userStore.badges?.length || 15 }}</span></div>
                       <router-link to="/achievements" class="inline-flex text-xs text-primary border-b border-primary mt-2 font-bold hover:text-primary/80 hover:border-primary/80 transition-colors">
-                        查看所有徽章
+                        {{ langText.profile.viewAllBadges }}
                       </router-link>
                     </div>
                   </div>
@@ -151,10 +151,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                           </svg>
                         </div>
-                        <h3 class="font-bold text-sm text-gray-800">用户等级</h3>
+                        <h3 class="font-bold text-sm text-gray-800">{{ langText.profile.userLevel }}</h3>
                       </div>
                       <p class="text-lg font-mono text-primary">Lv. {{ getUserLevel(displayPoints) }}</p>
-                      <p class="text-xs text-gray-600 mt-1">继续积累积分提升等级</p>
+                      <p class="text-xs text-gray-600 mt-1">{{ langText.profile.continueAccumulate }}</p>
                     </div>
 
                     <div class="bg-white/95 backdrop-blur-md border border-primary/20 p-5 rounded-2xl shadow-lg">
@@ -164,25 +164,25 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                         </div>
-                        <h3 class="font-bold text-sm text-gray-800">已兑换奖励</h3>
+                        <h3 class="font-bold text-sm text-gray-800">{{ langText.profile.redeemedRewards }}</h3>
                       </div>
                       <p class="text-lg font-mono text-primary">{{ redeemedRecords.length }}</p>
-                      <p class="text-xs text-gray-600 mt-1">商品、徽章与公益证书</p>
+                      <p class="text-xs text-gray-600 mt-1">{{ langText.profile.rewardTypes }}</p>
                     </div>
                   </div>
 
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <router-link to="/quiz" class="profile-shortcut">
-                      <span>每日问答</span>
-                      <strong>{{ quizSummary.total }} 次记录</strong>
+                      <span>{{ langText.profile.dailyQuiz }}</span>
+                      <strong>{{ quizSummary.total }} {{ langText.profile.recordsSuffix }}</strong>
                     </router-link>
                     <router-link to="/store" class="profile-shortcut">
-                      <span>兑换商城</span>
-                      <strong>{{ displayPoints }} 积分可用</strong>
+                      <span>{{ langText.profile.pointsAvailable }}</span>
+                      <strong>{{ displayPoints }} {{ langText.profile.pointsAvailable }}</strong>
                     </router-link>
                     <router-link to="/achievements" class="profile-shortcut">
-                      <span>成就徽章</span>
-                      <strong>{{ unlockedBadgeCount }} 个已解锁</strong>
+                      <span>{{ langText.profile.achievementBadges }}</span>
+                      <strong>{{ unlockedBadgeCount }} {{ langText.profile.unlockedSuffix }}</strong>
                     </router-link>
                   </div>
                 </div>
@@ -200,10 +200,10 @@
                 <section class="profile-panel">
                   <div class="profile-panel__head">
                     <div>
-                      <h3>成长里程碑</h3>
-                      <p>把用户行为串成可展示的绿色旅程</p>
+                      <h3>{{ langText.profile.milestones }}</h3>
+                      <p>{{ langText.profile.milestonesDesc }}</p>
                     </div>
-                    <router-link to="/achievements">徽章墙 →</router-link>
+                    <router-link to="/achievements">{{ langText.profile.badgeWall }} →</router-link>
                   </div>
                   <div class="profile-timeline">
                     <div v-for="item in recentMilestones" :key="item.title" class="profile-timeline__item">
@@ -219,10 +219,10 @@
                 <section class="profile-panel">
                   <div class="profile-panel__head">
                     <div>
-                      <h3>下一步行动</h3>
-                      <p>引导用户继续完成平台核心功能</p>
+                      <h3>{{ langText.profile.nextAction }}</h3>
+                      <p>{{ langText.profile.nextActionDesc }}</p>
                     </div>
-                    <router-link to="/quiz">去行动 →</router-link>
+                    <router-link to="/quiz">{{ langText.profile.goAction }} →</router-link>
                   </div>
                   <div class="profile-action-list">
                     <router-link v-for="action in nextActionTips" :key="action.title" :to="action.to">
@@ -237,8 +237,8 @@
             <!-- Recent Activity -->
             <div v-if="activeTab === 'activity'" class="p-6 md:p-10 animate-[fade-in_0.3s_ease]">
               <div class="mb-8 pb-4 border-b border-primary/10">
-                <h2 class="text-2xl font-bold mb-1">近期活动</h2>
-                <p class="text-xs text-gray-600 font-mono uppercase">Recent Activity</p>
+                <h2 class="text-2xl font-bold mb-1">{{ langText.profile.recentActivity }}</h2>
+                <p class="text-xs text-gray-600 font-mono uppercase">{{ langText.profile.recentActivityEn }}</p>
               </div>
 
               <div v-if="hasActivity" class="space-y-4">
@@ -249,7 +249,7 @@
                     </svg>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <h4 class="font-bold text-sm mb-1 text-gray-800">AI 环保咨询</h4>
+                    <h4 class="font-bold text-sm mb-1 text-gray-800">{{ langText.profile.aiEcoConsult }}</h4>
                     <p class="text-xs text-gray-600 line-clamp-1">{{ chat.content }}</p>
                     <p class="text-[10px] font-mono text-gray-500 mt-2">{{ new Date(chat.timestamp || Date.now()).toLocaleDateString() }}</p>
                   </div>
@@ -261,8 +261,8 @@
                     </svg>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <h4 class="font-bold text-sm mb-1 text-gray-800">兑换了 {{ record.productName }}</h4>
-                    <p class="text-xs text-gray-600">消耗 {{ record.costPoints }} 积分 · {{ record.statusText || record.status }}</p>
+                    <h4 class="font-bold text-sm mb-1 text-gray-800">{{ langText.profile.exchanged }} {{ record.productName }}</h4>
+                    <p class="text-xs text-gray-600">{{ langText.profile.consumed }} {{ record.costPoints }} {{ langText.profile.pointsSuffix }} · {{ record.statusText || record.status }}</p>
                     <p class="text-[10px] font-mono text-gray-500 mt-2">{{ formatDate(record.createdAt) }}</p>
                   </div>
                 </div>
@@ -273,14 +273,14 @@
                     </svg>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <h4 class="font-bold text-sm mb-1 text-gray-800">完成绿色生活问答</h4>
-                    <p class="text-xs text-gray-600">答对 {{ record.correctCount }}/{{ record.totalCount }} 题 · 获得 {{ record.earnedPoints }} 积分</p>
+                    <h4 class="font-bold text-sm mb-1 text-gray-800">{{ langText.profile.completedQuiz }}</h4>
+                    <p class="text-xs text-gray-600">{{ langText.profile.correctOf }} {{ record.correctCount }}/{{ record.totalCount }} {{ langText.profile.totalSuffix }} · {{ langText.profile.pointsEarned }} {{ record.earnedPoints }} {{ langText.profile.pointsSuffix }}</p>
                     <p class="text-[10px] font-mono text-gray-500 mt-2">{{ formatDate(record.date || record.createdAt) }}</p>
                   </div>
                 </div>
                 <div class="text-center pt-2">
                   <router-link to="/chat" class="text-xs font-bold uppercase tracking-widest text-primary hover:text-primary/80 transition-colors">
-                    进入 AI 助手查看更多 →
+                    {{ langText.profile.viewMoreInAI }} →
                   </router-link>
                 </div>
               </div>
@@ -291,9 +291,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <p class="text-sm text-gray-600 mb-4">暂无活动记录，快去探索平台功能吧！</p>
+                <p class="text-sm text-gray-600 mb-4">{{ langText.profile.noActivity }}</p>
                 <router-link to="/chat" class="inline-flex px-4 py-2 bg-primary text-white text-xs font-bold uppercase hover:bg-primary/90 transition-colors rounded-lg">
-                  探索功能
+                  {{ langText.profile.exploreFeatures }}
                 </router-link>
               </div>
             </div>
@@ -301,53 +301,53 @@
             <!-- Reward Center -->
             <div v-if="activeTab === 'rewards'" class="p-6 md:p-10 animate-[fade-in_0.3s_ease]">
               <div class="mb-8 pb-4 border-b border-primary/10">
-                <h2 class="text-2xl font-bold mb-1">我的兑换</h2>
-                <p class="text-xs text-gray-600 font-mono uppercase">Redeemed Products / Virtual Badges</p>
+                <h2 class="text-2xl font-bold mb-1">{{ langText.profile.myRedemptions }}</h2>
+                <p class="text-xs text-gray-600 font-mono uppercase">{{ langText.profile.myRedemptionsEn }}</p>
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <div class="profile-metric">
-                  <span>累计兑换</span>
+                  <span>{{ langText.profile.totalRedeemed }}</span>
                   <strong>{{ redeemedRecords.length }}</strong>
                 </div>
                 <div class="profile-metric">
-                  <span>累计消耗积分</span>
+                  <span>{{ langText.profile.totalSpentPoints }}</span>
                   <strong>{{ spentPoints }}</strong>
                 </div>
                 <div class="profile-metric">
-                  <span>虚拟徽章/装饰</span>
+                  <span>{{ langText.profile.virtualBadges }}</span>
                   <strong>{{ virtualRewards.length }}</strong>
                 </div>
               </div>
 
               <div class="mb-8">
                 <div class="flex items-center justify-between mb-4">
-                  <h3 class="font-bold text-lg">问答学习记录</h3>
-                  <router-link to="/quiz" class="text-xs font-bold text-primary">继续答题 →</router-link>
+                  <h3 class="font-bold text-lg">{{ langText.profile.quizLearning }}</h3>
+                  <router-link to="/quiz" class="text-xs font-bold text-primary">{{ langText.profile.continueQuiz }} →</router-link>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <div class="profile-metric">
-                    <span>完成次数</span>
+                    <span>{{ langText.profile.completionCount }}</span>
                     <strong>{{ quizSummary.total }}</strong>
                   </div>
                   <div class="profile-metric">
-                    <span>平均正确率</span>
+                    <span>{{ langText.profile.avgAccuracy }}</span>
                     <strong>{{ quizSummary.accuracy }}%</strong>
                   </div>
                   <div class="profile-metric">
-                    <span>问答积分</span>
+                    <span>{{ langText.profile.quizPoints }}</span>
                     <strong>{{ quizSummary.points }}</strong>
                   </div>
                 </div>
                 <div v-if="quizRecords.length === 0" class="profile-empty">
-                  暂无问答记录，完成每日问答后会在这里生成学习档案。
+                  {{ langText.profile.noQuizRecords }}
                 </div>
                 <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div v-for="record in quizRecords.slice(0, 6)" :key="`quiz-panel-${record.id || record.date}`" class="profile-reward-card">
                     <div>
                       <h4>{{ formatDate(record.date || record.createdAt) }}</h4>
-                      <p>答对 {{ record.correctCount }}/{{ record.totalCount }} 题</p>
-                      <span>正确率 {{ Math.round((record.correctCount / Math.max(record.totalCount, 1)) * 100) }}%</span>
+                      <p>{{ langText.profile.correctOf }} {{ record.correctCount }}/{{ record.totalCount }} {{ langText.profile.totalSuffix }}</p>
+                      <span>{{ langText.profile.quizAccuracy }} {{ Math.round((record.correctCount / Math.max(record.totalCount, 1)) * 100) }}%</span>
                     </div>
                     <strong class="!text-primary">+{{ record.earnedPoints }}</strong>
                   </div>
@@ -356,17 +356,17 @@
 
               <div class="mb-8">
                 <div class="flex items-center justify-between mb-4">
-                  <h3 class="font-bold text-lg">已兑换商品</h3>
-                  <router-link to="/store" class="text-xs font-bold text-primary">继续兑换 →</router-link>
+                  <h3 class="font-bold text-lg">{{ langText.profile.redeemedProducts }}</h3>
+                  <router-link to="/store" class="text-xs font-bold text-primary">{{ langText.profile.continueRedeem }} →</router-link>
                 </div>
                 <div v-if="redeemedRecords.length === 0" class="profile-empty">
-                  暂无兑换记录，完成问答或志愿活动后可前往商城兑换环保奖励。
+                  {{ langText.profile.noRedeemRecords }}
                 </div>
                 <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div v-for="record in redeemedRecords" :key="record.id" class="profile-reward-card">
                     <div>
                       <h4>{{ record.productName }}</h4>
-                      <p>{{ record.category || '积分奖励' }} · {{ record.statusText || record.status }}</p>
+                      <p>{{ record.category || langText.profile.statusText }} · {{ record.statusText || record.status }}</p>
                       <span>{{ formatDate(record.createdAt) }}</span>
                     </div>
                     <strong>-{{ record.costPoints }}</strong>
@@ -375,9 +375,9 @@
               </div>
 
               <div>
-                <h3 class="font-bold text-lg mb-4">个人主页徽章与装饰</h3>
+                <h3 class="font-bold text-lg mb-4">{{ langText.profile.profileBadges }}</h3>
                 <div v-if="virtualRewards.length === 0" class="profile-empty">
-                  暂无兑换徽章或头像装饰。兑换虚拟奖励后会在这里展示。
+                  {{ langText.profile.noVirtualRewards }}
                 </div>
                 <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   <div v-for="reward in virtualRewards" :key="reward.id" class="profile-badge-card">
@@ -393,14 +393,14 @@
             <!-- Account Settings -->
             <div v-if="activeTab === 'settings'" class="p-6 md:p-10 animate-[fade-in_0.3s_ease]">
               <div class="mb-8 pb-4 border-b border-primary/10">
-                <h2 class="text-2xl font-bold mb-1">账号设置</h2>
-                <p class="text-xs text-gray-600 font-mono uppercase">Account Settings</p>
+                <h2 class="text-2xl font-bold mb-1">{{ langText.profile.accountSettings }}</h2>
+                <p class="text-xs text-gray-600 font-mono uppercase">{{ langText.profile.accountSettingsEn }}</p>
               </div>
 
               <div class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div class="space-y-2">
-                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-600">用户名</label>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-600">{{ langText.profile.username }}</label>
                     <input
                       type="text"
                       :value="userStore.user?.username || ''"
@@ -409,7 +409,7 @@
                     />
                   </div>
                   <div class="space-y-2">
-                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-600">邮箱</label>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-600">{{ langText.profile.email }}</label>
                     <input
                       type="email"
                       :value="userStore.user?.email || ''"
@@ -420,7 +420,7 @@
                 </div>
 
                 <div class="space-y-2">
-                  <label class="block text-xs font-bold uppercase tracking-widest text-gray-600">环保积分</label>
+                  <label class="block text-xs font-bold uppercase tracking-widest text-gray-600">{{ langText.profile.ecoPoints }}</label>
                   <div class="w-full bg-green-50 border border-primary/10 px-4 py-3 text-sm rounded-lg">
                     <span class="font-mono font-bold text-primary">{{ displayPoints }}</span>
                   </div>
@@ -432,7 +432,7 @@
                     class="px-6 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors rounded-lg"
                     @click="openEditDialog"
                   >
-                    编辑个人资料
+                    {{ langText.profile.editProfile }}
                   </button>
                 </div>
               </div>
@@ -444,7 +444,7 @@
 
     <el-dialog
       v-model="showEditDialog"
-      title="编辑资料"
+      :title="langText.profile.editProfile"
       :width="560"
       align-center
       class="profile-edit-dialog"
@@ -458,8 +458,8 @@
           id="username"
           v-model="form.username"
           type="text"
-          label="用户名"
-          placeholder="请输入用户名"
+          :label="langText.profile.username"
+          :placeholder="langText.profile.enterUsername"
           :error="errors.username"
           :success="touched.username && Boolean(form.username) && !errors.username"
           required
@@ -467,7 +467,7 @@
         />
 
         <div>
-          <label for="email" class="block text-xs font-mono uppercase mb-2 text-gray-600">邮箱</label>
+          <label for="email" class="block text-xs font-mono uppercase mb-2 text-gray-600">{{ langText.profile.email }}</label>
           <input
             id="email"
             :value="userStore.user?.email || ''"
@@ -478,7 +478,7 @@
         </div>
 
         <div>
-          <label for="avatar" class="block text-xs font-mono uppercase mb-2 text-gray-600">头像链接</label>
+          <label for="avatar" class="block text-xs font-mono uppercase mb-2 text-gray-600">{{ langText.profile.avatarLink }}</label>
           <input
             id="avatar"
             v-model="form.avatar"
@@ -493,14 +493,14 @@
 
         <div>
           <div class="flex items-center justify-between mb-2">
-            <label for="bio" class="block text-xs font-mono uppercase text-gray-600">个人简介</label>
+            <label for="bio" class="block text-xs font-mono uppercase text-gray-600">{{ langText.profile.bio }}</label>
             <span class="text-xs text-gray-500">{{ form.bio.length }}/500</span>
           </div>
           <textarea
             id="bio"
             v-model="form.bio"
             rows="4"
-            placeholder="向社区介绍一下你的环保理念..."
+            :placeholder="langText.profile.enterBio"
             class="w-full bg-green-50 border border-primary/10 px-4 py-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all resize-none rounded-lg"
             :class="errors.bio ? 'border-red-500 text-red-900 placeholder-red-300' : ''"
             @blur="validateBio"
@@ -517,7 +517,7 @@
             :disabled="isSaving"
             @click="resetForm"
           >
-            重置
+            {{ langText.profile.reset }}
           </button>
           <button
             type="button"
@@ -525,7 +525,7 @@
             :disabled="isSaving"
             @click="handleSubmit"
           >
-            {{ isSaving ? '保存中...' : '保存资料' }}
+            {{ isSaving ? langText.profile.saving : langText.profile.saveProfile }}
           </button>
         </div>
       </template>
@@ -540,6 +540,7 @@ import BaseInput from '@/components/ui/BaseInput.vue'
 import { useUserStore } from '@/stores/user'
 import { fetchRedeemRecords } from '@/services/storeService'
 import { fetchQuizRecords } from '@/services/quizService'
+import { langText } from '@/language'
 
 const userStore = useUserStore()
 const isSaving = ref(false)
@@ -550,12 +551,12 @@ const avatarLoadError = ref(false)
 /**
  * 左侧导航标签配置
  */
-const tabs = [
-  { id: 'overview', name: '概览' },
-  { id: 'activity', name: '活动记录' },
-  { id: 'rewards', name: '我的兑换' },
-  { id: 'settings', name: '账号设置' }
-]
+const tabs = computed(() => [
+  { id: 'overview', name: langText.value.profile.overview },
+  { id: 'activity', name: langText.value.profile.recentActivity },
+  { id: 'rewards', name: langText.value.profile.myRedemptions },
+  { id: 'settings', name: langText.value.profile.accountSettings }
+])
 
 /**
  * 根据积分计算用户等级
@@ -604,7 +605,13 @@ const actionCount = computed(() => (
 ))
 const userLevel = computed(() => getUserLevel(displayPoints.value))
 const levelTitle = computed(() => {
-  const titles = ['初芽新人', '低碳践行者', '绿色先锋', '生态领航员', '可持续冠军']
+  const titles = [
+    langText.value.profile.level1,
+    langText.value.profile.level2,
+    langText.value.profile.level3,
+    langText.value.profile.level4,
+    langText.value.profile.level5,
+  ]
   return titles[userLevel.value - 1] || titles[0]
 })
 const levelTargets = [0, 500, 1000, 2000, 4000, 5000]
@@ -612,7 +619,7 @@ const nextLevelTarget = computed(() => levelTargets[userLevel.value] || levelTar
 const currentLevelBase = computed(() => levelTargets[Math.max(userLevel.value - 1, 0)] || 0)
 const nextLevelRemain = computed(() => Math.max(nextLevelTarget.value - displayPoints.value, 0))
 const nextLevelLabel = computed(() => (
-  nextLevelRemain.value === 0 ? '已达到当前最高成长阶段' : `还需 ${nextLevelRemain.value} 积分升级`
+  nextLevelRemain.value === 0 ? langText.value.profile.reachedMaxLevel : `${langText.value.profile.needPointsToLevel} ${nextLevelRemain.value} ${langText.value.profile.pointsToLevelSuffix}`
 ))
 const levelProgress = computed(() => {
   const range = Math.max(nextLevelTarget.value - currentLevelBase.value, 1)
@@ -621,7 +628,7 @@ const levelProgress = computed(() => {
 })
 const profileBio = computed(() => (
   userStore.user?.bio ||
-  '持续记录环保行动、学习低碳知识、兑换绿色奖励，把每一次选择变成可量化的可持续生活成果。'
+  langText.value.profile.profileBioDefault
 ))
 const profileCompleteness = computed(() => {
   const checks = [
@@ -637,24 +644,24 @@ const profileCompleteness = computed(() => {
 const quizAccuracyText = computed(() => `${quizSummary.value.accuracy}%`)
 const impactCards = computed(() => [
   {
-    label: '碳减排估算',
+    label: langText.value.profile.carbonEstimate,
     value: `${carbonReduction.value} kg`,
-    desc: `相当于种下 ${Math.floor(displayPoints.value / 100)} 棵树的阶段成果`,
+    desc: `${langText.value.profile.treeEquivalent} ${Math.floor(displayPoints.value / 100)} ${langText.value.profile.treesSuffix}`,
   },
   {
-    label: '学习完成度',
+    label: langText.value.profile.learningCompletion,
     value: quizAccuracyText.value,
-    desc: `${quizSummary.value.total} 次问答记录，沉淀环保知识档案`,
+    desc: `${quizSummary.value.total} ${langText.value.profile.quizRecordsSuffix}`,
   },
   {
-    label: '奖励循环',
-    value: `${redeemedRecords.value.length} 次`,
-    desc: `已消耗 ${spentPoints.value} 积分兑换绿色奖励`,
+    label: langText.value.profile.rewardCycle,
+    value: `${redeemedRecords.value.length} ${langText.value.profile.recordsSuffix}`,
+    desc: `${langText.value.profile.consumedPoints} ${spentPoints.value} ${langText.value.profile.consumedPointsSuffix}`,
   },
   {
-    label: '成长徽章',
+    label: langText.value.profile.growthBadges,
     value: `${unlockedBadgeCount.value}/${userStore.badges?.length || 15}`,
-    desc: '用成就系统激励用户持续参与',
+    desc: langText.value.profile.growthBadgesDesc,
   },
 ])
 const virtualRewards = computed(() => {
@@ -685,41 +692,41 @@ const quizSummary = computed(() => {
 const recentMilestones = computed(() => {
   const items = [
     {
-      date: '当前',
-      title: `达到 Lv.${userLevel.value} ${levelTitle.value}`,
-      desc: `累计 ${displayPoints.value} 积分，形成个人绿色成长等级。`,
+      date: langText.value.profile.reachedLevel,
+      title: `${langText.value.profile.reachedLevel} Lv.${userLevel.value} ${levelTitle.value}`,
+      desc: `${langText.value.profile.cumulativePoints} ${displayPoints.value} ${langText.value.profile.pointsFormLevel}`,
     },
     {
-      date: quizRecords.value[0]?.date ? formatDate(quizRecords.value[0].date) : '学习',
-      title: quizRecords.value.length ? '完成绿色生活问答' : '开启绿色知识学习',
+      date: quizRecords.value[0]?.date ? formatDate(quizRecords.value[0].date) : langText.value.profile.startQuiz,
+      title: quizRecords.value.length ? langText.value.profile.completedQuiz : langText.value.profile.startQuiz,
       desc: quizRecords.value.length
-        ? `累计完成 ${quizRecords.value.length} 次问答，平均正确率 ${quizSummary.value.accuracy}%。`
-        : '通过每日问答补充环保知识，让积分增长有明确路径。',
+        ? `${langText.value.profile.quizCompletedDesc} ${quizRecords.value.length} ${langText.value.profile.quizTimes} ${quizSummary.value.accuracy}%。`
+        : langText.value.profile.quizStartDesc,
     },
     {
-      date: redeemedRecords.value[0]?.createdAt ? formatDate(redeemedRecords.value[0].createdAt) : '兑换',
-      title: redeemedRecords.value.length ? '完成积分奖励兑换' : '等待首次奖励兑换',
+      date: redeemedRecords.value[0]?.createdAt ? formatDate(redeemedRecords.value[0].createdAt) : langText.value.profile.waitingRedemption,
+      title: redeemedRecords.value.length ? langText.value.profile.completedRedemption : langText.value.profile.waitingRedemption,
       desc: redeemedRecords.value.length
-        ? `已兑换 ${redeemedRecords.value.length} 项奖励，构成积分闭环。`
-        : '前往兑换商城，把环保行为转化为可见奖励。',
+        ? `${langText.value.profile.redeemedDesc} ${redeemedRecords.value.length} ${langText.value.profile.redeemedItems}`
+        : langText.value.profile.waitingRedeemDesc,
     },
   ]
   return items
 })
 const nextActionTips = computed(() => [
   {
-    title: quizRecords.value.length ? '继续每日问答' : '完成首次问答',
-    desc: quizRecords.value.length ? '保持知识学习节奏，补充积分来源' : '快速建立第一条学习记录',
+    title: quizRecords.value.length ? langText.value.profile.continueDailyQuiz : langText.value.profile.completeFirstQuiz,
+    desc: quizRecords.value.length ? langText.value.profile.maintainLearning : langText.value.profile.buildFirstRecord,
     to: '/quiz',
   },
   {
-    title: displayPoints.value >= 200 ? '兑换绿色奖励' : '积累兑换积分',
-    desc: displayPoints.value >= 200 ? '让积分形成可展示的奖励闭环' : '通过问答、志愿和 AI 工具获取积分',
+    title: displayPoints.value >= 200 ? langText.value.profile.redeemGreenReward : langText.value.profile.accumulatePoints,
+    desc: displayPoints.value >= 200 ? langText.value.profile.formRewardLoop : langText.value.profile.getPointsViaActions,
     to: displayPoints.value >= 200 ? '/store' : '/volunteer',
   },
   {
-    title: '完善成就徽章',
-    desc: `${unlockedBadgeCount.value} 个已解锁，继续冲击更多环保成就`,
+    title: langText.value.profile.perfectBadges,
+    desc: `${unlockedBadgeCount.value} ${langText.value.profile.badgessUnlocked}`,
     to: '/achievements',
   },
 ])
@@ -741,15 +748,15 @@ const validateUsername = (options) => {
   touched.username = true
   if (shouldTrim) form.username = form.username.trim()
   if (!form.username) {
-    errors.username = '请输入用户名'
+    errors.username = langText.value.profile.enterUsername
     return false
   }
   if (form.username.length < 2) {
-    errors.username = '用户名至少 2 个字符'
+    errors.username = langText.value.profile.usernameMin2
     return false
   }
   if (form.username.length > 20) {
-    errors.username = '用户名最多 20 个字符'
+    errors.username = langText.value.profile.usernameMax20
     return false
   }
   errors.username = ''
@@ -765,7 +772,7 @@ const validateAvatar = (options) => {
     return true
   }
   if (!/^https?:\/\//i.test(form.avatar)) {
-    errors.avatar = '请输入有效的 http 或 https 图片链接'
+    errors.avatar = langText.value.profile.validHttpLink
     return false
   }
   errors.avatar = ''
@@ -775,7 +782,7 @@ const validateAvatar = (options) => {
 const validateBio = () => {
   touched.bio = true
   if (form.bio.length > 500) {
-    errors.bio = '个人简介最多 500 个字符'
+    errors.bio = langText.value.profile.bioMax500
     return false
   }
   errors.bio = ''
@@ -790,7 +797,7 @@ const focusFirstInvalid = () => {
 
 const resetForm = () => {
   syncForm()
-  ElMessage.info('已恢复为当前保存的资料')
+  ElMessage.info(langText.value.profile.savedToCurrent)
 }
 
 const openEditDialog = () => {
@@ -809,7 +816,7 @@ const handleSubmit = async () => {
   const okAvatar = validateAvatar({ shouldTrim: true })
   const okBio = validateBio()
   if (!okUsername || !okAvatar || !okBio) {
-    ElMessage.warning('请先修正表单错误')
+    ElMessage.warning(langText.value.profile.fixFormError)
     focusFirstInvalid()
     return
   }

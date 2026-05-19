@@ -4,14 +4,14 @@
       v-if="iconClass"
       :class="['weather-icon', iconClass]"
       :style="iconStyle"
-      :aria-label="alt"
+      :aria-label="altText"
       role="img"
     ></span>
     <div
       v-else
       class="weather-icon-placeholder"
       :style="{ width: `${size}px`, height: `${size}px` }"
-      :aria-label="alt"
+      :aria-label="altText"
       role="img"
     ></div>
   </div>
@@ -19,6 +19,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { langText } from '@/language'
 
 const props = defineProps({
   code: {
@@ -35,9 +36,11 @@ const props = defineProps({
   },
   alt: {
     type: String,
-    default: '天气图标',
+    default: '',
   },
 })
+
+const altText = computed(() => props.alt || langText.value.weather.weatherIcon)
 
 const ICON_FALLBACK_MAP = {
   // qweather-icons@1.8.0 中无 qi-154，使用最接近的阴天图标替代

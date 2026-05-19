@@ -61,6 +61,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
+import { langText } from '@/language'
 import { renderChatMarkdown } from './chatMarkdown'
 import { useChatSession } from './useChatSession'
 import ChatComposer from './components/ChatComposer.vue'
@@ -79,8 +80,7 @@ const { allPrompts, quickPrompts, isShuffling, shufflePrompts } = useChatPrompts
 // AI 助手的欢迎消息（固定为对话第一条）
 const initialMessage = {
   role: 'assistant',
-  content:
-    '你好！我是 **GS AI 对话助手** 🌱，来自 GreenSight-绿我同行。无论是垃圾分类查询、旧物改造建议、低碳出行，还是碳足迹分析，我都可以帮你整理成可执行的绿色生活方案。今天想从哪个问题开始？',
+  content: langText.value.chat.greeting,
   time: new Date().toLocaleTimeString('en-GB'),
 }
 
@@ -120,7 +120,7 @@ const copyMessage = async (payload) => {
   const index = typeof payload === 'string' ? -1 : Number(payload?.index)
 
   if (!content.trim()) {
-    ElMessage.warning('暂无可复制内容')
+    ElMessage.warning(langText.value.chat.emptyCopy)
     return
   }
 
@@ -137,10 +137,10 @@ const copyMessage = async (payload) => {
       copiedMessageTimer = null
     }, 1600)
 
-    ElMessage.success('复制成功')
+    ElMessage.success(langText.value.chat.copySuccess)
   } catch (err) {
     console.error('Copy failed:', err)
-    ElMessage.error('复制失败')
+    ElMessage.error(langText.value.chat.copyFail)
   }
 }
 

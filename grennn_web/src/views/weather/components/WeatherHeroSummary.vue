@@ -1,7 +1,7 @@
 <template>
   <header class="hero-card">
     <div class="hero-copy">
-      <div class="hero-kicker">实时天气状态</div>
+      <div class="hero-kicker">{{ langText.weather.heroKicker }}</div>
       <h1 class="city-name">
         {{ weather.city.name }}
         <span v-if="weather.city.adm2 && weather.city.adm2 !== weather.city.name" class="city-adm">
@@ -27,7 +27,7 @@
         <div class="weather-desc">{{ weather.now.text }}</div>
         <div class="hero-divider"></div>
         <div class="hero-feels-like">
-          体感
+          {{ langText.weather.feelsLike }}
           <transition name="roll-number" mode="out-in">
             <span :key="`feels-${formatTemp(weather.now.feelsLike)}`" class="inline-roll">
               {{ formatTemp(weather.now.feelsLike) }}
@@ -39,7 +39,7 @@
 
       <div class="hero-range-line">
         <span>
-          最高
+          {{ langText.weather.highLabel }}
           <transition name="roll-number" mode="out-in">
             <span :key="`max-${formatTemp(weather.forecast[0]?.tempMax)}`" class="inline-roll">
               {{ formatTemp(weather.forecast[0]?.tempMax) }}
@@ -48,7 +48,7 @@
           °
         </span>
         <span>
-          最低
+          {{ langText.weather.lowLabel }}
           <transition name="roll-number" mode="out-in">
             <span :key="`min-${formatTemp(weather.forecast[0]?.tempMin)}`" class="inline-roll">
               {{ formatTemp(weather.forecast[0]?.tempMin) }}
@@ -60,12 +60,12 @@
     </div>
 
     <div class="hero-side glass-panel">
-      <div class="hero-side-label">当前概览</div>
+      <div class="hero-side-label">{{ langText.weather.currentOverview }}</div>
       <div class="hero-side-main">{{ summaryText }}</div>
-      <div class="hero-side-sub">湿度 {{ Math.round(weather.now.humidity || 0) }}% · 风速 {{ weather.now.windSpeed || '--' }} km/h</div>
+      <div class="hero-side-sub">{{ langText.weather.humidityLabel }} {{ Math.round(weather.now.humidity || 0) }}% · {{ langText.weather.windSpeedLabel }} {{ weather.now.windSpeed || '--' }} km/h</div>
       <div class="hero-side-pills">
-        <span class="hero-pill">气压 {{ Math.round(weather.now.pressure || 0) }} hPa</span>
-        <span class="hero-pill">能见度 {{ weather.now.vis || '--' }} km</span>
+        <span class="hero-pill">{{ langText.weather.pressureLabel }} {{ Math.round(weather.now.pressure || 0) }} hPa</span>
+        <span class="hero-pill">{{ langText.weather.visibilityLabel }} {{ weather.now.vis || '--' }} km</span>
       </div>
     </div>
   </header>
@@ -73,6 +73,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { langText } from '@/language'
 import WeatherIcon from '@/components/weather/WeatherIcon.vue'
 
 const props = defineProps({
@@ -94,10 +95,11 @@ const glowClass = computed(() => {
 })
 
 const summaryText = computed(() => {
-  const text = props.weather?.now?.text || '天气平稳'
-  if (/雨|雷|雪/.test(text)) return '空气湿润，建议备一把伞，出行节奏放缓会更舒适。'
-  if (/晴/.test(text)) return '天空清朗，适合外出活动，午后可适度注意防晒补水。'
-  return '云层柔和，通勤与散步都很合适，整体体感稳定舒缓。'
+  const w = langText.value.weather
+  const text = props.weather?.now?.text || ''
+  if (/雨|雷|雪|rain|snow|thunder/i.test(text)) return w.summaryRainy
+  if (/晴|sun|clear/i.test(text)) return w.summarySunny
+  return w.summaryCloudy
 })
 </script>
 

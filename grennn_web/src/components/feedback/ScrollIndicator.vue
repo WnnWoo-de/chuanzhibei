@@ -4,7 +4,7 @@
     :class="{ 'scroll-indicator--hidden': isHidden }"
     :aria-hidden="isHidden"
     role="img"
-    :aria-label="ariaLabel"
+    :aria-label="ariaLabel || langText.scrollIndicator.ariaLabel"
   >
     <!-- 呼吸灯效果背景 -->
     <div class="scroll-indicator__glow"></div>
@@ -42,21 +42,22 @@
     </div>
 
     <!-- 文字提示 -->
-    <div class="scroll-indicator__text">{{ text }}</div>
+    <div class="scroll-indicator__text">{{ text || langText.scrollIndicator.text }}</div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { langText } from '@/language'
 
-defineProps({
+const props = defineProps({
   text: {
     type: String,
-    default: '向下滑动',
+    default: '',
   },
   ariaLabel: {
     type: String,
-    default: '向下滑动以查看更多内容',
+    default: '',
   },
 })
 

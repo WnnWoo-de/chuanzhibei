@@ -3,14 +3,14 @@
     <div class="section-header">
       <div class="section-title">
         <WeatherUiIcon name="forecast" class="widget-icon" />
-        10日天气预报
+        {{ langText.weather.dailyTitle }}
       </div>
-      <div class="section-subtitle">未来温度走势</div>
+      <div class="section-subtitle">{{ langText.weather.dailySubtitle }}</div>
     </div>
 
     <div class="daily-list">
       <div v-for="(day, index) in forecast" :key="day.date" class="daily-item">
-        <span class="d-day">{{ index === 0 ? '今天' : formatDay(day.date) }}</span>
+        <span class="d-day">{{ index === 0 ? langText.weather.today : formatDay(day.date) }}</span>
         <span class="d-icon"><WeatherIcon :code="day.iconDay" :size="24" /></span>
         <span class="d-temp-min">{{ Math.round(day.tempMin) }}°</span>
         <div class="d-bar-container">
@@ -25,6 +25,7 @@
 </template>
 
 <script setup>
+import { langText } from '@/language'
 import WeatherIcon from '@/components/weather/WeatherIcon.vue'
 import WeatherUiIcon from './WeatherUiIcon.vue'
 

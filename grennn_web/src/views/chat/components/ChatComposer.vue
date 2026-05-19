@@ -7,7 +7,7 @@
           @click="$emit('stop')"
         >
           <el-icon><VideoPause /></el-icon>
-          <span>停止生成</span>
+          <span>{{ langText.chatComposer.stopGeneration }}</span>
         </button>
       </div>
     </transition>
@@ -22,7 +22,7 @@
           @click="$emit('regenerate')"
         >
           <el-icon><RefreshRight /></el-icon>
-          <span>重新生成</span>
+          <span>{{ langText.chatComposer.regenerate }}</span>
         </button>
       </div>
     </transition>
@@ -33,7 +33,7 @@
           ref="textareaEl"
           v-model="localNewMessage"
           rows="1"
-          placeholder="请输入您的问题… (Shift+Enter 换行)"
+          :placeholder="langText.chatComposer.placeholder"
           class="w-full bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-2xl px-4 py-3 pl-10 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 font-mono text-sm transition-all shadow-sm hover:border-gray-300 resize-none overflow-hidden max-h-32 leading-6"
           :disabled="isTyping || isWriting"
           @input="handleInput"
@@ -48,7 +48,7 @@
         :disabled="!localNewMessage.trim() || isTyping || isWriting"
         class="px-8 bg-gradient-to-br from-black to-gray-800 text-white text-xs font-mono uppercase tracking-wider rounded-2xl hover:from-green-600 hover:to-green-700 hover:shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:hover:from-black disabled:hover:to-gray-800 disabled:hover:shadow-none shadow-md flex items-center gap-2 h-full min-h-[46px] font-bold"
       >
-        <span>发送</span>
+        <span>{{ langText.chatComposer.send }}</span>
         <el-icon v-if="isTyping || isWriting" class="animate-spin"><Loading /></el-icon>
         <span v-else>→</span>
       </button>
@@ -59,6 +59,7 @@
 <script setup>
 import { nextTick, ref, watch } from 'vue'
 import { Loading, RefreshRight, VideoPause } from '@element-plus/icons-vue'
+import { langText } from '@/language'
 
 const props = defineProps({
   isTyping: {

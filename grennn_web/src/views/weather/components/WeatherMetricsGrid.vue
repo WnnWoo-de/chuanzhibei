@@ -3,7 +3,7 @@
     <article class="metric-card hover-float">
       <div class="metric-header">
         <WeatherUiIcon name="air-quality" class="widget-icon" />
-        空气质量地图感知
+        {{ langText.weather.metricAqiTitle }}
       </div>
       <div class="aqi-stage">
         <div class="aqi-orb orb-green"></div>
@@ -28,7 +28,7 @@
     <article class="metric-card hover-float">
       <div class="metric-header">
         <WeatherUiIcon name="uv" class="widget-icon" />
-        紫外线指数
+        {{ langText.weather.metricUvTitle }}
       </div>
       <div class="metric-value metric-value--large">
         <transition name="roll-number" mode="out-in">
@@ -38,25 +38,25 @@
         </transition>
       </div>
       <div class="metric-highlight">{{ getUvLevel(weather.now.uvIndex) }}</div>
-      <div class="metric-footnote">接下来持续较低。</div>
+      <div class="metric-footnote">{{ langText.weather.metricUvNote }}</div>
     </article>
 
     <article class="metric-card hover-float">
       <div class="metric-header">
         <WeatherUiIcon name="sunset" class="widget-icon" />
-        日落
+        {{ langText.weather.metricSunsetTitle }}
       </div>
       <div class="metric-value metric-value--time">{{ formatTime(weather.now.sunset) }}</div>
       <div class="sun-track">
         <span class="sun-track-dot"></span>
       </div>
-      <div class="metric-footnote">日出：{{ formatTime(weather.now.sunrise) }}</div>
+      <div class="metric-footnote">{{ langText.weather.metricSunrisePrefix }}{{ formatTime(weather.now.sunrise) }}</div>
     </article>
 
     <article class="metric-card hover-float">
       <div class="metric-header">
         <WeatherUiIcon name="wind" class="widget-icon" />
-        风
+        {{ langText.weather.metricWindTitle }}
       </div>
       <div class="wind-dial">
         <div class="wind-dial-inner">
@@ -74,21 +74,21 @@
     <article class="metric-card hover-float">
       <div class="metric-header">
         <WeatherUiIcon name="precipitation" class="widget-icon" />
-        降水
+        {{ langText.weather.metricPrecipTitle }}
       </div>
       <div class="metric-value">
         <transition name="roll-number" mode="out-in">
           <span :key="`prec-${weather.now.precipitation || 0}`" class="rolling-number-md">{{ weather.now.precipitation || 0 }}</span>
         </transition>
-        <span> 毫米</span>
+        <span> {{ langText.weather.mmUnit }}</span>
       </div>
-      <div class="metric-footnote">过去 24 小时</div>
+      <div class="metric-footnote">{{ langText.weather.pastHours }}</div>
     </article>
 
     <article class="metric-card hover-float">
       <div class="metric-header">
         <WeatherUiIcon name="feels-like" class="widget-icon" />
-        体感温度
+        {{ langText.weather.metricFeelsTitle }}
       </div>
       <div class="metric-value">
         <transition name="roll-number" mode="out-in">
@@ -98,13 +98,13 @@
         </transition>
         °
       </div>
-      <div class="metric-footnote">风使体感温度比实际气温更柔和。</div>
+      <div class="metric-footnote">{{ langText.weather.metricFeelsNote }}</div>
     </article>
 
     <article class="metric-card hover-float">
       <div class="metric-header">
         <WeatherUiIcon name="humidity" class="widget-icon" />
-        湿度
+        {{ langText.weather.metricHumidityTitle }}
       </div>
       <div class="metric-value">
         <transition name="roll-number" mode="out-in">
@@ -114,27 +114,27 @@
         </transition>
         %
       </div>
-      <div class="metric-footnote">空气含水量较为舒适。</div>
+      <div class="metric-footnote">{{ langText.weather.metricHumidityNote }}</div>
     </article>
 
     <article class="metric-card hover-float">
       <div class="metric-header">
         <WeatherUiIcon name="visibility" class="widget-icon" />
-        能见度
+        {{ langText.weather.metricVisTitle }}
       </div>
       <div class="metric-value">
         <transition name="roll-number" mode="out-in">
           <span :key="`vis-${weather.now.vis}`" class="rolling-number-md">{{ weather.now.vis }}</span>
         </transition>
-        公里
+        {{ langText.weather.kmUnit }}
       </div>
-      <div class="metric-footnote">视野表现稳定。</div>
+      <div class="metric-footnote">{{ langText.weather.metricVisNote }}</div>
     </article>
 
     <article class="metric-card hover-float">
       <div class="metric-header">
         <WeatherUiIcon name="pressure" class="widget-icon" />
-        气压
+        {{ langText.weather.metricPressureTitle }}
       </div>
       <div class="metric-value">
         <transition name="roll-number" mode="out-in">
@@ -143,12 +143,13 @@
           </span>
         </transition>
       </div>
-      <div class="metric-footnote">百帕 · 当前气压处于正常范围。</div>
+      <div class="metric-footnote">{{ langText.weather.metricPressureNote }}</div>
     </article>
   </section>
 </template>
 
 <script setup>
+import { langText } from '@/language'
 import WeatherUiIcon from './WeatherUiIcon.vue'
 
 defineProps({

@@ -13,11 +13,8 @@
       <!-- Sidebar / Header -->
       <div class="col-span-12 md:col-span-3">
         <div class="sticky top-24">
-          <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-6">旧物重构</h1>
-          <p class="text-sm opacity-60 max-w-[200px] mb-8">
-            智能回收<br />
-            上传旧物，AI 为您提供创意重构方案。
-          </p>
+          <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-6">{{ langText.reconstruction.title }}</h1>
+          <p class="text-sm opacity-60 max-w-[200px] mb-8" v-html="langText.reconstruction.sidebarDesc"></p>
 
           <!-- Upload Area -->
           <div
@@ -35,8 +32,8 @@
               class="text-4xl mb-2 opacity-40 group-hover:scale-110 transition-transform duration-300"
               ><Upload
             /></el-icon>
-            <p class="text-xs font-mono mb-1">点击或拖拽上传</p>
-            <p class="text-[10px] opacity-50">支持 JPG, PNG 格式</p>
+            <p class="text-xs font-mono mb-1">{{ langText.reconstruction.uploadHint }}</p>
+            <p class="text-[10px] opacity-50">{{ langText.reconstruction.uploadFormat }}</p>
             <input
               ref="fileInput"
               type="file"
@@ -47,8 +44,8 @@
           </div>
 
           <div class="hidden md:block text-xs font-mono opacity-40 space-y-2">
-            <p>模式：{{ showAnalysis ? 'AI 分析中' : '案例浏览' }}</p>
-            <p>案例数：{{ cases.length }}</p>
+            <p>{{ langText.reconstruction.mode }}：{{ showAnalysis ? langText.reconstruction.analyzing : langText.reconstruction.caseBrowsing }}</p>
+            <p>{{ langText.reconstruction.caseCount }}：{{ cases.length }}</p>
             <p>更新：2025.12.21</p>
           </div>
         </div>
@@ -69,13 +66,13 @@
                 v-if="!analysisComplete"
                 class="inline-block w-3 h-3 bg-primary rounded-full animate-ping"
               ></span>
-              AI 分析结果
+              {{ langText.reconstruction.analysisResult }}
             </h3>
 
             <!-- Uploaded Image Preview & Scanning -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div>
-                <p class="text-xs font-mono mb-2 opacity-50">您的物品</p>
+                <p class="text-xs font-mono mb-2 opacity-50">{{ langText.reconstruction.yourItem }}</p>
                 <div class="aspect-square bg-gray-100 rounded overflow-hidden relative group">
                   <img
                     v-if="uploadedImage"
@@ -103,7 +100,7 @@
               </div>
 
               <div>
-                <p class="text-xs font-mono mb-2 opacity-50">AI 识别进度</p>
+                <p class="text-xs font-mono mb-2 opacity-50">{{ langText.reconstruction.aiProgress }}</p>
                 <div class="space-y-4">
                   <div
                     v-for="(item, index) in analysisSteps"
@@ -138,36 +135,36 @@
                     class="mt-6 p-4 bg-gray-50 border border-black/5 rounded text-xs font-mono space-y-3"
                   >
                     <div class="flex justify-between gap-4">
-                      <span class="opacity-50">物品识别:</span>
+                      <span class="opacity-50">{{ langText.reconstruction.itemRecognition }}:</span>
                       <span class="text-right">{{ analysisMeta.itemName }}</span>
                     </div>
                     <div class="flex justify-between gap-4">
-                      <span class="opacity-50">主要材质:</span>
+                      <span class="opacity-50">{{ langText.reconstruction.material }}:</span>
                       <span class="text-right">{{ analysisMeta.material }}</span>
                     </div>
                     <div class="flex justify-between gap-4">
-                      <span class="opacity-50">完整性:</span>
+                      <span class="opacity-50">{{ langText.reconstruction.integrity }}:</span>
                       <span class="text-right">{{ analysisMeta.integrity }}</span>
                     </div>
                     <div class="flex justify-between gap-4">
-                      <span class="opacity-50">识别置信度:</span>
+                      <span class="opacity-50">{{ langText.reconstruction.confidence }}:</span>
                       <span class="text-right">{{ analysisMeta.confidence }}</span>
                     </div>
                     <div class="flex justify-between gap-4">
-                      <span class="opacity-50">重构可行性:</span>
+                      <span class="opacity-50">{{ langText.reconstruction.feasibility }}:</span>
                       <span :class="analysisMeta.reconstructable ? 'text-primary font-bold' : 'text-amber-600 font-bold'">
-                        {{ analysisMeta.reconstructable ? '适合重构' : '不建议重构' }}
+                        {{ analysisMeta.reconstructable ? langText.reconstruction.reconstructable : langText.reconstruction.notReconstructable }}
                       </span>
                     </div>
                     <div class="flex justify-between gap-4">
-                      <span class="opacity-50">预估碳减排:</span>
+                      <span class="opacity-50">{{ langText.reconstruction.carbonReduction }}:</span>
                       <span class="text-right" :class="analysisMeta.reconstructable ? 'text-primary font-bold' : 'text-gray-500'">
                         {{ analysisMeta.carbonReduction }}
                       </span>
                     </div>
                     <div class="pt-3 border-t border-black/5 space-y-2 leading-relaxed">
-                      <p><span class="opacity-50">判断依据:</span> {{ analysisMeta.reason }}</p>
-                      <p><span class="opacity-50">处理建议:</span> {{ analysisMeta.disposalAdvice }}</p>
+                      <p><span class="opacity-50">{{ langText.reconstruction.judgmentBasis }}:</span> {{ analysisMeta.reason }}</p>
+                      <p><span class="opacity-50">{{ langText.reconstruction.processingAdvice }}:</span> {{ analysisMeta.disposalAdvice }}</p>
                     </div>
                   </div>
                 </transition>
@@ -179,7 +176,7 @@
               <div v-if="analysisComplete" class="border-t border-black/10 pt-6">
                 <h4 class="font-bold mb-4 flex items-center gap-2">
                   <el-icon class="text-primary"><MagicStick /></el-icon>
-                  {{ analysisMeta.reconstructable ? '重构建议' : '处理建议' }}
+                  {{ analysisMeta.reconstructable ? langText.reconstruction.suggestionsTitle : langText.reconstruction.disposalTitle }}
                 </h4>
 
                 <div
@@ -204,7 +201,7 @@
                       @click.stop="openStepsDialog(suggestion)"
                       class="text-xs font-mono text-primary hover:underline flex items-center gap-1"
                     >
-                      查看图纸 <el-icon><ArrowRight /></el-icon>
+                      {{ langText.reconstruction.viewBlueprint }} <el-icon><ArrowRight /></el-icon>
                     </button>
                   </div>
                 </div>
@@ -213,24 +210,24 @@
                   v-else
                   class="rounded-2xl border border-amber-200 bg-amber-50/80 px-5 py-4 text-sm leading-relaxed text-amber-900"
                 >
-                  <p class="font-semibold mb-1">当前物品不适合进行旧物重构</p>
+                  <p class="font-semibold mb-1">{{ langText.reconstruction.notSuitable }}</p>
                   <p>{{ analysisMeta.disposalAdvice }}</p>
                 </div>
 
                 <div class="mt-8 flex justify-between items-center">
                   <p class="text-xs text-gray-400">
                     <template v-if="userStore.isLoggedIn">
-                      完成分析获得 <span class="text-primary font-bold">+50</span> 积分
+                      {{ langText.reconstruction.pointsEarned }} <span class="text-primary font-bold">+50</span> {{ langText.common.points }}
                     </template>
                     <template v-else>
-                      登录后可获得 <span class="text-primary font-bold">+50</span> 积分奖励
+                      {{ langText.reconstruction.pointsLoginHint }} <span class="text-primary font-bold">+50</span> {{ langText.reconstruction.pointsSuffix }}
                     </template>
                   </p>
                   <button
                     @click="closeAnalysis"
                     class="border border-black px-6 py-2 text-sm font-mono uppercase hover:bg-black hover:text-white transition-colors"
                   >
-                    返回案例库
+                    {{ langText.reconstruction.backToCases }}
                   </button>
                 </div>
               </div>
@@ -277,11 +274,11 @@
             <div class="border-t border-black/10 pt-4 mt-auto">
               <div class="flex justify-between items-center text-xs font-mono">
                 <div>
-                  <span class="opacity-40 block">来源</span>
+                  <span class="opacity-40 block">{{ langText.reconstruction.source }}</span>
                   <span>{{ item.source }}</span>
                 </div>
                 <div class="text-right">
-                  <span class="opacity-40 block">重构为</span>
+                  <span class="opacity-40 block">{{ langText.reconstruction.resultAs }}</span>
                   <span class="text-primary">{{ item.result }}</span>
                 </div>
               </div>
@@ -301,7 +298,7 @@
             <div
               class="mt-4 font-mono text-xs uppercase opacity-0 group-hover:opacity-100 transition-opacity text-center"
             >
-              点击查看详情 →
+              {{ langText.reconstruction.clickDetail }}
             </div>
           </div>
         </div>
@@ -311,13 +308,13 @@
     <!-- Steps Dialog -->
     <el-dialog
       v-model="showStepsDialog"
-      :title="selectedSuggestion?.title || '制作步骤'"
+      :title="selectedSuggestion?.title || langText.reconstruction.stepsTitle"
       :width="560"
       align-center
     >
       <template v-if="selectedSuggestion">
         <div class="mb-4 flex items-center gap-3">
-          <span class="px-2 py-1 text-xs font-mono bg-gray-100 rounded">难度：{{ selectedSuggestion.difficulty }}</span>
+          <span class="px-2 py-1 text-xs font-mono bg-gray-100 rounded">{{ langText.reconstruction.difficulty }}：{{ selectedSuggestion.difficulty }}</span>
           <p class="text-sm text-gray-600">{{ selectedSuggestion.description }}</p>
         </div>
         <ol class="space-y-3">
@@ -331,8 +328,8 @@
           </li>
         </ol>
         <div class="mt-6 pt-4 border-t border-black/10 flex justify-between items-center">
-          <p class="text-xs text-gray-400 font-mono">预计用时：{{ selectedSuggestion.duration || '2-4 小时' }}</p>
-          <button @click="showStepsDialog = false" class="border border-black px-4 py-2 text-xs font-mono uppercase hover:bg-black hover:text-white transition-colors">关闭</button>
+          <p class="text-xs text-gray-400 font-mono">{{ langText.reconstruction.duration }}：{{ selectedSuggestion.duration || langText.reconstruction.durationDefault }}</p>
+          <button @click="showStepsDialog = false" class="border border-black px-4 py-2 text-xs font-mono uppercase hover:bg-black hover:text-white transition-colors">{{ langText.reconstruction.close }}</button>
         </div>
       </template>
     </el-dialog>
@@ -357,18 +354,18 @@
             <div class="border-t border-black/10 pt-4 mb-4">
               <div class="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p class="font-mono text-xs opacity-50 mb-1">来源材料</p>
+                  <p class="font-mono text-xs opacity-50 mb-1">{{ langText.reconstruction.sourceMaterial }}</p>
                   <p class="font-bold">{{ selectedCase.source }}</p>
                 </div>
                 <div>
-                  <p class="font-mono text-xs opacity-50 mb-1">重构产物</p>
+                  <p class="font-mono text-xs opacity-50 mb-1">{{ langText.reconstruction.product }}</p>
                   <p class="font-bold text-primary">{{ selectedCase.result }}</p>
                 </div>
               </div>
             </div>
 
             <div v-if="selectedCase.steps" class="mb-6">
-              <h4 class="font-bold mb-3">制作步骤</h4>
+              <h4 class="font-bold mb-3">{{ langText.reconstruction.stepsTitle }}</h4>
               <ol class="space-y-2 text-sm">
                 <li v-for="(step, idx) in selectedCase.steps" :key="idx" class="flex gap-2">
                   <span class="font-mono text-primary">{{ idx + 1 }}.</span>
@@ -381,7 +378,7 @@
               @click="showDetailDialog = false"
               class="w-full border border-black px-4 py-3 text-sm font-mono uppercase hover:bg-black hover:text-white transition-colors"
             >
-              关闭
+              {{ langText.reconstruction.close }}
             </button>
           </div>
         </div>
@@ -396,12 +393,13 @@
 // 功能：上传旧物图片 → 调用 AI 分析 → 展示材质/碳减排数据和重构建议
 // 案例库：静态展示 4 个优质重构案例，支持点击查看详情
 // ============================================================
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Upload, CircleCheckFilled, MagicStick, ArrowRight, Star, StarFilled } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
 import { mapAnalyzeResult } from '@/services/reconstructionService'
 import { analyzeReconstruction } from '@/services/reconstructionService'
+import { langText } from '@/language'
 
 // Import images
 import case1 from '@/assets/images/case_1.png'
@@ -423,110 +421,58 @@ const showStepsDialog = ref(false)     // 制作步骤对话框可见性
 const selectedSuggestion = ref(null)   // 当前选中的重构建议
 
 // 未提供具体步骤时的通用制作流程（fallback）
-const defaultSteps = [
-  '仔细检查物品现状，评估可用部件',
-  '准备所需工具和辅助材料',
-  '按照方案拆解或改造物品结构',
-  '进行打磨、上色或组装等处理',
-  '完成收尾工作，检验成品质量',
-]
+const defaultSteps = computed(() => langText.value.reconstruction.defaultSteps)
 
 /** 打开制作步骤对话框 */
 const openStepsDialog = (suggestion) => {
   selectedSuggestion.value = suggestion
   showStepsDialog.value = true
 }
-const analysisMeta = ref({
-  itemName: '等待识别',
-  material: '等待识别',
-  integrity: '不适用',
-  carbonReduction: '不适用',
-  confidence: '低',
+/** 获取当前语言下分析元数据的初始/等待状态 */
+const getAnalysisMetaWaiting = () => ({
+  itemName: langText.value.reconstruction.waitRecognize,
+  material: langText.value.reconstruction.waitRecognize,
+  integrity: langText.value.reconstruction.notApplicable,
+  carbonReduction: langText.value.reconstruction.notApplicable,
+  confidence: langText.value.reconstruction.low,
   reconstructable: false,
-  reason: '上传图片后开始分析',
-  disposalAdvice: '识别完成后将显示处理建议',
+  reason: langText.value.reconstruction.analysisHint,
+  disposalAdvice: langText.value.reconstruction.waitAdvice,
 })
 
-const analysisSteps = ref([
-  { text: '正在扫描物品特征...', completed: false, active: false },
-  { text: 'AI 识别材质与结构...', completed: false, active: false },
-  { text: '计算环境影响值...', completed: false, active: false },
-  { text: '生成创意重构方案...', completed: false, active: false },
-])
+const analysisMeta = ref(getAnalysisMetaWaiting())
+
+/** 使用当前语言重新初始化分析步骤文本 */
+const makeAnalysisSteps = () => {
+  const t = langText.value.reconstruction
+  return [
+    { text: t.step1, completed: false, active: false },
+    { text: t.step2, completed: false, active: false },
+    { text: t.step3, completed: false, active: false },
+    { text: t.step4, completed: false, active: false },
+  ]
+}
+
+const analysisSteps = ref(makeAnalysisSteps())
+
+/** 使用当前语言重新初始化分析步骤文本 */
+const resetAnalysisSteps = () => {
+  analysisSteps.value = makeAnalysisSteps()
+}
 
 const suggestions = ref([])
 
-const cases = ref([
-  {
-    title: '复古植物架',
-    subtitle: '复古花架',
-    category: '家具',
-    description:
-      '移除破损的座椅部分，加固框架，并将其用作放置大型盆栽植物的独特支架。保留原木质感以增加复古风味。',
-    source: '旧木椅',
-    result: '植物架',
-    image: case1,
-    steps: [
-      '移除破损的椅面，保留框架结构',
-      '打磨木材表面，去除旧漆和污渍',
-      '加固连接处，确保结构稳定',
-      '涂刷清漆或木蜡油保护木材',
-      '摆放盆栽，享受复古园艺美学',
-    ],
-    liked: false
-  },
-  {
-    title: '牛仔托特包',
-    subtitle: '牛仔包',
-    category: '时尚',
-    description: '利用不再合身的旧牛仔裤，通过简单的剪裁和缝纫，改造成时尚耐用的购物托特包。',
-    source: '旧牛仔裤',
-    result: '托特包',
-    image: case2,
-    steps: [
-      '剪下牛仔裤的两条裤腿',
-      '将裤腿底部缝合作为包底',
-      '剪裁合适的手提带并缝制',
-      '添加内袋和装饰口袋',
-      '缝合开口，完成托特包',
-    ],
-    liked: true
-  },
-  {
-    title: '玻璃瓶氛围灯',
-    subtitle: '瓶灯',
-    category: '装饰',
-    description: '将废弃的玻璃饮料瓶清洗干净，放入LED灯串，打造出温暖浪漫的居家氛围灯。',
-    source: '玻璃瓶',
-    result: '氛围灯',
-    image: case3,
-    steps: [
-      '清洗玻璃瓶并去除标签',
-      '准备LED暖光灯串',
-      '将灯串小心放入瓶中',
-      '调整灯串位置以获得最佳效果',
-      '连接电源，享受温馨氛围',
-    ],
-    liked: false
-  },
-  {
-    title: '自行车轮时钟',
-    subtitle: '车轮时钟',
-    category: '艺术',
-    description: '回收废弃的自行车轮圈，安装时钟机芯，制作成充满工业风的挂钟。',
-    source: '车轮',
-    result: '挂钟',
-    image: case4,
-    steps: [
-      '清洁自行车轮圈，去除锈迹',
-      '在轮圈中心钻孔以安装时钟机芯',
-      '安装时钟机芯和指针',
-      '添加数字或刻度标记（可选）',
-      '安装壁挂固定装置',
-    ],
-    liked: false
-  },
-])
+const caseImages = [case1, case2, case3, case4]
+const caseLiked = ref([false, true, false, false])
+
+const cases = computed(() => {
+  const t = langText.value.reconstruction
+  return t.cases.map((c, i) => ({
+    ...c,
+    image: caseImages[i],
+    liked: caseLiked.value[i],
+  }))
+})
 
 /** 触发隐藏的文件选择框 */
 const triggerFileInput = () => {
@@ -535,9 +481,12 @@ const triggerFileInput = () => {
 
 /** 切换案例收藏状态（本地 mock，未同步后端） */
 const toggleLike = (item) => {
-    item.liked = !item.liked
-    if (item.liked) {
-        ElMessage.success('已收藏该案例')
+    const idx = cases.value.findIndex(c => c.title === item.title)
+    if (idx >= 0) {
+      caseLiked.value[idx] = !caseLiked.value[idx]
+      if (caseLiked.value[idx]) {
+        ElMessage.success(langText.value.reconstruction.collected)
+      }
     }
 }
 
@@ -546,12 +495,12 @@ const handleFileSelect = (event) => {
   const file = event.target.files?.[0]
   if (file) {
     if (!file.type.startsWith('image/')) {
-        ElMessage.warning('请上传图片文件')
+        ElMessage.warning(langText.value.reconstruction.uploadImageOnly)
         event.target.value = ''
         return
     }
     if (file.size > 5 * 1024 * 1024) {
-        ElMessage.warning('图片大小不能超过 5MB')
+        ElMessage.warning(langText.value.reconstruction.imageSizeLimit)
         event.target.value = ''
         return
     }
@@ -567,12 +516,12 @@ const handleDrop = (event) => {
   if (file) {
       if (file.type.startsWith('image/')) {
         if (file.size > 5 * 1024 * 1024) {
-            ElMessage.warning('图片大小不能超过 5MB')
+            ElMessage.warning(langText.value.reconstruction.imageSizeLimit)
             return
         }
         processFile(file)
       } else {
-        ElMessage.warning('请上传图片文件')
+        ElMessage.warning(langText.value.reconstruction.uploadImageOnly)
       }
   }
 }
@@ -603,23 +552,21 @@ const startAnalysis = async () => {
   analysisRunId.value = runId
   showAnalysis.value = true
   analysisComplete.value = false
+  const t = langText.value.reconstruction
   analysisMeta.value = {
-    itemName: '分析中',
-    material: '分析中',
-    integrity: '分析中',
-    carbonReduction: '不适用',
-    confidence: '低',
+    itemName: t.analyzingStatus,
+    material: t.analyzingStatus,
+    integrity: t.analyzingStatus,
+    carbonReduction: t.notApplicable,
+    confidence: t.low,
     reconstructable: false,
-    reason: 'AI 正在识别物品并判断是否适合重构',
-    disposalAdvice: '请稍候，分析完成后显示建议',
+    reason: t.aiAnalyzing,
+    disposalAdvice: t.pleaseWait,
   }
   suggestions.value = []
 
-  // Reset steps
-  analysisSteps.value.forEach((step) => {
-    step.completed = false
-    step.active = false
-  })
+  // Reset steps with localized text
+  resetAnalysisSteps()
 
   const file = uploadedFile.value
   const apiPromise = file
@@ -650,26 +597,27 @@ const startAnalysis = async () => {
       suggestions.value = mapped.suggestions
       ElMessage.success(
         mapped.summary.isReconstructable
-          ? '识别完成，已生成重构建议'
-          : '识别完成，该物品更适合分类处理',
+          ? langText.value.reconstruction.analysisSuccess
+          : langText.value.reconstruction.analysisSuccessNoRebuild,
       )
     } else {
+      const rt = langText.value.reconstruction
       const failureMessage =
         result.status === 404
-          ? '分析接口未找到。请先强制刷新页面（Ctrl+F5）或清除旧缓存，再确认 Node 后端已重启。'
-          : result.message || '后端分析失败'
+          ? rt.apiNotFound
+          : result.message || rt.backendFail
 
       const disposalAdvice =
         result.status === 401 || result.status === 403
-          ? '系统已切换为游客可分析模式，请刷新页面或重启后端后重试'
-          : '请确认后端与 FastAPI 服务已启动，再重新上传图片'
+          ? rt.authFailHint
+          : rt.backendHint
 
       analysisMeta.value = {
-        itemName: '识别失败',
-        material: '未识别',
-        integrity: '不适用',
-        carbonReduction: '不适用',
-        confidence: '低',
+        itemName: rt.recognizeFail,
+        material: rt.notRecognized,
+        integrity: rt.notApplicable,
+        carbonReduction: rt.notApplicable,
+        confidence: rt.low,
         reconstructable: false,
         reason: failureMessage,
         disposalAdvice,

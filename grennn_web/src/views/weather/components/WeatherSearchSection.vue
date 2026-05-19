@@ -2,14 +2,14 @@
   <div class="search-shell">
     <div class="search-card glass-card">
       <div class="search-copy">
-        <div class="search-eyebrow">天气查询</div>
-        <div class="search-hint">输入城市或城区；留空时将自动展示默认地区天气状态。</div>
+        <div class="search-eyebrow">{{ langText.weather.weatherQuery }}</div>
+        <div class="search-hint">{{ langText.weather.searchHint }}</div>
       </div>
 
       <div class="search-controls">
         <el-input
           :model-value="searchCity"
-          placeholder="搜索城市或城区，例如：北京、朝阳区、广州..."
+          :placeholder="langText.weather.searchPlaceholder"
           clearable
           class="search-input-el"
           size="large"
@@ -26,17 +26,17 @@
             <span v-if="loading" class="loading-cluster" aria-hidden="true">
               <i></i><i></i><i></i>
             </span>
-            <span class="search-btn-label">{{ loading ? '查询中' : '查询天气' }}</span>
+            <span class="search-btn-label">{{ loading ? langText.weather.querying : langText.weather.queryWeather }}</span>
           </span>
         </el-button>
       </div>
 
       <div class="search-meta">
-        <span class="meta-badge">默认城市：{{ defaultCity }}</span>
-        <span v-if="isMockData" class="meta-mock">演示模式：当前展示本地模拟天气数据</span>
+        <span class="meta-badge">{{ langText.weather.defaultCityLabel }}{{ defaultCity }}</span>
+        <span v-if="isMockData" class="meta-mock">{{ langText.weather.mockMode }}</span>
         <span v-if="errorMessage" class="meta-error">{{ errorMessage }}</span>
         <span v-else-if="infoMessage" class="meta-info">{{ infoMessage }}</span>
-        <span v-else class="meta-tip">支持直接输入地区名，页面会始终保留天气状态展示。</span>
+        <span v-else class="meta-tip">{{ langText.weather.searchTip }}</span>
       </div>
     </div>
   </div>
@@ -44,6 +44,7 @@
 
 <script setup>
 import { Location } from '@element-plus/icons-vue'
+import { langText } from '@/language'
 
 defineProps({
   searchCity: {

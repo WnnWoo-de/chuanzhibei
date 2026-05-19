@@ -16,8 +16,8 @@
           <div class="mb-6 flex justify-center">
             <img src="@/assets/logo.png" alt="GreenSight Logo" class="w-20 h-20 object-contain rounded-3xl shadow-lg border border-black/10" />
           </div>
-          <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">身份验证</p>
-          <h2 class="text-3xl font-bold">系统登录</h2>
+          <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">{{ langText.auth.verification }}</p>
+          <h2 class="text-3xl font-bold">{{ langText.auth.login }}</h2>
         </div>
 
         <!-- 登录表单 -->
@@ -27,8 +27,8 @@
             id="email"
             v-model="email"
             type="text"
-            label="邮箱或用户名"
-            placeholder="请输入邮箱或用户名"
+            :label="langText.auth.emailOrUsername"
+            :placeholder="langText.auth.enterEmailOrUsername"
             autocomplete="username"
             inputmode="text"
             :error="errors.email"
@@ -43,7 +43,7 @@
               id="password"
               v-model="password"
               type="password"
-              label="密码"
+              :label="langText.auth.password"
               placeholder="••••••••"
               autocomplete="current-password"
               :error="errors.password"
@@ -56,7 +56,7 @@
                 :to="{ name: 'forgot-password' }"
                 class="text-xs text-green-600 hover:text-green-700 hover:underline transition-colors"
               >
-                忘记密码？
+                {{ langText.auth.forgotPassword }}
               </router-link>
             </div>
           </div>
@@ -64,7 +64,7 @@
           <!-- 提交按钮：加载中显示 spinner -->
           <div>
             <BaseButton type="submit" class="w-full" :is-loading="isLoading">
-              登录
+              {{ langText.auth.login }}
             </BaseButton>
           </div>
         </form>
@@ -73,23 +73,23 @@
         <div class="mt-6 space-y-4 border-t border-black/10 pt-6">
           <!-- 注册入口 -->
           <div class="text-center pt-2">
-            <p class="text-xs opacity-60 mb-2">还没有账号？</p>
+            <p class="text-xs opacity-60 mb-2">{{ langText.auth.noAccount }}</p>
             <router-link
               :to="{ name: 'register', query: { redirect: route.query?.redirect } }"
               class="inline-flex items-center justify-center gap-1 px-4 py-2 bg-black text-white text-xs font-mono uppercase tracking-wider rounded hover:bg-green-600 transition-colors"
             >
-              <span>立即注册</span><span>→</span>
+              <span>{{ langText.auth.registerNow }}</span><span>→</span>
             </router-link>
           </div>
 
           <!-- 游客模式入口（无需登录体验部分功能） -->
           <div class="text-center pt-2 border-t border-black/10">
-            <p class="text-xs opacity-60 mb-2">想先体验一下？</p>
+            <p class="text-xs opacity-60 mb-2">{{ langText.auth.tryFirst }}</p>
             <router-link
               to="/chat"
               class="inline-flex items-center justify-center gap-1 px-4 py-2 bg-green-50 text-green-700 text-xs font-mono uppercase tracking-wider rounded border border-green-200 hover:bg-green-100 transition-colors"
             >
-              <span>游客模式</span><span>→</span>
+              <span>{{ langText.auth.guestMode }}</span><span>→</span>
             </router-link>
           </div>
         </div>
@@ -109,6 +109,7 @@ import { useRoute, useRouter } from 'vue-router'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useUserStore } from '@/stores/user'
+import { langText } from '@/language'
 
 // 表单字段响应式变量
 const email = ref('')
@@ -149,14 +150,14 @@ const validateEmail = (options) => {
   touched.email = true
   if (shouldTrim) email.value = email.value.trim()
   if (!email.value) {
-    errors.email = '请输入邮箱或用户名'
+    errors.email = langText.value.auth.enterEmailOrUsernameErr
     return false
   }
   const value = email.value.trim()
   if (value.includes('@')) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(value)) {
-      errors.email = '请输入有效的邮箱格式'
+      errors.email = langText.value.auth.invalidEmailFormat
       return false
     }
   }
@@ -172,11 +173,11 @@ const validateEmail = (options) => {
 const validatePassword = () => {
   touched.password = true
   if (!password.value) {
-    errors.password = '请输入密码'
+    errors.password = langText.value.auth.enterPassword
     return false
   }
   if (password.value.length < 6) {
-    errors.password = '密码长度至少为6位'
+    errors.password = langText.value.auth.passwordMinLength
     return false
   }
   errors.password = ''

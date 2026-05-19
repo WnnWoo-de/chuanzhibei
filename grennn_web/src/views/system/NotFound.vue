@@ -51,10 +51,10 @@
       <div class="mb-3">
         <span class="font-mono text-xs uppercase tracking-[0.3em] opacity-40">Error 404</span>
       </div>
-      <h2 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">页面已回收</h2>
+      <h2 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">{{ langText.notFound.title }}</h2>
       <p class="text-gray-500 mb-10 leading-relaxed text-base md:text-lg max-w-sm mx-auto">
-        您寻找的页面似乎已经被我们回收处理了，<br class="hidden md:block" />
-        或者它根本从未存在过。
+        {{ langText.notFound.description }}<br class="hidden md:block" />
+        {{ langText.notFound.descriptionLine2 }}
       </p>
 
       <!-- 操作按钮 -->
@@ -76,7 +76,7 @@
               d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
             />
           </svg>
-          返回首页
+          {{ langText.notFound.backHome }}
         </router-link>
 
         <button
@@ -92,13 +92,13 @@
           >
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
-          返回上一页
+          {{ langText.notFound.backPrev }}
         </button>
       </div>
 
       <!-- 快速导航 -->
       <div class="border-t border-black/10 pt-8">
-        <p class="font-mono text-[10px] uppercase tracking-widest opacity-40 mb-4">快速导航</p>
+        <p class="font-mono text-[10px] uppercase tracking-widest opacity-40 mb-4">{{ langText.notFound.quickNav }}</p>
         <div class="flex flex-wrap gap-2 justify-center">
           <router-link
             v-for="link in quickLinks"
@@ -117,7 +117,7 @@
       <span>GREEN AI WEB</span>
     </div>
     <div class="fixed bottom-8 right-8 font-mono text-[10px] opacity-20 hidden md:block">
-      <span>可持续未来倡议</span>
+      <span>{{ langText.notFound.slogan }}</span>
     </div>
   </div>
 </template>
@@ -127,16 +127,18 @@
 // views/NotFound.vue - 404 页面
 // 匹配所有未定义路由时展示，提供快速导航链接辅助用户回到正常流程
 // ============================================================
+import { computed } from 'vue'
+import { langText } from '@/language'
 
 // 快速导航链接列表，帮助迷失用户快速找到常用页面
-const quickLinks = [
-  { path: '/', label: '首页' },
-  { path: '/reconstruction', label: '旧物重构' },
-  { path: '/chat', label: 'AI 助手' },
-  { path: '/community', label: '社区活动' },
-  { path: '/weather', label: '天气查询' },
-  { path: '/achievements', label: '成就系统' },
-]
+const quickLinks = computed(() => [
+  { path: '/', label: langText.value.notFound.home },
+  { path: '/reconstruction', label: langText.value.notFound.reconstruction },
+  { path: '/chat', label: langText.value.notFound.aiAssistant },
+  { path: '/community', label: langText.value.notFound.community },
+  { path: '/weather', label: langText.value.notFound.weather },
+  { path: '/achievements', label: langText.value.notFound.achievements },
+])
 </script>
 
 <style scoped>

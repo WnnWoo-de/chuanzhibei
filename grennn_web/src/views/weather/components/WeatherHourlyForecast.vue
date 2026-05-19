@@ -3,9 +3,9 @@
     <div class="section-header">
       <div class="section-title">
         <WeatherUiIcon name="hourly" class="widget-icon" />
-        每小时天气预报
+        {{ langText.weather.hourlyTitle }}
       </div>
-      <div class="section-subtitle">未来 24 小时趋势</div>
+      <div class="section-subtitle">{{ langText.weather.hourlySubtitle }}</div>
     </div>
 
     <div class="hourly-list">
@@ -21,6 +21,7 @@
 </template>
 
 <script setup>
+import { langText } from '@/language'
 import WeatherIcon from '@/components/weather/WeatherIcon.vue'
 import WeatherUiIcon from './WeatherUiIcon.vue'
 

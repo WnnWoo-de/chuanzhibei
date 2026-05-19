@@ -17,10 +17,10 @@
               <div class="mb-6 flex justify-center">
                 <img src="@/assets/logo.png" alt="Logo" class="w-16 h-16 object-contain rounded-2xl shadow-lg border border-black/10" />
               </div>
-              <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">设置新密码</p>
-              <h2 class="text-2xl md:text-3xl font-bold">重置密码</h2>
+              <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">{{ langText.auth.setNewPassword }}</p>
+              <h2 class="text-2xl md:text-3xl font-bold">{{ langText.auth.resetPassword }}</h2>
               <p class="text-sm text-gray-500 mt-2">
-                请为 <span class="font-medium text-green-600">{{ userEmail }}</span> 设置新密码
+                {{ langText.auth.setPasswordFor }} <span class="font-medium text-green-600">{{ userEmail }}</span> {{ langText.auth.setNewPasswordSuffix }}
               </p>
             </div>
 
@@ -30,7 +30,7 @@
                 id="password"
                 v-model="password"
                 type="password"
-                label="新密码"
+                :label="langText.auth.newPassword"
                 placeholder="••••••••"
                 autocomplete="new-password"
                 :error="errors.password"
@@ -41,7 +41,7 @@
                 id="confirmPassword"
                 v-model="confirmPassword"
                 type="password"
-                label="确认新密码"
+                :label="langText.auth.confirmNewPassword"
                 placeholder="••••••••"
                 autocomplete="new-password"
                 :error="errors.confirmPassword"
@@ -49,14 +49,14 @@
                 @blur="validateConfirmPassword"
               />
               <BaseButton type="submit" class="w-full" :is-loading="isLoading">
-                重置密码
+                {{ langText.auth.resetPassword }}
               </BaseButton>
               <div class="text-center">
                 <router-link
                   :to="{ name: 'login' }"
                   class="text-xs text-gray-500 hover:text-gray-700 hover:underline transition-colors"
                 >
-                  返回登录
+                  {{ langText.auth.backToLogin }}
                 </router-link>
               </div>
             </form>
@@ -69,14 +69,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                 </div>
-                <h3 class="text-lg font-semibold text-green-900">密码已重置</h3>
+                <h3 class="text-lg font-semibold text-green-900">{{ langText.auth.passwordResetSuccess }}</h3>
                 <p class="text-green-700 text-sm mt-2">
-                  您的密码已成功重置，请使用新密码登录。
+                  {{ langText.auth.passwordResetSuccessMsg }}
                 </p>
               </div>
               <router-link :to="{ name: 'login' }">
                 <BaseButton type="button" class="w-full" variant="secondary">
-                  立即登录
+                  {{ langText.auth.loginNow }}
                 </BaseButton>
               </router-link>
             </div>
@@ -92,9 +92,9 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
                     </svg>
                   </div>
-                  <h3 class="text-xl font-semibold text-gray-900 mb-3">安全密码建议</h3>
+                  <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ langText.auth.securityAdvice }}</h3>
                   <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                    为了保护您的账户安全，请设置一个强密码。
+                    {{ langText.auth.securityAdviceDesc }}
                   </p>
                   <div class="space-y-3 text-left">
                     <div class="flex items-start gap-3">
@@ -103,7 +103,7 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
                       </div>
-                      <p class="text-gray-600 text-sm">至少 8 个字符</p>
+                      <p class="text-gray-600 text-sm">{{ langText.auth.minChars }}</p>
                     </div>
                     <div class="flex items-start gap-3">
                       <div class="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
@@ -111,7 +111,7 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
                       </div>
-                      <p class="text-gray-600 text-sm">包含大小写字母</p>
+                      <p class="text-gray-600 text-sm">{{ langText.auth.upperLowerCase }}</p>
                     </div>
                     <div class="flex items-start gap-3">
                       <div class="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
@@ -119,7 +119,7 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
                       </div>
-                      <p class="text-gray-600 text-sm">包含数字和特殊字符</p>
+                      <p class="text-gray-600 text-sm">{{ langText.auth.numbersAndSpecial }}</p>
                     </div>
                   </div>
                 </div>
@@ -138,6 +138,7 @@ import { useRoute, useRouter } from 'vue-router'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useUserStore } from '@/stores/user'
+import { langText } from '@/language'
 
 const password = ref('')
 const confirmPassword = ref('')
@@ -166,11 +167,11 @@ onMounted(() => {
 const validatePassword = () => {
   touched.password = true
   if (!password.value) {
-    errors.password = '请输入新密码'
+    errors.password = langText.value.auth.enterNewPassword
     return false
   }
   if (password.value.length < 8) {
-    errors.password = '密码长度至少为8位'
+    errors.password = langText.value.auth.passwordMinLength8
     return false
   }
   // 可选：添加更复杂的密码强度校验
@@ -181,11 +182,11 @@ const validatePassword = () => {
 const validateConfirmPassword = () => {
   touched.confirmPassword = true
   if (!confirmPassword.value) {
-    errors.confirmPassword = '请再次输入新密码'
+    errors.confirmPassword = langText.value.auth.enterNewPasswordAgain
     return false
   }
   if (confirmPassword.value !== password.value) {
-    errors.confirmPassword = '两次输入的密码不一致'
+    errors.confirmPassword = langText.value.auth.passwordMismatch
     return false
   }
   errors.confirmPassword = ''

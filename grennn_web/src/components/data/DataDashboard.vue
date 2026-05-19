@@ -63,41 +63,42 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { langText } from '@/language'
 
 const isVisible = ref(false)
 const displayedValues = ref({})
 
-const stats = [
+const stats = computed(() => [
   {
-    label: '用户总数',
+    label: langText.value.dataDashboard.totalUsers,
     value: 125000,
-    unit: '人',
+    unit: langText.value.dataDashboard.unitPeople,
     trend: 12.5,
     icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75',
   },
   {
-    label: '碳减排量',
+    label: langText.value.dataDashboard.carbonReduction,
     value: 5280,
-    unit: '吨',
+    unit: langText.value.dataDashboard.unitTons,
     trend: 28.3,
     icon: 'M12 2v20 M2 12h20 M4.22 4.22l14.14 14.14 M19.78 4.22L5.64 18.36',
   },
   {
-    label: '旧物重构',
+    label: langText.value.dataDashboard.upcycling,
     value: 8450,
-    unit: '件',
+    unit: langText.value.dataDashboard.unitItems,
     trend: 15.7,
     icon: 'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z',
   },
   {
-    label: '社区活动',
+    label: langText.value.dataDashboard.communityEvents,
     value: 342,
-    unit: '场',
+    unit: langText.value.dataDashboard.unitEvents,
     trend: 8.2,
     icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z M12 20c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z',
   },
-]
+])
 
 const displayValue = (value) => {
   if (value >= 1000000) {
@@ -113,7 +114,7 @@ let observer = null
 let animationFrameId = null
 
 const animateNumbers = () => {
-  stats.forEach((stat, index) => {
+  stats.value.forEach((stat, index) => {
     const startValue = 0
     const endValue = stat.value
     const duration = 600 // ms

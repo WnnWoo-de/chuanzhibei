@@ -1,36 +1,45 @@
+import { computed } from 'vue'
+import { langText } from '@/language'
+
 export const weatherFmt = {
   temp: (value) => (value !== null && value !== undefined ? Math.round(value) : '--'),
 }
 
-export const formatHour = (iso) => {
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return iso
-  const now = new Date()
-  if (d.getHours() === now.getHours() && d.getDate() === now.getDate()) return '现在'
-  return `${d.getHours()}时`
-}
+export const useWeatherFormatters = () => {
+  const formatHour = (iso) => {
+    const d = new Date(iso)
+    if (Number.isNaN(d.getTime())) return iso
+    const now = new Date()
+    if (d.getHours() === now.getHours() && d.getDate() === now.getDate()) {
+      return langText.value.weather.nowLabel
+    }
+    return `${d.getHours()}${langText.value.weather.hourSuffix}`
+  }
 
-export const formatDay = (dateStr) => {
-  const d = new Date(dateStr)
-  if (Number.isNaN(d.getTime())) return dateStr
-  const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
-  return days[d.getDay()]
-}
+  const formatDay = (dateStr) => {
+    const d = new Date(dateStr)
+    if (Number.isNaN(d.getTime())) return dateStr
+    return langText.value.weather.days[d.getDay()]
+  }
 
-export const formatTime = (iso) => {
-  if (!iso) return '--'
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return iso
-  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
-}
+  const formatTime = (iso) => {
+    if (!iso) return '--'
+    const d = new Date(iso)
+    if (Number.isNaN(d.getTime())) return iso
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+  }
 
-export const getUvLevel = (uv) => {
-  if (!uv) return '低'
-  if (uv < 3) return '低'
-  if (uv < 6) return '中等'
-  if (uv < 8) return '高'
-  if (uv < 11) return '极高'
-  return '危险'
+  const getUvLevel = (uv) => {
+    const w = langText.value.weather
+    if (!uv) return w.uvLow
+    if (uv < 3) return w.uvLow
+    if (uv < 6) return w.uvMedium
+    if (uv < 8) return w.uvHigh
+    if (uv < 11) return w.uvVeryHigh
+    return w.uvDanger
+  }
+
+  return { formatHour, formatDay, formatTime, getUvLevel }
 }
 
 export const getAqiColor = (aqi) => {

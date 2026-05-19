@@ -11,7 +11,7 @@
           <el-icon v-if="msg.role === 'assistant'" :size="12"><Cpu /></el-icon>
           <el-icon v-else :size="12"><User /></el-icon>
           <span class="font-mono text-[10px] uppercase tracking-wider">
-            {{ msg.role === 'user' ? 'You' : 'GS AI 对话助手' }} // {{ msg.time }}
+            {{ msg.role === 'user' ? langText.chat.you : langText.chat.assistant }} // {{ msg.time }}
           </span>
         </div>
 
@@ -39,14 +39,14 @@
                 ? 'bg-white/12 text-white hover:bg-white/20'
                 : 'bg-white/80 text-gray-500 hover:bg-white hover:text-gray-700 border border-black/5 shadow-sm'
             "
-            :title="copiedIndex === index ? '已复制' : '复制内容'"
+            :title="copiedIndex === index ? langText.chat.copied : langText.chat.copyContent"
             @click="$emit('copy-message', { content: msg.content, index })"
           >
             <el-icon>
               <Select v-if="copiedIndex === index" />
               <CopyDocument v-else />
             </el-icon>
-            <span>{{ copiedIndex === index ? '已复制' : '复制' }}</span>
+            <span>{{ copiedIndex === index ? langText.chat.copied : langText.chat.copy }}</span>
           </button>
 
           <div
@@ -71,7 +71,7 @@
                 <el-icon><ChatDotRound /></el-icon>
               </div>
               <div>
-                <h4 class="font-medium text-sm text-gray-800 mb-1">示例提问 {{ idx + 1 }}</h4>
+                <h4 class="font-medium text-sm text-gray-800 mb-1">{{ langText.chat.example }} {{ idx + 1 }}</h4>
                 <p class="text-xs text-gray-500 line-clamp-2">{{ prompt }}</p>
               </div>
             </div>
@@ -84,7 +84,7 @@
       <div v-if="isTyping" class="flex flex-col items-start max-w-[75%]">
         <div class="flex items-center gap-2 mb-2 opacity-50">
           <el-icon :size="12"><Cpu /></el-icon>
-          <span class="font-mono text-[10px] uppercase tracking-wider">GS AI 对话助手 正在思考...</span>
+          <span class="font-mono text-[10px] uppercase tracking-wider">{{ langText.chat.thinking }}</span>
         </div>
         <div class="p-4 bg-gray-50 border border-gray-100 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-1 h-[54px]">
           <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
@@ -99,6 +99,7 @@
 <script setup>
 import { nextTick, ref, watch } from 'vue'
 import { ChatDotRound, CopyDocument, Cpu, Select, User } from '@element-plus/icons-vue'
+import { langText } from '@/language'
 
 const containerRef = ref(null)
 

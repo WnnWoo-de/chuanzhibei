@@ -16,8 +16,8 @@
           <!-- Page header -->
           <div class="animate-fade-in-up">
             <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/60 mb-2">04. VOLUNTEER</p>
-            <h1 class="text-5xl font-bold leading-none tracking-tighter mb-3">志愿<br>活动</h1>
-            <p class="text-sm text-gray-500 leading-relaxed max-w-[200px]">参与志愿活动，记录志愿时长，<br>兑换环保积分。</p>
+            <h1 class="text-5xl font-bold leading-none tracking-tighter mb-3">{{ langText.volunteer.titleLine1 }}<br>{{ langText.volunteer.titleLine2 }}</h1>
+            <p class="text-sm text-gray-500 leading-relaxed max-w-[200px]">{{ langText.volunteer.subtitle }}</p>
           </div>
 
           <!-- Points card -->
@@ -28,7 +28,7 @@
               <div>
                 <p class="font-mono text-[9px] uppercase tracking-[0.22em] text-blue-500/60 mb-1">MY POINTS</p>
                 <p class="text-5xl font-bold tabular-nums tracking-tighter text-blue-900">{{ totalPoints }}</p>
-                <p class="font-mono text-[9px] text-blue-500/50 mt-0.5">环保积分</p>
+                <p class="font-mono text-[9px] text-blue-500/50 mt-0.5">{{ langText.volunteer.myPoints }}</p>
               </div>
               <div class="relative w-14 h-14 shrink-0">
                 <svg viewBox="0 0 40 40" class="w-14 h-14 -rotate-90">
@@ -44,12 +44,12 @@
             </div>
             <div class="relative z-10 border-t border-blue-300/40 pt-4 grid grid-cols-2 gap-3">
               <div class="bg-white/50 rounded-xl p-3 backdrop-blur-sm">
-                <p class="font-mono text-[8px] uppercase tracking-[0.18em] text-blue-500/60 mb-1">志愿时长</p>
+                <p class="font-mono text-[8px] uppercase tracking-[0.18em] text-blue-500/60 mb-1">{{ langText.volunteer.volunteerHours }}</p>
                 <p class="text-2xl font-bold text-blue-900">{{ myVolunteerHours }}<span class="text-xs text-blue-500/50 ml-1">h</span></p>
               </div>
               <div class="bg-white/50 rounded-xl p-3 backdrop-blur-sm">
-                <p class="font-mono text-[8px] uppercase tracking-[0.18em] text-blue-500/60 mb-1">已参与</p>
-                <p class="text-2xl font-bold text-blue-900">{{ myJoinedCount }}<span class="text-xs text-blue-500/50 ml-1">次</span></p>
+                <p class="font-mono text-[8px] uppercase tracking-[0.18em] text-blue-500/60 mb-1">{{ langText.volunteer.joined }}</p>
+                <p class="text-2xl font-bold text-blue-900">{{ myJoinedCount }}<span class="text-xs text-blue-500/50 ml-1">{{ langText.volunteer.times }}</span></p>
               </div>
             </div>
           </div>
@@ -57,12 +57,12 @@
           <!-- My Activities -->
           <div class="vol-sidebar-card animate-fade-in-up delay-200">
             <div class="vol-sidebar-card__header">
-              <span>我的活动</span>
+              <span>{{ langText.volunteer.myActivities }}</span>
               <div class="vol-sidebar-card__icon"><el-icon><Calendar /></el-icon></div>
             </div>
             <div v-if="myActivities.length === 0" class="text-center py-5">
               <div class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-2"><span class="text-base">📋</span></div>
-              <p class="text-xs text-gray-400 font-mono">暂未报名任何活动</p>
+              <p class="text-xs text-gray-400 font-mono">{{ langText.volunteer.noActivities }}</p>
             </div>
             <ul v-else class="space-y-2">
               <li v-for="act in myActivities" :key="act.id"
@@ -79,7 +79,7 @@
           <!-- Volunteer Leaderboard -->
           <div class="vol-sidebar-card animate-fade-in-up delay-300">
             <div class="vol-sidebar-card__header">
-              <span>志愿榜</span>
+              <span>{{ langText.volunteer.leaderboard }}</span>
               <div class="vol-sidebar-card__icon vol-sidebar-card__icon--gold"><el-icon><TrophyBase /></el-icon></div>
             </div>
             <ul class="space-y-1">
@@ -100,12 +100,12 @@
           <div class="vol-rules-card animate-fade-in-up delay-400">
             <div class="flex items-center gap-2 mb-3">
               <div class="w-1.5 h-1.5 rounded-full bg-primary animate-ping-slow"></div>
-              <p class="font-mono text-[9px] uppercase tracking-[0.2em] text-primary font-bold">积分规则</p>
+              <p class="font-mono text-[9px] uppercase tracking-[0.2em] text-primary font-bold">{{ langText.volunteer.rules }}</p>
             </div>
             <ul class="space-y-2">
-              <li class="flex items-start gap-2 text-xs text-gray-500"><span class="mt-1.5 w-1 h-1 rounded-full bg-primary/60 shrink-0"></span>每参与 1 小时约获得 25–40 积分</li>
-              <li class="flex items-start gap-2 text-xs text-gray-500"><span class="mt-1.5 w-1 h-1 rounded-full bg-primary/60 shrink-0"></span>积分可在成就页兑换专属徽章</li>
-              <li class="flex items-start gap-2 text-xs text-gray-500"><span class="mt-1.5 w-1 h-1 rounded-full bg-primary/60 shrink-0"></span>志愿榜每日 0 点实时更新</li>
+              <li class="flex items-start gap-2 text-xs text-gray-500"><span class="mt-1.5 w-1 h-1 rounded-full bg-primary/60 shrink-0"></span>{{ langText.volunteer.rule1 }}</li>
+              <li class="flex items-start gap-2 text-xs text-gray-500"><span class="mt-1.5 w-1 h-1 rounded-full bg-primary/60 shrink-0"></span>{{ langText.volunteer.rule2 }}</li>
+              <li class="flex items-start gap-2 text-xs text-gray-500"><span class="mt-1.5 w-1 h-1 rounded-full bg-primary/60 shrink-0"></span>{{ langText.volunteer.rule3 }}</li>
             </ul>
           </div>
 
@@ -117,7 +117,7 @@
         <!-- Search + Filter bar -->
         <div class="flex flex-col sm:flex-row gap-3 mb-8 animate-fade-in-up">
           <div class="flex-1">
-            <el-input v-model="searchQuery" placeholder="搜索活动名称或地点..." clearable :prefix-icon="Search" />
+            <el-input v-model="searchQuery" :placeholder="langText.volunteer.searchPlaceholder" clearable :prefix-icon="Search" />
           </div>
           <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
             <button v-for="cat in categories" :key="cat.value" @click="activeCategory = cat.value"
@@ -132,11 +132,11 @@
           <div class="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-[0.12]" style="background:radial-gradient(circle,#4ADE80,transparent)"></div>
           <div class="absolute right-28 bottom-0 w-28 h-28 rounded-full opacity-[0.06]" style="background:radial-gradient(circle,#4ADE80,transparent)"></div>
           <div class="relative z-10">
-            <p class="font-mono text-[9px] uppercase tracking-[0.2em] text-blue-500/60 mb-1">积分兑换</p>
-            <h3 class="text-lg font-bold text-blue-900 mb-1">用积分兑换成就徽章</h3>
-            <p class="text-xs text-blue-700/60 max-w-xs leading-relaxed">累计志愿时长，获取积分后可前往成就页面兑换专属徽章与荣誉称号。</p>
+            <p class="font-mono text-[9px] uppercase tracking-[0.2em] text-blue-500/60 mb-1">{{ langText.volunteer.redeemTitle }}</p>
+            <h3 class="text-lg font-bold text-blue-900 mb-1">{{ langText.volunteer.redeemHeading }}</h3>
+            <p class="text-xs text-blue-700/60 max-w-xs leading-relaxed">{{ langText.volunteer.redeemDesc }}</p>
           </div>
-          <router-link to="/achievements" class="vol-redeem-btn shrink-0 relative z-10">前往兑换 →</router-link>
+          <router-link to="/achievements" class="vol-redeem-btn shrink-0 relative z-10">{{ langText.volunteer.redeemBtn }}</router-link>
         </div>
 
         <!-- Activity cards -->
@@ -147,7 +147,7 @@
               <div class="absolute top-5 right-5 font-mono text-[9px] text-primary/20 select-none">ACT #{{ String(activity.id).padStart(3,'0') }}</div>
               <div class="flex items-center gap-2 mb-4">
                 <span class="vol-category-badge" :class="categoryBadgeClass(activity.category)">{{ activity.category }}</span>
-                <span v-if="activity.urgent" class="vol-urgent-badge">⚡ 急需</span>
+                <span v-if="activity.urgent" class="vol-urgent-badge">⚡ {{ langText.volunteer.urgent }}</span>
               </div>
               <h3 class="text-base font-bold mb-2 group-hover:text-primary transition-colors duration-300 leading-snug pr-4">{{ activity.title }}</h3>
               <p class="text-sm text-gray-500 leading-relaxed mb-5 flex-1 line-clamp-2">{{ activity.description }}</p>
@@ -166,12 +166,12 @@
                 </div>
                 <div class="vol-meta-cell vol-meta-cell--points">
                   <span class="text-primary font-bold text-sm tabular-nums">+{{ activity.points }}</span>
-                  <span class="font-mono text-[9px] text-primary/60">积分</span>
+                  <span class="font-mono text-[9px] text-primary/60">{{ langText.volunteer.pointsLabel }}</span>
                 </div>
               </div>
               <div class="mb-5">
                 <div class="flex justify-between font-mono text-[10px] mb-1.5">
-                  <span class="text-gray-400">报名进度</span>
+                  <span class="text-gray-400">{{ langText.volunteer.enrollProgress }}</span>
                   <span :class="activity.enrolled >= activity.capacity ? 'text-red-400 font-bold' : 'text-gray-400'">{{ activity.enrolled }} / {{ activity.capacity }}</span>
                 </div>
                 <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -186,13 +186,13 @@
                   :class="activity.enrolled >= activity.capacity
                     ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50'
                     : 'border-blue-400 text-blue-700 bg-blue-50/60 hover:bg-blue-400 hover:text-white hover:border-blue-400 shadow-sm hover:shadow-[0_4px_14px_rgba(96,165,250,0.4)]'"
-                >{{ activity.enrolled >= activity.capacity ? '名额已满' : '立即报名' }}</button>
+                >{{ activity.enrolled >= activity.capacity ? langText.volunteer.full : langText.volunteer.registerNow }}</button>
                 <button v-else @click="openLogHoursDialog(activity)"
                   class="flex-1 py-2.5 text-xs font-mono uppercase tracking-widest border border-primary text-primary hover:bg-primary hover:text-white transition-all duration-200 rounded-xl"
-                >✓ 已报名 · 记录时长</button>
+                >{{ langText.volunteer.registered }}</button>
                 <button @click="openDetailDialog(activity)"
                   class="px-4 py-2.5 text-xs font-mono uppercase tracking-widest border border-gray-200 text-gray-500 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all duration-200 rounded-xl"
-                >详情</button>
+                >{{ langText.volunteer.detail }}</button>
               </div>
             </div>
           </div>
@@ -202,14 +202,14 @@
           <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
             <el-icon :size="28" class="text-gray-300"><Sunrise /></el-icon>
           </div>
-          <p class="text-gray-400 font-mono text-sm">暂无匹配活动</p>
+          <p class="text-gray-400 font-mono text-sm">{{ langText.volunteer.noMatch }}</p>
         </div>
 
       </main>
     </div>
 
     <!-- ══════ REGISTER DIALOG ══════ -->
-    <el-dialog v-model="showRegisterDialog" title="活动报名" :width="520" align-center>
+    <el-dialog v-model="showRegisterDialog" :title="langText.volunteer.registerDialog.title" :width="520" align-center>
       <div v-if="selectedActivity" class="space-y-5">
         <div class="bg-gray-50 border border-black/5 p-4 rounded-xl">
           <h4 class="font-bold mb-2 text-sm">{{ selectedActivity.title }}</h4>
@@ -217,108 +217,108 @@
             <span>📅 {{ selectedActivity.date }}</span>
             <span>📍 {{ selectedActivity.location }}</span>
             <span>⏱ {{ selectedActivity.hours }}h</span>
-            <span class="text-primary font-bold">+{{ selectedActivity.points }} 积分</span>
+            <span class="text-primary font-bold">+{{ selectedActivity.points }} {{ langText.volunteer.pointsLabel }}</span>
           </div>
         </div>
         <div class="space-y-3">
           <div>
-            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-1">联系电话</label>
-            <el-input v-model="registerForm.phone" placeholder="请输入您的联系电话" />
+            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-1">{{ langText.volunteer.registerDialog.phoneLabel }}</label>
+            <el-input v-model="registerForm.phone" :placeholder="langText.volunteer.registerDialog.phonePlaceholder" />
           </div>
           <div>
-            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-1">备注信息（选填）</label>
-            <el-input v-model="registerForm.note" type="textarea" :rows="2" placeholder="有什么想对组织方说的？" />
+            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-1">{{ langText.volunteer.registerDialog.noteLabel }}</label>
+            <el-input v-model="registerForm.note" type="textarea" :rows="2" :placeholder="langText.volunteer.registerDialog.notePlaceholder" />
           </div>
           <div class="flex items-center gap-2 text-xs text-gray-500">
             <el-checkbox v-model="registerForm.agreed" />
-            <span>我已阅读并同意遵守活动规则，按时参加活动</span>
+            <span>{{ langText.volunteer.registerDialog.agreement }}</span>
           </div>
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button @click="showRegisterDialog = false" class="border border-gray-200 px-6 py-2 text-sm hover:bg-gray-50 transition-colors rounded-lg">取消</button>
-          <button @click="submitRegister" class="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-6 py-2 text-sm font-medium hover:from-blue-300 hover:to-blue-400 hover:shadow-[0_4px_14px_rgba(96,165,250,0.45)] hover:-translate-y-0.5 transition-all duration-200 rounded-lg">确认报名</button>
+          <button @click="showRegisterDialog = false" class="border border-gray-200 px-6 py-2 text-sm hover:bg-gray-50 transition-colors rounded-lg">{{ langText.volunteer.registerDialog.cancel }}</button>
+          <button @click="submitRegister" class="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-6 py-2 text-sm font-medium hover:from-blue-300 hover:to-blue-400 hover:shadow-[0_4px_14px_rgba(96,165,250,0.45)] hover:-translate-y-0.5 transition-all duration-200 rounded-lg">{{ langText.volunteer.registerDialog.confirm }}</button>
         </div>
       </div>
     </el-dialog>
 
     <!-- ══════ LOG HOURS DIALOG ══════ -->
-    <el-dialog v-model="showLogHoursDialog" title="记录志愿时长" :width="480" align-center>
+    <el-dialog v-model="showLogHoursDialog" :title="langText.volunteer.logHoursDialog.title" :width="480" align-center>
       <div v-if="selectedActivity" class="space-y-5">
         <div class="bg-gray-50 border border-black/5 p-4 rounded-xl">
           <h4 class="font-bold text-sm mb-1">{{ selectedActivity.title }}</h4>
-          <p class="text-xs text-gray-400 font-mono">计划时长：{{ selectedActivity.hours }}h</p>
+          <p class="text-xs text-gray-400 font-mono">{{ langText.volunteer.logHoursDialog.planHours }}{{ selectedActivity.hours }}h</p>
         </div>
         <div class="space-y-4">
           <div>
-            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-2">实际参与时长（小时）</label>
+            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-2">{{ langText.volunteer.logHoursDialog.actualLabel }}</label>
             <div class="flex items-center gap-4">
               <el-slider v-model="logForm.hours" :min="0.5" :max="selectedActivity.hours + 2" :step="0.5" class="flex-1" />
               <span class="font-bold text-xl w-12 text-right tabular-nums">{{ logForm.hours }}h</span>
             </div>
           </div>
           <div class="bg-primary/5 border border-primary/20 p-4 rounded-xl text-center">
-            <p class="text-xs font-mono opacity-60 mb-1">本次将获得积分</p>
+            <p class="text-xs font-mono opacity-60 mb-1">{{ langText.volunteer.logHoursDialog.earnLabel }}</p>
             <p class="text-3xl font-bold text-primary tabular-nums">+{{ earnedPoints }}</p>
-            <p class="text-xs opacity-50 mt-1 font-mono">{{ logForm.hours }}h × {{ selectedActivity.pointsPerHour }} 分/小时</p>
+            <p class="text-xs opacity-50 mt-1 font-mono">{{ logForm.hours }}h × {{ selectedActivity.pointsPerHour }} {{ langText.volunteer.logHoursDialog.perHour }}</p>
           </div>
           <div>
-            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-1">活动感想（选填）</label>
-            <el-input v-model="logForm.reflection" type="textarea" :rows="3" placeholder="记录一下这次志愿活动的感想吧..." maxlength="200" show-word-limit />
+            <label class="block text-xs font-mono uppercase tracking-widest opacity-50 mb-1">{{ langText.volunteer.logHoursDialog.reflectionLabel }}</label>
+            <el-input v-model="logForm.reflection" type="textarea" :rows="3" :placeholder="langText.volunteer.logHoursDialog.reflectionPlaceholder" maxlength="200" show-word-limit />
           </div>
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button @click="showLogHoursDialog = false" class="border border-gray-200 px-6 py-2 text-sm hover:bg-gray-50 transition-colors rounded-lg">取消</button>
-          <button @click="submitLogHours" class="bg-primary text-white px-6 py-2 text-sm hover:bg-green-700 transition-colors rounded-lg">提交并获取积分</button>
+          <button @click="showLogHoursDialog = false" class="border border-gray-200 px-6 py-2 text-sm hover:bg-gray-50 transition-colors rounded-lg">{{ langText.volunteer.logHoursDialog.cancel }}</button>
+          <button @click="submitLogHours" class="bg-primary text-white px-6 py-2 text-sm hover:bg-green-700 transition-colors rounded-lg">{{ langText.volunteer.logHoursDialog.submit }}</button>
         </div>
       </div>
     </el-dialog>
 
     <!-- ══════ DETAIL DIALOG ══════ -->
-    <el-dialog v-model="showDetailDialog" title="活动详情" :width="560" align-center>
+    <el-dialog v-model="showDetailDialog" :title="langText.volunteer.detailDialog.title" :width="560" align-center>
       <div v-if="selectedActivity" class="space-y-5">
         <div class="flex items-start justify-between gap-4">
           <div>
             <div class="flex items-center gap-2 mb-2">
               <span class="vol-category-badge" :class="categoryBadgeClass(selectedActivity.category)">{{ selectedActivity.category }}</span>
-              <span v-if="selectedActivity.urgent" class="text-[10px] font-mono uppercase px-2 py-1 rounded-full bg-red-100 text-red-600">急需</span>
+              <span v-if="selectedActivity.urgent" class="text-[10px] font-mono uppercase px-2 py-1 rounded-full bg-red-100 text-red-600">{{ langText.volunteer.urgent }}</span>
             </div>
             <h3 class="text-xl font-bold">{{ selectedActivity.title }}</h3>
           </div>
           <div class="text-right shrink-0">
             <p class="text-2xl font-bold text-primary tabular-nums">+{{ selectedActivity.points }}</p>
-            <p class="text-xs font-mono opacity-50">积分奖励</p>
+            <p class="text-xs font-mono opacity-50">{{ langText.volunteer.detailDialog.pointsReward }}</p>
           </div>
         </div>
         <p class="text-sm text-gray-600 leading-relaxed">{{ selectedActivity.description }}</p>
         <div class="grid grid-cols-2 gap-3">
           <div class="bg-gray-50 p-3 rounded-xl border border-black/5">
-            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">活动时间</p>
+            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">{{ langText.volunteer.detailDialog.activityTime }}</p>
             <p class="text-sm font-bold">{{ selectedActivity.date }}</p>
           </div>
           <div class="bg-gray-50 p-3 rounded-xl border border-black/5">
-            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">活动地点</p>
+            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">{{ langText.volunteer.detailDialog.activityLocation }}</p>
             <p class="text-sm font-bold">{{ selectedActivity.location }}</p>
           </div>
           <div class="bg-gray-50 p-3 rounded-xl border border-black/5">
-            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">志愿时长</p>
-            <p class="text-sm font-bold">{{ selectedActivity.hours }} 小时</p>
+            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">{{ langText.volunteer.detailDialog.volunteerDuration }}</p>
+            <p class="text-sm font-bold">{{ selectedActivity.hours }} {{ langText.volunteer.detailDialog.hours }}</p>
           </div>
           <div class="bg-gray-50 p-3 rounded-xl border border-black/5">
-            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">剩余名额</p>
-            <p class="text-sm font-bold">{{ selectedActivity.capacity - selectedActivity.enrolled }} 人</p>
+            <p class="text-[10px] font-mono uppercase opacity-40 mb-1">{{ langText.volunteer.detailDialog.remainingSlots }}</p>
+            <p class="text-sm font-bold">{{ selectedActivity.capacity - selectedActivity.enrolled }} {{ langText.volunteer.detailDialog.people }}</p>
           </div>
         </div>
         <div class="bg-gray-50 p-3 rounded-xl border border-black/5">
-          <p class="text-[10px] font-mono uppercase opacity-40 mb-1">活动须知</p>
-          <p class="text-sm text-gray-600">{{ selectedActivity.notes || '请准时到达集合地点，携带身份证件，穿着舒适便于活动的服装。' }}</p>
+          <p class="text-[10px] font-mono uppercase opacity-40 mb-1">{{ langText.volunteer.detailDialog.activityNotes }}</p>
+          <p class="text-sm text-gray-600">{{ selectedActivity.notes || langText.volunteer.detailDialog.defaultNotes }}</p>
         </div>
         <div class="flex justify-end gap-2">
-          <button @click="showDetailDialog = false" class="border border-gray-200 px-6 py-2 text-sm hover:bg-gray-50 transition-colors rounded-lg">关闭</button>
+          <button @click="showDetailDialog = false" class="border border-gray-200 px-6 py-2 text-sm hover:bg-gray-50 transition-colors rounded-lg">{{ langText.volunteer.detailDialog.close }}</button>
           <button
             v-if="!isJoined(selectedActivity.id) && selectedActivity.enrolled < selectedActivity.capacity"
             @click="() => { showDetailDialog = false; openRegisterDialog(selectedActivity) }"
             class="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-6 py-2 text-sm font-medium hover:from-blue-300 hover:to-blue-400 hover:shadow-[0_4px_14px_rgba(96,165,250,0.45)] hover:-translate-y-0.5 transition-all duration-200 rounded-lg"
-          >立即报名</button>
+          >{{ langText.volunteer.registerNow }}</button>
         </div>
       </div>
     </el-dialog>
@@ -334,6 +334,7 @@ import { ref, computed, onMounted } from 'vue'
 import { Calendar, Location, Timer, Sunrise, Search, TrophyBase } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { langText } from '@/language'
 
 const userStore = useUserStore()
 const searchQuery = ref('')
@@ -353,22 +354,26 @@ const myJoinedCount = computed(() => joinedIds.value.length)
 const isJoined = (id) => joinedIds.value.includes(id)
 const myActivities = computed(() => activities.value.filter(a => joinedIds.value.includes(a.id)))
 
-const categories = [
-  { label: '全部', value: '全部', icon: '📋' },
-  { label: '环境保护', value: '环境保护', icon: '🌳' },
-  { label: '社区清洁', value: '社区清洁', icon: '🧹' },
-  { label: '教育支持', value: '教育支持', icon: '📚' },
-  { label: '关爱老人', value: '关爱老人', icon: '🤝' },
-]
-
-const activities = ref([
-  { id:1, title:'城市公园清洁行动', category:'社区清洁', description:'加入我们的周末公园清洁行动，共同美化城市环境，让绿色空间更洁净。', date:'2026-04-05 09:00', location:'中山公园东门', hours:3, points:90, pointsPerHour:30, enrolled:18, capacity:30, urgent:false, status:'confirmed', notes:'请携带手套和水壶。' },
-  { id:2, title:'海滩垃圾清理志愿行', category:'环境保护', description:'共同清理海滩垃圾，保护海洋生态环境，为蓝色地球贡献一份力量。', date:'2026-04-12 08:30', location:'海滩公园南入口', hours:4, points:160, pointsPerHour:40, enrolled:25, capacity:25, urgent:true, status:'confirmed', notes:'请穿着旧衣服，备好防晒用品。' },
-  { id:3, title:'小学生环保科普教育', category:'教育支持', description:'向小学生传授环保知识，开展趣味性环保实验和手工活动，从小培养绿色意识。', date:'2026-04-19 14:00', location:'阳光小学', hours:2, points:80, pointsPerHour:40, enrolled:8, capacity:15, urgent:false, status:'pending' },
-  { id:4, title:'社区树木种植活动', category:'环境保护', description:'共同种植城市树木，增加城市绿化面积，改善生态环境。', date:'2026-04-26 09:00', location:'南山公园内', hours:3, points:90, pointsPerHour:30, enrolled:12, capacity:40, urgent:false, status:'pending' },
-  { id:5, title:'关爱老人探访志愿', category:'关爱老人', description:'探望居家老人，提供情感支持和实际帮助，传递社会温暖。', date:'2026-05-03 10:00', location:'阳光社区养老中心', hours:2, points:60, pointsPerHour:30, enrolled:6, capacity:10, urgent:false, status:'pending' },
-  { id:6, title:'垃圾分类宣传志愿行动', category:'社区清洁', description:'在社区内开展垃圾分类宣传，帮助居民了解并正确执行垃圾分类，减少环境污染。', date:'2026-05-10 09:30', location:'幸福居住区', hours:2, points:50, pointsPerHour:25, enrolled:5, capacity:20, urgent:false, status:'pending' },
+const categories = computed(() => [
+  { label: langText.value.volunteer.categories.all, value: '全部', icon: '📋' },
+  { label: langText.value.volunteer.categories.environment, value: '环境保护', icon: '🌳' },
+  { label: langText.value.volunteer.categories.community, value: '社区清洁', icon: '🧹' },
+  { label: langText.value.volunteer.categories.education, value: '教育支持', icon: '📚' },
+  { label: langText.value.volunteer.categories.elderly, value: '关爱老人', icon: '🤝' },
 ])
+
+const activities = computed(() => {
+  const t = langText.value.volunteer
+  const base = [
+    { date:'2026-04-05 09:00', hours:3, points:90, pointsPerHour:30, enrolled:18, capacity:30, urgent:false, status:'confirmed' },
+    { date:'2026-04-12 08:30', hours:4, points:160, pointsPerHour:40, enrolled:25, capacity:25, urgent:true, status:'confirmed' },
+    { date:'2026-04-19 14:00', hours:2, points:80, pointsPerHour:40, enrolled:8, capacity:15, urgent:false, status:'pending' },
+    { date:'2026-04-26 09:00', hours:3, points:90, pointsPerHour:30, enrolled:12, capacity:40, urgent:false, status:'pending' },
+    { date:'2026-05-03 10:00', hours:2, points:60, pointsPerHour:30, enrolled:6, capacity:10, urgent:false, status:'pending' },
+    { date:'2026-05-10 09:30', hours:2, points:50, pointsPerHour:25, enrolled:5, capacity:20, urgent:false, status:'pending' },
+  ]
+  return t.activities.map((item, i) => ({ id: i + 1, ...item, ...base[i] }))
+})
 
 const volunteerLeaderboard = ref([
   { name: 'EcoWarrior', hours: 48 },
@@ -391,7 +396,7 @@ const filteredActivities = computed(() => {
 const earnedPoints = computed(() => !selectedActivity.value ? 0 : Math.round(logForm.value.hours * selectedActivity.value.pointsPerHour))
 
 const statusClass = (s) => ({ pending:'bg-yellow-100 text-yellow-700', confirmed:'bg-green-100 text-green-700', completed:'bg-blue-100 text-blue-700' }[s] || 'bg-gray-100 text-gray-500')
-const statusLabel = (s) => ({ pending:'待确认', confirmed:'已确认', completed:'已完成' }[s] || s)
+const statusLabel = (s) => ({ pending: langText.value.volunteer.status.pending, confirmed: langText.value.volunteer.status.confirmed, completed: langText.value.volunteer.status.completed }[s] || s)
 const categoryBadgeClass = (c) => ({ '环境保护':'bg-green-100 text-green-700', '社区清洁':'bg-blue-100 text-blue-700', '教育支持':'bg-purple-100 text-purple-700', '关爱老人':'bg-orange-100 text-orange-700' }[c] || 'bg-gray-100 text-gray-600')
 const enrollmentColor = (a) => { const r = a.enrolled/a.capacity; return r>=1?'bg-red-400':r>=0.8?'bg-orange-400':'bg-primary' }
 const categoryAccent = (cat) => ({ '环境保护':'bg-gradient-to-r from-green-400 to-emerald-500', '社区清洁':'bg-gradient-to-r from-blue-400 to-sky-500', '教育支持':'bg-gradient-to-r from-purple-400 to-violet-500', '关爱老人':'bg-gradient-to-r from-orange-400 to-amber-500' }[cat] || 'bg-gradient-to-r from-gray-300 to-gray-400')
@@ -401,8 +406,8 @@ const openLogHoursDialog = (a) => { selectedActivity.value = a; logForm.value = 
 const openDetailDialog = (a) => { selectedActivity.value = a; showDetailDialog.value = true }
 
 const submitRegister = () => {
-  if (!registerForm.value.phone.trim()) { ElMessage.warning('请填写联系电话'); return }
-  if (!registerForm.value.agreed) { ElMessage.warning('请同意活动规则'); return }
+  if (!registerForm.value.phone.trim()) { ElMessage.warning(langText.value.volunteer.messages.phoneRequired); return }
+  if (!registerForm.value.agreed) { ElMessage.warning(langText.value.volunteer.messages.agreementRequired); return }
   const act = selectedActivity.value
   if (!joinedIds.value.includes(act.id)) {
     joinedIds.value.push(act.id)
@@ -411,7 +416,7 @@ const submitRegister = () => {
     localStorage.setItem('volunteer_joined', JSON.stringify(joinedIds.value))
   }
   showRegisterDialog.value = false
-  ElMessage.success('报名成功！期待您的参与 🌱')
+  ElMessage.success(langText.value.volunteer.messages.registerSuccess)
 }
 
 const submitLogHours = () => {
@@ -425,7 +430,7 @@ const submitLogHours = () => {
   else volunteerLeaderboard.value.push({ name: userName, hours: logForm.value.hours })
   volunteerLeaderboard.value.sort((a, b) => b.hours - a.hours)
   showLogHoursDialog.value = false
-  ElMessage.success(`志愿时长记录成功！获得 +${pts} 积分`)
+  ElMessage.success(langText.value.volunteer.messages.logSuccess.replace('{pts}', pts))
 }
 
 onMounted(async () => { await userStore.init() })

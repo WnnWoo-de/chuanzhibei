@@ -8,11 +8,11 @@
       <header class="store-header">
         <div>
           <p class="store-kicker">GREEN REWARD CENTER</p>
-          <h1>积分兑换商城</h1>
-          <p>积分可通过问答、志愿活动、旧物重构和社区互动获得。</p>
+          <h1>{{ langText.store.title }}</h1>
+          <p>{{ langText.store.subtitle }}</p>
         </div>
         <div class="store-points">
-          <span>我的绿色积分</span>
+          <span>{{ langText.store.myPoints }}</span>
           <strong>{{ greenPoints }}</strong>
         </div>
       </header>
@@ -30,7 +30,7 @@
             {{ category }}
           </button>
         </div>
-        <router-link to="/quiz" class="store-earn-link">去每日问答赚积分</router-link>
+        <router-link to="/quiz" class="store-earn-link">{{ langText.store.goToQuiz }}</router-link>
       </section>
 
       <main class="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
@@ -53,8 +53,8 @@
               <div class="mt-auto flex items-end justify-between gap-3 border-t border-black/5 pt-4">
                 <div>
                   <strong class="store-cost">{{ product.points }}</strong>
-                  <span class="store-cost-unit">积分</span>
-                  <p class="mt-1 text-xs text-gray-400">库存 {{ product.stock }}</p>
+                  <span class="store-cost-unit">{{ langText.store.costUnit }}</span>
+                  <p class="mt-1 text-xs text-gray-400">{{ langText.store.stock }} {{ product.stock }}</p>
                 </div>
                 <button
                   type="button"
@@ -62,7 +62,7 @@
                   :disabled="!canRedeem(product)"
                   @click="openProduct(product)"
                 >
-                  {{ product.stock <= 0 ? '已兑完' : greenPoints < product.points ? '积分不足' : '立即兑换' }}
+                  {{ product.stock <= 0 ? langText.store.soldOut : greenPoints < product.points ? langText.store.notEnough : langText.store.redeemNow }}
                 </button>
               </div>
             </div>
@@ -72,10 +72,10 @@
         <aside class="space-y-4">
           <section class="store-side-card">
             <div class="mb-4 flex items-center justify-between">
-              <h3>兑换记录</h3>
+              <h3>{{ langText.store.redeemHistory }}</h3>
               <span class="text-xs font-mono text-gray-400">RECENT</span>
             </div>
-            <div v-if="redeemRecords.length === 0" class="store-empty">暂无兑换记录</div>
+            <div v-if="redeemRecords.length === 0" class="store-empty">{{ langText.store.noRecords }}</div>
             <div v-else class="divide-y divide-black/5">
               <div v-for="record in redeemRecords" :key="record.id" class="store-record">
                 <div>
@@ -88,7 +88,7 @@
           </section>
 
           <section class="store-side-card">
-            <h3 class="mb-4">积分获取入口</h3>
+            <h3 class="mb-4">{{ langText.store.earnTitle }}</h3>
             <div class="divide-y divide-black/5">
               <router-link v-for="entry in earnEntries" :key="entry.path" :to="entry.path" class="store-entry">
                 <span>{{ entry.title }}</span>
@@ -111,17 +111,17 @@
           <p>{{ selectedProduct.description }}</p>
           <div class="my-5 grid grid-cols-2 gap-3 text-left">
             <div class="store-dialog-cell">
-              <span>所需积分</span>
+              <span>{{ langText.store.requiredPoints }}</span>
               <strong>{{ selectedProduct.points }}</strong>
             </div>
             <div class="store-dialog-cell">
-              <span>库存状态</span>
-              <strong>{{ selectedProduct.stock > 0 ? selectedProduct.stock + ' 件' : '已兑完' }}</strong>
+              <span>{{ langText.store.stockStatus }}</span>
+              <strong>{{ selectedProduct.stock > 0 ? selectedProduct.stock + ' ' + langText.store.stockCount : langText.store.soldOut }}</strong>
             </div>
           </div>
           <div class="flex justify-end gap-3">
-            <button type="button" class="store-cancel-btn" @click="showDetail = false">取消</button>
-            <button type="button" class="store-confirm-btn" :disabled="!canRedeem(selectedProduct)" @click="confirmRedeem">确认兑换</button>
+            <button type="button" class="store-cancel-btn" @click="showDetail = false">{{ langText.store.cancel }}</button>
+            <button type="button" class="store-confirm-btn" :disabled="!canRedeem(selectedProduct)" @click="confirmRedeem">{{ langText.store.confirmRedeem }}</button>
           </div>
         </div>
       </template>
@@ -134,6 +134,7 @@ import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { CoffeeCup, CollectionTag, Goods, Medal, Present, Reading, ShoppingBag } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
+import { langText } from '@/language'
 import { fetchRedeemRecords, fetchRewardProducts, redeemRewardProduct } from '@/services/storeService'
 
 const POINTS_KEY = 'green_reward_points'
@@ -147,7 +148,7 @@ const readNumber = (key, fallback) => {
 }
 
 const greenPoints = ref(readNumber(POINTS_KEY, 1280))
-const activeCategory = ref('全部')
+const activeCategory = ref(langText.value.store.categories[0])
 const showDetail = ref(false)
 const selectedProduct = shallowRef(null)
 const redeemRecords = ref(JSON.parse(localStorage.getItem(RECORDS_KEY) || '[]'))
@@ -162,27 +163,30 @@ const iconMap = {
   Reading,
 }
 
-const categories = ['全部', '实物商品', '虚拟徽章', '头像装饰', '公益证书', '限时兑换']
-const earnEntries = [
-  { title: '每日问答', desc: '完成 5 题最高 +120', path: '/quiz' },
-  { title: '志愿活动', desc: '记录时长获取积分', path: '/volunteer' },
-  { title: '旧物重构', desc: '上传改造方案', path: '/reconstruction' },
-  { title: '社区互动', desc: '发布环保动态', path: '/community' },
+const categories = computed(() => langText.value.store.categories)
+const earnEntries = computed(() => langText.value.store.earnEntries)
+
+const staticProducts = [
+  { id: 1, points: 500, stock: 20, productType: 'physical', icon: ShoppingBag, accent: 'accent-green' },
+  { id: 2, points: 800, stock: 12, productType: 'physical', icon: CoffeeCup, accent: 'accent-blue' },
+  { id: 3, points: 1200, stock: 8, productType: 'physical', icon: Goods, accent: 'accent-amber' },
+  { id: 4, points: 200, stock: 40, productType: 'physical', icon: CollectionTag, accent: 'accent-cyan' },
+  { id: 5, points: 300, stock: 99, productType: 'virtual', icon: Medal, accent: 'accent-lime' },
+  { id: 6, points: 400, stock: 99, productType: 'virtual', icon: Present, accent: 'accent-rose' },
+  { id: 7, points: 1500, stock: 6, productType: 'certificate', icon: Reading, accent: 'accent-emerald' },
 ]
 
-const products = ref([
-  { id: 1, name: '环保帆布袋', category: '实物商品', description: '可重复使用，适合购物、通勤、日常收纳。', points: 500, stock: 20, productType: 'physical', tags: ['低碳', '可重复使用'], icon: ShoppingBag, accent: 'accent-green' },
-  { id: 2, name: '可重复使用水杯', category: '实物商品', description: '减少一次性杯具使用，适合校园与通勤场景。', points: 800, stock: 12, productType: 'physical', tags: ['随身', '减塑'], icon: CoffeeCup, accent: 'accent-blue' },
-  { id: 3, name: '竹纤维餐具套装', category: '实物商品', description: '轻便餐具组合，降低外卖一次性餐具依赖。', points: 1200, stock: 8, productType: 'physical', tags: ['餐具', '低废弃'], icon: Goods, accent: 'accent-amber' },
-  { id: 4, name: '垃圾分类贴纸', category: '实物商品', description: '家庭分类提醒贴，帮助全家快速识别投放类别。', points: 200, stock: 40, productType: 'physical', tags: ['分类', '家庭'], icon: CollectionTag, accent: 'accent-cyan' },
-  { id: 5, name: '绿色知识达人徽章', category: '虚拟徽章', description: '完成环保知识学习后可展示在个人成就墙。', points: 300, stock: 99, productType: 'virtual', tags: ['徽章', '知识'], icon: Medal, accent: 'accent-lime' },
-  { id: 6, name: '低碳生活头像框', category: '头像装饰', description: '为个人主页增加低碳主题头像装饰。', points: 400, stock: 99, productType: 'virtual', tags: ['装饰', '虚拟'], icon: Present, accent: 'accent-rose' },
-  { id: 7, name: '公益树苗认养证书', category: '公益证书', description: '生成一份公益认养证书，记录你的绿色行动。', points: 1500, stock: 6, productType: 'certificate', tags: ['公益', '证书'], icon: Reading, accent: 'accent-emerald' },
-])
+const products = ref(
+  langText.value.store.products.map((item, i) => ({
+    ...item,
+    ...staticProducts[i],
+  })),
+)
 
 const filteredProducts = computed(() => {
-  if (activeCategory.value === '全部') return products.value
-  if (activeCategory.value === '限时兑换') return products.value.filter((item) => item.stock <= 10)
+  const t = langText.value.store
+  if (activeCategory.value === t.categories[0]) return products.value
+  if (activeCategory.value === t.categories[5]) return products.value.filter((item) => item.stock <= 10)
   return products.value.filter((item) => item.category === activeCategory.value)
 })
 
@@ -203,7 +207,7 @@ const normalizeProduct = (item) => ({
   tags: Array.isArray(item.tags) ? item.tags : [],
   icon: typeof item.icon === 'string' ? (iconMap[item.icon] || ShoppingBag) : (item.icon || ShoppingBag),
   accent: item.accent || 'accent-green',
-  productType: item.productType || (item.category === '实物商品' ? 'physical' : 'virtual'),
+  productType: item.productType || (item.category === langText.value.store.categories[1] ? 'physical' : 'virtual'),
 })
 
 const rememberVirtualReward = (product, record) => {
@@ -242,7 +246,7 @@ const confirmRedeem = async () => {
         rememberVirtualReward(product, record)
       }
       showDetail.value = false
-      ElMessage.success(`兑换成功！已消耗 ${product.points} 绿色积分`)
+      ElMessage.success(langText.value.store.messages.redeemSuccess.replace('{points}', product.points))
       return
     }
     if (result.status !== 401) {
@@ -260,14 +264,14 @@ const confirmRedeem = async () => {
     category: product.category,
     productType: product.productType,
     costPoints: product.points,
-    status: product.category === '实物商品' ? '已提交申请' : '已到账',
-    statusText: product.category === '实物商品' ? '已提交申请' : '已到账',
+    status: product.productType === 'physical' ? langText.value.store.submitted : langText.value.store.received,
+    statusText: product.productType === 'physical' ? langText.value.store.submitted : langText.value.store.received,
     createdAt: new Date().toISOString(),
   }
   redeemRecords.value = [record, ...redeemRecords.value].slice(0, 10)
   rememberVirtualReward(product, record)
   showDetail.value = false
-  ElMessage.success(`兑换成功！已消耗 ${product.points} 绿色积分`)
+  ElMessage.success(langText.value.store.messages.redeemSuccess.replace('{points}', product.points))
 }
 
 const handlePointChange = (event) => {

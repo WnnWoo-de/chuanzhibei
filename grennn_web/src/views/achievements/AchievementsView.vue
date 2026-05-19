@@ -11,11 +11,11 @@
       <!-- Header -->
       <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
-          <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-2">成就系统</h1>
-          <p class="text-gray-600">跟踪您的环保进度，通过行动解锁徽章</p>
+          <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-2">{{ langText.achievements.title }}</h1>
+          <p class="text-gray-600">{{ langText.achievements.subtitle }}</p>
         </div>
         <div class="text-left md:text-right bg-white/80 backdrop-blur-md p-4 border border-black/10 rounded-2xl shadow-xl">
-          <p class="text-xs font-mono opacity-50 mb-1">总积分</p>
+          <p class="text-xs font-mono opacity-50 mb-1">{{ langText.achievements.totalPoints }}</p>
           <p class="text-4xl font-bold text-primary">{{ totalPoints }}</p>
         </div>
       </header>
@@ -30,7 +30,7 @@
             <el-icon class="text-primary"><Medal /></el-icon>
             {{ levelData[currentLevel].name }}
           </h3>
-          <span class="text-xs font-mono opacity-50">等级 {{ currentLevel }}</span>
+          <span class="text-xs font-mono opacity-50">{{ langText.achievements.level }} {{ currentLevel }}</span>
         </div>
         <div class="w-full bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
           <div
@@ -43,9 +43,9 @@
         <p class="text-sm text-gray-600 text-right">
           {{ totalPoints }} / {{ levelData[currentLevel].nextLevelPoints }}
           <span class="opacity-50"
-            >距离下一等级还需
+            >{{ langText.achievements.nextLevel }}
             {{ Math.max(0, levelData[currentLevel].nextLevelPoints - totalPoints) }}
-            分</span
+            {{ langText.achievements.pointsUnit }}</span
           >
         </p>
       </div>
@@ -53,17 +53,17 @@
       <!-- Filter Tabs -->
       <div class="flex gap-4 mb-6 overflow-x-auto pb-2">
         <button
-          v-for="category in ['全部', '已解锁', '未解锁']"
-          :key="category"
-          @click="activeFilter = category"
+          v-for="filterKey in filterKeys"
+          :key="filterKey.key"
+          @click="activeFilter = filterKey.key"
           class="px-4 py-2 text-sm font-mono whitespace-nowrap border transition-colors rounded-sm"
           :class="
-            activeFilter === category
+            activeFilter === filterKey.key
               ? 'bg-black text-white border-black'
               : 'bg-white border-black/10 hover:border-black/30'
           "
         >
-          {{ category }} ({{ getFilteredBadges(category).length }})
+          {{ filterKey.label }} ({{ getFilteredBadges(filterKey.key).length }})
         </button>
       </div>
 
@@ -113,7 +113,7 @@
                 class="text-xs font-mono"
                 :class="badge.unlocked ? 'text-primary' : 'text-gray-400'"
               >
-                +{{ badge.points }} 分
+                +{{ badge.points }} {{ langText.achievements.pointsUnit }}
               </span>
             </div>
 
@@ -136,7 +136,7 @@
       <!-- Empty State -->
       <div v-if="filteredBadges.length === 0" class="text-center py-16 col-span-full">
         <el-icon :size="64" class="text-gray-300 mb-4"><Box /></el-icon>
-        <p class="text-gray-500">暂无{{ activeFilter }}徽章</p>
+        <p class="text-gray-500">{{ langText.achievements.emptyPrefix }}{{ filterLabel(activeFilter) }}{{ langText.achievements.emptySuffix }}</p>
       </div>
     </div>
 
@@ -155,10 +155,10 @@
               <component :is="iconMap[celebrateBadge.icon]" />
             </el-icon>
           </div>
-          <p class="text-xs font-mono uppercase tracking-widest text-primary mb-2">🎉 成就解锁！</p>
+          <p class="text-xs font-mono uppercase tracking-widest text-primary mb-2">🎉 {{ langText.achievements.achievementUnlocked }}</p>
           <h3 class="text-2xl font-bold mb-2">{{ celebrateBadge.name }}</h3>
           <p class="text-sm text-gray-500 mb-4">{{ celebrateBadge.description }}</p>
-          <span class="inline-block bg-primary text-white text-sm font-bold px-4 py-1 rounded-full">+{{ celebrateBadge.points }} 积分</span>
+          <span class="inline-block bg-primary text-white text-sm font-bold px-4 py-1 rounded-full">+{{ celebrateBadge.points }} {{ langText.achievements.pointsLabel }}</span>
         </div>
       </div>
     </transition>
@@ -184,18 +184,18 @@
 
           <div class="bg-gray-50 p-4 rounded mb-6 text-left border border-black/5">
             <h4 class="font-bold text-sm mb-2 text-black/70 uppercase tracking-wider font-mono">
-              获取条件
+              {{ langText.achievements.requirementTitle }}
             </h4>
             <p class="text-sm text-gray-600">{{ selectedBadge.requirement }}</p>
           </div>
 
           <div class="flex items-center justify-between border-t border-black/10 pt-4">
             <div class="text-left">
-              <p class="text-xs text-gray-500 font-mono uppercase">奖励积分</p>
+              <p class="text-xs text-gray-500 font-mono uppercase">{{ langText.achievements.rewardPoints }}</p>
               <p class="text-2xl font-bold text-primary">+{{ selectedBadge.points }}</p>
             </div>
             <div class="text-right">
-              <p class="text-xs text-gray-500 font-mono uppercase mb-1">状态</p>
+              <p class="text-xs text-gray-500 font-mono uppercase mb-1">{{ langText.achievements.status }}</p>
               <span
                 class="inline-block px-3 py-1 rounded-full text-xs font-bold"
                 :class="
@@ -204,7 +204,7 @@
                     : 'bg-gray-100 text-gray-500'
                 "
               >
-                {{ selectedBadge.unlocked ? '已解锁' : '未解锁' }}
+                {{ selectedBadge.unlocked ? langText.achievements.unlocked : langText.achievements.locked }}
               </span>
             </div>
           </div>
@@ -213,7 +213,7 @@
             v-if="selectedBadge.unlocked && selectedBadge.unlockedDate"
             class="mt-4 text-xs text-gray-400 font-mono"
           >
-            解锁于 {{ selectedBadge.unlockedDate }}
+            {{ langText.achievements.unlockedAt }} {{ selectedBadge.unlockedDate }}
           </div>
         </div>
       </template>
@@ -250,6 +250,7 @@ import {
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { fetchAchievements } from '@/services/achievementService'
+import { langText } from '@/language'
 
 // 图标名称 → Element Plus 图标组件 的映射（供徽章动态渲染使用）
 const iconMap = {
@@ -271,7 +272,7 @@ const iconMap = {
 }
 
 const userStore = useUserStore()
-const activeFilter = ref('全部')     // 当前筛选标签（全部/已解锁/未解锁）
+const activeFilter = ref('all')       // 当前筛选标签（all/unlocked/locked）
 const showBadgeDialog = ref(false)   // 徽章详情对话框可见性
 const selectedBadge = ref(null)      // 当前选中查看详情的徽章
 
@@ -281,15 +282,31 @@ const totalPoints = computed(() => {
   return Number.isFinite(points) ? points : 0
 })
 
+/** 筛选标签键列表（带翻译显示名） */
+const filterKeys = computed(() => {
+  const t = langText.value.achievements
+  return [
+    { key: 'all', label: t.filterAll },
+    { key: 'unlocked', label: t.filterUnlocked },
+    { key: 'locked', label: t.filterLocked },
+  ]
+})
+
+/** 根据筛选键返回翻译后的标签文本 */
+const filterLabel = (key) => {
+  const found = filterKeys.value.find(f => f.key === key)
+  return found ? found.label : key
+}
+
 // ---- 等级系统配置 ----
 // 每个等级的名称和升级所需积分阈值
-const levelData = {
-  1: { name: '环保新手', nextLevelPoints: 500 },
-  2: { name: '绿色探索者', nextLevelPoints: 1000 },
-  3: { name: '环保战士', nextLevelPoints: 2000 },
-  4: { name: '可持续先锋', nextLevelPoints: 4000 },
-  5: { name: '地球守护者', nextLevelPoints: 10000 },
-}
+const levelData = computed(() => ({
+  1: { name: langText.value.achievements.levels[1], nextLevelPoints: 500 },
+  2: { name: langText.value.achievements.levels[2], nextLevelPoints: 1000 },
+  3: { name: langText.value.achievements.levels[3], nextLevelPoints: 2000 },
+  4: { name: langText.value.achievements.levels[4], nextLevelPoints: 4000 },
+  5: { name: langText.value.achievements.levels[5], nextLevelPoints: 10000 },
+}))
 
 /** 根据总积分计算当前等级（1~5） */
 const currentLevel = computed(() => {
@@ -311,188 +328,32 @@ const progressPercent = computed(() => {
 })
 
 // ---- 徽章数据（默认值，初次加载时写入 userStore.badges） ----
-const defaultBadges = [
-  {
-    id: 1,
-    name: '初芽',
-    icon: 'Sunrise',
-    description: '完成首个重构任务',
-    points: 50,
-    unlocked: true,
-    bgColor: 'bg-green-100',
-    iconColor: 'text-green-600',
-    requirement: '完成你的第一个旧物重构任务',
-    unlockedDate: '2025-11-28',
-  },
-  {
-    id: 2,
-    name: '好奇心',
-    icon: 'ChatDotSquare',
-    description: '向 AI 助手发送 10 条消息',
-    points: 100,
-    unlocked: true,
-    bgColor: 'bg-blue-100',
-    iconColor: 'text-blue-600',
-    requirement: '与 AI 环保助手互动 10 次',
-    unlockedDate: '2025-11-30',
-  },
-  {
-    id: 3,
-    name: '重构大师',
-    icon: 'Refresh',
-    description: '重构 10 件物品',
-    points: 200,
-    unlocked: false,
-    bgColor: 'bg-purple-100',
-    iconColor: 'text-purple-600',
-    requirement: '成功完成 10 个旧物重构项目',
-    progress: 3,
-    target: 10,
-  },
-  {
-    id: 4,
-    name: '全球公民',
-    icon: 'Compass',
-    description: '社区排名进入前 100',
-    points: 300,
-    unlocked: false,
-    bgColor: 'bg-orange-100',
-    iconColor: 'text-orange-600',
-    requirement: '在社区贡献榜中排名前 100',
-    progress: 150,
-    target: 100,
-  },
-  {
-    id: 5,
-    name: '环保传播者',
-    icon: 'Share',
-    description: '发布 5 条社区动态',
-    points: 150,
-    unlocked: true,
-    bgColor: 'bg-pink-100',
-    iconColor: 'text-pink-600',
-    requirement: '在社区分享 5 次环保经验',
-    unlockedDate: '2025-12-01',
-  },
-  {
-    id: 6,
-    name: '知识渊博',
-    icon: 'Reading',
-    description: '浏览 20 个重构案例',
-    points: 100,
-    unlocked: false,
-    bgColor: 'bg-indigo-100',
-    iconColor: 'text-indigo-600',
-    requirement: '查看至少 20 个不同的重构案例',
-    progress: 15,
-    target: 20,
-  },
-  {
-    id: 7,
-    name: '速度之星',
-    icon: 'Lightning',
-    description: '一天内完成 3 个任务',
-    points: 250,
-    unlocked: false,
-    bgColor: 'bg-yellow-100',
-    iconColor: 'text-yellow-600',
-    requirement: '在 24 小时内完成 3 个环保任务',
-  },
-  {
-    id: 8,
-    name: '创意魔法师',
-    icon: 'MagicStick',
-    description: '获得 100 个点赞',
-    points: 200,
-    unlocked: false,
-    bgColor: 'bg-cyan-100',
-    iconColor: 'text-cyan-600',
-    requirement: '你的社区动态获得 100 次点赞',
-    progress: 45,
-    target: 100,
-  },
-  {
-    id: 9,
-    name: '社区之星',
-    icon: 'Star',
-    description: '帮助 10 位用户',
-    points: 300,
-    unlocked: false,
-    bgColor: 'bg-rose-100',
-    iconColor: 'text-rose-600',
-    requirement: '回复并帮助 10 位社区成员',
-  },
-  {
-    id: 10,
-    name: '可持续冠军',
-    icon: 'Trophy',
-    description: '连续登录 30 天',
-    points: 500,
-    unlocked: false,
-    bgColor: 'bg-amber-100',
-    iconColor: 'text-amber-600',
-    requirement: '连续 30 天登录平台',
-    progress: 12,
-    target: 30,
-  },
-  {
-    id: 11,
-    name: '环保推广员',
-    icon: 'Promotion',
-    description: '邀请 5 位好友',
-    points: 400,
-    unlocked: false,
-    bgColor: 'bg-teal-100',
-    iconColor: 'text-teal-600',
-    requirement: '邀请 5 位好友加入平台',
-  },
-  {
-    id: 12,
-    name: '黄金成就',
-    icon: 'GoldMedal',
-    description: '获得 5000 总积分',
-    points: 1000,
-    unlocked: false,
-    bgColor: 'bg-yellow-200',
-    iconColor: 'text-yellow-700',
-    requirement: '累计获得 5000 环保积分',
-    progress: 1250,
-    target: 5000,
-  },
-  {
-    id: 13,
-    name: '惊喜礼物',
-    icon: 'Present',
-    description: '参与特殊活动',
-    points: 200,
-    unlocked: false,
-    bgColor: 'bg-red-100',
-    iconColor: 'text-red-600',
-    requirement: '参与平台举办的特殊环保活动',
-  },
-  {
-    id: 14,
-    name: '地球守护者',
-    icon: 'Planet',
-    description: '完成所有基础成就',
-    points: 2000,
-    unlocked: false,
-    bgColor: 'bg-blue-200',
-    iconColor: 'text-blue-700',
-    requirement: '解锁所有其他徽章',
-  },
-  {
-    id: 15,
-    name: '终极荣耀',
-    icon: 'TrophyBase',
-    description: '达到最高等级',
-    points: 5000,
-    unlocked: false,
-    bgColor: 'bg-gradient-to-br from-yellow-200 to-orange-300',
-    iconColor: 'text-orange-700',
-    requirement: '达到等级 5 - 地球守护者',
-  },
+// 非文本属性（icon, points, unlocked, bgColor, iconColor, progress, target, unlockedDate）按 id 索引
+const badgeMeta = [
+  { id: 1, icon: 'Sunrise', points: 50, unlocked: true, bgColor: 'bg-green-100', iconColor: 'text-green-600', unlockedDate: '2025-11-28' },
+  { id: 2, icon: 'ChatDotSquare', points: 100, unlocked: true, bgColor: 'bg-blue-100', iconColor: 'text-blue-600', unlockedDate: '2025-11-30' },
+  { id: 3, icon: 'Refresh', points: 200, unlocked: false, bgColor: 'bg-purple-100', iconColor: 'text-purple-600', progress: 3, target: 10 },
+  { id: 4, icon: 'Compass', points: 300, unlocked: false, bgColor: 'bg-orange-100', iconColor: 'text-orange-600', progress: 150, target: 100 },
+  { id: 5, icon: 'Share', points: 150, unlocked: true, bgColor: 'bg-pink-100', iconColor: 'text-pink-600', unlockedDate: '2025-12-01' },
+  { id: 6, icon: 'Reading', points: 100, unlocked: false, bgColor: 'bg-indigo-100', iconColor: 'text-indigo-600', progress: 15, target: 20 },
+  { id: 7, icon: 'Lightning', points: 250, unlocked: false, bgColor: 'bg-yellow-100', iconColor: 'text-yellow-600' },
+  { id: 8, icon: 'MagicStick', points: 200, unlocked: false, bgColor: 'bg-cyan-100', iconColor: 'text-cyan-600', progress: 45, target: 100 },
+  { id: 9, icon: 'Star', points: 300, unlocked: false, bgColor: 'bg-rose-100', iconColor: 'text-rose-600' },
+  { id: 10, icon: 'Trophy', points: 500, unlocked: false, bgColor: 'bg-amber-100', iconColor: 'text-amber-600', progress: 12, target: 30 },
+  { id: 11, icon: 'Promotion', points: 400, unlocked: false, bgColor: 'bg-teal-100', iconColor: 'text-teal-600' },
+  { id: 12, icon: 'GoldMedal', points: 1000, unlocked: false, bgColor: 'bg-yellow-200', iconColor: 'text-yellow-700', progress: 1250, target: 5000 },
+  { id: 13, icon: 'Present', points: 200, unlocked: false, bgColor: 'bg-red-100', iconColor: 'text-red-600' },
+  { id: 14, icon: 'Planet', points: 2000, unlocked: false, bgColor: 'bg-blue-200', iconColor: 'text-blue-700' },
+  { id: 15, icon: 'TrophyBase', points: 5000, unlocked: false, bgColor: 'bg-gradient-to-br from-yellow-200 to-orange-300', iconColor: 'text-orange-700' },
 ]
+
+const defaultBadges = computed(() => {
+  const badges = langText.value.achievements.badges
+  return badgeMeta.map((meta, i) => ({
+    ...meta,
+    ...(badges[i] || {}),
+  }))
+})
 
 /** 当前过滤后的徽章列表（响应 activeFilter 变化） */
 const filteredBadges = computed(() => {
@@ -502,13 +363,13 @@ const filteredBadges = computed(() => {
 /**
  * 按类别过滤徽章列表
  * 优先使用 userStore.badges，若为空则使用 defaultBadges
- * @param category - '全部' | '已解锁' | '未解锁'
+ * @param category - 'all' | 'unlocked' | 'locked'
  */
 const getFilteredBadges = (category) => {
-  const currentBadges = userStore.badges.length > 0 ? userStore.badges : defaultBadges
-  if (category === '已解锁') {
+  const currentBadges = userStore.badges.length > 0 ? userStore.badges : defaultBadges.value
+  if (category === 'unlocked') {
     return currentBadges.filter((b) => b.unlocked)
-  } else if (category === '未解锁') {
+  } else if (category === 'locked') {
     return currentBadges.filter((b) => !b.unlocked)
   }
   return currentBadges
@@ -545,18 +406,18 @@ onMounted(async () => {
   if (result.ok && result.items.length > 0) {
     userStore.badges = result.items.map((badge) => ({
       ...badge,
-      icon: badge.icon || defaultBadges.find((item) => item.code === badge.code || item.id === badge.id)?.icon || 'Medal',
+      icon: badge.icon || defaultBadges.value.find((item) => item.code === badge.code || item.id === badge.id)?.icon || 'Medal',
       bgColor:
-        defaultBadges.find((item) => item.code === badge.code || item.id === badge.id)?.bgColor ||
+        defaultBadges.value.find((item) => item.code === badge.code || item.id === badge.id)?.bgColor ||
         (badge.unlocked ? 'bg-green-100' : 'bg-gray-100'),
       iconColor:
-        defaultBadges.find((item) => item.code === badge.code || item.id === badge.id)?.iconColor ||
+        defaultBadges.value.find((item) => item.code === badge.code || item.id === badge.id)?.iconColor ||
         (badge.unlocked ? 'text-green-600' : 'text-gray-400'),
       unlockedDate: badge.unlockedAt ? String(badge.unlockedAt).slice(0, 10) : '',
     }))
     userStore.save()
   } else if (userStore.badges.length === 0) {
-    userStore.badges = defaultBadges
+    userStore.badges = defaultBadges.value
     userStore.save()
   }
   window.addEventListener('badge:unlocked', handleBadgeUnlocked)
@@ -574,7 +435,7 @@ watch(
   (newPoints) => {
     if (!newPoints) return
     // 更新有进度追踪的徽章进度
-    const currentBadges = userStore.badges.length > 0 ? userStore.badges : defaultBadges
+    const currentBadges = userStore.badges.length > 0 ? userStore.badges : defaultBadges.value
     const points = Number(newPoints)
     // 黄金成就：积分进度同步
     const goldBadge = currentBadges.find(b => b.id === 12)

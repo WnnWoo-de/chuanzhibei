@@ -9,26 +9,26 @@
         to="/chat"
         class="carbon-back-link inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-primary transition-opacity"
       >
-        <span>&larr; 返回 AI 助手</span>
+        <span>&larr; {{ langText.carbonFootprint.backToAI }}</span>
       </router-link>
     </div>
 
     <div class="carbon-page__grid relative z-10 mx-auto max-w-[1680px]">
       <section class="carbon-panel carbon-panel--input carbon-rotate-reveal carbon-rotate-reveal--panel-1">
         <div class="carbon-panel__heading-wrap">
-          <h2 class="carbon-panel__heading">数据输入</h2>
+          <h2 class="carbon-panel__heading">{{ langText.carbonFootprint.inputTitle }}</h2>
         </div>
 
         <div class="space-y-5">
           <div class="carbon-field">
-            <label class="carbon-field__label">交通方式：</label>
+            <label class="carbon-field__label">{{ langText.carbonFootprint.transportLabel }}</label>
             <select v-model="commuteMode" class="carbon-field__control">
               <option v-for="option in commuteModes" :key="option.value" :value="option.value">{{ option.label }}</option>
             </select>
           </div>
 
           <div class="carbon-field">
-            <label class="carbon-field__label">通勤距离：</label>
+            <label class="carbon-field__label">{{ langText.carbonFootprint.commuteDistLabel }}</label>
             <div class="carbon-field__range-wrap">
               <input v-model="commuteKm" type="range" min="0" max="80" class="carbon-field__range" />
               <div class="carbon-field__hint">{{ commuteKm }} km</div>
@@ -36,17 +36,17 @@
           </div>
 
           <div class="carbon-field">
-            <label class="carbon-field__label">能源使用：</label>
+            <label class="carbon-field__label">{{ langText.carbonFootprint.energyLabel }}</label>
             <input v-model="electricityKwh" type="number" min="0" max="30" step="0.5" class="carbon-field__control" />
           </div>
 
           <div class="carbon-field">
-            <label class="carbon-field__label">肉类餐食：</label>
+            <label class="carbon-field__label">{{ langText.carbonFootprint.meatLabel }}</label>
             <input v-model="meatMeals" type="number" min="0" max="6" step="1" class="carbon-field__control" />
           </div>
 
           <div class="carbon-field">
-            <label class="carbon-field__label">快速场景：</label>
+            <label class="carbon-field__label">{{ langText.carbonFootprint.quickScenario }}</label>
             <div class="grid grid-cols-1 gap-2">
               <button
                 v-for="preset in carbonPresets"
@@ -61,13 +61,13 @@
             </div>
           </div>
 
-          <button @click="resetForm" class="carbon-submit">重置数据</button>
+          <button @click="resetForm" class="carbon-submit">{{ langText.carbonFootprint.resetBtn }}</button>
         </div>
       </section>
 
       <section class="carbon-panel carbon-panel--result carbon-rotate-reveal carbon-rotate-reveal--panel-2">
         <div class="carbon-panel__heading-wrap">
-          <h2 class="carbon-panel__heading">计算结果展示</h2>
+          <h2 class="carbon-panel__heading">{{ langText.carbonFootprint.resultTitle }}</h2>
         </div>
 
         <div class="carbon-result-stack">
@@ -83,9 +83,9 @@
               <div :key="donutAnimationKey" class="carbon-donut-wrap">
                 <div class="carbon-donut-ring relative w-[270px] h-[270px] rounded-full" :style="{ background: donutGradient }">
                   <div class="absolute inset-[42px] rounded-full bg-white flex flex-col items-center justify-center text-center shadow-[0_8px_20px_rgba(15,23,42,0.08)]">
-                    <div class="text-sm text-black/50 mb-1">总碳足迹</div>
+                    <div class="text-sm text-black/50 mb-1">{{ langText.carbonFootprint.totalFootprint }}</div>
                     <div class="text-4xl font-bold leading-none">{{ totalFootprint.toFixed(2) }}</div>
-                    <div class="mt-2 text-sm text-black/55">kg CO₂e</div>
+                    <div class="mt-2 text-sm text-black/55">{{ langText.carbonFootprint.co2Unit }}</div>
                   </div>
                 </div>
               </div>
@@ -107,24 +107,24 @@
           </div>
 
           <div class="carbon-summary carbon-rotate-reveal carbon-rotate-reveal--summary">
-            <p class="mb-3">您的碳足迹为：<strong>{{ totalFootprint.toFixed(2) }} kg CO₂e。</strong> 以下是详细分析：</p>
+            <p class="mb-3">{{ langText.carbonFootprint.summaryPrefix }}<strong>{{ totalFootprint.toFixed(2) }} {{ langText.carbonFootprint.co2Unit }}。</strong> {{ langText.carbonFootprint.summarySuffix }}</p>
             <ul class="space-y-2">
               <li v-for="item in animatedBreakdownItems" :key="`${item.key}-summary`">
-                {{ item.label }}占比：{{ item.percent }}%
+                {{ item.label }}{{ langText.carbonFootprint.detailSuffix }}{{ item.percent }}%
               </li>
             </ul>
-            <p v-if="latestSavedAt" class="carbon-summary__meta">最近同步：{{ String(latestSavedAt).slice(0, 16).replace('T', ' ') }}</p>
+            <p v-if="latestSavedAt" class="carbon-summary__meta">{{ langText.carbonFootprint.recentSync }}{{ String(latestSavedAt).slice(0, 16).replace('T', ' ') }}</p>
           </div>
         </div>
       </section>
 
       <section class="carbon-panel carbon-panel--advice carbon-rotate-reveal carbon-rotate-reveal--panel-3">
         <div class="carbon-panel__heading-wrap">
-          <h2 class="carbon-panel__heading carbon-panel__heading--green">环保建议</h2>
+          <h2 class="carbon-panel__heading carbon-panel__heading--green">{{ langText.carbonFootprint.adviceTitle }}</h2>
         </div>
 
         <div class="carbon-advice-block">
-          <p><strong>减排重点：</strong>优先关注{{ dominantSource.label }}，当前占比 {{ dominantSource.percent }}%。{{ dominantSourceAdvice }}</p>
+          <p><strong>{{ langText.carbonFootprint.reductionFocus }}</strong>{{ dominantSourceAdvice }}</p>
         </div>
 
         <div class="carbon-advice-block space-y-3">
@@ -145,25 +145,25 @@
 
         <div class="carbon-ai-box carbon-rotate-reveal carbon-rotate-reveal--ai-box">
           <div class="flex items-center justify-between gap-3 mb-3 flex-wrap">
-            <h3 class="font-semibold text-[#23452f]">AI 出行建议</h3>
+            <h3 class="font-semibold text-[#23452f]">{{ langText.carbonFootprint.aiTravelAdvice }}</h3>
             <button
               @click="generateAiTravelAdvice"
               :disabled="isGeneratingAdvice || adviceCooldown > 0"
               class="carbon-ai-box__button"
             >
-              {{ isGeneratingAdvice ? '生成中' : adviceCooldown > 0 ? `${adviceCooldown}s 后可重试` : '生成建议' }}
+              {{ isGeneratingAdvice ? langText.carbonFootprint.generating : adviceCooldown > 0 ? `${adviceCooldown}${langText.carbonFootprint.retryAfter}` : langText.carbonFootprint.generateBtn }}
             </button>
           </div>
 
           <div class="carbon-ai-box__content" :class="{ 'ai-loading-panel': isGeneratingAdvice }">
             <template v-if="isGeneratingAdvice && !aiTravelAdvice">
-              正在根据你的通勤方式、距离与交通排放生成个性化低碳出行建议...
+              {{ langText.carbonFootprint.generatingHint }}
             </template>
             <template v-else-if="aiTravelAdvice">
               <div :class="{ 'ai-streaming-text': isGeneratingAdvice }">{{ displayedAiTravelAdvice }}</div>
             </template>
             <template v-else>
-              点击按钮生成基于当前通勤方式和排放结果的 AI 个性化建议。
+              {{ langText.carbonFootprint.defaultHint }}
             </template>
           </div>
         </div>
@@ -175,6 +175,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
+import { langText } from '@/language'
 import { useUserStore } from '@/stores/user'
 import { consumeChatCompletionsStream, getResponseErrorMessage } from '@/utils/api'
 import { createCarbonRecord, fetchLatestCarbonRecord } from '@/services/carbonService'
@@ -196,32 +197,32 @@ const typewriterTimer = ref(null)
 const cooldownTimer = ref(null)
 const copyResetTimer = ref(null)
 
-const commuteModes = [
-  { label: '步行/骑行', value: 'bike', factor: 0 },
-  { label: '公交/地铁', value: 'bus', factor: 0.08 },
-  { label: '私家车', value: 'car', factor: 0.19 },
-]
+const commuteModes = computed(() => [
+  { label: langText.value.carbonFootprint.commuteModes.bike, value: 'bike', factor: 0 },
+  { label: langText.value.carbonFootprint.commuteModes.bus, value: 'bus', factor: 0.08 },
+  { label: langText.value.carbonFootprint.commuteModes.car, value: 'car', factor: 0.19 },
+])
 
-const carbonPresets = [
+const carbonPresets = computed(() => [
   {
     key: 'default',
-    label: '城市通勤日',
-    desc: '中等通勤 + 日常用电 + 轻度肉食',
+    label: langText.value.carbonFootprint.presets.default.label,
+    desc: langText.value.carbonFootprint.presets.default.desc,
     values: { commuteKm: 12, electricityKwh: 6, meatMeals: 1, commuteMode: 'bus' },
   },
   {
     key: 'home',
-    label: '居家办公日',
-    desc: '少出行 + 稳定用电 + 低碳饮食',
+    label: langText.value.carbonFootprint.presets.home.label,
+    desc: langText.value.carbonFootprint.presets.home.desc,
     values: { commuteKm: 2, electricityKwh: 8, meatMeals: 1, commuteMode: 'bike' },
   },
   {
     key: 'heavy',
-    label: '高负荷出行日',
-    desc: '远距离通勤 + 高能耗 + 肉食偏多',
+    label: langText.value.carbonFootprint.presets.heavy.label,
+    desc: langText.value.carbonFootprint.presets.heavy.desc,
     values: { commuteKm: 28, electricityKwh: 11, meatMeals: 2, commuteMode: 'car' },
   },
-]
+])
 
 const iconMap = {
   bus: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 3.75C5.75736 3.75 4.75 4.75736 4.75 6V14.5C4.75 15.8807 5.86929 17 7.25 17H7.5V18.25C7.5 18.9404 8.05964 19.5 8.75 19.5C9.44036 19.5 10 18.9404 10 18.25V17H14V18.25C14 18.9404 14.5596 19.5 15.25 19.5C15.9404 19.5 16.5 18.9404 16.5 18.25V17H16.75C18.1307 17 19.25 15.8807 19.25 14.5V6C19.25 4.75736 18.2426 3.75 17 3.75H7Z" stroke="currentColor" stroke-width="1.5"/><path d="M7.5 8H16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M8.25 13.25H8.26" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15.75 13.25H15.76" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
@@ -236,8 +237,8 @@ const iconMap = {
 
 const renderIcon = (name) => iconMap[name] ?? iconMap.leaf
 
-const commuteModeLabel = computed(() => commuteModes.find((item) => item.value === commuteMode.value)?.label ?? '未选择')
-const commuteFactor = computed(() => commuteModes.find((item) => item.value === commuteMode.value)?.factor ?? 0)
+const commuteModeLabel = computed(() => commuteModes.value.find((item) => item.value === commuteMode.value)?.label ?? langText.value.carbonFootprint.notSelected)
+const commuteFactor = computed(() => commuteModes.value.find((item) => item.value === commuteMode.value)?.factor ?? 0)
 const commuteEmission = computed(() => Number(commuteKm.value) * commuteFactor.value)
 const electricityEmission = computed(() => Number(electricityKwh.value) * 0.58)
 const dietEmission = computed(() => Number(meatMeals.value) * 1.6)
@@ -254,7 +255,7 @@ const persistCarbonRecord = async () => {
 }
 
 const updateActivePreset = () => {
-  const matched = carbonPresets.find((preset) => {
+  const matched = carbonPresets.value.find((preset) => {
     const values = preset.values
     return (
       Number(values.commuteKm) === Number(commuteKm.value) &&
@@ -302,9 +303,9 @@ const percentOfTotal = (value) => {
 const breakdownItems = computed(() => [
   {
     key: 'commute',
-    label: '交通排放',
+    label: langText.value.carbonFootprint.breakdown.commute.label,
     shortLabel: 'Traffic',
-    detail: '由通勤距离与出行方式共同决定，切换到公交、地铁、步行或骑行通常能最快看到下降。',
+    detail: langText.value.carbonFootprint.breakdown.commute.detail,
     value: commuteEmission.value,
     percent: percentOfTotal(commuteEmission.value),
     color: '#16a34a',
@@ -313,9 +314,9 @@ const breakdownItems = computed(() => [
   },
   {
     key: 'electricity',
-    label: '用电排放',
+    label: langText.value.carbonFootprint.breakdown.electricity.label,
     shortLabel: 'Power',
-    detail: '主要来自空调、照明和待机设备，压缩高峰时段与无效耗电能明显优化整体占比。',
+    detail: langText.value.carbonFootprint.breakdown.electricity.detail,
     value: electricityEmission.value,
     percent: percentOfTotal(electricityEmission.value),
     color: '#0ea5e9',
@@ -324,9 +325,9 @@ const breakdownItems = computed(() => [
   },
   {
     key: 'diet',
-    label: '饮食排放',
+    label: langText.value.carbonFootprint.breakdown.diet.label,
     shortLabel: 'Diet',
-    detail: '高碳肉类频次越多，占比越高；适当增加豆类、蔬菜与谷物组合会更轻盈。',
+    detail: langText.value.carbonFootprint.breakdown.diet.detail,
     value: dietEmission.value,
     percent: percentOfTotal(dietEmission.value),
     color: '#f59e0b',
@@ -353,71 +354,50 @@ const donutGradient = computed(() => {
 const dominantSource = computed(() => [...breakdownItems.value].sort((a, b) => b.value - a.value)[0])
 
 const dominantSourceAdvice = computed(() => {
-  if (dominantSource.value.key === 'commute') return '如果把部分通勤从私家车切换到公交、骑行或步行，减排会最明显。'
-  if (dominantSource.value.key === 'electricity') return '从空调温度、待机设备和照明时长入手，通常能最快降低这一部分排放。'
-  return '适当减少高碳肉类频次，增加豆类和蔬菜比例，会让饮食排放更快下降。'
+  if (dominantSource.value.key === 'commute') return langText.value.carbonFootprint.dominantAdvice.commute
+  if (dominantSource.value.key === 'electricity') return langText.value.carbonFootprint.dominantAdvice.electricity
+  return langText.value.carbonFootprint.dominantAdvice.diet
 })
 
 const ecoTravelSuggestions = computed(() => {
+  const travel = langText.value.carbonFootprint.ecoTravel
+
   if (commuteMode.value === 'bike') {
     return [
-      {
-        icon: 'walk',
-        title: '继续保持低碳通勤',
-        description: '你当前已经选择步行或骑行，这本身就是最直接有效的减排方式。',
-      },
-      {
-        icon: 'shield',
-        title: '关注通勤安全',
-        description: '优先选择人行道、自行车道和照明更好的路线，让绿色出行更稳定。',
-      },
+      { icon: 'walk', title: travel.bike[0].title, description: travel.bike[0].description },
+      { icon: 'shield', title: travel.bike[1].title, description: travel.bike[1].description },
     ]
   }
 
   if (commuteMode.value === 'car') {
     return [
-      {
-        icon: 'bus',
-        title: '优先替换短途驾车',
-        description: '5 公里内的通勤最适合先切换到公交、骑行或步行，减排效率最高。',
-      },
-      {
-        icon: 'group',
-        title: '尝试拼车或组合出行',
-        description: '即使不能完全放弃开车，也可以通过拼车和换乘降低单次排放。',
-      },
+      { icon: 'bus', title: travel.car[0].title, description: travel.car[0].description },
+      { icon: 'group', title: travel.car[1].title, description: travel.car[1].description },
     ]
   }
 
   return [
-    {
-      icon: 'metro',
-      title: '保持公共交通优先',
-      description: '公交和地铁在通勤场景下通常已经是成本与减排表现较平衡的方案。',
-    },
-    {
-      icon: 'pin',
-      title: '缩短接驳距离',
-      description: '最后一公里可尝试步行或共享单车，让整段通勤进一步降碳。',
-    },
+    { icon: 'metro', title: travel.bus[0].title, description: travel.bus[0].description },
+    { icon: 'pin', title: travel.bus[1].title, description: travel.bus[1].description },
   ]
 })
 
 const suggestions = computed(() => {
+  const tips = langText.value.carbonFootprint.tips
   const list = []
 
   if (commuteMode.value === 'car' && Number(commuteKm.value) > 5) {
-    list.push('将部分私家车通勤改为公交、地铁或拼车，通常是最快见效的减排方式。')
+    list.push(tips.carLong)
   }
   if (Number(electricityKwh.value) > 10) {
-    list.push('优先检查空调温度、待机设备和照明时长，家庭用电偏高时这三项最有效。')
+    list.push(tips.highElectricity)
   }
   if (Number(meatMeals.value) >= 2) {
-    list.push('尝试把一餐肉类替换为豆制品或蔬菜主食组合，可明显降低饮食碳排。')
+    list.push(tips.highMeat)
   }
   if (list.length === 0) {
-    list.push('继续保持当前节奏，并把这种低碳习惯延续到一周以上，效果会更稳定。')
-    list.push('如果想进一步降低排放，可优先从绿色出行和峰谷用电管理入手。')
+    list.push(tips.keepGoing)
+    list.push(tips.furtherReduction)
   }
 
   return list.slice(0, 3)
@@ -486,7 +466,7 @@ const copyAiTravelAdvice = async () => {
   try {
     await navigator.clipboard.writeText(aiTravelAdvice.value)
     copiedAdvice.value = true
-    ElMessage.success('建议已复制')
+    ElMessage.success(langText.value.carbonFootprint.adviceCopied)
     clearCopyResetTimer()
     copyResetTimer.value = setTimeout(() => {
       copiedAdvice.value = false
@@ -494,7 +474,7 @@ const copyAiTravelAdvice = async () => {
     }, 1800)
   } catch (error) {
     console.error('Copy AI travel advice failed:', error)
-    ElMessage.error('复制失败')
+    ElMessage.error(langText.value.carbonFootprint.copyFailed)
   }
 }
 

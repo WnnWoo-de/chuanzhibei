@@ -9,7 +9,7 @@
         <div class="search-section">
           <el-input
             v-model="searchCity"
-            placeholder="搜索城市或城区 (例如：北京市, 天河区)..."
+            :placeholder="langText.weather.searchPlaceholderLegacy"
             clearable
             @keyup.enter="handleSearch"
             class="search-input-el"
@@ -20,7 +20,7 @@
             </template>
             <template #append>
               <el-button @click="handleSearch" :loading="loading" class="search-btn">
-                查询
+                {{ langText.weather.queryBtn }}
               </el-button>
             </template>
           </el-input>
@@ -40,7 +40,7 @@
             <h1 class="city-name">{{ weather.city.name }} <span v-if="weather.city.adm2 && weather.city.adm2 !== weather.city.name" class="city-adm">{{ weather.city.adm2 }}</span></h1>
             <div class="temp-display">{{ fmt.temp(weather.now.temp) }}<span class="unit">°</span></div>
             <div class="weather-desc">{{ weather.now.text }}</div>
-            <div class="high-low">最高 {{ fmt.temp(weather.forecast[0]?.tempMax) }}° 最低 {{ fmt.temp(weather.forecast[0]?.tempMin) }}°</div>
+            <div class="high-low">{{ langText.weather.highLabel }} {{ fmt.temp(weather.forecast[0]?.tempMax) }}° {{ langText.weather.lowLabel }} {{ fmt.temp(weather.forecast[0]?.tempMin) }}°</div>
           </header>
 
           <!-- 布局网格 -->
@@ -48,7 +48,7 @@
 
             <!-- 顶端行：逐小时预报 -->
             <div class="widget widget-hourly">
-              <div class="widget-header"><span class="widget-icon">⏰</span> 24小时天气预报</div>
+              <div class="widget-header"><span class="widget-icon">⏰</span> {{ langText.weather.hourlyTitleLegacy }}</div>
               <div class="hourly-list">
                 <div class="hourly-item" v-for="h in weather.hourly" :key="h.time">
                   <span class="h-time">{{ formatHour(h.time) }}</span>
@@ -63,10 +63,10 @@
 
               <!-- 左栏：10天预报 -->
               <div class="widget widget-10day">
-                <div class="widget-header"><span class="widget-icon">📅</span> 10日天气预报</div>
+                <div class="widget-header"><span class="widget-icon">📅</span> {{ langText.weather.dailyTitle }}</div>
                 <div class="daily-list">
                   <div class="daily-item" v-for="(d, i) in weather.forecast" :key="d.date">
-                    <span class="d-day">{{ i === 0 ? '今天' : formatDay(d.date) }}</span>
+                    <span class="d-day">{{ i === 0 ? langText.weather.today : formatDay(d.date) }}</span>
                     <span class="d-icon"><WeatherIcon :code="d.iconDay" :size="26" /></span>
                     <span class="d-temp-min">{{ Math.round(d.tempMin) }}°</span>
                     <div class="d-bar-container">
@@ -84,7 +84,7 @@
 
                 <!-- AQI -->
                 <div class="widget widget-square widget-aqi">
-                  <div class="widget-header"><span class="widget-icon">🍃</span> 空气质量</div>
+                  <div class="widget-header"><span class="widget-icon">🍃</span> {{ langText.weather.metricAqiTitle }}</div>
                   <div class="widget-content">
                     <div class="big-value">{{ Math.round(weather.airQuality.aqi || 0) }}</div>
                     <div class="aqi-level-text" :style="{ color: getAqiColor(weather.airQuality.aqi) }">{{ weather.airQuality.level }}</div>
@@ -97,7 +97,7 @@
 
                 <!-- 紫外线指数 -->
                 <div class="widget widget-square">
-                  <div class="widget-header"><span class="widget-icon">☀️</span> 紫外线指数</div>
+                  <div class="widget-header"><span class="widget-icon">☀️</span> {{ langText.weather.metricUvTitle }}</div>
                   <div class="widget-content">
                     <div class="big-value">{{ Math.round(weather.now.uvIndex || 0) }}</div>
                     <div class="highlight-text">{{ getUvLevel(weather.now.uvIndex) }}</div>
@@ -106,19 +106,19 @@
 
                 <!-- 日落 -->
                 <div class="widget widget-square">
-                  <div class="widget-header"><span class="widget-icon">🌅</span> 日落</div>
+                  <div class="widget-header"><span class="widget-icon">🌅</span> {{ langText.weather.metricSunsetTitle }}</div>
                   <div class="widget-content">
                     <div class="big-value">{{ formatTime(weather.now.sunset) }}</div>
-                    <div class="sub-value mt-auto">日出: {{ formatTime(weather.now.sunrise) }}</div>
+                    <div class="sub-value mt-auto">{{ langText.weather.metricSunrisePrefix }}{{ formatTime(weather.now.sunrise) }}</div>
                   </div>
                 </div>
 
                 <!-- 风力指示 -->
                 <div class="widget widget-square">
-                  <div class="widget-header"><span class="widget-icon">🎐</span> 风力</div>
+                  <div class="widget-header"><span class="widget-icon">🎐</span> {{ langText.weather.metricWindTitleLegacy }}</div>
                   <div class="widget-content flex-center">
                     <div class="wind-circle">
-                      <div class="wind-val">{{ weather.now.windScale }} 级</div>
+                      <div class="wind-val">{{ weather.now.windScale }} {{ langText.weather.levelSuffix }}</div>
                       <div class="wind-dir">{{ weather.now.windDir }}</div>
                     </div>
                   </div>
@@ -126,47 +126,47 @@
 
                 <!-- 降水 -->
                 <div class="widget widget-square">
-                  <div class="widget-header"><span class="widget-icon">💧</span> 降水</div>
+                  <div class="widget-header"><span class="widget-icon">💧</span> {{ langText.weather.metricPrecipTitle }}</div>
                   <div class="widget-content">
-                    <div class="big-value">{{ weather.now.precipitation || 0 }} 毫米</div>
-                    <div class="sub-value mt-auto">过去 24 小时</div>
+                    <div class="big-value">{{ weather.now.precipitation || 0 }} {{ langText.weather.mmUnit }}</div>
+                    <div class="sub-value mt-auto">{{ langText.weather.pastHours }}</div>
                   </div>
                 </div>
 
                 <!-- 体感温度 -->
                 <div class="widget widget-square">
-                  <div class="widget-header"><span class="widget-icon">🌡️</span> 体感温度</div>
+                  <div class="widget-header"><span class="widget-icon">🌡️</span> {{ langText.weather.metricFeelsTitle }}</div>
                   <div class="widget-content">
                     <div class="big-value">{{ Math.round(weather.now.feelsLike) }}°</div>
-                    <div class="sub-value mt-auto">风使体感温度比实际气温低。</div>
+                    <div class="sub-value mt-auto">{{ langText.weather.metricFeelsNoteLegacy }}</div>
                   </div>
                 </div>
 
                 <!-- 湿度 -->
                 <div class="widget widget-square">
-                  <div class="widget-header"><span class="widget-icon">🌧️</span> 湿度</div>
+                  <div class="widget-header"><span class="widget-icon">🌧️</span> {{ langText.weather.metricHumidityTitle }}</div>
                   <div class="widget-content">
                     <div class="big-value">{{ Math.round(weather.now.humidity) }}%</div>
-                    <div class="sub-value mt-auto">当前露点温度为 20°。</div>
+                    <div class="sub-value mt-auto">{{ langText.weather.metricHumidityNoteLegacy }}</div>
                   </div>
                 </div>
 
                 <!-- 能见度 -->
                 <div class="widget widget-square">
-                  <div class="widget-header"><span class="widget-icon">👁️</span> 能见度</div>
+                  <div class="widget-header"><span class="widget-icon">👁️</span> {{ langText.weather.metricVisTitle }}</div>
                   <div class="widget-content">
-                    <div class="big-value">{{ weather.now.vis }} 公里</div>
-                    <div class="sub-value mt-auto">视野非常清晰。</div>
+                    <div class="big-value">{{ weather.now.vis }} {{ langText.weather.kmUnit }}</div>
+                    <div class="sub-value mt-auto">{{ langText.weather.metricVisNoteLegacy }}</div>
                   </div>
                 </div>
 
                 <!-- 气压 -->
                 <div class="widget widget-square">
-                  <div class="widget-header"><span class="widget-icon">⏲️</span> 气压</div>
+                  <div class="widget-header"><span class="widget-icon">⏲️</span> {{ langText.weather.metricPressureTitle }}</div>
                   <div class="widget-content">
                     <div class="big-value">{{ Math.round(weather.now.pressure) }}</div>
-                    <div class="sub-value">百帕</div>
-                    <div class="sub-value mt-auto">气压处于正常范围</div>
+                    <div class="sub-value">{{ langText.weather.hpaUnit }}</div>
+                    <div class="sub-value mt-auto">{{ langText.weather.metricPressureNoteLegacy }}</div>
                   </div>
                 </div>
 
@@ -177,7 +177,7 @@
 
         <!-- 空状态提示 -->
         <div v-else class="empty-state">
-          <el-empty description="输入城市或城区名称，探索实况天气数据" />
+          <el-empty :description="langText.weather.emptyStateDesc" />
         </div>
 
       </div>
@@ -188,6 +188,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { Location } from '@element-plus/icons-vue'
+import { langText } from '@/language'
 import WeatherIcon from '@/components/weather/WeatherIcon.vue'
 import { queryWeatherByCity } from '@/services/weatherService'
 
@@ -207,15 +208,14 @@ const formatHour = (iso) => {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return iso
   const now = new Date()
-  if (d.getHours() === now.getHours() && d.getDate() === now.getDate()) return '现在'
-  return `${d.getHours()}时`
+  if (d.getHours() === now.getHours() && d.getDate() === now.getDate()) return langText.value.weather.nowLabel
+  return `${d.getHours()}${langText.value.weather.hourSuffix}`
 }
 
 const formatDay = (dateStr) => {
   const d = new Date(dateStr)
   if (Number.isNaN(d.getTime())) return dateStr
-  const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
-  return days[d.getDay()]
+  return langText.value.weather.days[d.getDay()]
 }
 
 const formatTime = (iso) => {
@@ -226,12 +226,13 @@ const formatTime = (iso) => {
 }
 
 const getUvLevel = (uv) => {
-  if (!uv) return '低'
-  if (uv < 3) return '低'
-  if (uv < 6) return '中等'
-  if (uv < 8) return '高'
-  if (uv < 11) return '极高'
-  return '危险'
+  const w = langText.value.weather
+  if (!uv) return w.uvLow
+  if (uv < 3) return w.uvLow
+  if (uv < 6) return w.uvMedium
+  if (uv < 8) return w.uvHigh
+  if (uv < 11) return w.uvVeryHigh
+  return w.uvDanger
 }
 
 const getAqiColor = (aqi) => {
@@ -282,7 +283,7 @@ const handleSearch = async () => {
     }
   } else {
     weather.value = null
-    errorMessage.value = result.message || '查询失败，请重试'
+    errorMessage.value = result.message || langText.value.weather.queryFailed
   }
 }
 

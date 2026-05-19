@@ -18,32 +18,32 @@
         <!-- Sidebar -->
         <div class="col-span-12 md:col-span-3">
           <div class="sticky top-28">
-            <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-6">许可协议</h1>
+            <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-6">{{ langText.license.title }}</h1>
             <p class="text-sm opacity-60 max-w-[200px] mb-8">
-              项目声明与<br>
-              开源许可<br>
-              了解项目许可证及声明信息
+              {{ langText.license.subtitle1 }}<br>
+              {{ langText.license.subtitle2 }}<br>
+              {{ langText.license.subtitleDesc }}
             </p>
 
             <!-- Quick Navigation -->
             <nav class="hidden md:flex flex-col gap-2">
               <a href="#license" @click.prevent="scrollTo('#license')" class="text-sm font-mono px-4 py-2 rounded hover:bg-primary/10 hover:text-primary transition-colors border border-transparent hover:border-primary">
-                📜 开源许可证
+                📜 {{ langText.license.openSourceLicense }}
               </a>
               <a href="#statement" @click.prevent="scrollTo('#statement')" class="text-sm font-mono px-4 py-2 rounded hover:bg-primary/10 hover:text-primary transition-colors border border-transparent hover:border-primary">
-                🎯 项目声明
+                🎯 {{ langText.license.projectStatement }}
               </a>
               <a href="#vision" @click.prevent="scrollTo('#vision')" class="text-sm font-mono px-4 py-2 rounded hover:bg-primary/10 hover:text-primary transition-colors border border-transparent hover:border-primary">
-                💚 项目愿景
+                💚 {{ langText.license.projectVision }}
               </a>
               <a href="#tech" @click.prevent="scrollTo('#tech')" class="text-sm font-mono px-4 py-2 rounded hover:bg-primary/10 hover:text-primary transition-colors border border-transparent hover:border-primary">
-                🛠️ 技术栈
+                🛠️ {{ langText.license.techStack }}
               </a>
               <a href="#contribution" @click.prevent="scrollTo('#contribution')" class="text-sm font-mono px-4 py-2 rounded hover:bg-primary/10 hover:text-primary transition-colors border border-transparent hover:border-primary">
-                📖 使用贡献
+                📖 {{ langText.license.useContribution }}
               </a>
               <a href="#contact" @click.prevent="scrollTo('#contact')" class="text-sm font-mono px-4 py-2 rounded hover:bg-primary/10 hover:text-primary transition-colors border border-transparent hover:border-primary">
-                📧 联系反馈
+                📧 {{ langText.license.contactFeedback }}
               </a>
             </nav>
           </div>
@@ -54,18 +54,18 @@
           <!-- Introduction -->
           <section class="mb-16 animate-on-scroll">
             <div class="bg-gradient-to-br from-green-50 to-transparent p-8 rounded-2xl border border-green-100">
-              <p class="text-gray-700 mb-4 font-mono text-xs uppercase tracking-widest opacity-70">项目信息</p>
+              <p class="text-gray-700 mb-4 font-mono text-xs uppercase tracking-widest opacity-70">{{ langText.license.projectInfo }}</p>
               <p class="text-gray-700 mb-4">
-                <strong>项目名称：</strong>GreenSight AI Web（绿我同行）
+                <strong>{{ langText.license.projectName }}：</strong>GreenSight AI Web（绿我同行）
               </p>
               <p class="text-gray-700 mb-4">
-                <strong>版本：</strong>2.0
+                <strong>{{ langText.license.version }}：</strong>2.0
               </p>
               <p class="text-gray-700 mb-4">
-                <strong>开发者：</strong>wnnw
+                <strong>{{ langText.license.developer }}：</strong>wnnw
               </p>
               <p class="text-gray-700">
-                <strong>更新时间：</strong>{{ currentDate }}
+                <strong>{{ langText.license.updateTime }}：</strong>{{ currentDate }}
               </p>
             </div>
           </section>
@@ -73,11 +73,11 @@
           <!-- MIT License -->
           <section id="license" class="mb-16 animate-on-scroll">
             <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-              <span>📜 开源许可证</span>
+              <span>📜 {{ langText.license.openSourceLicense }}</span>
               <div class="flex-1 h-px bg-gradient-to-r from-black/20 to-transparent"></div>
             </h2>
             <p class="text-gray-700 mb-6">
-              本项目采用 <strong>MIT License</strong> 开源许可证。以下是许可证的完整条款：
+              {{ langText.license.mitLicense }} <strong>MIT License</strong> {{ langText.license.mitLicenseSuffix }}
             </p>
 
             <div class="bg-gray-50 p-6 rounded-lg border border-black/10 font-mono text-xs md:text-sm leading-relaxed overflow-auto max-h-80">
@@ -108,18 +108,18 @@ SOFTWARE.</pre>
           <!-- Project Statement -->
           <section id="statement" class="mb-16 animate-on-scroll">
             <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-              <span>🎯 项目声明</span>
+              <span>🎯 {{ langText.license.projectStatement }}</span>
               <div class="flex-1 h-px bg-gradient-to-r from-black/20 to-transparent"></div>
             </h2>
             <div class="space-y-4">
               <p class="text-gray-700">
-                GreenSight AI 是一个为"<strong>传智杯</strong>AI-Web 网页开发挑战赛"设计开发的项目。
+                {{ langText.license.statementContent1 }}<strong>传智杯</strong>{{ langText.license.statementContent1b }}
               </p>
               <p class="text-gray-700">
-                本项目是开发者 <strong>wnnw</strong> 个人完成的学习成果和竞赛作品，集合了现代化的前端技术和 AI 应用探索。
+                {{ langText.license.statementContent2 }} <strong>wnnw</strong> {{ langText.license.statementContent2b }}
               </p>
               <p class="text-gray-700">
-                项目已开源，欢迎社区开发者查看、学习、改进和扩展。
+                {{ langText.license.statementContent3 }}
               </p>
             </div>
           </section>
@@ -127,29 +127,29 @@ SOFTWARE.</pre>
           <!-- Project Vision -->
           <section id="vision" class="mb-16 animate-on-scroll">
             <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-              <span>💚 项目愿景</span>
+              <span>💚 {{ langText.license.projectVision }}</span>
               <div class="flex-1 h-px bg-gradient-to-r from-black/20 to-transparent"></div>
             </h2>
             <div class="space-y-4">
               <p class="text-gray-700">
-                <strong>致力于为用户打造更低碳、更可持续的绿色生活方式</strong>，通过 AI 技术和社区协作：
+                <strong>{{ langText.license.visionContent }}</strong>{{ langText.license.visionCollab }}
               </p>
               <ul class="space-y-3 text-gray-700">
                 <li class="flex items-start gap-3">
                   <span class="mt-1 text-green-600">🌿</span>
-                  <span>倡导节能减排理念，帮助用户建立日常环保习惯</span>
+                  <span>{{ langText.license.visionItem1 }}</span>
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="mt-1 text-green-600">♻️</span>
-                  <span>提供垃圾分类、碳足迹与绿色出行等实用支持</span>
+                  <span>{{ langText.license.visionItem2 }}</span>
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="mt-1 text-green-600">🤝</span>
-                  <span>连接更多关注生态与可持续发展的环保社区</span>
+                  <span>{{ langText.license.visionItem3 }}</span>
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="mt-1 text-green-600">💚</span>
-                  <span>用技术激发公众参与，让每个人都能成为绿色行动者</span>
+                  <span>{{ langText.license.visionItem4 }}</span>
                 </li>
               </ul>
             </div>
@@ -158,31 +158,31 @@ SOFTWARE.</pre>
           <!-- Technology Stack -->
           <section id="tech" class="mb-16 animate-on-scroll">
             <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-              <span>🛠️ 技术栈</span>
+              <span>🛠️ {{ langText.license.techStack }}</span>
               <div class="flex-1 h-px bg-gradient-to-r from-black/20 to-transparent"></div>
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="bg-blue-50 p-6 rounded-lg border border-blue-100">
-                <h3 class="font-bold mb-4 text-blue-900">前端技术</h3>
+                <h3 class="font-bold mb-4 text-blue-900">{{ langText.license.frontendTech }}</h3>
                 <ul class="space-y-2 text-sm text-gray-700">
                   <li class="flex items-center gap-2"><span class="text-blue-500">•</span> Vue.js 3 (Composition API)</li>
-                  <li class="flex items-center gap-2"><span class="text-blue-500">•</span> Vite 构建工具</li>
-                  <li class="flex items-center gap-2"><span class="text-blue-500">•</span> Tailwind CSS 样式框架</li>
-                  <li class="flex items-center gap-2"><span class="text-blue-500">•</span> Pinia 状态管理</li>
-                  <li class="flex items-center gap-2"><span class="text-blue-500">•</span> Vue Router 路由管理</li>
-                  <li class="flex items-center gap-2"><span class="text-blue-500">•</span> GSAP 动画库</li>
+                  <li class="flex items-center gap-2"><span class="text-blue-500">•</span> {{ langText.techStack.viteBuild }}</li>
+                  <li class="flex items-center gap-2"><span class="text-blue-500">•</span> {{ langText.techStack.tailwindCss }}</li>
+                  <li class="flex items-center gap-2"><span class="text-blue-500">•</span> {{ langText.techStack.piniaState }}</li>
+                  <li class="flex items-center gap-2"><span class="text-blue-500">•</span> {{ langText.techStack.vueRouter }}</li>
+                  <li class="flex items-center gap-2"><span class="text-blue-500">•</span> {{ langText.techStack.gsapAnim }}</li>
                 </ul>
               </div>
 
               <div class="bg-green-50 p-6 rounded-lg border border-green-100">
-                <h3 class="font-bold mb-4 text-green-900">后端技术</h3>
+                <h3 class="font-bold mb-4 text-green-900">{{ langText.license.backendTech }}</h3>
                 <ul class="space-y-2 text-sm text-gray-700">
                   <li class="flex items-center gap-2"><span class="text-green-500">•</span> Node.js + Express</li>
-                  <li class="flex items-center gap-2"><span class="text-green-500">•</span> MySQL 数据库</li>
-                  <li class="flex items-center gap-2"><span class="text-green-500">•</span> Passport.js 认证</li>
-                  <li class="flex items-center gap-2"><span class="text-green-500">•</span> Qwen2.5 AI 模型</li>
-                  <li class="flex items-center gap-2"><span class="text-green-500">•</span> RESTful API</li>
-                  <li class="flex items-center gap-2"><span class="text-green-500">•</span> Socket.io 实时通信</li>
+                  <li class="flex items-center gap-2"><span class="text-green-500">•</span> MySQL 8.0</li>
+                  <li class="flex items-center gap-2"><span class="text-green-500">•</span> {{ langText.techStack.passportAuth }}</li>
+                  <li class="flex items-center gap-2"><span class="text-green-500">•</span> {{ langText.techStack.qwenModel }}</li>
+                  <li class="flex items-center gap-2"><span class="text-green-500">•</span> {{ langText.techStack.restfulApi }}</li>
+                  <li class="flex items-center gap-2"><span class="text-green-500">•</span> {{ langText.techStack.socketIo }}</li>
                 </ul>
               </div>
             </div>
@@ -191,28 +191,28 @@ SOFTWARE.</pre>
           <!-- Use & Contribution -->
           <section id="contribution" class="mb-16 animate-on-scroll">
             <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-              <span>📖 使用与贡献</span>
+              <span>📖 {{ langText.license.useContribution }}</span>
               <div class="flex-1 h-px bg-gradient-to-r from-black/20 to-transparent"></div>
             </h2>
             <div class="space-y-6">
               <div class="bg-white border border-black/10 p-6 rounded-lg">
-                <h3 class="font-bold text-lg mb-3">✅ 你可以做的事</h3>
+                <h3 class="font-bold text-lg mb-3">✅ {{ langText.license.canDo }}</h3>
                 <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                  <li>自由使用、修改和分发本项目</li>
-                  <li>将本项目用于商业或个人项目</li>
-                  <li>学习和研究源代码</li>
-                  <li>提交问题和改进建议</li>
-                  <li>贡献代码和新功能</li>
+                  <li>{{ langText.license.canDo1 }}</li>
+                  <li>{{ langText.license.canDo2 }}</li>
+                  <li>{{ langText.license.canDo3 }}</li>
+                  <li>{{ langText.license.canDo4 }}</li>
+                  <li>{{ langText.license.canDo5 }}</li>
                 </ul>
               </div>
 
               <div class="bg-orange-50 border border-orange-100 p-6 rounded-lg">
-                <h3 class="font-bold text-lg mb-3">⚠️ 注意事项</h3>
+                <h3 class="font-bold text-lg mb-3">⚠️ {{ langText.license.notes }}</h3>
                 <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                  <li>必须保留原作者的版权声明</li>
-                  <li>项目按"现状"提供，不提供任何担保</li>
-                  <li>在商业使用时请注明原作者</li>
-                  <li>遵守当地法律法规</li>
+                  <li>{{ langText.license.note1 }}</li>
+                  <li>{{ langText.license.note2 }}</li>
+                  <li>{{ langText.license.note3 }}</li>
+                  <li>{{ langText.license.note4 }}</li>
                 </ul>
               </div>
             </div>
@@ -221,29 +221,29 @@ SOFTWARE.</pre>
           <!-- Contact & Feedback -->
           <section id="contact" class="mb-16 animate-on-scroll">
             <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-              <span>📧 联系与反馈</span>
+              <span>📧 {{ langText.license.contactTitle }}</span>
               <div class="flex-1 h-px bg-gradient-to-r from-black/20 to-transparent"></div>
             </h2>
             <div class="bg-gradient-to-br from-orange-50 to-transparent p-6 rounded-lg border border-orange-100">
               <p class="text-gray-700 mb-4">
-                如果您有任何问题、建议或反馈，欢迎通过以下方式与我们联系：
+                {{ langText.license.contactDesc }}
               </p>
               <ul class="space-y-3 text-gray-700">
                 <li class="flex items-start gap-3">
                   <span class="text-lg ml-0">📌</span>
-                  <div><strong>提交 Issue：</strong> 在 GitHub 项目页提交问题或功能请求</div>
+                  <div><strong>{{ langText.license.submitIssue }}：</strong> {{ langText.license.submitIssueDesc }}</div>
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="text-lg ml-0">✉️</span>
-                  <div><strong>发送邮件：</strong> 与项目维护者沟通</div>
+                  <div><strong>{{ langText.license.sendEmail }}：</strong> {{ langText.license.sendEmailDesc }}</div>
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="text-lg ml-0">🤝</span>
-                  <div><strong>参与贡献：</strong> Fork 项目，改进代码后提交 Pull Request</div>
+                  <div><strong>{{ langText.license.contribute }}：</strong> {{ langText.license.contributeDesc }}</div>
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="text-lg ml-0">💬</span>
-                  <div><strong>社区讨论：</strong> 在项目社区参与讨论和知识分享</div>
+                  <div><strong>{{ langText.license.communityDiscuss }}：</strong> {{ langText.license.communityDiscussDesc }}</div>
                 </li>
               </ul>
             </div>
@@ -252,18 +252,18 @@ SOFTWARE.</pre>
           <!-- Disclaimer -->
           <section class="mb-16 animate-on-scroll">
             <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-              <span>⚖️ 免责声明</span>
+              <span>⚖️ {{ langText.license.disclaimer }}</span>
               <div class="flex-1 h-px bg-gradient-to-r from-black/20 to-transparent"></div>
             </h2>
             <div class="bg-red-50 p-6 rounded-lg border border-red-100">
               <p class="text-gray-700 mb-4">
-                本项目提供的所有功能和信息"按现状"提供。开发者对以下内容不承担任何责任：
+                {{ langText.license.disclaimerContent }}
               </p>
               <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                <li>项目中的任何错误、遗漏或不准确之处</li>
-                <li>由使用本项目导致的任何损失或损害</li>
-                <li>第三方服务或资源的可用性和准确性</li>
-                <li>用户因使用本项目而进行的任何操作后果</li>
+                <li>{{ langText.license.disclaimer1 }}</li>
+                <li>{{ langText.license.disclaimer2 }}</li>
+                <li>{{ langText.license.disclaimer3 }}</li>
+                <li>{{ langText.license.disclaimer4 }}</li>
               </ul>
             </div>
           </section>
@@ -274,7 +274,7 @@ SOFTWARE.</pre>
               © 2025 GreenSight AI. All rights reserved. | MIT License
             </p>
             <p class="text-center text-gray-400 text-xs mt-4 font-mono">
-              最后更新：{{ currentDate }}
+              {{ langText.license.lastUpdate }}：{{ currentDate }}
             </p>
           </section>
         </div>
@@ -289,6 +289,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import TheNavbar from '@/components/layout/TheNavbar.vue'
 import TheSidebar from '@/components/layout/TheSidebar.vue'
+import { langText } from '@/language'
 
 gsap.registerPlugin(ScrollTrigger)
 

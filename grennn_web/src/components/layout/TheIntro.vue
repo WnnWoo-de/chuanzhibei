@@ -30,14 +30,14 @@
         <!-- 主标题第二行 -->
         <div class="overflow-hidden">
           <h1 class="text-5xl md:text-7xl font-bold tracking-tighter translate-y-full main-title text-black">
-            -绿我同行
+            {{ langText.intro.brandTagline }}
           </h1>
         </div>
 
         <!-- 副标题 -->
         <div class="mt-8 overflow-hidden">
           <p class="text-sm md:text-base tracking-[0.5em] uppercase translate-y-full subtitle opacity-70">
-            可持续未来倡议
+            {{ langText.intro.slogan }}
           </p>
         </div>
       </div>
@@ -52,6 +52,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { langText } from '@/language'
 
 // 声明向父组件抛出的事件：动画完成后触发 complete
 const emit = defineEmits(['complete'])

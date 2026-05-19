@@ -27,12 +27,12 @@
           <div class="p-8 pt-12">
             <!-- Title -->
             <h2 class="text-2xl font-bold text-center mb-2">
-              欢迎使用<span class="text-green-500">绿我同行</span>
+              {{ langText.home.welcomeTitlePrefix }}<span class="text-green-500">{{ langText.home.welcomeBrand }}</span>
             </h2>
             <h3 class="text-lg text-center text-gray-600 mb-4">GreenSight AI</h3>
 
             <!-- Welcome Text -->
-            <p class="text-center text-gray-600 text-sm mb-8">感谢您访问我们的项目</p>
+            <p class="text-center text-gray-600 text-sm mb-8">{{ langText.home.welcomeThanks }}</p>
 
             <!-- Info Sections -->
             <div class="space-y-5 mb-8">
@@ -44,9 +44,9 @@
                   </svg>
                 </div>
                 <div>
-                  <p class="font-semibold text-sm mb-1">项目声明</p>
+                  <p class="font-semibold text-sm mb-1">{{ langText.home.statementTitle }}</p>
                   <p class="text-xs text-gray-600">
-                    本项目由 wnnw 开发，用于参加"传智杯"AI-Web 网页开发挑战赛
+                    {{ langText.home.statementText }}
                   </p>
                 </div>
               </div>
@@ -59,9 +59,9 @@
                   </svg>
                 </div>
                 <div>
-                  <p class="font-semibold text-sm mb-1">项目愿景</p>
+                  <p class="font-semibold text-sm mb-1">{{ langText.home.visionTitle }}</p>
                   <p class="text-xs text-gray-600">
-                    致力于打造低碳、可持续的绿色生活平台，推动环保行动融入每一天
+                    {{ langText.home.visionText }}
                   </p>
                 </div>
               </div>
@@ -74,9 +74,9 @@
                   </svg>
                 </div>
                 <div>
-                  <p class="font-semibold text-sm mb-1">参与贡献</p>
+                  <p class="font-semibold text-sm mb-1">{{ langText.home.contributeTitle }}</p>
                   <p class="text-xs text-gray-600">
-                    欢迎通过参与项目改进、共同成长。联系我们或提交建议
+                    {{ langText.home.contributeText }}
                   </p>
                 </div>
               </div>
@@ -88,13 +88,13 @@
                 @click="openLicense"
                 class="flex-1 px-4 py-2.5 border-2 border-green-500 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-sm"
               >
-                查看许可协议
+                {{ langText.home.license }}
               </button>
               <button
                 @click="closeWelcomeModal"
                 class="flex-1 px-4 py-2.5 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
               >
-                了解并继续
+                {{ langText.home.continue }}
               </button>
             </div>
           </div>
@@ -158,8 +158,8 @@
           class="h-9 sm:h-12 w-9 sm:w-12 rounded-xl sm:rounded-2xl bg-white p-0.5 sm:p-1 object-contain shadow-sm"
         />
         <div>
-          <p class="text-[9px] sm:text-[11px] font-mono uppercase tracking-[0.3em] sm:tracking-[0.35em] text-emerald-700/60">Green platform</p>
-          <p class="text-xs sm:text-sm font-semibold text-[#163126]">GreenSight-绿我同行</p>
+          <p class="text-[9px] sm:text-[11px] font-mono uppercase tracking-[0.3em] sm:tracking-[0.35em] text-emerald-700/60">{{ langText.home.platform }}</p>
+          <p class="text-xs sm:text-sm font-semibold text-[#163126]">{{ langText.nav.brand }}</p>
         </div>
       </div>
 
@@ -170,7 +170,7 @@
             <div class="hero-brand-glow" aria-hidden="true"></div>
             <div class="mt-4 sm:mt-2 overflow-hidden flex-1 flex flex-col md:justify-end">
               <div class="flex flex-col justify-center flex-1">
-                <p class="hero-line hero-line--eyebrow text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] sm:tracking-[0.45em] text-emerald-600/65">Brand Intro</p>
+                <p class="hero-line hero-line--eyebrow text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] sm:tracking-[0.45em] text-emerald-600/65">{{ langText.home.brandIntro }}</p>
                 <div class="mt-2 sm:mt-3 sm:mt-6 space-y-1 sm:space-y-1.5 sm:space-y-3">
                   <p class="hero-line hero-line--body font-mono text-[12px] sm:text-[13px] md:text-base md:text-lg leading-snug md:leading-tight text-emerald-600 min-h-[2.5rem] sm:min-h-[3rem]">
                     {{ typedBrandLines[0] }}<span v-if="activeTypingLine === 0" class="typing-caret ml-1 inline-block h-3 sm:h-4 sm:h-6 w-[2px] bg-emerald-500 align-[-0.15em]"></span>
@@ -195,7 +195,7 @@
                       <path stroke-linecap="round" stroke-linejoin="round" d="M8.8 12h6.4" />
                     </svg>
                   </span>
-                  <span class="relative z-10">AI 环保助手</span>
+                  <span class="relative z-10">{{ langText.home.tags[0] }}</span>
                 </span>
                 <span class="glass-tag glass-tag--cyan group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-cyan-100/68 px-2.5 md:px-4 py-1 md:py-2 text-[10px] md:text-sm font-semibold leading-none text-cyan-950 shadow-[0_16px_38px_rgba(8,145,178,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-cyan-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-cyan-200/70">
                   <span class="glass-tag__pulse"></span>
@@ -207,7 +207,7 @@
                       <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 14.6 10.7 11l2 2 2.8-4.1" />
                     </svg>
                   </span>
-                  <span class="relative z-10">碳足迹分析</span>
+                  <span class="relative z-10">{{ langText.home.tags[1] }}</span>
                 </span>
                 <span class="glass-tag glass-tag--orange group inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/80 bg-gradient-to-br from-white/96 via-white/88 to-orange-100/68 px-2.5 md:px-4 py-1 md:py-2 text-[10px] md:text-sm font-semibold leading-none text-orange-950 shadow-[0_16px_38px_rgba(234,88,12,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-10px_24px_rgba(255,255,255,0.26)] backdrop-blur-xl backdrop-saturate-150 ring-1 ring-orange-200/55 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/90 hover:shadow-[0_24px_52px_rgba(251,146,60,0.18),inset_0_1px_0_rgba(255,255,255,0.98),inset_0_-12px_28px_rgba(255,255,255,0.3)] hover:ring-orange-200/70">
                   <span class="glass-tag__pulse"></span>
@@ -221,7 +221,7 @@
                       <circle cx="12" cy="12" r="2.3" />
                     </svg>
                   </span>
-                  <span class="relative z-10">社区共创</span>
+                  <span class="relative z-10">{{ langText.home.tags[2] }}</span>
                 </span>
               </div>
             </div>
@@ -360,10 +360,9 @@
         <!-- Sticky Sidebar -->
         <div class="col-span-12 md:col-span-3 mb-12 md:mb-0">
           <div class="sticky top-24">
-            <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-6 animate-on-scroll">核心功能</h2>
-            <p class="text-sm opacity-60 max-w-[200px] animate-on-scroll">
-              核心功能入口<br />
-              探索 Green AI Web 的主要功能模块。
+            <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-6 animate-on-scroll">{{ langText.home.featuresTitle }}</h2>
+            <p class="text-sm opacity-60 max-w-[200px] animate-on-scroll whitespace-pre-line">
+              {{ langText.home.featuresIntro }}
             </p>
           </div>
         </div>
@@ -454,7 +453,7 @@
                 </router-link>
                 <span
                   class="opacity-0 group-hover:opacity-100 transition-opacity duration-500 text-[10px] font-mono text-gray-400"
-                  >ACCESS GRANTED</span
+                  >{{ langText.home.accessGranted }}</span
                 >
               </div>
             </div>
@@ -469,7 +468,7 @@
         <!-- Sticky Sidebar -->
         <div class="col-span-12 md:col-span-3 mb-12 md:mb-0">
           <div class="sticky top-24">
-            <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-6">动态资讯</h2>
+            <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-6">{{ langText.home.newsTitle }}</h2>
             <div class="flex gap-2 mt-8">
               <button
                 @click="prevPage"
@@ -532,13 +531,13 @@
       <div class="grid grid-cols-12 gap-4 relative z-10">
         <div class="col-span-12 md:col-span-3 mb-12 md:mb-0">
           <div class="sticky top-24 dashboard-copy">
-            <h2 class="text-4xl md:text-5xl font-bold mt-3 mb-6 text-white">数据看板</h2>
+            <h2 class="text-4xl md:text-5xl font-bold mt-3 mb-6 text-white">{{ langText.home.dashboard.title }}</h2>
             <p class="dashboard-copy__text">
-              用更像“环境控制台”的方式展示平台增长、减排效率与社区热度，让每一次绿色行动都像被实时捕捉。
+              {{ langText.home.dashboard.intro }}
             </p>
             <div class="dashboard-breathing-chip mt-8 inline-flex items-center gap-3 rounded-full px-4 py-2 text-sm">
               <span class="dashboard-breathing-dot"></span>
-              数据流已接入主屏
+              {{ langText.home.dashboard.live }}
             </div>
             <div class="dashboard-copy__meta mt-10">
             </div>
@@ -550,10 +549,10 @@
               <div class="dashboard-panel__frame"></div>
               <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between relative z-10">
                 <div>
-                  <p class="dashboard-eyebrow">影响概览</p>
-                  <h3 class="mt-3 text-2xl font-bold text-white">绿色行动趋势主屏</h3>
+                  <p class="dashboard-eyebrow">{{ langText.home.dashboard.impact }}</p>
+                  <h3 class="mt-3 text-2xl font-bold text-white">{{ langText.home.dashboard.trendTitle }}</h3>
                 </div>
-                <p class="dashboard-muted">近 6 个月关键指标实时采样</p>
+                <p class="dashboard-muted">{{ langText.home.dashboard.sixMonths }}</p>
               </div>
 
               <div class="mt-8 grid gap-4 sm:grid-cols-3 relative z-10">
@@ -574,8 +573,8 @@
 
               <div class="mt-10 relative z-10">
                 <div class="flex items-center justify-between">
-                  <p class="text-sm font-semibold text-white">月度活跃趋势</p>
-                  <p class="dashboard-muted dashboard-muted--mono">2025 // 运行中</p>
+                  <p class="text-sm font-semibold text-white">{{ langText.home.dashboard.monthlyTrend }}</p>
+                  <p class="dashboard-muted dashboard-muted--mono">{{ langText.home.dashboard.running }}</p>
                 </div>
                 <div class="mt-6 grid grid-cols-6 gap-3 md:gap-4 items-end">
                   <div
@@ -605,8 +604,8 @@
                 <div class="dashboard-panel__frame"></div>
                 <div class="flex items-center justify-between gap-4 relative z-10">
                   <div>
-                    <p class="dashboard-eyebrow">碳排脉冲</p>
-                    <h3 class="mt-3 text-2xl font-bold text-white">减排呼吸环</h3>
+                    <p class="dashboard-eyebrow">{{ langText.home.dashboard.pulse }}</p>
+                    <h3 class="mt-3 text-2xl font-bold text-white">{{ langText.home.dashboard.ringTitle }}</h3>
                   </div>
                   <div class="dashboard-ring-badge">{{ animatedPulseProgress }}%</div>
                 </div>
@@ -625,18 +624,18 @@
                     </svg>
                     <div class="dashboard-ring__center">
                       <span class="dashboard-ring__number">{{ animatedPulseProgress }}%</span>
-                      <span class="dashboard-ring__caption">达成率</span>
+                      <span class="dashboard-ring__caption">{{ langText.home.dashboard.rate }}</span>
                     </div>
                   </div>
                 </div>
 
                 <div class="mt-8 grid grid-cols-2 gap-4 relative z-10">
                   <div class="dashboard-mini-card">
-                    <p class="dashboard-mini-card__label">本周减排</p>
-                    <p class="dashboard-mini-card__value">18.6 吨</p>
+                    <p class="dashboard-mini-card__label">{{ langText.home.dashboard.weekReduction }}</p>
+                    <p class="dashboard-mini-card__value">18.6 {{ lang === 'EN' ? 't' : lang === 'JP' ? 'トン' : '吨' }}</p>
                   </div>
                   <div class="dashboard-mini-card">
-                    <p class="dashboard-mini-card__label">AI 建议采纳</p>
+                    <p class="dashboard-mini-card__label">{{ langText.home.dashboard.adopted }}</p>
                     <p class="dashboard-mini-card__value">92%</p>
                   </div>
                 </div>
@@ -646,10 +645,10 @@
                 <div class="dashboard-panel__frame"></div>
                 <div class="flex items-center justify-between gap-3 relative z-10">
                   <div>
-                    <p class="dashboard-eyebrow">社区热度</p>
-                    <h3 class="mt-3 text-2xl font-bold text-white">社区热力分布</h3>
+                    <p class="dashboard-eyebrow">{{ langText.home.dashboard.heat }}</p>
+                    <h3 class="mt-3 text-2xl font-bold text-white">{{ langText.home.dashboard.heatTitle }}</h3>
                   </div>
-                  <span class="dashboard-live-tag">实时</span>
+                  <span class="dashboard-live-tag">{{ langText.home.dashboard.realtime }}</span>
                 </div>
 
                 <div class="mt-8 space-y-4 relative z-10">
@@ -678,25 +677,21 @@
       <div class="flex whitespace-nowrap animate-marquee">
         <!-- 第一组内容 -->
         <div class="flex items-center shrink-0">
-          <span class="text-[4vw] font-bold mx-8">GreenSight AI WEB</span>
-          <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续发展</span>
-           <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续绿色生态</span>
-          <span class="text-[4vw] font-bold mx-8">旧物重构</span>
-          <span class="text-[4vw] font-bold mx-8 text-gray-500">社区</span>
-          <span class="text-[4vw] font-bold mx-8">GreenSight-绿我同行 AI WEB</span>
-          <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续</span>
-          <span class="text-[4vw] font-bold mx-8">旧物重构</span>
-          <span class="text-[4vw] font-bold mx-8 text-gray-500">社区活动</span>
+          <span
+            v-for="(item, index) in langText.home.marquee"
+            :key="`m1-${index}`"
+            class="text-[4vw] font-bold mx-8"
+            :class="{ 'text-gray-500': index % 3 !== 0 }"
+          >{{ item }}</span>
         </div>
         <!-- 第二组内容 (用于无缝循环) -->
         <div class="flex items-center shrink-0">
-          <span class="text-[4vw] font-bold mx-8">GreenSight AI WEB</span>
-          <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续</span>
-          <span class="text-[4vw] font-bold mx-8 text-gray-500">社区</span>
-          <span class="text-[4vw] font-bold mx-8">GreenSight-绿我同行 AI WEB</span>
-          <span class="text-[4vw] font-bold mx-8 text-gray-500">可持续</span>
-          <span class="text-[4vw] font-bold mx-8">旧物重构</span>
-          <span class="text-[4vw] font-bold mx-8 text-gray-500">社区</span>
+          <span
+            v-for="(item, index) in langText.home.marquee"
+            :key="`m2-${index}`"
+            class="text-[4vw] font-bold mx-8"
+            :class="{ 'text-gray-500': index % 3 !== 0 }"
+          >{{ item }}</span>
         </div>
       </div>
     </div>
@@ -704,11 +699,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Silk from '@/components/effects/Silk.vue'
+import { lang, langText } from '@/language'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -724,27 +720,48 @@ const heroGlowTrailStyle = computed(() => ({
   background: `radial-gradient(circle at ${18 + currentSlide.value * 28}% ${32 + currentSlide.value * 10}%, rgba(74, 222, 128, 0.24), transparent 34%), radial-gradient(circle at ${72 - currentSlide.value * 14}% ${68 - currentSlide.value * 12}%, rgba(34, 211, 238, 0.18), transparent 28%)`,
 }))
 
-const dashboardMetrics = [
-  { label: '累计减排', value: 5280, unit: '吨 CO₂e', change: '+28.3%', formatter: 'number' },
-  { label: '活跃用户', value: 125000, unit: '绿色用户', change: '+12.5%', formatter: 'compact' },
-  { label: '旧物重构', value: 8450, unit: '创意方案', change: '+15.7%', formatter: 'number' },
+const dashboardMetricMeta = [
+  { value: 5280, change: '+28.3%', formatter: 'number' },
+  { value: 125000, change: '+12.5%', formatter: 'compact' },
+  { value: 8450, change: '+15.7%', formatter: 'number' },
 ]
 
-const dashboardTrend = [
-  { month: '1月', value: '2.1k', height: 42 },
-  { month: '2月', value: '2.8k', height: 56 },
-  { month: '3月', value: '3.6k', height: 68 },
-  { month: '4月', value: '4.4k', height: 81 },
-  { month: '5月', value: '5.1k', height: 92 },
-  { month: '6月', value: '5.8k', height: 100 },
+const dashboardMetrics = computed(() =>
+  dashboardMetricMeta.map((metric, index) => ({
+    ...metric,
+    ...langText.value.home.dashboard.metrics[index],
+  })),
+)
+
+const dashboardTrendMeta = [
+  { value: '2.1k', height: 42 },
+  { value: '2.8k', height: 56 },
+  { value: '3.6k', height: 68 },
+  { value: '4.4k', height: 81 },
+  { value: '5.1k', height: 92 },
+  { value: '5.8k', height: 100 },
 ]
 
-const dashboardHeatmap = [
-  { name: '旧物改造话题', value: 86, gradient: 'linear-gradient(90deg, #22d3ee 0%, #06b6d4 52%, #0ea5e9 100%)' },
-  { name: '碳足迹打卡', value: 74, gradient: 'linear-gradient(90deg, #38bdf8 0%, #3b82f6 54%, #6366f1 100%)' },
-  { name: '社区志愿活动', value: 63, gradient: 'linear-gradient(90deg, #2dd4bf 0%, #14b8a6 52%, #0f766e 100%)' },
-  { name: '环保知识学习', value: 58, gradient: 'linear-gradient(90deg, #67e8f9 0%, #22d3ee 50%, #0284c7 100%)' },
+const dashboardTrend = computed(() =>
+  dashboardTrendMeta.map((item, index) => ({
+    ...item,
+    month: langText.value.home.dashboard.months[index],
+  })),
+)
+
+const dashboardHeatmapMeta = [
+  { value: 86, gradient: 'linear-gradient(90deg, #22d3ee 0%, #06b6d4 52%, #0ea5e9 100%)' },
+  { value: 74, gradient: 'linear-gradient(90deg, #38bdf8 0%, #3b82f6 54%, #6366f1 100%)' },
+  { value: 63, gradient: 'linear-gradient(90deg, #2dd4bf 0%, #14b8a6 52%, #0f766e 100%)' },
+  { value: 58, gradient: 'linear-gradient(90deg, #67e8f9 0%, #22d3ee 50%, #0284c7 100%)' },
 ]
+
+const dashboardHeatmap = computed(() =>
+  dashboardHeatmapMeta.map((item, index) => ({
+    ...item,
+    name: langText.value.home.dashboard.zones[index],
+  })),
+)
 
 const ringCircumference = 2 * Math.PI * 44
 const dashboardPulse = {
@@ -752,7 +769,7 @@ const dashboardPulse = {
   offset: ringCircumference * (1 - 0.78),
 }
 
-const displayedDashboardMetrics = ref(dashboardMetrics.map((metric) => formatDashboardMetric(0, metric.formatter)))
+const displayedDashboardMetrics = ref(dashboardMetrics.value.map((metric) => formatDashboardMetric(0, metric.formatter)))
 const animatedPulseProgress = ref(0)
 const animatedPulseOffset = ref(ringCircumference)
 const hasAnimatedDashboard = ref(false)
@@ -767,7 +784,8 @@ function formatDashboardMetric(value, formatter) {
     return `${Math.round(value)}`
   }
 
-  return new Intl.NumberFormat('zh-CN').format(Math.round(value))
+  const locale = lang.value === 'EN' ? 'en-US' : lang.value === 'JP' ? 'ja-JP' : 'zh-CN'
+  return new Intl.NumberFormat(locale).format(Math.round(value))
 }
 
 function animateDashboardValues() {
@@ -781,7 +799,7 @@ function animateDashboardValues() {
     const progress = Math.min((now - start) / duration, 1)
     const eased = 1 - Math.pow(1 - progress, 3)
 
-    displayedDashboardMetrics.value = dashboardMetrics.map((metric) =>
+    displayedDashboardMetrics.value = dashboardMetrics.value.map((metric) =>
       formatDashboardMetric(metric.value * eased, metric.formatter),
     )
 
@@ -793,7 +811,7 @@ function animateDashboardValues() {
       return
     }
 
-    displayedDashboardMetrics.value = dashboardMetrics.map((metric) =>
+    displayedDashboardMetrics.value = dashboardMetrics.value.map((metric) =>
       formatDashboardMetric(metric.value, metric.formatter),
     )
     animatedPulseProgress.value = dashboardPulse.progress
@@ -804,10 +822,7 @@ function animateDashboardValues() {
   dashboardAnimationFrame = requestAnimationFrame(tick)
 }
 
-const brandLines = [
-  'GreenSight-绿我同行，聚焦绿色可持续生活与 AI 协作体验。',
-  '围绕旧物改造、碳足迹分析、志愿活动与社区互动。',
-]
+const brandLines = computed(() => langText.value.home.typeLines)
 const typedBrandLines = ref(['', ''])
 const activeTypingLine = ref(0)
 const showWelcomeModal = ref(false)
@@ -826,7 +841,7 @@ const startTypewriter = () => {
   activeTypingLine.value = 0
 
   const tick = () => {
-    const currentLine = brandLines[lineIndex]
+    const currentLine = brandLines.value[lineIndex]
 
     if (isPaused) {
       return
@@ -862,7 +877,7 @@ const startTypewriter = () => {
       isDeleting = false
       typingRestartTimeout = setTimeout(() => {
         isPaused = false
-        lineIndex = (lineIndex + 1) % brandLines.length
+        lineIndex = (lineIndex + 1) % brandLines.value.length
         charIndex = 0
         activeTypingLine.value = lineIndex
       }, 500)
@@ -898,32 +913,18 @@ const currentSlide = ref(0)
 const isAutoPlaying = ref(true)
 let autoPlayInterval = null
 
-const slides = [
-  {
-    title: 'GreenSight-绿我同行 AI Web',
-    subtitle: '关于我们',
-    description:
-      'GreenSight-绿我同行 AI Web 以 AI 技术连接旧物改造、碳足迹分析、环保问答与社区互动，打造更轻盈的绿色生活平台。',
-    cta: '开始探索',
-    link: '#features',
-  },
-  {
-    title: 'AI 创意重构',
-    subtitle: '最新活动',
-    description:
-      '参与我们的夏季旧物重构挑战赛！上传你的创意作品，赢取环保积分与独家徽章。AI 助手将全程提供灵感支持。',
-    cta: '立即参与',
-    link: '/community',
-  },
-  {
-    title: '智能助手 2.0',
-    subtitle: '功能更新',
-    description:
-      '全新的 AI 环保助手现已上线。更精准的物品识别，更个性化的改造建议，助您轻松开启绿色生活。',
-    cta: '体验新版',
-    link: '/chat',
-  },
+const slideMeta = [
+  { link: '#features' },
+  { link: '/community' },
+  { link: '/chat' },
 ]
+
+const slides = computed(() =>
+  langText.value.home.slides.map((slide, index) => ({
+    ...slide,
+    ...slideMeta[index],
+  })),
+)
 
 const scrollToSection = (hash) => {
   const target = document.querySelector(hash)
@@ -933,11 +934,11 @@ const scrollToSection = (hash) => {
 }
 
 const nextSlide = () => {
-  currentSlide.value = (currentSlide.value + 1) % slides.length
+  currentSlide.value = (currentSlide.value + 1) % slides.value.length
 }
 
 const prevSlide = () => {
-  currentSlide.value = (currentSlide.value - 1 + slides.length) % slides.length
+  currentSlide.value = (currentSlide.value - 1 + slides.value.length) % slides.value.length
 }
 
 const setSlide = (index) => {
@@ -968,102 +969,54 @@ const resetAutoPlay = () => {
 }
 
 // --- Features Data ---
-const features = [
+const featureMeta = [
   {
-    title: '旧物重构',
-    subtitle: 'RECONSTRUCTION',
-    description: '通过 AI 技术将闲置物品重新设计改造，激发创意，延长物品生命周期。上传照片，获取改造建议。',
     link: '/reconstruction',
-    cta: '开始创意重构',
     icon: 'M12 3.5 4.5 7.75v8.5L12 20.5l7.5-4.25v-8.5L12 3.5z',
     gradient: 'from-orange-400 to-pink-400',
   },
   {
-    title: 'GS AI 对话助手',
-    subtitle: 'GREENSIGHT CHAT',
-    description: '围绕垃圾分类、旧物改造、低碳出行和环保生活进行即时问答，像绿色生活顾问一样给出可执行建议。',
     link: '/chat',
-    cta: '进入 GS 对话',
     icon: 'M6 7.5h12a2.5 2.5 0 0 1 2.5 2.5v4A2.5 2.5 0 0 1 18 16.5h-6l-4.5 4v-4H6A2.5 2.5 0 0 1 3.5 14v-4A2.5 2.5 0 0 1 6 7.5Z M8 12h.01M12 12h.01M16 12h.01',
     gradient: 'from-emerald-400 to-cyan-400',
   },
   {
-    title: '成就系统',
-    subtitle: 'ACHIEVEMENTS',
-    description: '完成环保任务，收集独家徽章与成就。展示你的绿色足迹，激励更多人加入生态保护行动。',
     link: '/achievements',
-    cta: '查看成就',
     icon: 'M12 4.25 13.894 8.356 18.25 8.83 15 11.914 15.9 16.25 12 14.07 8.1 16.25 9 11.914 5.75 8.83 10.106 8.356 12 4.25ZM6 3.75v3.5M4.25 5.5h3.5M18 16.75v3.5m-1.75-1.75h3.5',
     gradient: 'from-yellow-400 to-amber-400',
   },
   {
-    title: '活动社区',
-    subtitle: 'COMMUNITY',
-    description: '分享你的环保故事，参与社区讨论与挑战赛。与志同道合的伙伴互动，共同建设绿色社区。',
     link: '/community',
-    cta: '进入社区',
     icon: 'M8.5 11.25a2.75 2.75 0 1 1 0-5.5 2.75 2.75 0 0 1 0 5.5Zm7 0a2.75 2.75 0 1 1 0-5.5 2.75 2.75 0 0 1 0 5.5ZM3.75 18.25a4.75 4.75 0 0 1 8.21-3.25M20.25 18.25a4.75 4.75 0 0 0-8.21-3.25M8.5 18.25a3.5 3.5 0 0 1 7 0',
     gradient: 'from-green-400 to-teal-400',
   },
   {
-    title: '志愿活动',
-    subtitle: 'VOLUNTEER',
-    description: '参加线上线下志愿活动，为环保事业贡献力量。积累志愿时数，获得认可与奖励。',
     link: '/volunteer',
-    cta: '参加志愿',
     icon: 'M12 20s-6.5-4.35-8.5-8.15C1.6 8.96 3.1 5.75 6.5 5.75c2.05 0 3.14 1.08 4.03 2.3.63-.96 1.98-2.3 4.47-2.3 3.39 0 4.9 3.21 3 6.1C18.5 15.65 12 20 12 20Z',
     gradient: 'from-red-400 to-rose-400',
   },
   {
-    title: '天气查询',
-    subtitle: 'WEATHER',
-    description: '实时查看天气数据与环保指数。了解空气质量，规划户外环保活动。',
     link: '/weather',
-    cta: '查看天气',
     icon: 'M7 18.25h9a4.25 4.25 0 1 0-.68-8.445A5.5 5.5 0 0 0 4.75 12a3.25 3.25 0 0 0 2.25 6.25Z',
     gradient: 'from-violet-400 to-purple-400',
   },
 ]
 
+const features = computed(() =>
+  langText.value.home.features.map((feature, index) => ({
+    ...feature,
+    ...featureMeta[index],
+  })),
+)
+
 // --- News Data & Pagination ---
-const newsItems = [
-  {
-    title: 'Green AI Web 2.0 正式发布：全新 AI 识别引擎上线',
-    date: '2025.03.18',
-    tag: '系统公告',
-    excerpt: '全新 UI 设计、更强大的 Qwen2.5 AI 识别引擎以及社区功能全面升级，带来更流畅的绿色生活体验。',
-  },
-  {
-    title: '「春日旧物重构」挑战赛正式启动',
-    date: '2025.03.15',
-    tag: '社区活动',
-    excerpt: '上传你的创意重构作品，赢取环保积分与独家徽章，AI 助手全程提供灵感支持。',
-  },
-  {
-    title: '本周环保达人榜单公布',
-    date: '2025.03.12',
-    tag: '排行榜',
-    excerpt: '恭喜 User888 获得本周「碳中和先锋」称号，累计减排超过 500kg CO₂e！',
-  },
-  {
-    title: '如何正确进行垃圾分类？AI 助手来教你',
-    date: '2025.03.10',
-    tag: '环保知识',
-    excerpt: '详细解析各类垃圾的分类标准与回收利用价值，让环保成为日常习惯。',
-  },
-  {
-    title: '碳足迹分析功能重大升级：接入实时 AI 建议',
-    date: '2025.03.07',
-    tag: '功能更新',
-    excerpt: '全新碳足迹计算器现已接入 Qwen2.5，根据你的数据生成个性化减排方案。',
-  },
-  {
-    title: '社区「闲置物品交换」板块正式上线',
-    date: '2025.03.05',
-    tag: '功能更新',
-    excerpt: '让闲置物品流动起来，减少资源浪费，每一次交换都是对地球的贡献。',
-  },
-]
+const newsDates = ['2025.03.18', '2025.03.15', '2025.03.12', '2025.03.10', '2025.03.07', '2025.03.05']
+const newsItems = computed(() =>
+  langText.value.home.news.map((news, index) => ({
+    ...news,
+    date: newsDates[index],
+  })),
+)
 
 const currentPage = ref(1)
 const itemsPerPage = 4
@@ -1161,10 +1114,10 @@ const handleAppIntroComplete = () => {
 }
 
 
-const totalPages = computed(() => Math.ceil(newsItems.length / itemsPerPage))
+const totalPages = computed(() => Math.ceil(newsItems.value.length / itemsPerPage))
 const paginatedNews = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
-  return newsItems.slice(start, start + itemsPerPage)
+  return newsItems.value.slice(start, start + itemsPerPage)
 })
 
 const nextPage = () => {
@@ -1174,6 +1127,14 @@ const nextPage = () => {
 const prevPage = () => {
   if (currentPage.value > 1) currentPage.value--
 }
+
+watch(lang, () => {
+  currentPage.value = 1
+  displayedDashboardMetrics.value = dashboardMetrics.value.map((metric) =>
+    formatDashboardMetric(metric.value, metric.formatter),
+  )
+  startTypewriter()
+})
 
 // --- Lifecycle ---
 onMounted(() => {

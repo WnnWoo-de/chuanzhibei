@@ -15,8 +15,8 @@
           <div class="mb-6 flex justify-center">
             <img src="@/assets/logo.png" alt="GreenSight Logo" class="w-20 h-20 object-contain rounded-3xl shadow-lg border border-black/10" />
           </div>
-          <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">注册</p>
-          <h2 class="text-3xl font-bold">创建账号</h2>
+          <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">{{ langText.auth.register }}</p>
+          <h2 class="text-3xl font-bold">{{ langText.auth.createAccount }}</h2>
         </div>
 
         <!-- 注册表单 -->
@@ -26,8 +26,8 @@
             id="username"
             v-model="username"
             type="text"
-            label="用户名"
-            placeholder="请输入用户名"
+            :label="langText.auth.username"
+            :placeholder="langText.auth.enterUsername"
             autocomplete="username"
             :error="errors.username"
             :success="touched.username && Boolean(username) && !errors.username"
@@ -39,7 +39,7 @@
             id="email"
             v-model="email"
             type="email"
-            label="邮箱"
+            :label="langText.auth.email"
             placeholder="user@example.com"
             autocomplete="email"
             inputmode="email"
@@ -53,7 +53,7 @@
             id="password"
             v-model="password"
             type="password"
-            label="密码"
+            :label="langText.auth.password"
             placeholder="••••••••"
             autocomplete="new-password"
             :error="errors.password"
@@ -65,7 +65,7 @@
             id="confirmPassword"
             v-model="confirmPassword"
             type="password"
-            label="确认密码"
+            :label="langText.auth.confirmPassword"
             placeholder="••••••••"
             autocomplete="new-password"
             :error="errors.confirmPassword"
@@ -74,7 +74,7 @@
           />
 
           <div>
-            <BaseButton type="submit" class="w-full" :is-loading="isLoading">注册</BaseButton>
+            <BaseButton type="submit" class="w-full" :is-loading="isLoading">{{ langText.auth.register }}</BaseButton>
           </div>
         </form>
 
@@ -82,17 +82,17 @@
         <div class="mt-6 space-y-4 border-t border-black/10 pt-6">
           <!-- 已有账号：跳转登录 -->
           <div class="text-center">
-            <p class="text-xs opacity-60 mb-2">已有账号？</p>
+            <p class="text-xs opacity-60 mb-2">{{ langText.auth.hasAccount }}</p>
             <router-link
               :to="{ name: 'login', query: { redirect: route.query?.redirect } }"
               class="inline-flex items-center justify-center gap-1 px-4 py-2 bg-black text-white text-xs font-mono uppercase tracking-wider rounded hover:bg-green-600 transition-colors"
-            ><span>立即登录</span><span>→</span></router-link>
+            ><span>{{ langText.auth.loginNow }}</span><span>→</span></router-link>
           </div>
           <!-- 游客模式 -->
           <div class="text-center border-t border-black/10 pt-4">
-            <p class="text-xs opacity-60 mb-2">想先体验一下？</p>
+            <p class="text-xs opacity-60 mb-2">{{ langText.auth.tryFirst }}</p>
             <router-link to="/chat" class="inline-flex items-center justify-center gap-1 px-4 py-2 bg-green-50 text-green-700 text-xs font-mono uppercase tracking-wider rounded border border-green-200 hover:bg-green-100 transition-colors">
-              <span>游客模式</span><span>→</span>
+              <span>{{ langText.auth.guestMode }}</span><span>→</span>
             </router-link>
           </div>
         </div>
@@ -113,6 +113,7 @@ import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
+import { langText } from '@/language'
 
 // 表单字段
 const username = ref('')
@@ -143,9 +144,9 @@ const validateName = (options) => {
   const shouldTrim = Boolean(options?.shouldTrim) || Boolean(options?.target)
   touched.username = true
   if (shouldTrim) username.value = username.value.trim()
-  if (!username.value) { errors.username = '请输入用户名'; return false }
-  if (username.value.length < 2) { errors.username = '用户名至少 2 个字符'; return false }
-  if (username.value.length > 20) { errors.username = '用户名最多 20 个字符'; return false }
+  if (!username.value) { errors.username = langText.value.auth.enterUsernameErr; return false }
+  if (username.value.length < 2) { errors.username = langText.value.auth.usernameMinLength; return false }
+  if (username.value.length > 20) { errors.username = langText.value.auth.usernameMaxLength; return false }
   errors.username = ''
   return true
 }
@@ -155,9 +156,9 @@ const validateEmail = (options) => {
   const shouldTrim = Boolean(options?.shouldTrim) || Boolean(options?.target)
   touched.email = true
   if (shouldTrim) email.value = email.value.trim()
-  if (!email.value) { errors.email = '请输入邮箱地址'; return false }
+  if (!email.value) { errors.email = langText.value.auth.enterEmailErr; return false }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(email.value)) { errors.email = '请输入有效的邮箱格式'; return false }
+  if (!emailRegex.test(email.value)) { errors.email = langText.value.auth.invalidEmailFormat; return false }
   errors.email = ''
   return true
 }
@@ -165,8 +166,8 @@ const validateEmail = (options) => {
 /** 校验密码：至少 6 位，并联动校验确认密码 */
 const validatePassword = () => {
   touched.password = true
-  if (!password.value) { errors.password = '请输入密码'; return false }
-  if (password.value.length < 6) { errors.password = '密码长度至少为 6 位'; return false }
+  if (!password.value) { errors.password = langText.value.auth.enterPassword; return false }
+  if (password.value.length < 6) { errors.password = langText.value.auth.passwordMinLength; return false }
   errors.password = ''
   // 如果确认密码已填写，联动重新校验
   if (confirmPassword.value) validateConfirmPassword()
@@ -176,8 +177,8 @@ const validatePassword = () => {
 /** 校验两次密码一致性 */
 const validateConfirmPassword = () => {
   touched.confirmPassword = true
-  if (!confirmPassword.value) { errors.confirmPassword = '请再次输入密码'; return false }
-  if (confirmPassword.value !== password.value) { errors.confirmPassword = '两次输入的密码不一致'; return false }
+  if (!confirmPassword.value) { errors.confirmPassword = langText.value.auth.enterPasswordAgain; return false }
+  if (confirmPassword.value !== password.value) { errors.confirmPassword = langText.value.auth.passwordMismatch; return false }
   errors.confirmPassword = ''
   return true
 }
@@ -213,7 +214,7 @@ const handleRegister = async () => {
   const okPassword = validatePassword()
   const okConfirm = validateConfirmPassword()
   if (!okName || !okEmail || !okPassword || !okConfirm) {
-    ElMessage.warning('请修正表单错误后再提交')
+    ElMessage.warning(langText.value.auth.formErrorWarning)
     focusFirstInvalid()
     return
   }

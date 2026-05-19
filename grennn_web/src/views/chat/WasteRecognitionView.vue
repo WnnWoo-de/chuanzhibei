@@ -13,12 +13,12 @@
             to="/chat"
             class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-primary transition-opacity mb-8"
           >
-            <span>&larr; 返回 AI 助手</span>
+            <span>&larr; {{ langText.wasteRecognition.backToAI }}</span>
           </router-link>
 
-          <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-6">AI 识别<br />回收分类</h1>
+          <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-6">{{ langText.wasteRecognition.pageTitle1 }}<br />{{ langText.wasteRecognition.pageTitle2 }}</h1>
           <p class="text-sm opacity-60 max-w-[200px] mb-8">
-            上传物品图片，AI 将自动为您识别并建议正确的垃圾分类方式。
+            {{ langText.wasteRecognition.pageDesc }}
           </p>
         </div>
       </div>
@@ -31,7 +31,7 @@
           <div class="flex-1 p-8 border-b md:border-b-0 md:border-r border-black/10 flex flex-col items-center justify-center relative bg-gray-50/30">
             <h2 class="text-2xl font-bold mb-6 flex items-center gap-3 self-start w-full">
               <el-icon><Camera /></el-icon>
-              图像识别
+              {{ langText.wasteRecognition.imageRecognition }}
             </h2>
             
             <div 
@@ -54,7 +54,7 @@
                 <img :src="previewUrl" class="w-full h-full object-contain relative z-10 p-2" />
                 <div v-if="isAnalyzing" class="absolute inset-0 bg-white/80 z-20 flex flex-col items-center justify-center text-black backdrop-blur-sm">
                   <el-icon class="animate-spin text-4xl mb-2 text-primary"><Loading /></el-icon>
-                  <p class="font-mono text-sm uppercase tracking-widest font-bold">AI 视觉分析中...</p>
+                  <p class="font-mono text-sm uppercase tracking-widest font-bold">{{ langText.wasteRecognition.analyzing }}</p>
                   <!-- Scanning effect -->
                   <div class="absolute top-0 left-0 w-full h-1 bg-primary animate-[scan_2s_linear_infinite] shadow-[0_0_8px_2px_rgba(46,125,50,0.8)]"></div>
                 </div>
@@ -63,8 +63,8 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400 group-hover:text-primary transition-colors">
                   <el-icon size="24"><UploadFilled /></el-icon>
                 </div>
-                <p class="font-bold text-gray-700 mb-1 pointer-events-none">点击或拖拽上传图片</p>
-                <p class="text-xs text-gray-500 font-mono pointer-events-none">支持 JPG, PNG 格式，最大 5MB</p>
+                <p class="font-bold text-gray-700 mb-1 pointer-events-none">{{ langText.wasteRecognition.uploadHint }}</p>
+                <p class="text-xs text-gray-500 font-mono pointer-events-none">{{ langText.wasteRecognition.uploadFormats }}</p>
               </template>
             </div>
             
@@ -73,7 +73,7 @@
                 @click="resetUpload" 
                 class="w-full py-3 bg-white border border-black/20 text-xs font-bold uppercase tracking-widest hover:bg-gray-50 transition-colors"
               >
-                重新上传
+                {{ langText.wasteRecognition.reupload }}
               </button>
             </div>
           </div>
@@ -83,16 +83,16 @@
             <div v-if="!analysisResult && !isAnalyzing" class="flex-1 animate-fade-in flex flex-col">
               <div class="flex-1 bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-md">
                 <h4 class="font-bold mb-4 flex items-center gap-2">
-                  <el-icon class="text-primary"><InfoFilled /></el-icon> AI 绿色环保建议
+                  <el-icon class="text-primary"><InfoFilled /></el-icon> {{ langText.wasteRecognition.defaultAdviceTitle }}
                 </h4>
                 <ul class="space-y-3">
                   <li class="flex gap-3 text-sm text-gray-600 leading-relaxed">
                     <span class="text-primary mt-0.5">•</span>
-                    <span>当前展示为默认演示建议；接入 AI 识别接口后，会根据上传图片内容动态生成更精准的分类建议。</span>
+                    <span>{{ langText.wasteRecognition.defaultAdvice1 }}</span>
                   </li>
                   <li class="flex gap-3 text-sm text-gray-600 leading-relaxed">
                     <span class="text-primary mt-0.5">•</span>
-                    <span>建议接入后端视觉模型与知识库（如分类规范、投放点规则），实现按城市与物品类型返回个性化环保建议。</span>
+                    <span>{{ langText.wasteRecognition.defaultAdvice2 }}</span>
                   </li>
                 </ul>
               </div>
@@ -100,10 +100,10 @@
             
             <div v-else-if="analysisResult" class="flex-1 animate-fade-in flex flex-col">
               <div class="mb-6">
-                <span class="font-mono text-xs uppercase tracking-widest opacity-50 block mb-2">特征提取完成 / Extracted</span>
+                <span class="font-mono text-xs uppercase tracking-widest opacity-50 block mb-2">{{ langText.wasteRecognition.featureExtracted }} / {{ langText.wasteRecognition.extracted }}</span>
                 <h3 class="text-3xl font-bold flex items-center gap-3">
                   {{ analysisResult.itemName }}
-                  <span class="text-xs font-mono font-normal px-2 py-1 rounded-sm text-white bg-black whitespace-nowrap">置信度 {{ analysisResult.confidence }}%</span>
+                  <span class="text-xs font-mono font-normal px-2 py-1 rounded-sm text-white bg-black whitespace-nowrap">{{ langText.wasteRecognition.confidence }} {{ analysisResult.confidence }}%</span>
                 </h3>
               </div>
               
@@ -113,8 +113,8 @@
                     {{ categoryIcon(analysisResult.category) }}
                   </div>
                   <div>
-                    <h4 class="text-xl font-bold">{{ analysisResult.category }}</h4>
-                    <p class="text-xs opacity-70 font-mono uppercase tracking-widest">{{ categoryEng(analysisResult.category) }}</p>
+                    <h4 class="text-xl font-bold">{{ categoryLabel(analysisResult.category) }}</h4>
+                    <p class="text-xs opacity-70 font-mono uppercase tracking-widest">{{ categoryEngLabel(analysisResult.category) }}</p>
                   </div>
                 </div>
                 <p class="text-sm leading-relaxed text-gray-700">{{ analysisResult.description }}</p>
@@ -122,7 +122,7 @@
               
               <div class="flex-1 bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-md">
                 <h4 class="font-bold mb-4 flex items-center gap-2">
-                  <el-icon class="text-primary"><InfoFilled /></el-icon> AI 环保建议
+                  <el-icon class="text-primary"><InfoFilled /></el-icon> {{ langText.wasteRecognition.ecoAdviceTitle }}
                 </h4>
                 <ul class="space-y-3">
                   <li v-for="(tip, idx) in analysisResult.tips" :key="idx" class="flex gap-3 text-sm text-gray-600 leading-relaxed">
@@ -145,10 +145,11 @@
 // views/chat/WasteRecognitionView.vue - 垃圾分类 AI 识别页面
 // 用户上传图片后，调用后端识别接口返回分类结果和环保建议
 // ============================================================
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Camera, UploadFilled, Loading, InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { analyzeWasteImage } from '@/services/wasteService'
+import { langText } from '@/language'
 
 // 拖拽悬停状态（控制上传区域的高亮效果）
 const isDragging = ref(false)
@@ -176,11 +177,11 @@ const handleFileChange = (e) => {
  */
 const processFile = (file) => {
   if (!file.type.startsWith('image/')) {
-    ElMessage.error('请上传图片文件')
+    ElMessage.error(langText.value.wasteRecognition.uploadImageError)
     return
   }
   if (file.size > 5 * 1024 * 1024) {
-    ElMessage.error('图片大小不能超过 5MB')
+    ElMessage.error(langText.value.wasteRecognition.imageSizeError)
     return
   }
   
@@ -204,7 +205,7 @@ const analyzeImage = async (file) => {
   isAnalyzing.value = false
 
   if (!result.ok || !result.data) {
-    ElMessage.error(result.message || '识别失败')
+    ElMessage.error(result.message || langText.value.wasteRecognition.recognitionFailed)
     return
   }
 
@@ -212,48 +213,61 @@ const analyzeImage = async (file) => {
 }
 
 // ---- 分类样式映射工具函数 ----
+
+// API 返回的中文分类名到 i18n key 的映射
+const categoryKeyMap = {
+  '可回收物': 'recyclable',
+  '有害垃圾': 'hazardous',
+  '厨余垃圾': 'food',
+  '其他垃圾': 'residual',
+}
+
 /** 返回分类对应的左边框+背景色 CSS 类 */
 const categoryColor = (cat) => {
   const map = {
-    '可回收物': 'border-blue-500 bg-blue-50/50',
-    '有害垃圾': 'border-red-500 bg-red-50/50',
-    '厨余垃圾': 'border-green-500 bg-green-50/50',
-    '其他垃圾': 'border-gray-500 bg-gray-50/50'
+    recyclable: 'border-blue-500 bg-blue-50/50',
+    hazardous: 'border-red-500 bg-red-50/50',
+    food: 'border-green-500 bg-green-50/50',
+    residual: 'border-gray-500 bg-gray-50/50',
   }
-  return map[cat] || 'border-gray-500 bg-gray-50/50'
+  const key = categoryKeyMap[cat] || cat
+  return map[key] || 'border-gray-500 bg-gray-50/50'
 }
 
 /** 返回分类图标圆形背景色 CSS 类 */
 const categoryBgColor = (cat) => {
   const map = {
-    '可回收物': 'bg-blue-500',
-    '有害垃圾': 'bg-red-500',
-    '厨余垃圾': 'bg-green-500',
-    '其他垃圾': 'bg-gray-500'
+    recyclable: 'bg-blue-500',
+    hazardous: 'bg-red-500',
+    food: 'bg-green-500',
+    residual: 'bg-gray-500',
   }
-  return map[cat] || 'bg-gray-500'
+  const key = categoryKeyMap[cat] || cat
+  return map[key] || 'bg-gray-500'
 }
 
 /** 返回分类对应的 Emoji 图标 */
 const categoryIcon = (cat) => {
   const map = {
-    '可回收物': '♻️',
-    '有害垃圾': '☠️',
-    '厨余垃圾': '🍎',
-    '其他垃圾': '🗑️'
+    recyclable: '♻️',
+    hazardous: '☠️',
+    food: '🍎',
+    residual: '🗑️',
   }
-  return map[cat] || '📦'
+  const key = categoryKeyMap[cat] || cat
+  return map[key] || '📦'
+}
+
+/** 返回分类的国际化名称 */
+const categoryLabel = (cat) => {
+  const key = categoryKeyMap[cat] || cat
+  return langText.value.wasteRecognition.categories[key] || cat
 }
 
 /** 返回分类的英文名称 */
-const categoryEng = (cat) => {
-  const map = {
-    '可回收物': 'Recyclable Waste',
-    '有害垃圾': 'Hazardous Waste',
-    '厨余垃圾': 'Food Waste',
-    '其他垃圾': 'Residual Waste'
-  }
-  return map[cat] || 'Unknown'
+const categoryEngLabel = (cat) => {
+  const key = categoryKeyMap[cat] || cat
+  return langText.value.wasteRecognition.categoryEng[key] || 'Unknown'
 }
 </script>
 

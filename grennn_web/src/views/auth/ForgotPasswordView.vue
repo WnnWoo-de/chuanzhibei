@@ -17,9 +17,9 @@
               <div class="mb-6 flex justify-center">
                 <img src="@/assets/logo.png" alt="Logo" class="w-16 h-16 object-contain rounded-2xl shadow-lg border border-black/10" />
               </div>
-              <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">密码重置</p>
-              <h2 class="text-2xl md:text-3xl font-bold">忘记密码</h2>
-              <p class="text-sm text-gray-500 mt-2">请输入您的邮箱验证身份</p>
+              <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">{{ langText.auth.passwordReset }}</p>
+              <h2 class="text-2xl md:text-3xl font-bold">{{ langText.auth.forgotPassword }}</h2>
+              <p class="text-sm text-gray-500 mt-2">{{ langText.auth.enterEmailToVerify }}</p>
             </div>
 
             <!-- 邮箱验证表单 -->
@@ -28,7 +28,7 @@
                 id="email"
                 v-model="email"
                 type="email"
-                label="邮箱"
+                :label="langText.auth.email"
                 placeholder="user@example.com"
                 autocomplete="email"
                 :error="errors.email"
@@ -37,14 +37,14 @@
                 @blur="validateEmail"
               />
               <BaseButton type="submit" class="w-full" :is-loading="isLoading">
-                验证邮箱
+                {{ langText.auth.verifyEmail }}
               </BaseButton>
               <div class="text-center">
                 <router-link
                   :to="{ name: 'login' }"
                   class="text-xs text-gray-500 hover:text-gray-700 hover:underline transition-colors"
                 >
-                  返回登录
+                  {{ langText.auth.backToLogin }}
                 </router-link>
               </div>
             </form>
@@ -60,9 +60,9 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                   </div>
-                  <h3 class="text-xl font-semibold text-gray-900 mb-3">身份验证</h3>
+                  <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ langText.auth.identityVerify }}</h3>
                   <p class="text-gray-600 text-sm leading-relaxed">
-                    请输入您注册时使用的邮箱地址，我们会验证您的身份后让您直接设置新密码。
+                    {{ langText.auth.enterRegisteredEmail }}
                   </p>
                   <div class="mt-6 space-y-3 text-left">
                     <div class="flex items-start gap-3">
@@ -71,7 +71,7 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
                       </div>
-                      <p class="text-gray-600 text-sm">验证邮箱正确性</p>
+                      <p class="text-gray-600 text-sm">{{ langText.auth.verifyEmailCorrectness }}</p>
                     </div>
                     <div class="flex items-start gap-3">
                       <div class="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
@@ -79,7 +79,7 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
                       </div>
-                      <p class="text-gray-600 text-sm">无需等待邮件</p>
+                      <p class="text-gray-600 text-sm">{{ langText.auth.noWaitEmail }}</p>
                     </div>
                     <div class="flex items-start gap-3">
                       <div class="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
@@ -87,7 +87,7 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
                       </div>
-                      <p class="text-gray-600 text-sm">直接设置新密码</p>
+                      <p class="text-gray-600 text-sm">{{ langText.auth.setNewPasswordDirectly }}</p>
                     </div>
                   </div>
                 </div>
@@ -106,6 +106,7 @@ import { useRouter } from 'vue-router'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useUserStore } from '@/stores/user'
+import { langText } from '@/language'
 
 const email = ref('')
 const isLoading = ref(false)
@@ -121,13 +122,13 @@ const validateEmail = (options) => {
   touched.email = true
   if (shouldTrim) email.value = email.value.trim()
   if (!email.value) {
-    errors.email = '请输入邮箱'
+    errors.email = langText.value.auth.enterEmail
     return false
   }
   const value = email.value.trim()
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(value)) {
-    errors.email = '请输入有效的邮箱格式'
+    errors.email = langText.value.auth.invalidEmailFormat
     return false
   }
   errors.email = ''

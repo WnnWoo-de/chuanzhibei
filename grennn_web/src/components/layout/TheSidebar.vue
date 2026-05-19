@@ -20,7 +20,7 @@
           :class="isMiniMode ? 'w-0 opacity-0' : 'opacity-100 w-auto'"
         >
           <span class="font-bold text-lg leading-none whitespace-nowrap">GreenSight</span>
-          <span class="text-[10px] text-primary font-mono uppercase tracking-tighter mt-1 whitespace-nowrap">绿我同行</span>
+          <span class="text-[10px] text-primary font-mono uppercase tracking-tighter mt-1 whitespace-nowrap">{{ langText.nav.brandTagline }}</span>
         </div>
       </div>
 
@@ -32,7 +32,7 @@
               class="transition-all duration-300 overflow-hidden"
               :class="isMiniMode ? 'h-0 opacity-0 py-0 my-0' : 'px-3 py-2 text-xs font-mono uppercase tracking-widest text-gray-400 mt-6 mb-2'"
             >
-              <span v-if="!isMiniMode">{{ item.category }}</span>
+              <span v-if="!isMiniMode">{{ langText.nav[item.categoryKey] || item.category }}</span>
               <div v-else class="my-1 border-t border-black/8"></div>
             </div>
 
@@ -44,7 +44,7 @@
                 activeNav === item.link ? 'bg-primary/10 text-primary font-medium' : 'text-gray-700',
                 isMiniMode ? 'justify-center px-0 py-2.5 w-10 mx-auto' : 'gap-3 px-3 py-2.5'
               ]"
-              :title="isMiniMode ? item.label : ''"
+              :title="isMiniMode ? (langText.nav[item.labelKey] || langText.common[item.labelKey] || item.label) : ''"
               @click="handleNavClick(item.link)"
             >
               <span
@@ -65,12 +65,12 @@
                 <path :d="item.icon" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
 
-              <span v-if="!isMiniMode" class="flex-1 whitespace-nowrap text-left">{{ item.label }}</span>
+              <span v-if="!isMiniMode" class="flex-1 whitespace-nowrap text-left">{{ langText.nav[item.labelKey] || langText.common[item.labelKey] || item.label }}</span>
 
               <span
                 v-if="item.badge && !isMiniMode"
                 class="text-xs px-2 py-0.5 bg-primary/20 text-primary rounded-full font-mono"
-              >{{ item.badge }}</span>
+              >{{ langText.nav[item.badgeKey] || item.badge }}</span>
 
               <span v-if="!isMiniMode" class="opacity-0 group-hover/item:opacity-100 transition-all duration-200 text-gray-400 text-xs">→</span>
             </button>
@@ -84,7 +84,7 @@
       @click="toggleSidebarState"
       class="sidebar-toggle fixed top-3 z-[210] flex h-10 w-10 items-center justify-center rounded-md border border-black/10 bg-white text-black shadow-sm transition-all duration-300 hover:bg-white hover:text-black"
       :class="toggleButtonClass"
-      :aria-label="isSidebarExpanded ? '收起侧边栏' : '展开侧边栏'"
+      :aria-label="isSidebarExpanded ? langText.nav.collapseSidebar : langText.nav.expandSidebar"
     >
       <div class="relative h-5 w-5 overflow-hidden">
         <svg
@@ -124,6 +124,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { langText } from '@/language'
 
 const props = defineProps({
   isOpen: {
@@ -248,84 +249,100 @@ const handleNavClick = async (link) => {
 }
 
 const sidebarItems = [
-  { category: '导航菜单' },
+  { category: '导航菜单', categoryKey: 'navigationMenu' },
   {
     label: '首页',
+    labelKey: 'home',
     link: '/',
     icon: 'M3 12.5 12 4l9 8.5M5 10.75V20h4.5v-5.5h5V20H19v-9.25',
   },
   {
     label: '核心功能',
+    labelKey: 'coreFeatures',
     link: '#features',
     icon: 'M13 3 4 14h7v7l9-11h-7z',
   },
   {
     label: '动态资讯',
+    labelKey: 'news',
     link: '#news',
     icon: 'M5 6.5h14M5 12h14M5 17.5h8',
   },
 
-  { category: '功能模块' },
+  { category: '功能模块', categoryKey: 'featureModules' },
   {
     label: '旧物重构',
+    labelKey: 'reconstruction',
     link: '/reconstruction',
     icon: 'M12 3.5 4.5 7.75v8.5L12 20.5l7.5-4.25v-8.5L12 3.5z',
   },
   {
     label: 'GS AI 对话助手',
+    labelKey: 'chat',
     link: '/chat',
     icon: 'M6 7.5h12a2.5 2.5 0 0 1 2.5 2.5v4A2.5 2.5 0 0 1 18 16.5h-6l-4.5 4v-4H6A2.5 2.5 0 0 1 3.5 14v-4A2.5 2.5 0 0 1 6 7.5Z M8 12h.01M12 12h.01M16 12h.01',
   },
   {
     label: '碳足迹计算',
+    labelKey: 'carbon',
     link: '/chat/carbon-footprint',
     icon: 'M12 3.5c-2.4 2.1-4.75 5.32-4.75 8.44A4.75 4.75 0 0 0 12 16.69a4.75 4.75 0 0 0 4.75-4.75C16.75 8.82 14.4 5.6 12 3.5Zm0 0V20.5M8.5 12.5c1.2.75 2.35 1.1 3.5 1.1 1.15 0 2.3-.35 3.5-1.1',
   },
   {
     label: '识别分类',
+    labelKey: 'waste',
     link: '/chat/waste-recognition',
     icon: 'M8 4.75h8M9 4.75v-1h6v1M7.25 7h9.5l-.8 11.1a1.5 1.5 0 0 1-1.5 1.4h-4.9a1.5 1.5 0 0 1-1.5-1.4L7.25 7Zm2.5 3.25v5.5m4-5.5v5.5',
   },
   {
     label: '成就系统',
+    labelKey: 'achievements',
     link: '/achievements',
     icon: 'M12 4.25 13.894 8.356 18.25 8.83 15 11.914 15.9 16.25 12 14.07 8.1 16.25 9 11.914 5.75 8.83 10.106 8.356 12 4.25ZM6 3.75v3.5M4.25 5.5h3.5M18 16.75v3.5m-1.75-1.75h3.5',
   },
   {
     label: '绿色问答',
+    labelKey: 'quiz',
     link: '/quiz',
     icon: 'M8.25 7.75a3.75 3.75 0 1 1 5.68 3.22c-1.1.64-1.93 1.39-1.93 2.78M12 17.75h.01M4.75 4.75h14.5v14.5H4.75z',
     badge: '赚积分',
+    badgeKey: 'earnPoints',
   },
   {
     label: '兑换商城',
+    labelKey: 'store',
     link: '/store',
     icon: 'M6.75 8.25h10.5l-.85 10.15a1.5 1.5 0 0 1-1.5 1.35H9.1a1.5 1.5 0 0 1-1.5-1.35L6.75 8.25ZM9 8.25a3 3 0 0 1 6 0M9.25 12.25h5.5',
   },
   {
     label: '活动社区',
+    labelKey: 'community',
     link: '/community',
     icon: 'M8.5 11.25a2.75 2.75 0 1 1 0-5.5 2.75 2.75 0 0 1 0 5.5Zm7 0a2.75 2.75 0 1 1 0-5.5 2.75 2.75 0 0 1 0 5.5ZM3.75 18.25a4.75 4.75 0 0 1 8.21-3.25M20.25 18.25a4.75 4.75 0 0 0-8.21-3.25M8.5 18.25a3.5 3.5 0 0 1 7 0',
   },
   {
     label: '志愿活动',
+    labelKey: 'volunteer',
     link: '/volunteer',
     icon: 'M12 20s-6.5-4.35-8.5-8.15C1.6 8.96 3.1 5.75 6.5 5.75c2.05 0 3.14 1.08 4.03 2.3.63-.96 1.98-2.3 4.47-2.3 3.39 0 4.9 3.21 3 6.1C18.5 15.65 12 20 12 20Z',
   },
   {
     label: '天气查询',
+    labelKey: 'weather',
     link: '/weather',
     icon: 'M7 18.25h9a4.25 4.25 0 1 0-.68-8.445A5.5 5.5 0 0 0 4.75 12a3.25 3.25 0 0 0 2.25 6.25Z',
   },
 
-  { category: '用户' },
+  { category: '用户', categoryKey: 'user' },
   {
     label: '个人中心',
+    labelKey: 'profile',
     link: '/profile',
     icon: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0',
   },
   {
     label: '设置',
+    labelKey: 'settings',
     link: '/settings',
     icon: 'M12 8.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5Zm8 3.25-.92-.24a7.86 7.86 0 0 0-.52-1.27l.53-.8a.75.75 0 0 0-.09-.95l-1.74-1.74a.75.75 0 0 0-.95-.09l-.8.53c-.41-.21-.83-.39-1.27-.52L14 4a.75.75 0 0 0-.73-.57h-2.54A.75.75 0 0 0 10 4l-.24.92c-.44.13-.86.31-1.27.52l-.8-.53a.75.75 0 0 0-.95.09L5 6.74a.75.75 0 0 0-.09.95l.53.8c-.21.41-.39-.83-.52 1.27L4 10a.75.75 0 0 0-.57.73v2.54c0 .34.23.63.57.73l.92.24c.13.44.31.86.52 1.27l-.53.8a.75.75 0 0 0 .09.95L6.74 19a.75.75 0 0 0 .95.09l.8-.53c.41.21.83.39 1.27.52L10 20a.75.75 0 0 0 .73.57h2.54A.75.75 0 0 0 14 20l.24-.92c.44-.13.86-.31 1.27-.52l.8.53a.75.75 0 0 0 .95-.09L19 17.26a.75.75 0 0 0 .09-.95l-.53-.8c.21-.41.39-.83.52-1.27L20 14a.75.75 0 0 0 .57-.73v-2.54A.75.75 0 0 0 20 10Z',
   },

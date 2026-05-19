@@ -30,8 +30,8 @@
                 </svg>
               </div>
               <div class="title-section">
-                <h2 class="card-title">天气查询与绿色出行</h2>
-                <p class="card-subtitle">Weather & Green Travel</p>
+                <h2 class="card-title">{{ langText.weather.pageTitle }}</h2>
+                <p class="card-subtitle">{{ langText.weather.pageSubtitle }}</p>
               </div>
             </div>
 
@@ -51,8 +51,8 @@
                   </svg>
                 </div>
                 <div class="tip-content">
-                  <h3 class="tip-title">晴朗天气</h3>
-                  <p class="tip-text">适合骑行或步行，享受阳光，减少碳排放</p>
+                  <h3 class="tip-title">{{ langText.weather.sunnyTitle }}</h3>
+                  <p class="tip-text">{{ langText.weather.sunnyText }}</p>
                 </div>
               </div>
 
@@ -63,8 +63,8 @@
                   </svg>
                 </div>
                 <div class="tip-content">
-                  <h3 class="tip-title">多云天气</h3>
-                  <p class="tip-text">推荐公共交通出行，避免空调车过度使用</p>
+                  <h3 class="tip-title">{{ langText.weather.cloudyTitle }}</h3>
+                  <p class="tip-text">{{ langText.weather.cloudyText }}</p>
                 </div>
               </div>
 
@@ -81,8 +81,8 @@
                   </svg>
                 </div>
                 <div class="tip-content">
-                  <h3 class="tip-title">雨雪天气</h3>
-                  <p class="tip-text">选择合乘或地铁，减少道路拥堵和污染</p>
+                  <h3 class="tip-title">{{ langText.weather.rainyTitle }}</h3>
+                  <p class="tip-text">{{ langText.weather.rainyText }}</p>
                 </div>
               </div>
 
@@ -94,8 +94,8 @@
                   </svg>
                 </div>
                 <div class="tip-content">
-                  <h3 class="tip-title">环保倡议</h3>
-                  <p class="tip-text">每周少开一天车，让地球多一份清新</p>
+                  <h3 class="tip-title">{{ langText.weather.ecoTitle }}</h3>
+                  <p class="tip-text">{{ langText.weather.ecoText }}</p>
                 </div>
               </div>
             </div>
@@ -152,12 +152,10 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
+import { langText } from '@/language'
 import {
-  formatDay,
-  formatHour,
-  formatTime,
   getAqiColor,
-  getUvLevel,
+  useWeatherFormatters,
   weatherFmt,
 } from './weatherFormatters'
 import { useWeatherQuery } from './useWeatherQuery'
@@ -178,6 +176,7 @@ const {
   searchCity,
   weather,
 } = useWeatherQuery()
+const { formatDay, formatHour, formatTime, getUvLevel } = useWeatherFormatters()
 const fmt = weatherFmt
 
 const themeClass = computed(() => {
