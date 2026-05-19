@@ -6,6 +6,7 @@
 import './assets/main.css'
 import './assets/nprogress.css'
 import '../node_modules/qweather-icons/font/qweather-icons.css'
+import './theme'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

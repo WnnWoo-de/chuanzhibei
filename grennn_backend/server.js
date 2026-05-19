@@ -42,6 +42,8 @@ app.use('/api/v1/achievements',   require('./routes/achievement'));
 app.use('/api/v1/volunteer',      require('./routes/volunteer'));
 app.use('/api/v1/waste',          require('./routes/waste'));
 app.use('/api/v1/carbon',         require('./routes/carbon'));
+app.use('/api/v1/store',          require('./routes/store'));
+app.use('/api/v1/quiz',           require('./routes/quiz'));
 
 const PORT = process.env.PORT || 3000;
 const shouldAlterSync = String(process.env.DB_SYNC_ALTER || '').toLowerCase() === 'true';

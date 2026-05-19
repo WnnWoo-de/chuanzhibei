@@ -9,7 +9,7 @@
         <el-icon><Delete /></el-icon>
         <span>清空对话</span>
       </button>
-      <span class="md:hidden text-xs font-bold text-gray-500">GreenSight-绿我同行 AI 助手</span>
+      <span class="md:hidden text-xs font-bold text-gray-500">GS AI 对话助手</span>
     </div>
     <div class="font-mono text-[10px] opacity-40 uppercase tracking-widest font-bold">安全连接 // 已加密</div>
   </div>

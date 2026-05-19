@@ -1,10 +1,10 @@
 <template>
   <div class="col-span-12 md:col-span-3 flex flex-col md:h-full">
     <div class="sticky top-24">
-      <h1 class="text-3xl md:text-5xl font-bold mt-2 mb-4 md:mb-6">GreenSight- AI 助手</h1>
+      <h1 class="text-3xl md:text-5xl font-bold mt-2 mb-4 md:mb-6">GS AI<br />对话助手</h1>
       <p class="text-xs md:text-sm opacity-60 max-w-[200px] mb-4 md:mb-8 hidden md:block">
-        AI 环保助手<br />
-        您的专属绿色生活顾问，提供可持续生活建议。
+        GreenSight 环保问答中枢<br />
+        帮你快速获得垃圾分类、旧物改造、碳足迹与可持续生活建议。
       </p>
 
       <div class="flex md:hidden items-center justify-between mb-4 text-xs font-mono opacity-60 border-b border-black/10 pb-2">

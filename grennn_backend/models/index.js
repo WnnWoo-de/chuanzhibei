@@ -14,6 +14,10 @@ const Achievement             = require('./Achievement');
 const UserAchievement         = require('./UserAchievement');
 const VolunteerActivity       = require('./VolunteerActivity');
 const VolunteerEnrollment     = require('./VolunteerEnrollment');
+const RewardProduct           = require('./RewardProduct');
+const RedeemRecord            = require('./RedeemRecord');
+const QuizQuestion            = require('./QuizQuestion');
+const QuizRecord              = require('./QuizRecord');
 
 Post.belongsTo(User, { foreignKey: 'userId', as: 'author' });
 User.hasMany(Post, { foreignKey: 'userId', as: 'posts' });
@@ -48,6 +52,14 @@ VolunteerEnrollment.belongsTo(VolunteerActivity, { foreignKey: 'activityId', as:
 User.hasMany(VolunteerEnrollment, { foreignKey: 'userId', as: 'volunteerEnrollments' });
 VolunteerActivity.hasMany(VolunteerEnrollment, { foreignKey: 'activityId', as: 'enrollments' });
 
+RedeemRecord.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+RedeemRecord.belongsTo(RewardProduct, { foreignKey: 'productId', as: 'product' });
+User.hasMany(RedeemRecord, { foreignKey: 'userId', as: 'redeemRecords' });
+RewardProduct.hasMany(RedeemRecord, { foreignKey: 'productId', as: 'redeemRecords' });
+
+QuizRecord.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+User.hasMany(QuizRecord, { foreignKey: 'userId', as: 'quizRecords' });
+
 const db = {
     sequelize,
     User,
@@ -61,6 +73,10 @@ const db = {
     UserAchievement,
     VolunteerActivity,
     VolunteerEnrollment,
+    RewardProduct,
+    RedeemRecord,
+    QuizQuestion,
+    QuizRecord,
 };
 
 module.exports = db;

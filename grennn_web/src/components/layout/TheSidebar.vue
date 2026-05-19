@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="fixed left-0 top-0 h-screen bg-white border-r border-black/10 transition-all duration-300 z-[200] overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col"
+      class="app-sidebar fixed left-0 top-0 h-screen bg-white border-r border-black/10 transition-all duration-300 z-[200] overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col"
       :class="sidebarClasses"
     >
       <div
@@ -82,7 +82,7 @@
     <button
       type="button"
       @click="toggleSidebarState"
-      class="fixed top-3 z-[210] flex h-10 w-10 items-center justify-center rounded-md border border-black/10 bg-white text-black shadow-sm transition-all duration-300 hover:bg-white hover:text-black"
+      class="sidebar-toggle fixed top-3 z-[210] flex h-10 w-10 items-center justify-center rounded-md border border-black/10 bg-white text-black shadow-sm transition-all duration-300 hover:bg-white hover:text-black"
       :class="toggleButtonClass"
       :aria-label="isSidebarExpanded ? '收起侧边栏' : '展开侧边栏'"
     >
@@ -272,7 +272,7 @@ const sidebarItems = [
     icon: 'M12 3.5 4.5 7.75v8.5L12 20.5l7.5-4.25v-8.5L12 3.5z',
   },
   {
-    label: 'GreenSight- AI助手',
+    label: 'GS AI 对话助手',
     link: '/chat',
     icon: 'M6 7.5h12a2.5 2.5 0 0 1 2.5 2.5v4A2.5 2.5 0 0 1 18 16.5h-6l-4.5 4v-4H6A2.5 2.5 0 0 1 3.5 14v-4A2.5 2.5 0 0 1 6 7.5Z M8 12h.01M12 12h.01M16 12h.01',
   },
@@ -290,6 +290,17 @@ const sidebarItems = [
     label: '成就系统',
     link: '/achievements',
     icon: 'M12 4.25 13.894 8.356 18.25 8.83 15 11.914 15.9 16.25 12 14.07 8.1 16.25 9 11.914 5.75 8.83 10.106 8.356 12 4.25ZM6 3.75v3.5M4.25 5.5h3.5M18 16.75v3.5m-1.75-1.75h3.5',
+  },
+  {
+    label: '绿色问答',
+    link: '/quiz',
+    icon: 'M8.25 7.75a3.75 3.75 0 1 1 5.68 3.22c-1.1.64-1.93 1.39-1.93 2.78M12 17.75h.01M4.75 4.75h14.5v14.5H4.75z',
+    badge: '赚积分',
+  },
+  {
+    label: '兑换商城',
+    link: '/store',
+    icon: 'M6.75 8.25h10.5l-.85 10.15a1.5 1.5 0 0 1-1.5 1.35H9.1a1.5 1.5 0 0 1-1.5-1.35L6.75 8.25ZM9 8.25a3 3 0 0 1 6 0M9.25 12.25h5.5',
   },
   {
     label: '活动社区',
@@ -333,5 +344,38 @@ onMounted(() => {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+:global(:root[data-theme='dark']) .app-sidebar {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  background: #1f1f1f !important;
+  color: #f7fff8 !important;
+  box-shadow: none;
+}
+
+:global(:root[data-theme='dark']) .app-sidebar span,
+:global(:root[data-theme='dark']) .app-sidebar .text-gray-400,
+:global(:root[data-theme='dark']) .app-sidebar .text-gray-700 {
+  color: #dff7e3 !important;
+}
+
+:global(:root[data-theme='dark']) .app-sidebar button {
+  color: #dff7e3 !important;
+}
+
+:global(:root[data-theme='dark']) .app-sidebar button:hover {
+  background: rgba(115, 242, 135, 0.12) !important;
+  color: #ffffff !important;
+}
+
+:global(:root[data-theme='dark']) .app-sidebar .bg-primary\/10 {
+  background: #333333 !important;
+  color: #ffffff !important;
+}
+
+:global(:root[data-theme='dark']) .sidebar-toggle {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: #2b2b2b !important;
+  color: #f7fff8 !important;
 }
 </style>

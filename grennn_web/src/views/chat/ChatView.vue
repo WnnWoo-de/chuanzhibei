@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-transparent h-screen text-[#1a1a1a] font-sans flex flex-col overflow-hidden">
+  <div class="chat-page bg-transparent h-screen text-[#1a1a1a] font-sans flex flex-col overflow-hidden">
     <!-- 网格背景 -->
     <div
       class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6"
@@ -15,7 +15,7 @@
       <!-- 聊天界面 -->
       <div class="col-span-12 md:col-span-9 flex flex-col h-full overflow-hidden">
         <div
-          class="bg-white/90 backdrop-blur-md border border-black/10 flex-1 flex flex-col relative overflow-hidden shadow-xl transition-all duration-500 hover:shadow-2xl rounded-2xl h-full"
+          class="chat-shell bg-white/90 backdrop-blur-md border border-black/10 flex-1 flex flex-col relative overflow-hidden shadow-xl transition-all duration-500 hover:shadow-2xl rounded-2xl h-full"
         >
           <ChatHeaderBar @clear-chat="clearChat" />
 
@@ -80,7 +80,7 @@ const { allPrompts, quickPrompts, isShuffling, shufflePrompts } = useChatPrompts
 const initialMessage = {
   role: 'assistant',
   content:
-    '你好！我是 **GreenSight-绿我同行 AI 助手** 🌱，您的专属 AI 环保助手。无论是垃圾分类查询、旧物改造建议，还是碳足迹分析，我都可以帮您！有什么想聊的吗？',
+    '你好！我是 **GS AI 对话助手** 🌱，来自 GreenSight-绿我同行。无论是垃圾分类查询、旧物改造建议、低碳出行，还是碳足迹分析，我都可以帮你整理成可执行的绿色生活方案。今天想从哪个问题开始？',
   time: new Date().toLocaleTimeString('en-GB'),
 }
 
@@ -204,6 +204,65 @@ onUnmounted(() => {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+:global(:root[data-theme='dark'] .chat-page) {
+  color: var(--color-text);
+}
+
+:global(:root[data-theme='dark'] .chat-page .border-r) {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+:global(:root[data-theme='dark'] .chat-shell) {
+  background:
+    linear-gradient(145deg, rgba(6, 18, 11, 0.94), rgba(15, 30, 20, 0.9)),
+    radial-gradient(circle at 18% 0%, rgba(110, 231, 123, 0.14), transparent 30rem) !important;
+  border-color: rgba(232, 255, 238, 0.2) !important;
+  box-shadow: 0 30px 110px rgba(0, 0, 0, 0.58) !important;
+  backdrop-filter: blur(28px) saturate(130%);
+  -webkit-backdrop-filter: blur(28px) saturate(130%);
+}
+
+:global(:root[data-theme='dark'] .chat-shell::before) {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent),
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 220% 100%, 100% 34px;
+  opacity: 0.28;
+  animation: chatGlassDrift 12s linear infinite;
+}
+
+:global(:root[data-theme='dark'] .chat-shell > *) {
+  position: relative;
+  z-index: 1;
+}
+
+:global(:root[data-theme='dark'] .chat-shell .markdown-body),
+:global(:root[data-theme='dark'] .chat-shell .markdown-body p),
+:global(:root[data-theme='dark'] .chat-shell .markdown-body li) {
+  color: rgba(244, 247, 244, 0.9);
+}
+
+:global(:root[data-theme='dark'] .chat-shell .markdown-body strong),
+:global(:root[data-theme='dark'] .chat-shell .markdown-body h1),
+:global(:root[data-theme='dark'] .chat-shell .markdown-body h2),
+:global(:root[data-theme='dark'] .chat-shell .markdown-body h3),
+:global(:root[data-theme='dark'] .chat-shell .markdown-body h4) {
+  color: #ffffff;
+}
+
+@keyframes chatGlassDrift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 220% 0, 0 34px;
+  }
 }
 
 /* ---- 消息气泡出现/消失动画 ---- */

@@ -349,7 +349,109 @@ CREATE TABLE IF NOT EXISTS `VolunteerEnrollments` (
 
 
 -- ============================================================
--- 12. 种子数据：平台初始成就
+-- 12. RewardProducts
+--     frontend: views/store/StoreView.vue
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `RewardProducts` (
+    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name`        VARCHAR(120) NOT NULL COMMENT '商品名称',
+    `category`    VARCHAR(50)  NOT NULL DEFAULT '实物商品' COMMENT '商品分类',
+    `description` VARCHAR(500) NOT NULL COMMENT '商品简介',
+    `points`      INT          NOT NULL DEFAULT 0 COMMENT '兑换所需积分',
+    `stock`       INT          NOT NULL DEFAULT 0 COMMENT '库存数量',
+    `productType` ENUM('physical','virtual','certificate') NOT NULL DEFAULT 'physical' COMMENT '商品类型',
+    `icon`        VARCHAR(50)  NULL COMMENT '前端图标名称',
+    `accent`      VARCHAR(50)  NULL COMMENT '前端色彩类名',
+    `tags`        JSON         NOT NULL COMMENT '标签数组',
+    `enabled`     TINYINT(1)   NOT NULL DEFAULT 1 COMMENT '是否上架',
+    `sortOrder`   INT          NOT NULL DEFAULT 0 COMMENT '展示排序',
+    `createdAt`   DATETIME     NOT NULL,
+    `updatedAt`   DATETIME     NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `idx_reward_products_category` (`category`),
+    INDEX `idx_reward_products_enabled_sort` (`enabled`, `sortOrder`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='积分兑换商品定义表';
+
+
+-- ============================================================
+-- 13. RedeemRecords
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `RedeemRecords` (
+    `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `userId`      CHAR(36)        NOT NULL COMMENT '兑换用户ID',
+    `productId`   INT UNSIGNED    NULL COMMENT '商品ID，商品删除后保留记录快照',
+    `productName` VARCHAR(120)    NOT NULL COMMENT '兑换时商品名称快照',
+    `category`    VARCHAR(50)     NOT NULL COMMENT '兑换时商品分类快照',
+    `productType` ENUM('physical','virtual','certificate') NOT NULL DEFAULT 'physical',
+    `costPoints`  INT             NOT NULL COMMENT '消耗积分',
+    `status`      ENUM('pending','fulfilled','cancelled') NOT NULL DEFAULT 'pending',
+    `fulfilledAt` DATETIME        NULL COMMENT '到账或履约时间',
+    `createdAt`   DATETIME        NOT NULL,
+    `updatedAt`   DATETIME        NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_redeem_userId`
+        FOREIGN KEY (`userId`) REFERENCES `Users`(`id`)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `fk_redeem_productId`
+        FOREIGN KEY (`productId`) REFERENCES `RewardProducts`(`id`)
+        ON UPDATE CASCADE ON DELETE SET NULL,
+    INDEX `idx_redeem_user_createdAt` (`userId`, `createdAt` DESC),
+    INDEX `idx_redeem_productId` (`productId`),
+    INDEX `idx_redeem_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='用户积分兑换记录表';
+
+
+-- ============================================================
+-- 14. QuizQuestions
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `QuizQuestions` (
+    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `category`    VARCHAR(50)  NOT NULL COMMENT '题目分类',
+    `type`        ENUM('single','multiple','judge') NOT NULL DEFAULT 'single' COMMENT '题型',
+    `question`    VARCHAR(500) NOT NULL COMMENT '题干',
+    `options`     JSON         NOT NULL COMMENT '选项数组',
+    `answer`      JSON         NOT NULL COMMENT '正确答案标签数组',
+    `explanation` VARCHAR(1000) NOT NULL COMMENT '解析',
+    `points`      INT          NOT NULL DEFAULT 10 COMMENT '答对积分',
+    `enabled`     TINYINT(1)   NOT NULL DEFAULT 1 COMMENT '是否启用',
+    `sortOrder`   INT          NOT NULL DEFAULT 0 COMMENT '展示排序',
+    `createdAt`   DATETIME     NOT NULL,
+    `updatedAt`   DATETIME     NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `idx_quiz_questions_category` (`category`),
+    INDEX `idx_quiz_questions_enabled_sort` (`enabled`, `sortOrder`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='绿色生活问答题库表';
+
+
+-- ============================================================
+-- 15. QuizRecords
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `QuizRecords` (
+    `id`           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `userId`       CHAR(36)        NOT NULL COMMENT '答题用户ID',
+    `date`         DATE            NOT NULL COMMENT '答题日期',
+    `questionIds`  JSON            NOT NULL COMMENT '本次题目ID数组',
+    `correctCount` INT             NOT NULL DEFAULT 0 COMMENT '答对数量',
+    `totalCount`   INT             NOT NULL DEFAULT 0 COMMENT '题目总数',
+    `earnedPoints` INT             NOT NULL DEFAULT 0 COMMENT '获得积分',
+    `completed`    TINYINT(1)      NOT NULL DEFAULT 1 COMMENT '是否完成',
+    `createdAt`    DATETIME        NOT NULL,
+    `updatedAt`    DATETIME        NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `uq_quiz_records_user_date` (`userId`, `date`),
+    CONSTRAINT `fk_quiz_records_userId`
+        FOREIGN KEY (`userId`) REFERENCES `Users`(`id`)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    INDEX `idx_quiz_records_createdAt` (`createdAt` DESC)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='用户每日问答成绩记录表';
+
+
+-- ============================================================
+-- 16. 种子数据：平台初始成就
 -- ============================================================
 INSERT IGNORE INTO `Achievements`
     (`code`,`name`,`description`,`icon`,`category`,`requirement`,`conditionJson`,`pointsReward`,`rarity`,`sortOrder`,`createdAt`,`updatedAt`)
@@ -366,6 +468,26 @@ VALUES
     ('ECO_WARRIOR',    '环保勇士',    '积分达到500分',            'Trophy',     'general',   '积分达到 500 分',            '{"type":"points","value":500}',           100, 'epic',      10,NOW(),NOW()),
     ('GREEN_LEGEND',   '绿色传奇',    '积分达到2000分',           'TrophyBase', 'general',   '积分达到 2000 分',           '{"type":"points","value":2000}',          500, 'legendary', 11,NOW(),NOW());
 
+INSERT IGNORE INTO `RewardProducts`
+    (`id`,`name`,`category`,`description`,`points`,`stock`,`productType`,`icon`,`accent`,`tags`,`enabled`,`sortOrder`,`createdAt`,`updatedAt`)
+VALUES
+    (1, '环保帆布袋',       '实物商品', '可重复使用，适合购物、通勤、日常收纳。',       500,  20, 'physical',    'ShoppingBag',   'accent-green',   '["低碳","可重复使用"]', 1, 1, NOW(), NOW()),
+    (2, '可重复使用水杯',   '实物商品', '减少一次性杯具使用，适合校园与通勤场景。',       800,  12, 'physical',    'CoffeeCup',     'accent-blue',    '["随身","减塑"]',       1, 2, NOW(), NOW()),
+    (3, '竹纤维餐具套装',   '实物商品', '轻便餐具组合，降低外卖一次性餐具依赖。',        1200,   8, 'physical',    'Goods',         'accent-amber',   '["餐具","低废弃"]',     1, 3, NOW(), NOW()),
+    (4, '垃圾分类贴纸',     '实物商品', '家庭分类提醒贴，帮助全家快速识别投放类别。',     200,  40, 'physical',    'CollectionTag', 'accent-cyan',    '["分类","家庭"]',       1, 4, NOW(), NOW()),
+    (5, '绿色知识达人徽章', '虚拟徽章', '完成环保知识学习后可展示在个人成就墙。',         300,  99, 'virtual',     'Medal',         'accent-lime',    '["徽章","知识"]',       1, 5, NOW(), NOW()),
+    (6, '低碳生活头像框',   '头像装饰', '为个人主页增加低碳主题头像装饰。',               400,  99, 'virtual',     'Present',       'accent-rose',    '["装饰","虚拟"]',       1, 6, NOW(), NOW()),
+    (7, '公益树苗认养证书', '公益证书', '生成一份公益认养证书，记录你的绿色行动。',      1500,   6, 'certificate', 'Reading',       'accent-emerald', '["公益","证书"]',       1, 7, NOW(), NOW());
+
+INSERT IGNORE INTO `QuizQuestions`
+    (`id`,`category`,`type`,`question`,`options`,`answer`,`explanation`,`points`,`enabled`,`sortOrder`,`createdAt`,`updatedAt`)
+VALUES
+    (1, '垃圾分类', 'single',   '以下哪种垃圾属于可回收物？',                         '[{"label":"A","text":"废旧报纸"},{"label":"B","text":"剩菜剩饭"},{"label":"C","text":"用过的纸巾"},{"label":"D","text":"烟蒂"}]', '["A"]',         '废旧报纸属于可回收物，回收后可以重新制浆造纸。',                         10, 1, 1, NOW(), NOW()),
+    (2, '低碳出行', 'single',   '短距离出行时，以下哪种方式更低碳？',                 '[{"label":"A","text":"开私家车"},{"label":"B","text":"步行或骑自行车"},{"label":"C","text":"怠速停车等待"},{"label":"D","text":"单人长距离开车"}]', '["B"]', '步行和骑行几乎不产生直接碳排放，适合短距离通勤。',                         10, 1, 2, NOW(), NOW()),
+    (3, '节水节电', 'judge',    '离开房间随手关灯可以减少不必要的电力消耗。',         '[{"label":"A","text":"正确"},{"label":"B","text":"错误"}]', '["A"]',      '随手关灯是最容易坚持的节能行为之一，也能降低家庭用电成本。',               10, 1, 3, NOW(), NOW()),
+    (4, '绿色饮食', 'single',   '以下哪种行为更符合绿色饮食理念？',                   '[{"label":"A","text":"按需点餐，减少浪费"},{"label":"B","text":"每餐大量剩饭"},{"label":"C","text":"频繁使用一次性餐具"},{"label":"D","text":"只购买过度包装食品"}]', '["A"]', '按需点餐可以减少食物浪费，也能降低生产和处理过程中的资源消耗。',             10, 1, 4, NOW(), NOW()),
+    (5, '旧物利用', 'multiple', '以下哪些做法属于旧物利用？',                         '[{"label":"A","text":"把旧玻璃瓶改造成花瓶"},{"label":"B","text":"修补旧衣服继续穿"},{"label":"C","text":"还能用的物品直接丢弃"},{"label":"D","text":"旧纸箱改成收纳盒"}]', '["A","B","D"]', '旧物利用可以延长物品生命周期，减少新资源消耗和废弃物产生。',                 10, 1, 5, NOW(), NOW());
+
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -375,4 +497,6 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ReconstructionRecords / WasteRecognitionRecords / CarbonFootprintRecords
 -- Achievements / UserAchievements
 -- VolunteerActivities / VolunteerEnrollments
+-- RewardProducts / RedeemRecords
+-- QuizQuestions / QuizRecords
 -- ============================================================

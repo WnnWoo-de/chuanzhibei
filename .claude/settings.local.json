@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mysql -u root -pWnn0705520@ -e \"SELECT 1\")",
+      "Bash(npm run *)"
+    ]
+  }
+}

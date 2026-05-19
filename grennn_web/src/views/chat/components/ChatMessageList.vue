@@ -11,7 +11,7 @@
           <el-icon v-if="msg.role === 'assistant'" :size="12"><Cpu /></el-icon>
           <el-icon v-else :size="12"><User /></el-icon>
           <span class="font-mono text-[10px] uppercase tracking-wider">
-            {{ msg.role === 'user' ? 'You' : 'GreenSight-绿我同行 AI 助手' }} // {{ msg.time }}
+            {{ msg.role === 'user' ? 'You' : 'GS AI 对话助手' }} // {{ msg.time }}
           </span>
         </div>
 
@@ -84,7 +84,7 @@
       <div v-if="isTyping" class="flex flex-col items-start max-w-[75%]">
         <div class="flex items-center gap-2 mb-2 opacity-50">
           <el-icon :size="12"><Cpu /></el-icon>
-          <span class="font-mono text-[10px] uppercase tracking-wider">GreenSight-绿我同行 AI 助手 正在思考...</span>
+          <span class="font-mono text-[10px] uppercase tracking-wider">GS AI 对话助手 正在思考...</span>
         </div>
         <div class="p-4 bg-gray-50 border border-gray-100 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-1 h-[54px]">
           <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>

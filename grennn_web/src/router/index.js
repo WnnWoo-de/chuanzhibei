@@ -15,9 +15,9 @@ const router = createRouter({
     void to
     void from
     if (savedPosition) {
-      return savedPosition
+      return { ...savedPosition, behavior: 'auto' }
     }
-    return { top: 0 }
+    return { top: 0, behavior: 'auto' }
   },
 
   routes: [
@@ -86,6 +86,16 @@ const router = createRouter({
       path: '/achievements',
       name: 'achievements',
       component: () => import('../views/achievements/AchievementsView.vue'),
+    },
+    {
+      path: '/quiz',
+      name: 'quiz',
+      component: () => import('../views/quiz/QuizView.vue'),
+    },
+    {
+      path: '/store',
+      name: 'store',
+      component: () => import('../views/store/StoreView.vue'),
     },
     {
       path: '/community',

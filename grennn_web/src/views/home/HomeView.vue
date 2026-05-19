@@ -104,7 +104,7 @@
 
     <!-- Hero Section (Carousel) -->
     <section class="hero-section min-h-[100dvh] md:min-h-screen relative flex flex-col justify-center overflow-hidden bg-[#fcfffc] px-4 md:px-6 pt-10 md:pt-20 text-[#1d3a2d]">
-      <div class="absolute inset-0 z-0 overflow-hidden opacity-55 pointer-events-none">
+      <div class="hero-silk-layer absolute inset-0 z-0 overflow-hidden opacity-55 pointer-events-none">
         <Silk
           :speed="1.8"
           :scale="0.85"
@@ -114,10 +114,10 @@
           class-name="h-full w-full"
         />
       </div>
-      <div class="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.98),transparent_42%),radial-gradient(circle_at_78%_20%,rgba(220,252,231,0.34),transparent_26%),linear-gradient(135deg,rgba(252,255,252,0.96),rgba(248,252,248,0.84))] pointer-events-none"></div>
+      <div class="hero-tint-layer absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.98),transparent_42%),radial-gradient(circle_at_78%_20%,rgba(220,252,231,0.34),transparent_26%),linear-gradient(135deg,rgba(252,255,252,0.96),rgba(248,252,248,0.84))] pointer-events-none"></div>
       <!-- Background Grid -->
       <div
-        class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-[0.07] z-0 px-6"
+        class="hero-grid-layer fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-[0.07] z-0 px-6"
       >
         <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
         <!-- Mobile grid lines (fewer) -->
@@ -374,7 +374,7 @@
             <div
               v-for="(feature, index) in features"
               :key="index"
-              class="group relative bg-white aspect-[4/5] md:aspect-square p-8 flex flex-col justify-between border border-black/5 tech-border rounded-3xl transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden animate-on-scroll"
+              class="feature-card group relative bg-white aspect-[4/5] md:aspect-square p-8 flex flex-col justify-between border border-black/5 tech-border rounded-3xl transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden animate-on-scroll"
               :class="{ 'md:mt-24': index % 2 !== 0 }"
             >
               <!-- 背景装饰 -->
@@ -383,7 +383,7 @@
                 :class="feature.gradient"
               ></div>
               <div
-                class="absolute -right-8 -bottom-8 w-48 h-48 opacity-[0.02] group-hover:opacity-10 transition-all duration-700 transform group-hover:scale-110 group-hover:-rotate-12 pointer-events-none"
+                class="feature-card__ghost-icon absolute -right-8 -bottom-8 w-48 h-48 opacity-[0.02] group-hover:opacity-10 transition-all duration-700 transform group-hover:scale-110 group-hover:-rotate-12 pointer-events-none"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -404,14 +404,14 @@
                   02.{{ index + 1 }}
                 </div>
                 <div
-                  class="w-2 h-2 rounded-full bg-black/10 group-hover:bg-green-500 transition-colors duration-300"
+                  class="feature-card__status w-2 h-2 rounded-full bg-black/10 group-hover:bg-green-500 transition-colors duration-300"
                 ></div>
               </div>
 
               <!-- 核心内容区 -->
               <div class="relative z-10 mt-auto mb-8">
                 <div
-                  class="mb-6 w-12 h-12 rounded-xl bg-gray-50 border border-black/5 flex items-center justify-center group-hover:bg-black group-hover:text-white group-hover:border-black transition-all duration-300 shadow-sm"
+                  class="feature-card__icon mb-6 w-12 h-12 rounded-xl bg-gray-50 border border-black/5 flex items-center justify-center group-hover:bg-black group-hover:text-white group-hover:border-black transition-all duration-300 shadow-sm"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -432,7 +432,7 @@
                   {{ feature.subtitle }}
                 </p>
                 <p
-                  class="text-sm leading-relaxed text-gray-600 opacity-80 group-hover:opacity-100 transition-opacity border-l-2 border-transparent group-hover:border-primary pl-0 group-hover:pl-3 transition-all duration-300"
+                  class="feature-card__desc text-sm leading-relaxed text-gray-600 opacity-80 group-hover:opacity-100 transition-opacity border-l-2 border-transparent group-hover:border-primary pl-0 group-hover:pl-3 transition-all duration-300"
                 >
                   {{ feature.description }}
                 </p>
@@ -440,7 +440,7 @@
 
               <!-- 底部操作栏 -->
               <div
-                class="relative z-10 pt-4 border-t border-black/5 group-hover:border-black/10 transition-colors flex justify-between items-center"
+                class="feature-card__footer relative z-10 pt-4 border-t border-black/5 group-hover:border-black/10 transition-colors flex justify-between items-center"
               >
                 <router-link
                   :to="feature.link"
@@ -979,13 +979,13 @@ const features = [
     gradient: 'from-orange-400 to-pink-400',
   },
   {
-    title: 'AI 智能助手',
-    subtitle: 'GREENSIGHT AI',
-    description: '使用 Qwen2.5 AI 模型识别物品、提供改造建议、计算碳足迹。智能化、个性化的绿色生活指导。',
+    title: 'GS AI 对话助手',
+    subtitle: 'GREENSIGHT CHAT',
+    description: '围绕垃圾分类、旧物改造、低碳出行和环保生活进行即时问答，像绿色生活顾问一样给出可执行建议。',
     link: '/chat',
-    cta: '开启对话',
+    cta: '进入 GS 对话',
     icon: 'M6 7.5h12a2.5 2.5 0 0 1 2.5 2.5v4A2.5 2.5 0 0 1 18 16.5h-6l-4.5 4v-4H6A2.5 2.5 0 0 1 3.5 14v-4A2.5 2.5 0 0 1 6 7.5Z M8 12h.01M12 12h.01M16 12h.01',
-    gradient: 'from-blue-400 to-cyan-400',
+    gradient: 'from-emerald-400 to-cyan-400',
   },
   {
     title: '成就系统',
@@ -1603,6 +1603,148 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
+:global(:root[data-theme='dark']) .relay-section {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(:root[data-theme='dark']) .home-view {
+  background: #1f1f1f !important;
+  color: #f7fff8 !important;
+}
+
+:global(:root[data-theme='dark']) .hero-section {
+  background: #1f1f1f !important;
+  color: #f7fff8 !important;
+}
+
+:global(:root[data-theme='dark']) .hero-silk-layer {
+  opacity: 0 !important;
+}
+
+:global(:root[data-theme='dark']) .hero-tint-layer {
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+:global(:root[data-theme='dark']) .hero-grid-layer {
+  opacity: 0.16 !important;
+}
+
+:global(:root[data-theme='dark']) .hero-grid-layer .border-r,
+:global(:root[data-theme='dark']) .hero-section .border-r {
+  border-color: rgba(177, 255, 196, 0.16) !important;
+}
+
+:global(:root[data-theme='dark']) .hero-badge {
+  background: #2b2b2b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+}
+
+:global(:root[data-theme='dark']) .hero-badge p,
+:global(:root[data-theme='dark']) .hero-section .hero-line,
+:global(:root[data-theme='dark']) .hero-section .hero-copy,
+:global(:root[data-theme='dark']) .hero-section .hero-copy--title,
+:global(:root[data-theme='dark']) .hero-section .hero-copy--description {
+  color: #f7fff8 !important;
+  opacity: 1 !important;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.36);
+}
+
+:global(:root[data-theme='dark']) .hero-section .hero-copy--meta,
+:global(:root[data-theme='dark']) .hero-section .hero-copy--subtitle,
+:global(:root[data-theme='dark']) .hero-section .hero-line--eyebrow,
+:global(:root[data-theme='dark']) .hero-section .hero-line--body,
+:global(:root[data-theme='dark']) .hero-section .scroll-indicator-text {
+  color: #cfcfcf !important;
+  opacity: 1 !important;
+}
+
+:global(:root[data-theme='dark']) .hero-section .glass-tag {
+  background: #2b2b2b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f8fff9 !important;
+  box-shadow: none !important;
+}
+
+:global(:root[data-theme='dark']) .hero-section .hero-controls button,
+:global(:root[data-theme='dark']) .hero-section .scroll-mouse-shell {
+  background: #2b2b2b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+:global(:root[data-theme='dark']) .hero-section a {
+  color: #c8b8ff !important;
+  border-color: rgba(200, 184, 255, 0.68) !important;
+}
+
+:global(:root[data-theme='dark']) .feature-card {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background:
+    none !important;
+  background-color: #2b2b2b !important;
+  color: var(--color-text);
+  box-shadow: none;
+}
+
+:global(:root[data-theme='dark']) .feature-card:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: #333333 !important;
+  box-shadow: none;
+}
+
+:global(:root[data-theme='dark']) .feature-card__icon {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: #3a3a3a !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+:global(:root[data-theme='dark']) .feature-card:hover .feature-card__icon {
+  border-color: rgba(255, 255, 255, 0.24) !important;
+  background: #4a4a4a !important;
+  color: var(--color-primary) !important;
+}
+
+:global(:root[data-theme='dark']) .feature-card__ghost-icon {
+  opacity: 0.08 !important;
+  color: rgba(244, 247, 244, 0.42);
+}
+
+:global(:root[data-theme='dark']) .feature-card:hover .feature-card__ghost-icon {
+  opacity: 0.16 !important;
+  color: rgba(110, 231, 123, 0.5);
+}
+
+:global(:root[data-theme='dark']) .feature-card__status {
+  background: rgba(110, 231, 123, 0.34) !important;
+  box-shadow: 0 0 18px rgba(110, 231, 123, 0.24);
+}
+
+:global(:root[data-theme='dark']) .feature-card__desc,
+:global(:root[data-theme='dark']) .feature-card p {
+  color: var(--color-text-muted) !important;
+}
+
+:global(:root[data-theme='dark']) .feature-card h3,
+:global(:root[data-theme='dark']) .feature-card a {
+  color: var(--color-text) !important;
+}
+
+:global(:root[data-theme='dark']) .feature-card a:hover {
+  color: var(--color-primary) !important;
+}
+
+:global(:root[data-theme='dark']) .feature-card__footer {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+:global(:root[data-theme='dark']) .feature-card .font-mono {
+  color: var(--color-text-muted);
+}
+
 @keyframes brand-glow-float {
   0%,
   100% {
@@ -2212,5 +2354,3 @@ onUnmounted(() => {
   }
 }
 </style>
-
-
