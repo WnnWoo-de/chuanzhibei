@@ -42,7 +42,10 @@
               class="account-trigger__avatar"
               :alt="userStore.user.username"
             />
-            <span v-else class="account-trigger__avatar account-trigger__avatar--guest">{{ userInitials }}</span>
+            <span v-else class="account-trigger__avatar account-trigger__avatar--guest">
+              <span class="guest-avatar__mark" aria-hidden="true"></span>
+              <span class="guest-avatar__initials">{{ userInitials }}</span>
+            </span>
             <span class="hidden sm:block normal-case">{{ accountDisplayName }}</span>
             <span class="account-trigger__chevron">›</span>
           </button>
@@ -56,7 +59,10 @@
                   class="account-menu-profile__avatar"
                   :alt="userStore.user.username"
                 />
-                <span v-else class="account-menu-profile__avatar account-menu-profile__avatar--guest">{{ userInitials }}</span>
+                <span v-else class="account-menu-profile__avatar account-menu-profile__avatar--guest">
+                  <span class="guest-avatar__mark" aria-hidden="true"></span>
+                  <span class="guest-avatar__initials">{{ userInitials }}</span>
+                </span>
                 <div>
                   <p>{{ accountDisplayName }}</p>
                   <span>{{ userStore.isLoggedIn ? langText.account.signedIn : langText.account.signedOut }}</span>
@@ -179,8 +185,8 @@
         </div>
 
         <!-- 全局菜单触发按钮：点击展开/收起全屏抽屉菜单 -->
-        <button @click="toggleMenu" class="group flex items-center gap-1.5 md:gap-2 hover:text-[#2E7D32] transition-colors">
-          <div class="border border-current px-2.5 py-1 md:px-3 md:py-1.5 transition-all duration-300 group-hover:bg-[#2E7D32] group-hover:text-white group-hover:border-[#2E7D32] flex items-center gap-1.5">
+        <button @click="toggleMenu" class="global-menu-button group flex items-center gap-1.5 md:gap-2 hover:text-[#2E7D32] transition-colors">
+          <div class="global-menu-button__inner border border-current px-2.5 py-1 md:px-3 md:py-1.5 transition-all duration-300 group-hover:bg-[#2E7D32] group-hover:text-white group-hover:border-[#2E7D32] flex items-center gap-1.5">
             <span>{{ langText.common.menu }}</span>
             <!-- 开关状态指示符：展开时旋转 90° -->
             <span class="inline-block transition-transform duration-300 text-[10px]" :class="{ 'rotate-90': isOpen }">
@@ -468,6 +474,12 @@ nav {
   transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
+.account-trigger:focus-visible,
+.global-menu-button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 58%, transparent);
+  outline-offset: 3px;
+}
+
 .account-trigger:hover,
 .account-trigger--open {
   border-color: rgba(46, 125, 50, 0.42);
@@ -477,10 +489,12 @@ nav {
 
 .account-trigger__avatar,
 .account-menu-profile__avatar {
+  position: relative;
   display: grid;
   place-items: center;
   border-radius: 999px;
   object-fit: cover;
+  overflow: hidden;
   background: #111;
   color: #fff;
   font-weight: 800;
@@ -533,6 +547,60 @@ nav {
   height: 2.35rem;
   flex: 0 0 2.35rem;
   font-size: 0.9rem;
+}
+
+.account-trigger__avatar--guest,
+.account-menu-profile__avatar--guest {
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background:
+    radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.94) 0 8%, transparent 9%),
+    linear-gradient(145deg, #0f172a 0%, #176b43 44%, #8bdc72 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+    0 7px 18px rgba(23, 107, 67, 0.24);
+}
+
+.account-trigger__avatar--guest::before,
+.account-menu-profile__avatar--guest::before {
+  content: '';
+  position: absolute;
+  inset: 16% 15% auto auto;
+  width: 38%;
+  height: 38%;
+  border-radius: 70% 30% 68% 32%;
+  background: rgba(255, 255, 255, 0.32);
+  transform: rotate(-28deg);
+}
+
+.account-trigger__avatar--guest::after,
+.account-menu-profile__avatar--guest::after {
+  content: '';
+  position: absolute;
+  inset: auto -18% -24% 18%;
+  height: 58%;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  filter: blur(3px);
+  transform: rotate(-16deg);
+}
+
+.guest-avatar__mark {
+  position: absolute;
+  left: 19%;
+  top: 22%;
+  width: 32%;
+  height: 34%;
+  border-radius: 76% 24% 68% 32%;
+  background: #c8f7b8;
+  box-shadow: 0.38rem 0.18rem 0 -0.12rem rgba(224, 255, 207, 0.9);
+  transform: rotate(-34deg);
+}
+
+.guest-avatar__initials {
+  position: relative;
+  z-index: 1;
+  transform: translateY(0.04rem);
+  text-shadow: 0 1px 5px rgba(6, 35, 21, 0.35);
 }
 
 .account-menu-profile p {
@@ -701,5 +769,138 @@ nav {
 .menu-item--visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .app-navbar {
+    height: 3.65rem;
+    padding-inline: 0.85rem;
+  }
+
+  .account-trigger {
+    height: 2.45rem;
+    gap: 0.36rem;
+    padding: 0.22rem 0.48rem 0.22rem 0.22rem;
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1);
+  }
+
+  .account-trigger__avatar {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.72rem;
+  }
+
+  .account-trigger__chevron {
+    font-size: 0.92rem;
+  }
+
+  .global-menu-button__inner {
+    min-height: 2.25rem;
+    padding-inline: 0.75rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+  }
+
+  .account-menu-panel {
+    position: fixed;
+    top: calc(4.15rem + env(safe-area-inset-top));
+    right: max(0.85rem, env(safe-area-inset-right));
+    left: max(0.85rem, env(safe-area-inset-left));
+    width: auto;
+    max-height: calc(100svh - 5.35rem - env(safe-area-inset-bottom));
+    overflow-y: auto;
+    border-radius: 0.85rem;
+    background: color-mix(in srgb, var(--color-surface-muted) 94%, transparent);
+    box-shadow: 0 22px 60px rgba(15, 23, 42, 0.22);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .account-menu-profile {
+    gap: 0.8rem;
+    padding: 0.95rem 1rem 0.85rem;
+    background:
+      linear-gradient(135deg, rgba(46, 125, 50, 0.1), transparent 62%),
+      color-mix(in srgb, var(--color-surface) 64%, transparent);
+  }
+
+  .account-menu-profile__avatar {
+    width: 2.8rem;
+    height: 2.8rem;
+    flex-basis: 2.8rem;
+    font-size: 0.94rem;
+  }
+
+  .account-menu-profile p {
+    max-width: calc(100vw - 7.5rem);
+    font-size: 1rem;
+  }
+
+  .account-menu-row {
+    min-height: 2.75rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 0.62rem 1rem;
+    font-size: 0.92rem;
+  }
+
+  .account-menu-row em {
+    max-width: 8.5rem;
+    overflow: hidden;
+    font-size: 0.74rem;
+    text-overflow: ellipsis;
+  }
+
+  .account-menu-row b {
+    display: none;
+  }
+
+  .account-submenu {
+    margin-left: 1rem;
+  }
+
+  .account-menu-row--sub {
+    min-height: 2.35rem;
+    padding-left: 1.15rem;
+    font-size: 0.84rem;
+  }
+
+  .drawer-panel {
+    height: 100svh;
+  }
+
+  .drawer-nav-link {
+    gap: 0.7rem;
+    font-size: clamp(1.55rem, 8.5vw, 2.35rem);
+    line-height: 1.05;
+  }
+
+  .drawer-nav-link :deep(svg) {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .app-navbar {
+    padding-inline: 0.65rem;
+  }
+
+  .account-trigger {
+    height: 2.25rem;
+  }
+
+  .account-trigger__avatar {
+    width: 1.82rem;
+    height: 1.82rem;
+  }
+
+  .global-menu-button__inner {
+    min-height: 2.1rem;
+    padding-inline: 0.58rem;
+  }
+
+  .account-menu-row em {
+    display: none;
+  }
 }
 </style>
