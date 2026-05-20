@@ -254,6 +254,7 @@ import { langText } from '@/language'
 
 // 图标名称 → Element Plus 图标组件 的映射（供徽章动态渲染使用）
 const iconMap = {
+  Medal,
   Sunrise,
   ChatDotSquare,
   Refresh,
@@ -322,8 +323,9 @@ const currentLevel = computed(() => {
 const progressPercent = computed(() => {
   const level = currentLevel.value
   if (level === 5) return 100
-  const prev = level > 1 ? levelData[level - 1].nextLevelPoints : 0
-  const next = levelData[level].nextLevelPoints
+  const levels = levelData.value
+  const prev = level > 1 ? levels[level - 1].nextLevelPoints : 0
+  const next = levels[level].nextLevelPoints
   return Math.min(100, Math.max(0, ((totalPoints.value - prev) / (next - prev)) * 100))
 })
 
