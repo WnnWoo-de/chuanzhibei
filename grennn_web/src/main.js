@@ -16,6 +16,7 @@ import { registerSW } from 'virtual:pwa-register'
 import App from './App.vue'
 import router from './router'
 import { useUserStore } from '@/stores/user'
+import { installPwaSync } from '@/utils/pwaSync'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -41,6 +42,7 @@ app.use(router)
 const initApp = async () => {
   const userStore = useUserStore(pinia)
   await userStore.init()
+  installPwaSync()
 
   if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
     window.addEventListener('auth:logout', (event) => {
@@ -64,6 +66,16 @@ const initApp = async () => {
   if (!isLocalDevHost) {
     const updateSW = registerSW({
       immediate: true,
+      onNeedRefresh() {
+        ElMessage.info('发现新版本，正在后台更新 GreenSight')
+        updateSW(true)
+      },
+      onOfflineReady() {
+        ElMessage.success('离线资源已就绪，可在无网络时继续访问')
+      },
+      onRegisterError(error) {
+        console.warn('PWA service worker 注册失败：', error)
+      },
     })
     updateSW()
   }

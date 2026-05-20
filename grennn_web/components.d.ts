@@ -23,6 +23,7 @@ declare module 'vue' {
     ElSkeleton: typeof import('element-plus/es')['ElSkeleton']
     ElSlider: typeof import('element-plus/es')['ElSlider']
     NavIcons: typeof import('./src/components/icons/NavIcons.vue')['default']
+    PwaInstallPrompt: typeof import('./src/components/pwa/PwaInstallPrompt.vue')['default']
     ResilienceProgress: typeof import('./src/components/data/ResilienceProgress.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

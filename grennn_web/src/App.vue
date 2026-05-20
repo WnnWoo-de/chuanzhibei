@@ -9,6 +9,7 @@ import { defineAsyncComponent, ref, watch, onMounted, onUnmounted, computed } fr
 import TheNavbar from './components/layout/TheNavbar.vue'
 import TheFooter from './components/layout/TheFooter.vue'
 import TheSidebar from './components/layout/TheSidebar.vue' // 左侧导航栏
+import PwaInstallPrompt from './components/pwa/PwaInstallPrompt.vue'
 import './styles/design-tokens.css'                          // 设计令牌系统
 import { isDarkTheme } from './theme'
 
@@ -131,6 +132,8 @@ watch(() => route.path, () => {
     <!-- 底部页脚 -->
     <TheFooter />
   </div>
+
+  <PwaInstallPrompt v-if="!showIntro" />
 </template>
 
 <style>
