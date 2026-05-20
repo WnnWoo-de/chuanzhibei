@@ -4,6 +4,25 @@
       <div v-for="n in 12" :key="n" class="h-full border-r border-primary"></div>
     </div>
 
+    <transition name="celebration-fade">
+      <div v-if="showCelebration" class="quiz-celebration" aria-hidden="true">
+        <span
+          v-for="petal in celebrationPetals"
+          :key="petal.id"
+          class="quiz-petal"
+          :style="{
+            '--petal-x': `${petal.x}vw`,
+            '--petal-drift': `${petal.drift}vw`,
+            '--petal-delay': `${petal.delay}s`,
+            '--petal-duration': `${petal.duration}s`,
+            '--petal-size': `${petal.size}px`,
+            '--petal-rotate': `${petal.rotate}deg`,
+            '--petal-color': petal.color,
+          }"
+        ></span>
+      </div>
+    </transition>
+
     <div class="relative z-10 mx-auto max-w-7xl">
       <header class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section class="quiz-hero">
@@ -165,7 +184,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { langText } from '@/language'
@@ -185,9 +204,11 @@ const currentIndex = ref(0)
 const selectedAnswers = ref([])
 const submitted = ref(false)
 const isTodayCompleted = ref(false)
+const showCelebration = ref(false)
 const completionBonus = ref(0)
 const answers = ref([])
 const quizRecords = ref(JSON.parse(localStorage.getItem(RECORDS_KEY) || '[]'))
+let celebrationTimer = null
 
 const quizQuestions = ref(
   langText.value.quiz.questions.map((q, i) => ({ id: i + 1, ...q })),
@@ -218,6 +239,20 @@ const visibleRecords = computed(() => [
   { date: '2026-05-16', correctCount: 4, totalCount: 5, earnedPoints: 70 },
 ].slice(0, 4))
 
+const celebrationPetals = computed(() => {
+  const palette = ['#f9a8d4', '#fda4af', '#fef08a', '#bbf7d0', '#86efac', '#fde68a']
+  return Array.from({ length: 54 }, (_, index) => ({
+    id: index,
+    x: (index * 17) % 100,
+    drift: ((index % 9) - 4) * 3.2,
+    delay: (index % 18) * 0.12,
+    duration: 3.4 + (index % 7) * 0.34,
+    size: 8 + (index % 5) * 3,
+    rotate: (index * 41) % 360,
+    color: palette[index % palette.length],
+  }))
+})
+
 const statCards = computed(() => {
   const t = langText.value.quiz.statLabels
   return [
@@ -240,6 +275,18 @@ const awardPoints = (amount) => {
 
 const sameAnswer = (left, right) => left.slice().sort().join('|') === right.slice().sort().join('|')
 const typeLabel = (type) => langText.value.quiz.typeLabels[type] || type
+
+const triggerCelebration = () => {
+  showCelebration.value = false
+  if (celebrationTimer) window.clearTimeout(celebrationTimer)
+  requestAnimationFrame(() => {
+    showCelebration.value = true
+    celebrationTimer = window.setTimeout(() => {
+      showCelebration.value = false
+      celebrationTimer = null
+    }, 4600)
+  })
+}
 
 const toggleOption = (label) => {
   if (currentQuestion.value.type === 'multiple') {
@@ -286,6 +333,7 @@ const finishToday = () => {
   localStorage.setItem(RECORDS_KEY, JSON.stringify(quizRecords.value))
   if (userStore.isLoggedIn) saveQuizRecord(record)
   isTodayCompleted.value = true
+  triggerCelebration()
   ElMessage.success(langText.value.quiz.messages.todayComplete.replace('{bonus}', bonus))
 }
 
@@ -310,6 +358,11 @@ const resetToday = () => {
   selectedAnswers.value = []
   submitted.value = false
   isTodayCompleted.value = false
+  showCelebration.value = false
+  if (celebrationTimer) {
+    window.clearTimeout(celebrationTimer)
+    celebrationTimer = null
+  }
   completionBonus.value = 0
   answers.value = []
   ElMessage.info(langText.value.quiz.messages.resetDone)
@@ -327,6 +380,10 @@ onMounted(async () => {
     const recordResult = await fetchQuizRecords()
     if (recordResult.ok) quizRecords.value = recordResult.items
   }
+})
+
+onBeforeUnmount(() => {
+  if (celebrationTimer) window.clearTimeout(celebrationTimer)
 })
 </script>
 
@@ -361,6 +418,28 @@ onMounted(async () => {
 .quiz-reward-panel,
 .quiz-card,
 .quiz-side-card { padding: 1.25rem; }
+.quiz-celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  pointer-events: none;
+}
+.quiz-petal {
+  position: absolute;
+  top: -2rem;
+  left: var(--petal-x);
+  width: var(--petal-size);
+  height: calc(var(--petal-size) * 1.35);
+  border-radius: 70% 20% 70% 20%;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255,255,255,0.85), transparent 34%),
+    var(--petal-color);
+  box-shadow: 0 8px 18px rgba(46, 125, 50, 0.12);
+  opacity: 0;
+  transform: translate3d(0, -8vh, 0) rotate(var(--petal-rotate));
+  animation: petal-fall var(--petal-duration) cubic-bezier(0.28, 0.02, 0.58, 1) var(--petal-delay) forwards;
+}
 .quiz-reward-panel h2,
 .quiz-card h2,
 .quiz-side-card h3 { font-weight: 750; }
@@ -456,4 +535,25 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .fade-up-leave-active { transition: all 0.25s ease; }
 .fade-up-enter-from,
 .fade-up-leave-to { opacity: 0; transform: translateY(8px); }
+.celebration-fade-enter-active,
+.celebration-fade-leave-active { transition: opacity 0.35s ease; }
+.celebration-fade-enter-from,
+.celebration-fade-leave-to { opacity: 0; }
+@keyframes petal-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -8vh, 0) rotate(var(--petal-rotate)) scale(0.8);
+  }
+  12% { opacity: 0.95; }
+  55% {
+    transform: translate3d(calc(var(--petal-drift) * -0.45), 52vh, 0) rotate(calc(var(--petal-rotate) + 260deg)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--petal-drift), 108vh, 0) rotate(calc(var(--petal-rotate) + 620deg)) scale(0.92);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quiz-celebration { display: none; }
+}
 </style>
