@@ -316,23 +316,36 @@
 </template>
 
 <script setup>
+// ============================================================
+// TheNavbar.vue - 顶部导航栏组件
+// 包含品牌 Logo、账户菜单（语言/主题/功能面板）、全屏抽屉菜单
+// ============================================================
+
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import gsap from 'gsap'
-import { useUserStore } from '@/stores/user'
-import NavIcons from '@/components/icons/NavIcons.vue'
-import { changeLang, lang, langTemplate, langText } from '@/language'
-import { setTheme, theme } from '@/theme'
+import gsap from 'gsap'                                         // 动画库
+import { useUserStore } from '@/stores/user'                     // 用户状态管理
+import NavIcons from '@/components/icons/NavIcons.vue'            // 导航图标组件
+import { changeLang, lang, langTemplate, langText } from '@/language'  // 多语言
+import { setTheme, theme } from '@/theme'                        // 主题管理
 
 // 控制全屏抽屉菜单的展开/收起状态
 const isOpen = ref(false)
+
+// 控制账户下拉菜单的展开/收起状态
 const isAccountOpen = ref(false)
+
+// 账户菜单 DOM 引用，用于检测点击外部区域关闭菜单
 const accountMenuRef = ref(null)
+
+// 账户菜单中各子面板的展开状态（语言/主题/功能面板）
 const expandedAccountSections = reactive({
   language: false,
   theme: false,
   features: false,
 })
+
+// 用户状态管理
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
@@ -348,11 +361,18 @@ const navItems = [
   { path: '/achievements', labelKey: 'achievements', iconName: 'achievements' },
 ]
 
+// 账户显示名称：已登录显示用户名，未登录显示"访客"
 const accountDisplayName = computed(() => userStore.user?.username || langText.value.account.guest)
+
+// 当前语言名称，用于账户菜单中显示
 const currentLanguageName = computed(() => langTemplate[lang.value]?.name || langTemplate.CN.name)
+
+// 当前主题名称，用于账户菜单中显示
 const currentThemeName = computed(() => (
   theme.value === 'dark' ? langText.value.account.darkTheme : langText.value.account.lightTheme
 ))
+
+// 用户头像首字母：取用户名或邮箱的前两个字母，用于未上传头像时显示
 const userInitials = computed(() => {
   const source = String(userStore.user?.username || userStore.user?.email || 'G').trim()
   return (source.match(/[a-zA-Z0-9]/g)?.join('') || source || 'G').slice(0, 2).toUpperCase()
@@ -388,26 +408,32 @@ const toggleMenu = () => {
   document.body.style.overflow = isOpen.value ? 'hidden' : ''
 }
 
+// 切换账户下拉菜单的展开/收起
 const toggleAccountMenu = () => {
   isAccountOpen.value = !isAccountOpen.value
 }
 
+// 关闭账户下拉菜单
 const closeAccountMenu = () => {
   isAccountOpen.value = false
 }
 
+// 切换账户菜单中某个子面板（语言/主题/功能）的展开状态
 const toggleAccountSection = (section) => {
   expandedAccountSections[section] = !expandedAccountSections[section]
 }
 
+// 切换界面语言
 const changeLanguage = (key) => {
   changeLang(key)
 }
 
+// 切换界面主题（亮色/暗色）
 const changeTheme = (key) => {
   setTheme(key)
 }
 
+// 点击文档空白处时关闭账户菜单（点击菜单内部不关闭）
 const handleDocumentClick = (event) => {
   if (!isAccountOpen.value) return
   if (accountMenuRef.value?.contains?.(event.target)) return
@@ -445,21 +471,25 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 导航栏基础字体 */
 nav {
   font-family: var(--font-mono);
 }
 
+/* 固定顶部导航栏：半透明磨砂玻璃效果 */
 .app-navbar {
   border-bottom: 1px solid var(--navbar-border);
   background: var(--navbar-bg);
   color: var(--navbar-text);
 }
 
+/* 导航栏内链接和按钮继承文字颜色 */
 .app-navbar :deep(a),
 .app-navbar button {
   color: inherit;
 }
 
+/* 账户触发按钮：圆角胶囊样式，显示头像和用户名 */
 .account-trigger {
   display: inline-flex;
   align-items: center;
@@ -487,6 +517,7 @@ nav {
   color: var(--color-primary);
 }
 
+/* 头像通用样式：圆形裁剪 + 居中显示 */
 .account-trigger__avatar,
 .account-menu-profile__avatar {
   position: relative;
@@ -520,6 +551,7 @@ nav {
   transform: rotate(-90deg);
 }
 
+/* 账户下拉面板：绝对定位，圆角阴影卡片 */
 .account-menu-panel {
   position: absolute;
   top: calc(100% + 0.65rem);
@@ -549,6 +581,7 @@ nav {
   font-size: 0.9rem;
 }
 
+/* 未登录访客头像：渐变背景 + 装饰纹理 */
 .account-trigger__avatar--guest,
 .account-menu-profile__avatar--guest {
   border: 1px solid rgba(255, 255, 255, 0.7);
@@ -620,6 +653,7 @@ nav {
   font-size: 0.72rem;
 }
 
+/* 账户菜单分组区域 */
 .account-menu-section {
   padding: 0.25rem 0;
 }
@@ -630,6 +664,7 @@ nav {
   background: var(--color-border-soft);
 }
 
+/* 账户菜单行：三列网格布局（标签 + 值 + 箭头） */
 .account-menu-row {
   display: grid;
   width: 100%;
@@ -747,6 +782,7 @@ nav {
   will-change: transform;
 }
 
+/* 抽屉导航链接：默认文字色，悬停/激活时变为主色调 */
 .drawer-nav-link {
   color: var(--color-text);
 }
@@ -771,6 +807,7 @@ nav {
   transform: translateY(0);
 }
 
+/* 移动端响应式适配 */
 @media (max-width: 640px) {
   .app-navbar {
     height: 3.65rem;

@@ -1,11 +1,15 @@
 <template>
+  <!-- 搜索区域外壳 -->
   <div class="search-shell">
+    <!-- 搜索卡片（毛玻璃效果） -->
     <div class="search-card glass-card">
+      <!-- 左侧文案区域 -->
       <div class="search-copy">
         <div class="search-eyebrow">{{ langText.weather.weatherQuery }}</div>
         <div class="search-hint">{{ langText.weather.searchHint }}</div>
       </div>
 
+      <!-- 右侧搜索控件区域 -->
       <div class="search-controls">
         <el-input
           :model-value="searchCity"
@@ -31,6 +35,7 @@
         </el-button>
       </div>
 
+      <!-- 搜索元信息区域（默认城市、状态提示等） -->
       <div class="search-meta">
         <span class="meta-badge">{{ langText.weather.defaultCityLabel }}{{ defaultCity }}</span>
         <span v-if="isMockData" class="meta-mock">{{ langText.weather.mockMode }}</span>
@@ -44,43 +49,47 @@
 
 <script setup>
 import { Location } from '@element-plus/icons-vue'
-import { langText } from '@/language'
+import { langText } from '@/language' // 多语言文本
 
+// 组件属性定义
 defineProps({
   searchCity: {
     type: String,
-    default: '',
+    default: '', // 当前搜索城市名
   },
   loading: {
     type: Boolean,
-    default: false,
+    default: false, // 是否正在查询中
   },
   errorMessage: {
     type: String,
-    default: '',
+    default: '', // 错误提示信息
   },
   infoMessage: {
     type: String,
-    default: '',
+    default: '', // 提示信息
   },
   isMockData: {
     type: Boolean,
-    default: false,
+    default: false, // 是否为模拟数据
   },
   defaultCity: {
     type: String,
-    default: '北京',
+    default: '北京', // 默认城市
   },
 })
 
+// 定义组件事件：更新搜索城市、触发搜索
 defineEmits(['update:searchCity', 'search'])
 </script>
 
 <style scoped>
+/* 搜索区域外壳 */
 .search-shell {
   margin-bottom: 16px;
 }
 
+/* 搜索卡片布局 */
 .search-card {
   display: grid;
   grid-template-columns: minmax(240px, 0.88fr) minmax(360px, 1.24fr);
@@ -89,6 +98,7 @@ defineEmits(['update:searchCity', 'search'])
   padding: 16px 18px;
 }
 
+/* 毛玻璃卡片通用样式 */
 .glass-card {
   border-radius: 30px;
   background: linear-gradient(180deg, rgba(255,255,255,0.65), rgba(235,242,250,0.72));
@@ -105,10 +115,12 @@ defineEmits(['update:searchCity', 'search'])
     transform 0.35s ease;
 }
 
+/* 左侧文案区域 */
 .search-copy {
   min-width: 0;
 }
 
+/* 搜索标题文字 */
 .search-eyebrow {
   font-size: 12px;
   letter-spacing: 0.24em;
@@ -117,18 +129,21 @@ defineEmits(['update:searchCity', 'search'])
   margin-bottom: 6px;
 }
 
+/* 搜索提示文字 */
 .search-hint {
   color: rgba(80, 101, 128, 0.94);
   font-size: 14px;
   line-height: 1.55;
 }
 
+/* 搜索输入框和按钮布局 */
 .search-controls {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px;
 }
 
+/* 搜索输入框样式 */
 .search-input-el :deep(.el-input__wrapper) {
   min-height: 50px;
   border-radius: 18px;
@@ -151,6 +166,7 @@ defineEmits(['update:searchCity', 'search'])
   color: rgba(103, 124, 151, 0.78);
 }
 
+/* 搜索按钮样式 */
 .search-btn {
   min-width: 126px;
   min-height: 50px;
@@ -186,6 +202,7 @@ defineEmits(['update:searchCity', 'search'])
   animation: shimmer 1.6s linear infinite;
 }
 
+/* 搜索按钮内部布局 */
 .search-btn-inner {
   display: inline-flex;
   align-items: center;
@@ -198,6 +215,7 @@ defineEmits(['update:searchCity', 'search'])
   z-index: 1;
 }
 
+/* 加载动画三点样式 */
 .loading-cluster {
   display: inline-flex;
   align-items: center;
@@ -223,6 +241,7 @@ defineEmits(['update:searchCity', 'search'])
   animation-delay: 0.28s;
 }
 
+/* 搜索元信息区域（默认城市、状态提示等） */
 .search-meta {
   grid-column: 1 / -1;
   display: flex;
@@ -231,6 +250,7 @@ defineEmits(['update:searchCity', 'search'])
   align-items: center;
 }
 
+/* 元信息标签通用样式 */
 .meta-badge,
 .meta-tip,
 .meta-info,
@@ -242,34 +262,40 @@ defineEmits(['update:searchCity', 'search'])
   line-height: 1;
 }
 
+/* 默认城市标签 */
 .meta-badge {
   background: rgba(255,255,255,0.76);
   color: #5e7590;
   border: 1px solid rgba(224, 233, 243, 0.9);
 }
 
+/* 搜索提示文字 */
 .meta-tip {
   color: rgba(111, 130, 155, 0.92);
 }
 
+/* 信息提示标签 */
 .meta-info {
   background: rgba(235, 245, 255, 0.96);
   color: #5f7f9f;
   border: 1px solid rgba(203, 223, 243, 0.95);
 }
 
+/* 模拟数据标签 */
 .meta-mock {
   background: linear-gradient(135deg, rgba(255, 247, 214, 0.95), rgba(255, 236, 188, 0.95));
   color: #996600;
   border: 1px solid rgba(244, 214, 120, 0.92);
 }
 
+/* 错误提示标签 */
 .meta-error {
   background: rgba(255, 239, 239, 0.96);
   color: #c36e6e;
   border: 1px solid rgba(255, 214, 214, 0.9);
 }
 
+/* 加载动画关键帧 */
 @keyframes dotPulse {
   0%, 80%, 100% {
     transform: translateY(0) scale(0.9);

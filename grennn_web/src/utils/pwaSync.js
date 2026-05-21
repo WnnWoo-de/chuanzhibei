@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+// 本地离线同步队列配置
 const QUEUE_KEY = 'greensight_pwa_sync_queue'
 const MAX_QUEUE_SIZE = 50
 const SYNCABLE_METHODS = new Set(['post', 'put', 'patch', 'delete'])
@@ -8,11 +9,13 @@ const EXCLUDED_PATHS = ['/api/v1/auth/login', '/api/v1/auth/register', '/api/v1/
 let installed = false
 let flushing = false
 
+/** 向前端广播当前离线同步状态，供 PWA 提示组件展示 */
 const emitSyncStatus = (detail = {}) => {
   if (typeof window === 'undefined') return
   window.dispatchEvent(new CustomEvent('pwa:sync-status', { detail: getPwaSyncState(detail) }))
 }
 
+/** 从 localStorage 读取待同步请求队列 */
 const readQueue = () => {
   if (typeof localStorage === 'undefined') return []
   try {
@@ -24,6 +27,7 @@ const readQueue = () => {
   }
 }
 
+/** 将队列写回本地，并限制最大长度，避免无限增长 */
 const writeQueue = (queue) => {
   if (typeof localStorage === 'undefined') return
   try {
@@ -33,11 +37,13 @@ const writeQueue = (queue) => {
   }
 }
 
+/** 判断错误是否属于离线/网络不可达场景 */
 const isNetworkError = (error) => {
   if (typeof navigator !== 'undefined' && navigator.onLine === false) return true
   return !error?.response && ['ERR_NETWORK', 'ECONNABORTED'].includes(error?.code)
 }
 
+/** 提取请求 URL 的 pathname，便于判断是否属于 API 接口 */
 const getUrlPath = (url = '') => {
   try {
     return new URL(url, window.location.origin).pathname
@@ -47,6 +53,7 @@ const getUrlPath = (url = '') => {
   }
 }
 
+/** 判断请求体能否安全序列化到 localStorage 中 */
 const canSerializeData = (data) => {
   if (!data) return true
   if (typeof FormData !== 'undefined' && data instanceof FormData) return false
@@ -55,6 +62,7 @@ const canSerializeData = (data) => {
   return ['string', 'number', 'boolean', 'object'].includes(typeof data)
 }
 
+/** 规范化请求头，并移除 Authorization，防止把敏感 token 写入本地队列 */
 const normalizeHeaders = (headers = {}) => {
   const normalized = typeof headers.toJSON === 'function' ? headers.toJSON() : { ...headers }
   delete normalized.Authorization
@@ -62,6 +70,7 @@ const normalizeHeaders = (headers = {}) => {
   return normalized
 }
 
+/** 判断本次失败请求是否应加入离线同步队列 */
 const shouldQueueRequest = (config = {}, error) => {
   if (!isNetworkError(error)) return false
   if (config.__pwaSyncReplay || config.__skipPwaSync) return false
@@ -74,6 +83,7 @@ const shouldQueueRequest = (config = {}, error) => {
   return path.startsWith('/api/') && !EXCLUDED_PATHS.includes(path)
 }
 
+/** 将 Axios 配置压缩为可持久化的队列项 */
 const buildQueueItem = (config = {}) => {
   const method = String(config.method || 'get').toLowerCase()
   return {
@@ -90,6 +100,7 @@ const buildQueueItem = (config = {}) => {
   }
 }
 
+/** 将请求加入同步队列，并立刻广播最新状态 */
 const enqueueRequest = (config) => {
   const queue = readQueue()
   const item = buildQueueItem(config)
@@ -99,6 +110,7 @@ const enqueueRequest = (config) => {
   return item
 }
 
+/** 重放单条已排队的离线请求 */
 const replayItem = async (item) => {
   await axios.request({
     method: item.method,
@@ -113,6 +125,7 @@ const replayItem = async (item) => {
   })
 }
 
+/** 获取当前离线同步状态快照 */
 export const getPwaSyncState = (extra = {}) => {
   const queue = readQueue()
   return {
@@ -123,6 +136,7 @@ export const getPwaSyncState = (extra = {}) => {
   }
 }
 
+/** 批量回放本地离线请求队列，遇到再次断网时保留剩余项目 */
 export const flushPwaSyncQueue = async () => {
   if (flushing) return getPwaSyncState()
   if (typeof navigator !== 'undefined' && navigator.onLine === false) return getPwaSyncState()
@@ -159,6 +173,7 @@ export const flushPwaSyncQueue = async () => {
   return getPwaSyncState({ synced })
 }
 
+/** 安装 Axios 离线同步拦截器，并在重新联机/回到前台时自动重试 */
 export const installPwaSync = () => {
   if (installed || typeof window === 'undefined') return
   installed = true

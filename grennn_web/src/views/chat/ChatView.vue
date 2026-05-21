@@ -1,26 +1,32 @@
 <template>
+  <!-- 聊天页面主容器：全屏布局，包含网格背景和聊天界面 -->
   <div class="chat-page bg-transparent h-screen text-[#1a1a1a] font-sans flex flex-col overflow-hidden">
-    <!-- 网格背景 -->
+    <!-- 网格背景装饰层 -->
     <div
       class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6"
     >
       <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
-      <!-- Mobile grid -->
+      <!-- 移动端网格（4列） -->
       <div v-for="n in 4" :key="`m-${n}`" class="border-r border-black h-full block md:hidden col-span-3"></div>
     </div>
 
+    <!-- 主内容区域：12列网格布局 -->
     <div class="relative z-10 grid grid-cols-12 gap-6 flex-1 h-full pt-24 px-6 pb-12">
+      <!-- 左侧边栏：显示标题、快捷功能入口等 -->
       <ChatSidebarPanel @clear-chat="clearChat" />
 
-      <!-- 聊天界面 -->
+      <!-- 聊天界面主体（占9列） -->
       <div class="col-span-12 md:col-span-9 flex flex-col h-full overflow-hidden">
+        <!-- 聊天主容器：毛玻璃背景，包含头部、消息列表、快捷提问、输入框 -->
         <div
           class="chat-shell bg-white/90 backdrop-blur-md border border-black/10 flex-1 flex flex-col relative overflow-hidden shadow-xl transition-all duration-500 hover:shadow-2xl rounded-2xl h-full"
         >
+          <!-- 顶部操作栏：清除聊天等操作按钮 -->
           <ChatHeaderBar @clear-chat="clearChat" />
 
           <!-- 消息列表区域 - 可滚动 -->
           <div class="flex-1 overflow-hidden flex flex-col">
+            <!-- 聊天消息列表组件：展示所有对话消息 -->
             <ChatMessageList
               ref="chatMessageListRef"
               :all-prompts="allPrompts"
@@ -34,6 +40,7 @@
             />
           </div>
 
+          <!-- 快捷提问区域：提供预设问题快速发送 -->
           <ChatQuickPrompts
             :is-shuffling="isShuffling"
             :quick-prompts="quickPrompts"
@@ -42,6 +49,7 @@
           />
 
           <!-- 输入框 - 固定在底部 -->
+          <!-- 消息输入组件：文本输入、发送、停止生成、重新生成 -->
           <ChatComposer
             v-model:new-message="newMessage"
             :is-typing="isTyping"
@@ -58,6 +66,10 @@
 </template>
 
 <script setup>
+// ============================================================
+// ChatView.vue - AI 聊天主页面
+// 组合聊天会话管理、消息展示、快捷提问等功能
+// ============================================================
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
@@ -71,11 +83,11 @@ import ChatQuickPrompts from './components/ChatQuickPrompts.vue'
 import ChatSidebarPanel from './components/ChatSidebarPanel.vue'
 import { useChatPrompts } from './useChatPrompts'
 
-const userStore = useUserStore()
-const chatMessageListRef = ref(null)
-const copiedMessageIndex = ref(-1)
-let copiedMessageTimer = null
-const { allPrompts, quickPrompts, isShuffling, shufflePrompts } = useChatPrompts()
+const userStore = useUserStore()                // 用户状态管理
+const chatMessageListRef = ref(null)            // 消息列表组件引用，用于调用滚动方法
+const copiedMessageIndex = ref(-1)              // 当前已复制消息的索引（用于显示复制成功状态）
+let copiedMessageTimer = null                   // 复制状态重置定时器
+const { allPrompts, quickPrompts, isShuffling, shufflePrompts } = useChatPrompts() // 快捷提问相关状态
 
 // AI 助手的欢迎消息（固定为对话第一条）
 const initialMessage = {
@@ -84,21 +96,23 @@ const initialMessage = {
   time: new Date().toLocaleTimeString('en-GB'),
 }
 
+/** 滚动消息列表到底部 */
 const scrollToBottom = () => {
   chatMessageListRef.value?.scrollToBottom()
 }
 
+// 使用聊天会话 composable 管理消息收发状态
 const {
-  abortController,
-  clearChat,
-  isTyping,
-  isWriting,
-  loadChatHistory,
-  messages,
-  newMessage,
-  regenerate,
-  sendMessage,
-  stopGeneration,
+  abortController,    // 请求中断控制器
+  clearChat,          // 清空聊天记录
+  isTyping,           // AI 正在思考（等待首个 token）
+  isWriting,          // AI 正在输出（流式写入中）
+  loadChatHistory,    // 从后端加载历史消息
+  messages,           // 消息列表
+  newMessage,         // 当前输入框内容
+  regenerate,         // 重新生成最后一条回复
+  sendMessage,        // 发送消息
+  stopGeneration,     // 停止 AI 生成
 } = useChatSession({
   initialMessage,
   scrollToBottom,

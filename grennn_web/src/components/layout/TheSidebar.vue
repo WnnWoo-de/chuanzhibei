@@ -1,9 +1,11 @@
 <template>
   <div>
+    <!-- 侧边栏主容器：固定在左侧，根据状态动态切换宽度 -->
     <div
       class="app-sidebar fixed left-0 top-0 h-screen bg-white border-r border-black/10 transition-all duration-300 z-[200] overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col"
       :class="sidebarClasses"
     >
+      <!-- 侧边栏头部：Logo + 品牌名称，mini 模式下仅显示 Logo -->
       <div
         class="flex items-center border-b border-black/10 transition-all duration-300 flex-shrink-0"
         :class="isMiniMode ? 'justify-center px-2 py-3 h-16' : 'gap-3 px-6 py-4 h-16'"
@@ -24,6 +26,7 @@
         </div>
       </div>
 
+      <!-- 导航菜单区域：可滚动，包含分类标题和菜单项 -->
       <div class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar p-3 pt-3">
         <nav class="space-y-1">
           <div v-for="(item, index) in sidebarItems" :key="index" class="group">
@@ -79,6 +82,7 @@
       </div>
     </div>
 
+    <!-- 展开/收起切换按钮：固定定位，始终可见 -->
     <button
       type="button"
       @click="toggleSidebarState"
@@ -113,6 +117,7 @@
       </div>
     </button>
 
+    <!-- 移动端遮罩层：侧边栏展开时显示，点击关闭侧边栏 -->
     <div
       v-if="isOpen"
       class="fixed inset-0 z-[190] bg-black/30 backdrop-blur-sm md:hidden"
@@ -122,10 +127,17 @@
 </template>
 
 <script setup>
+// ============================================================
+// TheSidebar.vue - 左侧导航栏组件
+// 支持 mini（仅图标）和 full（图标+文字）两种形态
+// 移动端自动切换为抽屉模式，桌面端可手动切换展开/收起
+// ============================================================
+
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { langText } from '@/language'
+import { langText } from '@/language'  // 多语言文本资源
 
+// 接收父组件传入的属性
 const props = defineProps({
   isOpen: {
     type: Boolean,
@@ -133,6 +145,7 @@ const props = defineProps({
   },
 })
 
+// 向父组件抛出的事件：toggle（切换展开）、close（关闭）、expand-change（展开状态变化）
 const emit = defineEmits(['toggle', 'close', 'expand-change'])
 
 const route = useRoute()
@@ -140,11 +153,14 @@ const router = useRouter()
 
 // 默认以 mini 形态收起侧边栏
 const isMini = ref(true)
+
+// 当前激活的导航路径，用于高亮当前页面对应的菜单项
 const activeNav = ref(route.path)
 
-// 响应式判断移动端
+// 响应式判断是否为移动端（宽度 < 768px）
 const isMobile = ref(window.innerWidth < 768)
 
+// 窗口大小变化时更新移动端状态，移动端自动关闭 mini 模式
 const handleResize = () => {
   const isMobileNow = window.innerWidth < 768
   if (isMobileNow !== isMobile.value) {
@@ -155,6 +171,7 @@ const handleResize = () => {
   }
 }
 
+// 监听路由变化，实时更新当前激活的导航项
 watch(
   () => route.path,
   (newPath) => {
@@ -163,15 +180,18 @@ watch(
   { immediate: true }
 )
 
+// 组件挂载时：监听窗口大小变化，通知父组件当前展开状态
 onMounted(() => {
   window.addEventListener('resize', handleResize)
   emit('expand-change', !isMini.value)
 })
 
+// 组件卸载时：移除窗口大小监听，防止内存泄漏
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 
+// 侧边栏是否处于展开状态：移动端取决于 isOpen，桌面端取决于 isMini
 const isSidebarExpanded = computed(() => {
   if (isMobile.value) {
     return props.isOpen
@@ -179,11 +199,13 @@ const isSidebarExpanded = computed(() => {
   return !isMini.value
 })
 
+// 是否处于 mini 模式（仅显示图标）：移动端始终为 false
 const isMiniMode = computed(() => {
   if (isMobile.value) return false
   return isMini.value
 })
 
+// 侧边栏容器样式类：根据移动端/桌面端和展开状态动态计算宽度和位移
 const sidebarClasses = computed(() => {
   if (isMobile.value) {
     return props.isOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full'
@@ -191,6 +213,7 @@ const sidebarClasses = computed(() => {
   return isMiniMode.value ? 'w-14 translate-x-0' : 'w-64 translate-x-0'
 })
 
+// 展开/收起按钮的定位样式：跟随侧边栏宽度变化
 const toggleButtonClass = computed(() => {
   if (isMobile.value) {
     return props.isOpen ? 'left-[264px]' : 'left-3'
@@ -198,18 +221,21 @@ const toggleButtonClass = computed(() => {
   return isMini.value ? 'left-[64px]' : 'left-[264px]'
 })
 
+// 收起侧边栏为 mini 模式，并持久化到 localStorage
 const collapseSidebar = () => {
   isMini.value = true
   localStorage.setItem('sidebar_mini', 'true')
   emit('expand-change', false)
 }
 
+// 展开侧边栏为 full 模式，并持久化到 localStorage
 const expandSidebar = () => {
   isMini.value = false
   localStorage.setItem('sidebar_mini', 'false')
   emit('expand-change', true)
 }
 
+// 切换侧边栏状态：移动端通过 emit 通知父组件，桌面端切换 mini/full
 const toggleSidebarState = () => {
   if (isMobile.value) {
     emit('toggle')
@@ -223,12 +249,14 @@ const toggleSidebarState = () => {
   }
 }
 
+// 平滑滚动到页面内锚点位置
 const scrollToAnchor = (link) => {
   requestAnimationFrame(() => {
     document.querySelector(link)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   })
 }
 
+// 导航点击处理：锚点链接先跳转首页再滚动，路由链接直接跳转，移动端自动关闭侧边栏
 const handleNavClick = async (link) => {
   activeNav.value = link
 
@@ -248,6 +276,7 @@ const handleNavClick = async (link) => {
   }
 }
 
+// 侧边栏导航菜单配置：包含分类标题和各菜单项（路由路径、图标、标签等）
 const sidebarItems = [
   { category: '导航菜单', categoryKey: 'navigationMenu' },
   {
@@ -348,12 +377,14 @@ const sidebarItems = [
   },
 ]
 
+// 挂载时通知父组件当前侧边栏展开状态
 onMounted(() => {
   emit('expand-change', !isMini.value)
 })
 </script>
 
 <style scoped>
+/* 隐藏滚动条：兼容 Webkit 和 Firefox */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -363,6 +394,7 @@ onMounted(() => {
   scrollbar-width: none;
 }
 
+/* 暗色主题下侧边栏样式适配 */
 :global(:root[data-theme='dark']) .app-sidebar {
   border-color: rgba(255, 255, 255, 0.1) !important;
   background: #1f1f1f !important;
@@ -370,6 +402,7 @@ onMounted(() => {
   box-shadow: none;
 }
 
+/* 暗色主题下侧边栏文字颜色 */
 :global(:root[data-theme='dark']) .app-sidebar span,
 :global(:root[data-theme='dark']) .app-sidebar .text-gray-400,
 :global(:root[data-theme='dark']) .app-sidebar .text-gray-700 {
@@ -390,6 +423,7 @@ onMounted(() => {
   color: #ffffff !important;
 }
 
+/* 暗色主题下展开/收起按钮样式 */
 :global(:root[data-theme='dark']) .sidebar-toggle {
   border-color: rgba(255, 255, 255, 0.12) !important;
   background: #2b2b2b !important;

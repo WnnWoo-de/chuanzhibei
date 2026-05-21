@@ -1,47 +1,56 @@
 <template>
+  <!-- 志愿活动页面根容器 -->
   <div class="vol-root bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-24 px-6 pb-16">
-    <!-- Ambient glows -->
+    <!-- 背景装饰：蓝色光晕效果 -->
     <div class="fixed top-32 right-0 w-[28rem] h-[28rem] rounded-full pointer-events-none blur-3xl opacity-[0.04]" style="background:radial-gradient(circle,#3b82f6,transparent)"></div>
     <div class="fixed bottom-0 left-16 w-80 h-80 rounded-full pointer-events-none blur-3xl opacity-[0.05]" style="background:radial-gradient(circle,#93c5fd,transparent)"></div>
-    <!-- Grid background -->
+    <!-- 背景网格线装饰 -->
     <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-[0.06] z-0 px-6">
       <div v-for="n in 12" :key="n" class="border-r border-primary h-full"></div>
     </div>
 
+    <!-- 主内容区域：12列网格布局 -->
     <div class="relative z-10 grid grid-cols-12 gap-6 lg:gap-10">
-      <!-- ══════ LEFT SIDEBAR ══════ -->
+      <!-- 左侧边栏（3列宽） -->
       <aside class="col-span-12 md:col-span-3">
         <div class="sticky top-24 space-y-5">
 
-          <!-- Page header -->
+          <!-- 页面标题区域 -->
           <div class="animate-fade-in-up">
             <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/60 mb-2">04. VOLUNTEER</p>
             <h1 class="text-5xl font-bold leading-none tracking-tighter mb-3">{{ langText.volunteer.titleLine1 }}<br>{{ langText.volunteer.titleLine2 }}</h1>
             <p class="text-sm text-gray-500 leading-relaxed max-w-[200px]">{{ langText.volunteer.subtitle }}</p>
           </div>
 
-          <!-- Points card -->
+          <!-- 积分卡片：显示用户积分、志愿时长和参与次数 -->
           <div class="vol-points-card animate-fade-in-up delay-100">
+            <!-- 卡片装饰光晕 -->
             <div class="absolute -right-8 -top-8 w-40 h-40 rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(147,197,253,0.35),transparent)"></div>
             <div class="absolute right-4 bottom-4 w-20 h-20 rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(255,255,255,0.5),transparent)"></div>
             <div class="relative z-10 flex items-start justify-between mb-4">
               <div>
                 <p class="font-mono text-[9px] uppercase tracking-[0.22em] text-blue-500/60 mb-1">MY POINTS</p>
+                <!-- 积分总数显示 -->
                 <p class="text-5xl font-bold tabular-nums tracking-tighter text-blue-900">{{ totalPoints }}</p>
                 <p class="font-mono text-[9px] text-blue-500/50 mt-0.5">{{ langText.volunteer.myPoints }}</p>
               </div>
+              <!-- 积分进度环形图：以5000分为满值 -->
               <div class="relative w-14 h-14 shrink-0">
                 <svg viewBox="0 0 40 40" class="w-14 h-14 -rotate-90">
+                  <!-- 背景圆环 -->
                   <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(96,165,250,0.2)" stroke-width="3"/>
+                  <!-- 进度圆环：根据积分比例动态计算偏移量 -->
                   <circle cx="20" cy="20" r="16" fill="none" stroke="#3b82f6" stroke-width="3"
                     stroke-dasharray="100.5"
                     :stroke-dashoffset="100.5 * (1 - Math.min(totalPoints / 5000, 1))"
                     stroke-linecap="round"
                     style="transition: stroke-dashoffset 1.2s cubic-bezier(0.19,1,0.22,1)"/>
                 </svg>
+                <!-- 中心百分比文字 -->
                 <span class="absolute inset-0 flex items-center justify-center font-mono text-[9px] text-blue-700 font-bold">{{ Math.round(Math.min(totalPoints/5000,1)*100) }}%</span>
               </div>
             </div>
+            <!-- 底部统计信息：志愿时长和参与次数 -->
             <div class="relative z-10 border-t border-blue-300/40 pt-4 grid grid-cols-2 gap-3">
               <div class="bg-white/50 rounded-xl p-3 backdrop-blur-sm">
                 <p class="font-mono text-[8px] uppercase tracking-[0.18em] text-blue-500/60 mb-1">{{ langText.volunteer.volunteerHours }}</p>
@@ -54,7 +63,7 @@
             </div>
           </div>
 
-          <!-- My Activities -->
+          <!-- 我的活动列表：显示已报名的志愿活动 -->
           <div class="vol-sidebar-card animate-fade-in-up delay-200">
             <div class="vol-sidebar-card__header">
               <span>{{ langText.volunteer.myActivities }}</span>
@@ -76,7 +85,7 @@
             </ul>
           </div>
 
-          <!-- Volunteer Leaderboard -->
+          <!-- 志愿者排行榜：按志愿时长排名 -->
           <div class="vol-sidebar-card animate-fade-in-up delay-300">
             <div class="vol-sidebar-card__header">
               <span>{{ langText.volunteer.leaderboard }}</span>
@@ -96,7 +105,7 @@
             </ul>
           </div>
 
-          <!-- Points rules -->
+          <!-- 积分规则说明 -->
           <div class="vol-rules-card animate-fade-in-up delay-400">
             <div class="flex items-center gap-2 mb-3">
               <div class="w-1.5 h-1.5 rounded-full bg-primary animate-ping-slow"></div>
@@ -111,10 +120,10 @@
 
         </div>
       </aside>
-      <!-- ══════ RIGHT MAIN CONTENT ══════ -->
+      <!-- 右侧主内容区域（9列宽） -->
       <main class="col-span-12 md:col-span-9">
 
-        <!-- Search + Filter bar -->
+        <!-- 搜索栏和分类筛选按钮 -->
         <div class="flex flex-col sm:flex-row gap-3 mb-8 animate-fade-in-up">
           <div class="flex-1">
             <el-input v-model="searchQuery" :placeholder="langText.volunteer.searchPlaceholder" clearable :prefix-icon="Search" />
@@ -127,7 +136,7 @@
           </div>
         </div>
 
-        <!-- Redeem banner -->
+        <!-- 积分兑换横幅：引导用户前往成就页面兑换奖励 -->
         <div class="vol-redeem-banner mb-8 animate-fade-in-up delay-200">
           <div class="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-[0.12]" style="background:radial-gradient(circle,#4ADE80,transparent)"></div>
           <div class="absolute right-28 bottom-0 w-28 h-28 rounded-full opacity-[0.06]" style="background:radial-gradient(circle,#4ADE80,transparent)"></div>
@@ -139,7 +148,7 @@
           <router-link to="/achievements" class="vol-redeem-btn shrink-0 relative z-10">{{ langText.volunteer.redeemBtn }}</router-link>
         </div>
 
-        <!-- Activity cards -->
+        <!-- 志愿活动卡片列表：带过渡动画效果 -->
         <transition-group name="card-list" tag="div" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <div v-for="activity in filteredActivities" :key="activity.id" class="vol-activity-card group">
             <div class="h-[3px] w-full absolute top-0 left-0 rounded-t-2xl" :class="categoryAccent(activity.category)"></div>
@@ -208,7 +217,7 @@
       </main>
     </div>
 
-    <!-- ══════ REGISTER DIALOG ══════ -->
+    <!-- 报名对话框：填写手机号和备注信息进行志愿活动报名 -->
     <el-dialog v-model="showRegisterDialog" :title="langText.volunteer.registerDialog.title" :width="520" align-center>
       <div v-if="selectedActivity" class="space-y-5">
         <div class="bg-gray-50 border border-black/5 p-4 rounded-xl">
@@ -241,7 +250,7 @@
       </div>
     </el-dialog>
 
-    <!-- ══════ LOG HOURS DIALOG ══════ -->
+    <!-- 记录时长对话框：记录实际志愿时长并计算获得积分 -->
     <el-dialog v-model="showLogHoursDialog" :title="langText.volunteer.logHoursDialog.title" :width="480" align-center>
       <div v-if="selectedActivity" class="space-y-5">
         <div class="bg-gray-50 border border-black/5 p-4 rounded-xl">
@@ -273,7 +282,7 @@
       </div>
     </el-dialog>
 
-    <!-- ══════ DETAIL DIALOG ══════ -->
+    <!-- 活动详情对话框：显示活动完整信息 -->
     <el-dialog v-model="showDetailDialog" :title="langText.volunteer.detailDialog.title" :width="560" align-center>
       <div v-if="selectedActivity" class="space-y-5">
         <div class="flex items-start justify-between gap-4">
@@ -336,24 +345,39 @@ import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { langText } from '@/language'
 
+// 用户状态管理
 const userStore = useUserStore()
+// 搜索关键词
 const searchQuery = ref('')
+// 当前选中的活动分类
 const activeCategory = ref('全部')
+// 对话框显示状态
 const showRegisterDialog = ref(false)
 const showLogHoursDialog = ref(false)
 const showDetailDialog = ref(false)
+// 当前选中的活动
 const selectedActivity = ref(null)
+// 报名表单数据
 const registerForm = ref({ phone: '', note: '', agreed: false })
+// 记录时长表单数据
 const logForm = ref({ hours: 2, reflection: '' })
+// 已报名活动ID列表（从本地存储读取）
 const joinedIds = ref(JSON.parse(localStorage.getItem('volunteer_joined') || '[]'))
+// 志愿时长记录（从本地存储读取）
 const volunteerLogs = ref(JSON.parse(localStorage.getItem('volunteer_logs') || '[]'))
 
+// 计算属性：用户积分总数
 const totalPoints = computed(() => Number(userStore.user?.points) || 0)
+// 计算属性：累计志愿时长
 const myVolunteerHours = computed(() => volunteerLogs.value.reduce((s, l) => s + (l.hours || 0), 0))
+// 计算属性：已报名活动数量
 const myJoinedCount = computed(() => joinedIds.value.length)
+// 判断是否已报名某活动
 const isJoined = (id) => joinedIds.value.includes(id)
+// 计算属性：我报名的活动列表
 const myActivities = computed(() => activities.value.filter(a => joinedIds.value.includes(a.id)))
 
+// 活动分类列表
 const categories = computed(() => [
   { label: langText.value.volunteer.categories.all, value: '全部', icon: '📋' },
   { label: langText.value.volunteer.categories.environment, value: '环境保护', icon: '🌳' },
@@ -362,8 +386,10 @@ const categories = computed(() => [
   { label: langText.value.volunteer.categories.elderly, value: '关爱老人', icon: '🤝' },
 ])
 
+// 活动数据：合并多语言文本和基础数据
 const activities = computed(() => {
   const t = langText.value.volunteer
+  // 活动基础数据（日期、时长、积分、报名人数等）
   const base = [
     { date:'2026-04-05 09:00', hours:3, points:90, pointsPerHour:30, enrolled:18, capacity:30, urgent:false, status:'confirmed' },
     { date:'2026-04-12 08:30', hours:4, points:160, pointsPerHour:40, enrolled:25, capacity:25, urgent:true, status:'confirmed' },
@@ -372,9 +398,11 @@ const activities = computed(() => {
     { date:'2026-05-03 10:00', hours:2, points:60, pointsPerHour:30, enrolled:6, capacity:10, urgent:false, status:'pending' },
     { date:'2026-05-10 09:30', hours:2, points:50, pointsPerHour:25, enrolled:5, capacity:20, urgent:false, status:'pending' },
   ]
+  // 将多语言文本与基础数据合并，生成完整活动对象
   return t.activities.map((item, i) => ({ id: i + 1, ...item, ...base[i] }))
 })
 
+// 志愿者排行榜数据
 const volunteerLeaderboard = ref([
   { name: 'EcoWarrior', hours: 48 },
   { name: 'GreenStar', hours: 36 },
@@ -383,9 +411,12 @@ const volunteerLeaderboard = ref([
   { name: 'Emma W.', hours: 18 },
 ])
 
+// 计算属性：根据分类和搜索关键词筛选活动
 const filteredActivities = computed(() => {
   let list = activities.value
+  // 按分类筛选
   if (activeCategory.value !== '全部') list = list.filter(a => a.category === activeCategory.value)
+  // 按关键词搜索（匹配标题或地点）
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase()
     list = list.filter(a => a.title.toLowerCase().includes(q) || a.location.toLowerCase().includes(q))
@@ -393,37 +424,55 @@ const filteredActivities = computed(() => {
   return list
 })
 
+// 计算属性：根据时长计算获得积分
 const earnedPoints = computed(() => !selectedActivity.value ? 0 : Math.round(logForm.value.hours * selectedActivity.value.pointsPerHour))
 
+// 状态标签样式类
 const statusClass = (s) => ({ pending:'bg-yellow-100 text-yellow-700', confirmed:'bg-green-100 text-green-700', completed:'bg-blue-100 text-blue-700' }[s] || 'bg-gray-100 text-gray-500')
+// 状态标签文字（多语言）
 const statusLabel = (s) => ({ pending: langText.value.volunteer.status.pending, confirmed: langText.value.volunteer.status.confirmed, completed: langText.value.volunteer.status.completed }[s] || s)
+// 分类徽章样式类
 const categoryBadgeClass = (c) => ({ '环境保护':'bg-green-100 text-green-700', '社区清洁':'bg-blue-100 text-blue-700', '教育支持':'bg-purple-100 text-purple-700', '关爱老人':'bg-orange-100 text-orange-700' }[c] || 'bg-gray-100 text-gray-600')
+// 报名进度条颜色（满员红色，80%以上橙色，否则绿色）
 const enrollmentColor = (a) => { const r = a.enrolled/a.capacity; return r>=1?'bg-red-400':r>=0.8?'bg-orange-400':'bg-primary' }
+// 分类顶部装饰条渐变色
 const categoryAccent = (cat) => ({ '环境保护':'bg-gradient-to-r from-green-400 to-emerald-500', '社区清洁':'bg-gradient-to-r from-blue-400 to-sky-500', '教育支持':'bg-gradient-to-r from-purple-400 to-violet-500', '关爱老人':'bg-gradient-to-r from-orange-400 to-amber-500' }[cat] || 'bg-gradient-to-r from-gray-300 to-gray-400')
 
+// 打开报名对话框
 const openRegisterDialog = (a) => { selectedActivity.value = a; registerForm.value = { phone:'', note:'', agreed:false }; showRegisterDialog.value = true }
+// 打开记录时长对话框
 const openLogHoursDialog = (a) => { selectedActivity.value = a; logForm.value = { hours: a.hours, reflection:'' }; showLogHoursDialog.value = true }
+// 打开活动详情对话框
 const openDetailDialog = (a) => { selectedActivity.value = a; showDetailDialog.value = true }
 
+// 提交报名
 const submitRegister = () => {
+  // 表单验证：手机号必填
   if (!registerForm.value.phone.trim()) { ElMessage.warning(langText.value.volunteer.messages.phoneRequired); return }
+  // 表单验证：必须同意协议
   if (!registerForm.value.agreed) { ElMessage.warning(langText.value.volunteer.messages.agreementRequired); return }
   const act = selectedActivity.value
+  // 将活动添加到已报名列表
   if (!joinedIds.value.includes(act.id)) {
     joinedIds.value.push(act.id)
     act.enrolled = Math.min(act.enrolled + 1, act.capacity)
     act.status = 'confirmed'
+    // 持久化到本地存储
     localStorage.setItem('volunteer_joined', JSON.stringify(joinedIds.value))
   }
   showRegisterDialog.value = false
   ElMessage.success(langText.value.volunteer.messages.registerSuccess)
 }
 
+// 提交志愿时长记录
 const submitLogHours = () => {
   const pts = earnedPoints.value
+  // 添加时长记录
   volunteerLogs.value.push({ activityId: selectedActivity.value.id, title: selectedActivity.value.title, hours: logForm.value.hours, points: pts, date: new Date().toISOString().split('T')[0] })
   localStorage.setItem('volunteer_logs', JSON.stringify(volunteerLogs.value))
+  // 给用户增加积分
   userStore.addPoints(pts)
+  // 更新排行榜数据
   const userName = userStore.user?.name || userStore.user?.username || '我'
   const idx = volunteerLeaderboard.value.findIndex(u => u.name === userName)
   if (idx >= 0) volunteerLeaderboard.value[idx].hours += logForm.value.hours
@@ -433,11 +482,12 @@ const submitLogHours = () => {
   ElMessage.success(langText.value.volunteer.messages.logSuccess.replace('{pts}', pts))
 }
 
+// 组件挂载时初始化用户数据
 onMounted(async () => { await userStore.init() })
 </script>
 
 <style scoped>
-/* ── Points Card ── */
+/* 积分卡片样式：蓝色渐变背景，带阴影和圆角 */
 .vol-points-card {
   position: relative;
   overflow: hidden;
@@ -448,7 +498,7 @@ onMounted(async () => { await userStore.init() })
   box-shadow: 0 16px 40px rgba(96,165,250,0.18), 0 0 0 1px rgba(255,255,255,0.7) inset;
 }
 
-/* ── Sidebar Card ── */
+/* 侧边栏卡片：毛玻璃效果，白色半透明背景 */
 .vol-sidebar-card {
   background: rgba(255,255,255,0.82);
   backdrop-filter: blur(16px);
@@ -489,7 +539,7 @@ onMounted(async () => { await userStore.init() })
   color: #b45309;
 }
 
-/* ── Rules Card ── */
+/* 积分规则卡片：浅绿色边框和渐变背景 */
 .vol-rules-card {
   border: 1px solid rgba(46,125,50,0.18);
   background: linear-gradient(135deg, rgba(46,125,50,0.04) 0%, rgba(74,222,128,0.03) 100%);
@@ -497,7 +547,7 @@ onMounted(async () => { await userStore.init() })
   padding: 1rem 1.1rem;
 }
 
-/* ── Filter Buttons ── */
+/* 分类筛选按钮：默认白色背景，选中蓝色渐变 */
 .vol-filter-btn {
   display: inline-flex;
   align-items: center;
@@ -534,7 +584,7 @@ onMounted(async () => { await userStore.init() })
   box-shadow: 0 6px 18px rgba(96,165,250,0.45);
 }
 
-/* ── Redeem Banner ── */
+/* 积分兑换横幅：蓝色渐变背景，响应式布局 */
 .vol-redeem-banner {
   position: relative;
   overflow: hidden;
@@ -582,7 +632,7 @@ onMounted(async () => { await userStore.init() })
   color: #1e40af;
 }
 
-/* ── Activity Card ── */
+/* 志愿活动卡片：毛玻璃效果，悬停上浮动画 */
 .vol-activity-card {
   position: relative;
   display: flex;
@@ -602,7 +652,7 @@ onMounted(async () => { await userStore.init() })
   border-color: rgba(46,125,50,0.25);
 }
 
-/* ── Category Badge ── */
+/* 分类徽章：小标签样式，等宽字体 */
 .vol-category-badge {
   display: inline-block;
   font-family: var(--font-mono);
@@ -628,7 +678,7 @@ onMounted(async () => { await userStore.init() })
   animation: pulse 2s cubic-bezier(0,0,0.2,1) infinite;
 }
 
-/* ── Meta cell ── */
+/* 活动元信息单元格：日期、地点、时长等 */
 .vol-meta-cell {
   display: flex;
   align-items: center;
@@ -644,6 +694,7 @@ onMounted(async () => { await userStore.init() })
   background: rgba(46,125,50,0.07);
 }
 
+/* 暗色主题适配：深色背景、浅色文字 */
 :global(:root[data-theme='dark']) .vol-root {
   background: #1f1f1f !important;
   color: #ffffff !important;
@@ -760,7 +811,7 @@ onMounted(async () => { await userStore.init() })
   color: rgba(220, 239, 226, 0.8) !important;
 }
 
-/* ── Card list transition ── */
+/* 卡片列表过渡动画：进入、离开和排序变化 */
 .card-list-move,
 .card-list-enter-active,
 .card-list-leave-active {

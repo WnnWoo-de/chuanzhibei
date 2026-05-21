@@ -47,26 +47,36 @@
 </template>
 
 <script setup>
+// ============================================================
+// components/feedback/ScrollIndicator.vue - 滚动指示器组件
+// 页面底部固定的向下滚动提示，包含鼠标图标和弹跳箭头
+// 用户滚动超过 100px 后自动淡出隐藏
+// ============================================================
+
 import { ref, onMounted, onUnmounted } from 'vue'
 import { langText } from '@/language'
 
 const props = defineProps({
+  /** 自定义提示文字（为空时使用多语言默认值） */
   text: {
     type: String,
     default: '',
   },
+  /** 自定义无障碍标签（为空时使用多语言默认值） */
   ariaLabel: {
     type: String,
     default: '',
   },
 })
 
+/** 控制指示器是否隐藏（滚动超过 100px 后隐藏） */
 const isHidden = ref(false)
 
+/** 滚动事件监听器引用（用于卸载时移除） */
 let scrollListener = null
 
 onMounted(() => {
-  // 首屏滚动后淡出
+  // 监听滚动，超过 100px 后淡出
   scrollListener = () => {
     const scrolled = window.scrollY > 100
     isHidden.value = scrolled

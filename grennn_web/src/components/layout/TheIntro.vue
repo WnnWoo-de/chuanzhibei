@@ -6,9 +6,10 @@
        - font-mono：等宽字体风格，强调科技感
        ============================================================ -->
   <div class="fixed inset-0 z-[100] bg-white text-black flex items-center justify-center overflow-hidden font-mono" ref="introContainer">
+    <!-- 开场动画内容容器：居中布局 -->
     <div class="relative w-full h-full flex items-center justify-center">
 
-      <!-- 右下角数字计数器（0% → 100%）-->
+      <!-- 右下角数字计数器（0% → 100%），动画时数字递增 -->
       <div class="absolute bottom-10 right-10 text-9xl font-bold tracking-tighter opacity-0 counter">
         <span ref="counterRef">0</span>%
       </div>
@@ -61,8 +62,10 @@ const emit = defineEmits(['complete'])
 const introContainer = ref(null)
 // 计数器数字元素的 DOM 引用（用于 GSAP 数字递增动画）
 const counterRef = ref(null)
+// 兜底定时器引用：动画库加载失败或卡住时自动结束开场动画
 const fallbackTimer = ref(null)
 
+// 结束开场动画：清除兜底定时器，恢复页面滚动，通知父组件
 const finishIntro = () => {
   if (fallbackTimer.value) {
     window.clearTimeout(fallbackTimer.value)
@@ -72,6 +75,7 @@ const finishIntro = () => {
   emit('complete')
 }
 
+// 组件挂载后：加载 GSAP 动画库并播放开场动画序列
 onMounted(async () => {
   // 兜底：仅在动画库加载失败或异常卡住时结束，避免正常播放中途提前跳过
   fallbackTimer.value = window.setTimeout(() => {
@@ -184,6 +188,7 @@ onMounted(async () => {
   }
 })
 
+// 组件卸载时：清除兜底定时器，恢复页面滚动
 onUnmounted(() => {
   if (fallbackTimer.value) {
     window.clearTimeout(fallbackTimer.value)
@@ -194,6 +199,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 主题色文字样式 */
 .text-primary {
   color: var(--color-accent, #4ADE80);
 }

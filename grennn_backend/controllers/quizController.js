@@ -1,5 +1,10 @@
+/**
+ * controllers/quizController.js - 环保问答控制器
+ * 负责题库初始化、题目查询、用户答题记录查询与保存
+ */
 const { QuizQuestion, QuizRecord } = require('../models');
 
+// 默认题库：当数据库中还没有题目时，首次请求会自动写入这些种子题
 const seedQuestions = [
     { id: 1, category: '垃圾分类', type: 'single', question: '以下哪种垃圾属于可回收物？', options: [{ label: 'A', text: '废旧报纸' }, { label: 'B', text: '剩菜剩饭' }, { label: 'C', text: '用过的纸巾' }, { label: 'D', text: '烟蒂' }], answer: ['A'], explanation: '废旧报纸属于可回收物，回收后可以重新制浆造纸。', points: 10, sortOrder: 1 },
     { id: 2, category: '低碳出行', type: 'single', question: '短距离出行时，以下哪种方式更低碳？', options: [{ label: 'A', text: '开私家车' }, { label: 'B', text: '步行或骑自行车' }, { label: 'C', text: '怠速停车等待' }, { label: 'D', text: '单人长距离开车' }], answer: ['B'], explanation: '步行和骑行几乎不产生直接碳排放，适合短距离通勤。', points: 10, sortOrder: 2 },
@@ -8,12 +13,14 @@ const seedQuestions = [
     { id: 5, category: '旧物利用', type: 'multiple', question: '以下哪些做法属于旧物利用？', options: [{ label: 'A', text: '把旧玻璃瓶改造成花瓶' }, { label: 'B', text: '修补旧衣服继续穿' }, { label: 'C', text: '还能用的物品直接丢弃' }, { label: 'D', text: '旧纸箱改成收纳盒' }], answer: ['A', 'B', 'D'], explanation: '旧物利用可以延长物品生命周期，减少新资源消耗和废弃物产生。', points: 10, sortOrder: 5 },
 ];
 
+/** 若题库为空，则自动写入默认题目，方便项目开箱即用 */
 const ensureQuestions = async () => {
     const count = await QuizQuestion.count();
     if (count > 0) return;
     await QuizQuestion.bulkCreate(seedQuestions, { ignoreDuplicates: true });
 };
 
+/** 将数据库题目对象裁剪为前端所需字段 */
 const formatQuestion = (item) => ({
     id: item.id,
     category: item.category,
@@ -25,6 +32,7 @@ const formatQuestion = (item) => ({
     points: item.points,
 });
 
+/** 统一答题记录返回格式，避免前端直接依赖 Sequelize 原始对象 */
 const formatRecord = (item) => ({
     id: item.id,
     date: item.date,
@@ -36,6 +44,10 @@ const formatRecord = (item) => ({
     createdAt: item.createdAt,
 });
 
+/**
+ * GET /api/v1/quiz/questions
+ * 返回启用中的题库列表，若数据库为空则先自动初始化种子题
+ */
 exports.listQuestions = async (_, res) => {
     try {
         await ensureQuestions();
@@ -50,6 +62,10 @@ exports.listQuestions = async (_, res) => {
     }
 };
 
+/**
+ * GET /api/v1/quiz/records
+ * 获取当前登录用户最近的答题记录
+ */
 exports.listMyRecords = async (req, res) => {
     try {
         const items = await QuizRecord.findAll({
@@ -63,14 +79,20 @@ exports.listMyRecords = async (req, res) => {
     }
 };
 
+/**
+ * POST /api/v1/quiz/records
+ * 保存当前用户某一天的答题结果；同一天重复提交会更新原记录
+ */
 exports.saveRecord = async (req, res) => {
     try {
+        // 取 yyyy-mm-dd 作为自然日主键，避免同一天产生多条成绩记录
         const date = String(req.body?.date || new Date().toISOString().slice(0, 10)).slice(0, 10);
         const questionIds = Array.isArray(req.body?.questionIds) ? req.body.questionIds : [];
         const correctCount = Number(req.body?.correctCount);
         const totalCount = Number(req.body?.totalCount);
         const earnedPoints = Number(req.body?.earnedPoints);
 
+        // 基础校验：答题数量必须合理，积分必须是有限且非负的数字
         if (!Number.isInteger(correctCount) || !Number.isInteger(totalCount) || totalCount <= 0) {
             return res.status(400).json({ error: '答题数量无效' });
         }
@@ -78,6 +100,7 @@ exports.saveRecord = async (req, res) => {
             return res.status(400).json({ error: '积分数据无效' });
         }
 
+        // 将正确题数限制在 [0, totalCount] 范围内，避免前端误传异常值
         const payload = {
             questionIds,
             correctCount: Math.max(0, Math.min(correctCount, totalCount)),
@@ -85,6 +108,8 @@ exports.saveRecord = async (req, res) => {
             earnedPoints,
             completed: true,
         };
+
+        // 同一用户同一天只保留一条记录：没有就创建，有就更新
         const [record] = await QuizRecord.findOrCreate({
             where: { userId: req.user.id, date },
             defaults: { userId: req.user.id, date, ...payload },

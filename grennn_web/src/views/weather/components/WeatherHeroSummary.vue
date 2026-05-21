@@ -1,7 +1,10 @@
 <template>
+  <!-- 天气概览头部卡片 -->
   <header class="hero-card">
+    <!-- 左侧主信息区域 -->
     <div class="hero-copy">
       <div class="hero-kicker">{{ langText.weather.heroKicker }}</div>
+      <!-- 城市名称 -->
       <h1 class="city-name">
         {{ weather.city.name }}
         <span v-if="weather.city.adm2 && weather.city.adm2 !== weather.city.name" class="city-adm">
@@ -9,10 +12,12 @@
         </span>
       </h1>
 
+      <!-- 天气图标和主温度显示 -->
       <div class="hero-temp-row">
         <div class="hero-icon-breath" :class="glowClass">
           <WeatherIcon :code="weather.now.icon" :size="72" :alt="weather.now.text" />
         </div>
+        <!-- 当前温度（带滚动数字动画） -->
         <div class="temp-display">
           <transition name="roll-number" mode="out-in">
             <span :key="`now-temp-${formatTemp(weather.now.temp)}`" class="rolling-number">
@@ -23,6 +28,7 @@
         </div>
       </div>
 
+      <!-- 天气状态行：天气描述和体感温度 -->
       <div class="hero-status-row">
         <div class="weather-desc">{{ weather.now.text }}</div>
         <div class="hero-divider"></div>
@@ -37,6 +43,7 @@
         </div>
       </div>
 
+      <!-- 最高/最低温度行 -->
       <div class="hero-range-line">
         <span>
           {{ langText.weather.highLabel }}
@@ -59,10 +66,13 @@
       </div>
     </div>
 
+    <!-- 右侧天气概况面板 -->
     <div class="hero-side glass-panel">
       <div class="hero-side-label">{{ langText.weather.currentOverview }}</div>
+      <!-- 天气概况摘要文字 -->
       <div class="hero-side-main">{{ summaryText }}</div>
       <div class="hero-side-sub">{{ langText.weather.humidityLabel }} {{ Math.round(weather.now.humidity || 0) }}% · {{ langText.weather.windSpeedLabel }} {{ weather.now.windSpeed || '--' }} km/h</div>
+      <!-- 气压和能见度标签 -->
       <div class="hero-side-pills">
         <span class="hero-pill">{{ langText.weather.pressureLabel }} {{ Math.round(weather.now.pressure || 0) }} hPa</span>
         <span class="hero-pill">{{ langText.weather.visibilityLabel }} {{ weather.now.vis || '--' }} km</span>
@@ -73,20 +83,22 @@
 
 <script setup>
 import { computed } from 'vue'
-import { langText } from '@/language'
+import { langText } from '@/language' // 多语言文本
 import WeatherIcon from '@/components/weather/WeatherIcon.vue'
 
+// 组件属性
 const props = defineProps({
   weather: {
     type: Object,
-    required: true,
+    required: true, // 天气数据对象
   },
   formatTemp: {
     type: Function,
-    required: true,
+    required: true, // 温度格式化函数
   },
 })
 
+// 根据天气文本计算图标发光效果类名（晴天/阴天/雨天）
 const glowClass = computed(() => {
   const text = props.weather?.now?.text || ''
   if (/雨|雷|雪/.test(text)) return 'is-rainy'
@@ -94,6 +106,7 @@ const glowClass = computed(() => {
   return 'is-cloudy'
 })
 
+// 根据天气状况生成概况摘要文字
 const summaryText = computed(() => {
   const w = langText.value.weather
   const text = props.weather?.now?.text || ''
@@ -104,6 +117,7 @@ const summaryText = computed(() => {
 </script>
 
 <style scoped>
+/* 概览卡片布局 */
 .hero-card {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.72fr);
@@ -124,10 +138,12 @@ const summaryText = computed(() => {
     transform 0.35s ease;
 }
 
+/* 左侧主信息区域 */
 .hero-copy {
   min-width: 0;
 }
 
+/* 标签文字样式 */
 .hero-kicker,
 .hero-side-label {
   font-size: 12px;
@@ -136,6 +152,7 @@ const summaryText = computed(() => {
   color: rgba(103, 122, 146, 0.7);
 }
 
+/* 城市名称 */
 .city-name {
   margin: 8px 0 6px;
   font-size: clamp(38px, 4.8vw, 70px);
@@ -152,6 +169,7 @@ const summaryText = computed(() => {
   font-weight: 400;
 }
 
+/* 温度显示行（图标 + 温度） */
 .hero-temp-row {
   display: flex;
   align-items: center;
@@ -159,6 +177,7 @@ const summaryText = computed(() => {
   margin: 18px 0 10px;
 }
 
+/* 天气图标呼吸发光容器 */
 .hero-icon-breath {
   position: relative;
   width: 110px;
@@ -203,6 +222,7 @@ const summaryText = computed(() => {
   background: radial-gradient(circle, rgba(155, 211, 255, 0.58) 0%, rgba(128, 178, 239, 0.2) 58%, transparent 74%);
 }
 
+/* 主温度显示 */
 .temp-display {
   position: relative;
   font-size: clamp(84px, 11vw, 144px);
@@ -214,6 +234,7 @@ const summaryText = computed(() => {
   align-items: flex-end;
 }
 
+/* 滚动数字动画 */
 .rolling-number {
   display: inline-block;
   min-width: 1.6em;
@@ -232,6 +253,7 @@ const summaryText = computed(() => {
   margin-left: 6px;
 }
 
+/* 天气状态行 */
 .hero-status-row {
   display: flex;
   flex-wrap: wrap;
@@ -240,6 +262,7 @@ const summaryText = computed(() => {
   color: #5c7089;
 }
 
+/* 天气描述文字 */
 .weather-desc {
   font-size: 24px;
   font-weight: 600;

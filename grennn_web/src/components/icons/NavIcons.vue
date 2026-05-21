@@ -45,22 +45,32 @@
 </template>
 
 <script setup>
+// ============================================================
+// components/icons/NavIcons.vue - 导航图标组件
+// 根据 name prop 渲染对应的 SVG 图标
+// 支持 7 种图标：about / reconstruction / chat / community / volunteer / weather / achievements
+// ============================================================
+
 defineProps({
+  /** 图标名称，决定渲染哪个 SVG 图形 */
   name: {
     type: String,
     required: true,
     validator: (value) => ['about', 'reconstruction', 'chat', 'community', 'volunteer', 'weather', 'achievements'].includes(value)
   },
+  /** 图标尺寸（像素） */
   size: {
     type: [String, Number],
     default: 24
   }
 })
 
+/** SVG 视口大小（24x24 为标准图标尺寸） */
 const viewBox = '0 0 24 24'
 </script>
 
 <style scoped>
+/* 图标基础样式：行内块级、垂直居中、透明度过渡 */
 .nav-icon {
   display: inline-block;
   vertical-align: middle;

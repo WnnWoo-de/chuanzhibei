@@ -1,10 +1,12 @@
 <template>
+  <!-- 登录页面主容器：全屏居中布局 -->
   <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans flex items-center justify-center px-6 relative overflow-hidden">
     <!-- 背景网格装饰（固定定位，纯视觉） -->
     <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6">
       <div v-for="n in 12" :key="n" class="border-r border-black h-full"></div>
     </div>
 
+    <!-- 主内容区域 -->
     <div class="relative z-10 w-full max-w-md">
       <!-- 登录卡片容器 -->
       <div class="bg-white/95 border border-black/10 p-8 md:p-12 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.15)] relative overflow-hidden group">
@@ -102,7 +104,7 @@
 // ============================================================
 // views/auth/LoginView.vue - 登录页面
 // 包含邮箱/用户名 + 密码表单，支持字段级实时校验
-// 支持 Token 自动登录
+// 支持 Token 自动登录（OAuth 回调）
 // ============================================================
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -226,7 +228,7 @@ const handleLogin = async () => {
 watch(email, () => { if (touched.email) validateEmail() })
 watch(password, () => { if (touched.password) validatePassword() })
 
-// 页面挂载时：检查 URL 中是否有 Token
+// 页面挂载时：检查 URL 中是否有 Token（OAuth 回调自动登录）
 onMounted(async () => {
   const queryToken = route.query?.token || route.query?.access_token
   if (typeof queryToken !== 'string' || !queryToken) return

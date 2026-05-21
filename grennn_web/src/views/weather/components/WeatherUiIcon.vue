@@ -1,5 +1,7 @@
 <template>
+  <!-- 天气UI图标容器，根据name属性渲染对应的SVG图标 -->
   <span class="weather-ui-icon" :style="iconStyle" aria-hidden="true">
+    <!-- 空气质量图标 -->
     <svg
       v-if="name === 'air-quality'"
       viewBox="0 0 24 24"
@@ -11,6 +13,7 @@
       <path d="M12 10c2.4-.7 4-2.8 4-5.5-3 .1-5.2 1.1-6.6 2.9-1.1 1.3-1.6 3-1.5 5.1 1.3-1.4 2.7-2.2 4.1-2.5Z" fill="currentColor" stroke="none" />
     </svg>
 
+    <!-- 紫外线指数图标 -->
     <svg
       v-else-if="name === 'uv'"
       viewBox="0 0 24 24"
@@ -21,6 +24,7 @@
       <path d="M12 2.5v3M12 18.5v3M21.5 12h-3M5.5 12h-3M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1M18.7 18.7l-2.1-2.1M7.4 7.4 5.3 5.3" />
     </svg>
 
+    <!-- 日落/日出图标 -->
     <svg
       v-else-if="name === 'sunset'"
       viewBox="0 0 24 24"
@@ -33,6 +37,7 @@
       <path d="m9.5 8 2.5 2.5L14.5 8" />
     </svg>
 
+    <!-- 风力图标 -->
     <svg
       v-else-if="name === 'wind'"
       viewBox="0 0 24 24"
@@ -44,6 +49,7 @@
       <path d="M3 18.5h8" />
     </svg>
 
+    <!-- 降水量图标 -->
     <svg
       v-else-if="name === 'precipitation'"
       viewBox="0 0 24 24"
@@ -54,6 +60,7 @@
       <path d="M9 17.5 7.8 20M13 17.5 11.8 20M17 17.5 15.8 20" />
     </svg>
 
+    <!-- 体感温度图标 -->
     <svg
       v-else-if="name === 'feels-like'"
       viewBox="0 0 24 24"
@@ -65,6 +72,7 @@
       <path d="M12 17.5v.1" />
     </svg>
 
+    <!-- 湿度图标 -->
     <svg
       v-else-if="name === 'humidity'"
       viewBox="0 0 24 24"
@@ -75,6 +83,7 @@
       <path d="M9.5 14.5c.2 1.4 1.2 2.4 2.5 2.8" />
     </svg>
 
+    <!-- 能见度图标 -->
     <svg
       v-else-if="name === 'visibility'"
       viewBox="0 0 24 24"
@@ -85,6 +94,7 @@
       <circle cx="12" cy="12" r="2.5" />
     </svg>
 
+    <!-- 气压图标 -->
     <svg
       v-else-if="name === 'pressure'"
       viewBox="0 0 24 24"
@@ -96,6 +106,7 @@
       <path d="M12 7v1.5M7 12h1.5M15.5 12H17M12 15.5V17" />
     </svg>
 
+    <!-- 逐小时预报图标 -->
     <svg
       v-else-if="name === 'hourly'"
       viewBox="0 0 24 24"
@@ -106,6 +117,7 @@
       <path d="M12 7.5V12l3 2" />
     </svg>
 
+    <!-- 多日预报图标 -->
     <svg
       v-else-if="name === 'forecast'"
       viewBox="0 0 24 24"
@@ -122,21 +134,23 @@
 <script setup>
 import { computed } from 'vue'
 
+// 组件属性定义
 const props = defineProps({
   name: {
     type: String,
-    required: true,
+    required: true, // 图标名称，如 'air-quality'、'uv'、'wind' 等
   },
   size: {
     type: [Number, String],
-    default: 18,
+    default: 18, // 图标尺寸（px）
   },
   strokeWidth: {
     type: [Number, String],
-    default: 1.8,
+    default: 1.8, // SVG描边宽度
   },
 })
 
+// 计算图标容器的样式（尺寸和描边宽度）
 const iconStyle = computed(() => ({
   width: `${props.size}px`,
   height: `${props.size}px`,
@@ -145,6 +159,7 @@ const iconStyle = computed(() => ({
 </script>
 
 <style scoped>
+/* 图标容器基础样式 */
 .weather-ui-icon {
   display: inline-flex;
   align-items: center;
@@ -152,6 +167,7 @@ const iconStyle = computed(() => ({
   flex-shrink: 0;
 }
 
+/* SVG图标统一样式 */
 .weather-ui-icon svg {
   width: 100%;
   height: 100%;

@@ -1,11 +1,19 @@
 import axios from 'axios'
 import { requestAxios } from '@/utils/api'
 
+// ============================================================
+// services/volunteerService.js - 志愿活动服务
+// 优先请求后端接口；接口不可用时可回退到本地 Mock 活动数据
+// ============================================================
+
+// 本地 mock 活动状态的持久化键
 const MOCK_STATE_KEY = 'green_volunteer_mock_state_v1'
 
+// 开发/部署阶段如果显式开启 mock，或生产环境未接入接口时，允许回退到本地模拟
 const shouldUseVolunteerMock = () =>
   import.meta.env.VITE_USE_MOCK_VOLUNTEER === 'true' || import.meta.env.PROD
 
+// 本地模拟活动清单：用于无后端时保证页面仍可完整演示
 const volunteerMockActivities = [
   {
     id: 101,
@@ -73,6 +81,7 @@ const volunteerMockActivities = [
   },
 ]
 
+/** 规范化活动对象中的数字字段，避免接口/本地数据类型不一致 */
 const normalizeVolunteerItem = (item = {}) => ({
   ...item,
   pointsPerHour: Number(item.pointsPerHour || 30),
@@ -82,8 +91,10 @@ const normalizeVolunteerItem = (item = {}) => ({
   enrolled: Number(item.enrolled || 0),
 })
 
+/** 判断当前环境是否可以使用 localStorage 保存 mock 状态 */
 const canUseStorage = () => typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
 
+/** 读取本地 mock 活动状态；若没有缓存则回退到默认数据 */
 const loadMockState = () => {
   if (!canUseStorage()) return volunteerMockActivities.map((item) => ({ ...item }))
 
@@ -100,6 +111,7 @@ const loadMockState = () => {
   }
 }
 
+/** 将更新后的 mock 活动列表写回本地 */
 const saveMockState = (list = []) => {
   if (!canUseStorage()) return
   try {
@@ -109,12 +121,14 @@ const saveMockState = (list = []) => {
   }
 }
 
+/** 获取并规范化当前 mock 活动列表 */
 const fetchMockActivities = () => {
   const list = loadMockState().map(normalizeVolunteerItem)
   saveMockState(list)
   return list
 }
 
+/** 更新单个 mock 活动，用于模拟报名和记录服务时长 */
 const updateMockActivity = (activityId, updater) => {
   const list = loadMockState().map(normalizeVolunteerItem)
   const idx = list.findIndex((item) => Number(item.id) === Number(activityId))
@@ -128,6 +142,7 @@ const updateMockActivity = (activityId, updater) => {
   return { ok: true, item: list[idx], message: '' }
 }
 
+/** 获取志愿活动列表：接口成功用接口数据，否则按需回退到 mock */
 export const fetchVolunteerActivities = async () => {
   const result = await requestAxios(() => axios.get('/api/v1/volunteer/activities'), {
     fallbackMessage: '加载志愿活动失败',
@@ -160,6 +175,7 @@ export const fetchVolunteerActivities = async () => {
   return { ok: false, items: [], message: result.message, source: 'api' }
 }
 
+/** 报名指定志愿活动；mock 模式下会同步更新本地报名人数 */
 export const enrollVolunteerActivity = async (activityId, { phone, remark, agreedRules } = {}) => {
   const result = await requestAxios(
     () => axios.post(`/api/v1/volunteer/activities/${activityId}/enroll`, { phone, remark, agreedRules }),
@@ -198,6 +214,7 @@ export const enrollVolunteerActivity = async (activityId, { phone, remark, agree
   }
 }
 
+/** 提交服务时长与心得；mock 模式下会按照活动时薪规则计算积分 */
 export const logVolunteerHours = async (activityId, { hours, reflection } = {}) => {
   const result = await requestAxios(
     () => axios.post(`/api/v1/volunteer/activities/${activityId}/log-hours`, { hours, reflection }),

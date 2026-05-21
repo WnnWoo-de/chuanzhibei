@@ -5,6 +5,7 @@
     </div>
 
     <div class="relative z-10 mx-auto max-w-7xl">
+      <!-- 积分商城头部：标题、积分余额 -->
       <header class="store-header">
         <div>
           <p class="store-kicker">GREEN REWARD CENTER</p>
@@ -17,6 +18,7 @@
         </div>
       </header>
 
+      <!-- 分类筛选栏 -->
       <section class="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div class="flex gap-2 overflow-x-auto pb-1">
           <button
@@ -33,7 +35,9 @@
         <router-link to="/quiz" class="store-earn-link">{{ langText.store.goToQuiz }}</router-link>
       </section>
 
+      <!-- 商城主体：商品列表 + 右侧边栏 -->
       <main class="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <!-- 商品网格 -->
         <section class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <article v-for="product in filteredProducts" :key="product.id" class="store-product">
             <div class="store-product__visual" :class="product.accent">
@@ -69,6 +73,7 @@
           </article>
         </section>
 
+        <!-- 右侧边栏：兑换记录、积分获取途径 -->
         <aside class="space-y-4">
           <section class="store-side-card">
             <div class="mb-4 flex items-center justify-between">
@@ -100,6 +105,7 @@
       </main>
     </div>
 
+    <!-- 商品兑换确认对话框 -->
     <el-dialog v-model="showDetail" :width="520" align-center>
       <template v-if="selectedProduct">
         <div class="store-dialog">
@@ -137,9 +143,10 @@ import { useUserStore } from '@/stores/user'
 import { langText } from '@/language'
 import { fetchRedeemRecords, fetchRewardProducts, redeemRewardProduct } from '@/services/storeService'
 
-const POINTS_KEY = 'green_reward_points'
-const RECORDS_KEY = 'green_redeem_records'
-const BADGES_KEY = 'green_redeemed_badges'
+// ---- 本地存储键名 ----
+const POINTS_KEY = 'green_reward_points'     // 积分存储键
+const RECORDS_KEY = 'green_redeem_records'   // 兑换记录存储键
+const BADGES_KEY = 'green_redeemed_badges'   // 已兑换虚拟奖品存储键
 const userStore = useUserStore()
 
 const readNumber = (key, fallback) => {
@@ -147,11 +154,12 @@ const readNumber = (key, fallback) => {
   return Number.isFinite(raw) && raw >= 0 ? raw : fallback
 }
 
-const greenPoints = ref(readNumber(POINTS_KEY, 1280))
-const activeCategory = ref(langText.value.store.categories[0])
-const showDetail = ref(false)
-const selectedProduct = shallowRef(null)
-const redeemRecords = ref(JSON.parse(localStorage.getItem(RECORDS_KEY) || '[]'))
+// ---- 响应式状态 ----
+const greenPoints = ref(readNumber(POINTS_KEY, 1280))    // 用户当前积分
+const activeCategory = ref(langText.value.store.categories[0])  // 当前选中的商品分类
+const showDetail = ref(false)                             // 兑换确认对话框可见性
+const selectedProduct = shallowRef(null)                  // 当前选中的商品
+const redeemRecords = ref(JSON.parse(localStorage.getItem(RECORDS_KEY) || '[]'))  // 兑换记录列表
 
 const iconMap = {
   ShoppingBag,
@@ -199,6 +207,7 @@ watch(redeemRecords, (records) => {
   localStorage.setItem(RECORDS_KEY, JSON.stringify(records))
 }, { deep: true })
 
+// 判断是否可兑换（库存 > 0 且积分足够）
 const canRedeem = (product) => Boolean(product && product.stock > 0 && greenPoints.value >= product.points)
 const formatDate = (value) => value ? String(value).slice(0, 10) : ''
 
@@ -210,6 +219,7 @@ const normalizeProduct = (item) => ({
   productType: item.productType || (item.category === langText.value.store.categories[1] ? 'physical' : 'virtual'),
 })
 
+// 记录已兑换的虚拟奖品到本地存储
 const rememberVirtualReward = (product, record) => {
   if (!product || product.productType === 'physical') return
   const current = JSON.parse(localStorage.getItem(BADGES_KEY) || '[]')
@@ -228,6 +238,7 @@ const openProduct = (product) => {
   showDetail.value = true
 }
 
+// 确认兑换商品（优先远程接口，失败则本地扣减）
 const confirmRedeem = async () => {
   const product = selectedProduct.value
   if (!canRedeem(product)) return
@@ -300,6 +311,7 @@ onUnmounted(() => window.removeEventListener('green-points:change', handlePointC
 </script>
 
 <style scoped>
+/* 商城头部样式 */
 .store-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -332,10 +344,12 @@ onUnmounted(() => window.removeEventListener('green-points:change', handlePointC
   transition: all 0.2s ease;
   white-space: nowrap;
 }
+/* 分类筛选按钮 */
 .store-filter { border: 1px solid rgba(25,45,32,0.1); background: rgba(255,255,255,0.9); color: #58645c; }
 .store-filter--active,
 .store-earn-link,
 .store-confirm-btn { background: #2e7d32; color: white; }
+/* 商品卡片和侧边卡片通用样式 */
 .store-product,
 .store-side-card {
   overflow: hidden;
@@ -385,6 +399,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .store-dialog-cell span { display: block; font-size: 0.72rem; color: #718177; }
 .store-dialog-cell strong { display: block; margin-top: 0.2rem; font-size: 1.35rem; color: #2e7d32; }
 .store-cancel-btn { border: 1px solid rgba(0,0,0,0.1); background: white; color: #5d6b62; }
+/* 商品图标背景色变体 */
 .accent-green { background: #edf7ee; }
 .accent-blue { background: #eef6ff; }
 .accent-amber { background: #fff7e6; }

@@ -1,5 +1,7 @@
 <template>
+  <!-- 消息滚动容器：承载历史消息、欢迎示例和“思考中”状态 -->
   <div class="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth" ref="containerRef">
+    <!-- 消息主体列表：用户消息靠右，助手消息靠左 -->
     <transition-group name="message-fade">
       <div
         v-for="(msg, index) in messages"
@@ -57,6 +59,7 @@
       </div>
     </transition-group>
 
+    <!-- 只有欢迎语时，展示示例问题卡片，帮助用户快速开启对话 -->
     <transition name="fade">
       <div v-if="messages.length === 1 && !isTyping" class="mt-12 px-2 md:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -80,6 +83,7 @@
       </div>
     </transition>
 
+    <!-- AI 首包返回前的“思考中”占位动画 -->
     <transition name="fade">
       <div v-if="isTyping" class="flex flex-col items-start max-w-[75%]">
         <div class="flex items-center gap-2 mb-2 opacity-50">
@@ -97,12 +101,17 @@
 </template>
 
 <script setup>
+// ============================================================
+// ChatMessageList.vue - 聊天消息列表组件
+// 负责渲染消息气泡、示例问题、复制按钮和滚动到底部逻辑
+// ============================================================
 import { nextTick, ref, watch } from 'vue'
 import { ChatDotRound, CopyDocument, Cpu, Select, User } from '@element-plus/icons-vue'
 import { langText } from '@/language'
 
-const containerRef = ref(null)
+const containerRef = ref(null) // 消息容器 DOM 引用，用于自动滚动到底部
 
+// ---- Props 定义 ----
 const props = defineProps({
   allPrompts: {
     type: Array,
@@ -132,10 +141,12 @@ const props = defineProps({
 
 defineEmits(['copy-message', 'quick-prompt'])
 
+/** 判断当前消息是否为正在流式输出的最后一条助手消息 */
 const isCurrentStreamingMessage = (msg, index) => {
   return props.isWriting && msg.role === 'assistant' && index === props.messages.length - 1
 }
 
+/** 滚动消息容器到底部，确保最新内容始终可见 */
 const scrollToBottom = async () => {
   await nextTick()
   if (!containerRef.value) return
@@ -165,6 +176,7 @@ watch(
   }
 )
 
+// 向父组件暴露滚动方法，方便外层在发送消息后主动调用
 defineExpose({
   scrollToBottom,
 })

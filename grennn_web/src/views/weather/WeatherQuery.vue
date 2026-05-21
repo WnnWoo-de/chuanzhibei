@@ -1,11 +1,12 @@
 <template>
+  <!-- 天气查询页面主容器 -->
   <div class="weather-page">
 
-    <!-- 统一的天气应用卡片 (蓝白色系，全页铺满) -->
+    <!-- 天气应用仪表盘卡片（蓝白色系全页铺满） -->
     <div class="weather-dashboard-card">
       <div class="weather-container">
 
-        <!-- 内部顶端搜索区域 -->
+        <!-- 顶部搜索区域 -->
         <div class="search-section">
           <el-input
             v-model="searchCity"
@@ -188,22 +189,30 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { Location } from '@element-plus/icons-vue'
-import { langText } from '@/language'
+import { langText } from '@/language' // 多语言文本
 import WeatherIcon from '@/components/weather/WeatherIcon.vue'
-import { queryWeatherByCity } from '@/services/weatherService'
+import { queryWeatherByCity } from '@/services/weatherService' // 天气查询服务
 
+// 搜索城市名称，默认北京
 const searchCity = ref('北京')
+// 天气数据对象
 const weather = ref(null)
+// 加载状态
 const loading = ref(false)
+// 错误提示信息
 const errorMessage = ref('')
+// 10天预报的全局最低温（用于温度条定位）
 const globalMinTemp = ref(0)
+// 10天预报的全局最高温（用于温度条定位）
 const globalMaxTemp = ref(40)
 
 // ── 格式化工具 ────────────────────────────────────────────────────────────────
+// 温度格式化：四舍五入取整
 const fmt = {
   temp: (v) => (v !== null && v !== undefined ? Math.round(v) : '--'),
 }
 
+// 将ISO时间格式化为小时显示（当前小时显示"现在"）
 const formatHour = (iso) => {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return iso
@@ -212,12 +221,14 @@ const formatHour = (iso) => {
   return `${d.getHours()}${langText.value.weather.hourSuffix}`
 }
 
+// 将日期字符串格式化为星期几
 const formatDay = (dateStr) => {
   const d = new Date(dateStr)
   if (Number.isNaN(d.getTime())) return dateStr
   return langText.value.weather.days[d.getDay()]
 }
 
+// 将ISO时间格式化为 HH:mm 格式
 const formatTime = (iso) => {
   if (!iso) return '--'
   const d = new Date(iso)
@@ -225,6 +236,7 @@ const formatTime = (iso) => {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
+// 根据紫外线指数返回等级文本
 const getUvLevel = (uv) => {
   const w = langText.value.weather
   if (!uv) return w.uvLow
@@ -235,15 +247,17 @@ const getUvLevel = (uv) => {
   return w.uvDanger
 }
 
+// 根据AQI值返回对应颜色
 const getAqiColor = (aqi) => {
-  if (aqi <= 50) return '#10b981' // Green
-  if (aqi <= 100) return '#eab308' // Yellow
-  if (aqi <= 150) return '#f97316' // Orange
-  if (aqi <= 200) return '#ef4444' // Red
-  if (aqi <= 300) return '#a855f7' // Purple
-  return '#be123c' // Maroon
+  if (aqi <= 50) return '#10b981' // 优-绿色
+  if (aqi <= 100) return '#eab308' // 良-黄色
+  if (aqi <= 150) return '#f97316' // 轻度污染-橙色
+  if (aqi <= 200) return '#ef4444' // 中度污染-红色
+  if (aqi <= 300) return '#a855f7' // 重度污染-紫色
+  return '#be123c' // 严重污染-深红色
 }
 
+// 计算温度条的样式（位置和宽度基于全局温度范围）
 const getBarStyle = (min, max) => {
   const range = globalMaxTemp.value - globalMinTemp.value || 1;
   const left = ((min - globalMinTemp.value) / range) * 100;
@@ -257,6 +271,7 @@ const getBarStyle = (min, max) => {
 }
 
 // ── 查询逻辑 ─────────────────────────────────────────────────────────────────
+// 根据城市名查询天气数据
 const handleSearch = async () => {
   const city = searchCity.value.trim()
   if (!city) return
@@ -272,7 +287,7 @@ const handleSearch = async () => {
     weather.value = result.data
     errorMessage.value = ''
 
-    // Calculate global min/max for the 10-day bars
+    // 计算10天预报的全局最低/最高温，用于温度条的定位
     if (result.data.forecast && result.data.forecast.length > 0) {
       let temps = []
       result.data.forecast.forEach(d => {
@@ -287,13 +302,14 @@ const handleSearch = async () => {
   }
 }
 
+// 页面挂载后自动查询默认城市的天气
 onMounted(() => {
   handleSearch()
 })
 </script>
 
 <style scoped>
-/* ── Reset & Container ── */
+/* ── 页面主容器 ── */
 .weather-page {
   padding: 64px 0 0;
   background-color: transparent;
@@ -329,7 +345,7 @@ onMounted(() => {
   box-shadow: 0 10px 40px rgba(0, 100, 200, 0.05);
 }
 
-/* ── 独立的天气卡片 (蓝白渐变底色) ── */
+/* ── 天气仪表盘卡片（蓝白渐变底色） ── */
 .weather-dashboard-card {
   position: relative;
   width: 100%;
@@ -342,6 +358,7 @@ onMounted(() => {
   box-shadow: none;
 }
 
+/* 内容容器 */
 .weather-container {
   position: relative;
   z-index: 1;
@@ -351,7 +368,7 @@ onMounted(() => {
   width: 100%;
 }
 
-/* ── General Widget UI (微调为半透明白底以凸显下方蓝底) ── */
+/* ── 通用微件UI（半透明白底） ── */
 .widget {
   background: rgba(255, 255, 255, 0.65); /* 半透明白 */
   backdrop-filter: blur(12px);
@@ -375,7 +392,7 @@ onMounted(() => {
   margin-right: 6px;
 }
 
-/* ── Header ── */
+/* ── 头部区域：城市名和主温度 ── */
 .weather-header {
   text-align: center;
   margin-bottom: 40px;
@@ -422,7 +439,7 @@ onMounted(() => {
   color: #3b82f6;
 }
 
-/* ── Dashboard Layout ── */
+/* ── 仪表盘布局 ── */
 .dashboard-grid {
   display: flex;
   flex-direction: column;
@@ -444,7 +461,7 @@ onMounted(() => {
   }
 }
 
-/* ── Widget: Hourly ── */
+/* ── 逐小时预报微件 ── */
 .widget-hourly { padding: 16px 20px; }
 .hourly-list {
   display: flex;
@@ -464,7 +481,7 @@ onMounted(() => {
 .h-icon { font-size: 28px; margin-bottom: 12px; filter: drop-shadow(0 2px 4px rgba(186, 230, 253, 0.4)); }
 .h-temp { font-size: 18px; font-weight: 600; color: #1e3a8a; }
 
-/* ── Widget: 10-Day ── */
+/* ── 10天预报微件 ── */
 .widget-10day { flex: 0 0 350px; max-width: 350px; }
 .daily-list { display: flex; flex-direction: column; }
 .daily-item {
@@ -490,7 +507,7 @@ onMounted(() => {
 }
 .d-bar-fill { position: absolute; height: 100%; border-radius: 3px; }
 
-/* ── Widget: Group (Right Grid) ── */
+/* ── 右侧微件网格组 ── */
 .widget-group {
   flex: 1;
   display: grid;
@@ -510,12 +527,12 @@ onMounted(() => {
 .mt-auto { margin-top: auto; }
 .highlight-text { font-size: 18px; font-weight: 600; color: #1e40af; }
 
-/* AQI Custom */
+/* AQI 空气质量指示条样式 */
 .aqi-level-text { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
 .aqi-bar-bg { width: 100%; height: 6px; border-radius: 3px; background: rgba(147, 197, 253, 0.3); margin-bottom: 8px; overflow: hidden;}
 .aqi-bar-fill { height: 100%; border-radius: 3px; }
 
-/* Wind Circle */
+/* 风力圆环指示器 */
 .wind-circle {
   width: 100px; height: 100px; border-radius: 50%;
   border: 4px solid rgba(147, 197, 253, 0.3);

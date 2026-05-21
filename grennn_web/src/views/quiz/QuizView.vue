@@ -4,6 +4,7 @@
       <div v-for="n in 12" :key="n" class="h-full border-r border-primary"></div>
     </div>
 
+    <!-- 答题正确花瓣庆祝动效 -->
     <transition name="celebration-fade">
       <div
         v-if="showCelebration"
@@ -34,6 +35,7 @@
       </div>
     </transition>
 
+    <!-- 完成全部题目后的大型庆祝动效 -->
     <transition name="finish-celebration-fade">
       <div v-if="showFinishCelebration" class="quiz-finish-celebration" aria-hidden="true">
         <span
@@ -58,6 +60,7 @@
     </transition>
 
     <div class="relative z-10 mx-auto max-w-7xl">
+      <!-- 每日答题头部：标题、统计卡片、今日奖励 -->
       <header class="quiz-header mb-6 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section class="quiz-hero">
           <div class="quiz-panel-pattern" aria-hidden="true"></div>
@@ -110,7 +113,9 @@
         </aside>
       </header>
 
+      <!-- 答题主区域：题目卡片 + 右侧边栏 -->
       <main class="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <!-- 答题卡片（题目、选项、解析、完成页面） -->
         <section class="quiz-card">
           <div class="quiz-card__glow" aria-hidden="true"></div>
           <template v-if="!isTodayCompleted">
@@ -218,6 +223,7 @@
           </transition>
         </section>
 
+        <!-- 右侧边栏：正确率、分类挑战、历史记录 -->
         <aside class="quiz-aside space-y-4">
           <section class="quiz-side-card quiz-insight-card">
             <div class="quiz-accuracy-ring" :style="{ '--accuracy': `${accuracyPercent}%` }">
@@ -280,8 +286,9 @@ import { useUserStore } from '@/stores/user'
 import { langText } from '@/language'
 import { fetchQuizQuestions, fetchQuizRecords, saveQuizRecord } from '@/services/quizService'
 
-const POINTS_KEY = 'green_reward_points'
-const RECORDS_KEY = 'green_quiz_records'
+// ---- 本地存储键名 ----
+const POINTS_KEY = 'green_reward_points'   // 积分存储键
+const RECORDS_KEY = 'green_quiz_records'   // 答题记录存储键
 const userStore = useUserStore()
 
 const readNumber = (key, fallback) => {
@@ -289,12 +296,13 @@ const readNumber = (key, fallback) => {
   return Number.isFinite(raw) && raw >= 0 ? raw : fallback
 }
 
-const greenPoints = ref(readNumber(POINTS_KEY, 1280))
-const currentIndex = ref(0)
-const selectedAnswers = ref([])
-const submitted = ref(false)
-const isTodayCompleted = ref(false)
-const showCelebration = ref(false)
+// ---- 响应式状态 ----
+const greenPoints = ref(readNumber(POINTS_KEY, 1280))  // 当前积分
+const currentIndex = ref(0)                             // 当前题目索引
+const selectedAnswers = ref([])                         // 已选答案
+const submitted = ref(false)                            // 是否已提交当前题
+const isTodayCompleted = ref(false)                     // 今日答题是否已完成
+const showCelebration = ref(false)                      // 单题答对庆祝动效
 const showFinishCelebration = ref(false)
 const celebrationOrigin = ref({ x: 50, y: 50 })
 const finishCelebrationOrigin = ref({ x: window.innerWidth / 2, y: window.innerHeight / 2 })
@@ -405,6 +413,7 @@ watch(greenPoints, (value) => {
   window.dispatchEvent(new CustomEvent('green-points:change', { detail: { points: value } }))
 })
 
+// 奖励积分（本地 + 远程同步）
 const awardPoints = (amount) => {
   greenPoints.value += amount
   if (userStore.isLoggedIn) userStore.addPoints(amount)
@@ -456,6 +465,7 @@ const triggerFinishCelebration = (event) => {
   })
 }
 
+// 选择/取消选择选项（支持多选题）
 const toggleOption = (label) => {
   if (currentQuestion.value.type === 'multiple') {
     selectedAnswers.value = selectedAnswers.value.includes(label)
@@ -473,6 +483,7 @@ const optionClass = (label) => {
   return 'quiz-option--disabled'
 }
 
+// 提交当前题目答案
 const submitAnswer = (event) => {
   if (submitted.value || isTodayCompleted.value || selectedAnswers.value.length === 0) return
   const correct = isCurrentCorrect.value

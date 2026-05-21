@@ -1,5 +1,7 @@
 <template>
+  <!-- 输入框容器：固定在聊天区域底部 -->
   <div class="p-6 border-t border-black/10 bg-white relative z-20 sticky bottom-0">
+    <!-- 停止生成按钮（AI 输出时显示） -->
     <transition name="fade">
       <div v-if="isWriting || isTyping" class="absolute -top-12 left-1/2 -translate-x-1/2">
         <button
@@ -12,6 +14,7 @@
       </div>
     </transition>
 
+    <!-- 重新生成按钮（AI 完成回复后显示） -->
     <transition name="fade">
       <div
         v-if="!isWriting && !isTyping && messages.length > 1 && messages[messages.length - 1].role === 'assistant'"
@@ -27,7 +30,9 @@
       </div>
     </transition>
 
+    <!-- 消息输入表单 -->
     <form class="flex gap-4 relative items-stretch" @submit.prevent="handleSend">
+      <!-- 文本输入区域 -->
       <div class="flex-1 relative">
         <textarea
           ref="textareaEl"
@@ -39,10 +44,12 @@
           @input="handleInput"
           @keydown.enter.exact.prevent="handleSend"
         ></textarea>
+        <!-- 输入框左侧图标 -->
         <div class="absolute left-3 top-3 text-gray-400 font-bold">
           <span class="text-xs">▶</span>
         </div>
       </div>
+      <!-- 发送按钮 -->
       <button
         type="submit"
         :disabled="!localNewMessage.trim() || isTyping || isWriting"
@@ -57,33 +64,28 @@
 </template>
 
 <script setup>
+// ============================================================
+// ChatComposer.vue - 聊天消息输入组件
+// 包含文本输入框、发送按钮、停止/重新生成按钮
+// 支持自适应高度、Enter 发送、v-model 双向绑定
+// ============================================================
 import { nextTick, ref, watch } from 'vue'
 import { Loading, RefreshRight, VideoPause } from '@element-plus/icons-vue'
 import { langText } from '@/language'
 
+// ---- Props 定义 ----
 const props = defineProps({
-  isTyping: {
-    type: Boolean,
-    default: false,
-  },
-  isWriting: {
-    type: Boolean,
-    default: false,
-  },
-  messages: {
-    type: Array,
-    default: () => [],
-  },
-  newMessage: {
-    type: String,
-    default: '',
-  },
+  isTyping: { type: Boolean, default: false },    // AI 正在思考
+  isWriting: { type: Boolean, default: false },   // AI 正在输出
+  messages: { type: Array, default: () => [] },   // 消息列表
+  newMessage: { type: String, default: '' },      // 输入框内容（v-model）
 })
 
 const emit = defineEmits(['adjust-height', 'regenerate', 'send', 'stop', 'update:newMessage'])
-const textareaEl = ref(null)
-const localNewMessage = ref('')
+const textareaEl = ref(null)           // textarea DOM 引用
+const localNewMessage = ref('')        // 本地输入框状态（与父组件双向同步）
 
+/** 自动调整 textarea 高度以适应内容 */
 const syncHeight = async () => {
   await nextTick()
   if (!textareaEl.value) return
@@ -91,11 +93,13 @@ const syncHeight = async () => {
   textareaEl.value.style.height = `${textareaEl.value.scrollHeight}px`
 }
 
+/** 处理输入事件：同步值到父组件并调整高度 */
 const handleInput = (event) => {
   emit('update:newMessage', localNewMessage.value)
   emit('adjust-height')
 }
 
+/** 处理发送：触发 send 事件并清空输入框 */
 const handleSend = () => {
   emit('update:newMessage', localNewMessage.value)
   emit('send')

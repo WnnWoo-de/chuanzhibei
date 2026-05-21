@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 
+// 预设快捷提问池：用于聊天页下方“灵感提示”随机展示
 const allPrompts = [
   '如何回收废旧电池？',
   '旧牛仔裤可以改造成什么？',
@@ -16,9 +17,10 @@ const allPrompts = [
 ]
 
 export const useChatPrompts = () => {
-  const quickPrompts = ref([])
-  const isShuffling = ref(false)
+  const quickPrompts = ref([])        // 当前展示的 4 条快捷提问
+  const isShuffling = ref(false)      // 是否正在执行“换一换”动画
 
+  /** 随机抽取 4 条问题，配合短暂延时让按钮旋转动画更自然 */
   const shufflePrompts = async () => {
     isShuffling.value = true
     await new Promise((resolve) => setTimeout(resolve, 300))

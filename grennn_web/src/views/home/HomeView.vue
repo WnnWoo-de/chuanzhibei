@@ -3,7 +3,7 @@
     ref="homeRootRef"
     class="home-view bg-transparent min-h-screen text-[#1a1a1a] font-sans selection:bg-primary selection:text-white overflow-x-hidden"
   >
-    <!-- Welcome Modal -->
+    <!-- 首次访问欢迎弹窗 -->
     <transition name="modal-fade">
       <div
         v-if="showWelcomeModal"
@@ -102,7 +102,7 @@
       </div>
     </transition>
 
-    <!-- Hero Section (Carousel) -->
+    <!-- 首屏英雄区域（轮播展示） -->
     <section class="hero-section min-h-[100dvh] md:min-h-screen relative flex flex-col justify-center overflow-hidden bg-[#fcfffc] px-4 md:px-6 pt-10 md:pt-20 text-[#1d3a2d]">
       <div class="hero-silk-layer absolute inset-0 z-0 overflow-hidden opacity-55 pointer-events-none">
         <Silk
@@ -115,7 +115,7 @@
         />
       </div>
       <div class="hero-tint-layer absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.98),transparent_42%),radial-gradient(circle_at_78%_20%,rgba(220,252,231,0.34),transparent_26%),linear-gradient(135deg,rgba(252,255,252,0.96),rgba(248,252,248,0.84))] pointer-events-none"></div>
-      <!-- Background Grid -->
+      <!-- 背景网格装饰线 -->
       <div
         class="hero-grid-layer fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-[0.07] z-0 px-6"
       >
@@ -163,7 +163,7 @@
         </div>
       </div>
 
-      <!-- Carousel Content -->
+      <!-- 轮播内容区：品牌标语 + 轮播卡片 -->
       <div class="relative z-10 flex h-full flex-col justify-center pt-20 sm:pt-20 lg:pt-0 hero-orbit" :style="heroParallaxStyle">
         <div class="hero-layout-grid grid grid-cols-1 items-center gap-5 sm:gap-10 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:items-end md:gap-8 lg:items-stretch lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pl-1">
           <div class="hero-brand-block flex flex-col min-h-[280px] sm:min-h-[320px] md:min-h-[420px] md:justify-between lg:h-full lg:min-h-[420px] lg:pr-6">
@@ -316,7 +316,7 @@
           </div>
         </div>
 
-        <!-- Scroll Down Indicator -->
+        <!-- 向下滚动提示指示器 -->
         <div class="hidden md:flex absolute bottom-8 left-1/2 z-0 -translate-x-1/2 scroll-indicator opacity-100 transition-opacity duration-1000">
           <div class="scroll-indicator-stack flex flex-col items-center gap-1.5">
             <div class="scroll-mouse-shell flex items-center justify-center rounded-full">
@@ -354,7 +354,7 @@
       </div>
     </section>
 
-    <!-- Chapter 2: Quick Access (Core Features) -->
+    <!-- 核心功能入口区域 -->
     <section class="relay-section py-24 px-6 border-t border-black/10 relative" id="features">
       <div class="grid grid-cols-12 gap-4">
         <!-- Sticky Sidebar -->
@@ -462,7 +462,7 @@
       </div>
     </section>
 
-    <!-- Chapter 4: Dynamic News (Updates) -->
+    <!-- 动态资讯区域 -->
     <section class="relay-section py-24 px-6 border-t border-black/10 relative" id="news">
       <div class="grid grid-cols-12 gap-4">
         <!-- Sticky Sidebar -->
@@ -521,7 +521,7 @@
       </div>
     </section>
 
-    <!-- Chapter 5: Data Dashboard -->
+    <!-- 数据仪表盘区域 -->
     <section class="relay-section dashboard-section py-24 px-6 border-t border-black/10 relative overflow-hidden" id="dashboard">
       <div class="dashboard-noise"></div>
       <div class="dashboard-grid"></div>
@@ -672,7 +672,7 @@
       </div>
     </section>
 
-    <!-- Footer Marquee -->
+    <!-- 底部滚动标语 -->
     <div class="py-12 border-t border-black/10 overflow-hidden bg-white text-white/80">
       <div class="flex whitespace-nowrap animate-marquee">
         <!-- 第一组内容 -->
@@ -708,10 +708,12 @@ import { lang, langText } from '@/language'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// ---- 基础引用 ----
 const router = useRouter()
-const homeRootRef = ref(null)
-let heroEntranceTimeline = null
+const homeRootRef = ref(null)       // 页面根元素引用
+let heroEntranceTimeline = null      // Hero 入场动画时间线
 
+// Hero 区域视差样式（随轮播切换微调位移）
 const heroParallaxStyle = computed(() => ({
   transform: `translate3d(0, ${currentSlide.value * -8}px, 0)`,
 }))
@@ -720,6 +722,7 @@ const heroGlowTrailStyle = computed(() => ({
   background: `radial-gradient(circle at ${18 + currentSlide.value * 28}% ${32 + currentSlide.value * 10}%, rgba(74, 222, 128, 0.24), transparent 34%), radial-gradient(circle at ${72 - currentSlide.value * 14}% ${68 - currentSlide.value * 12}%, rgba(34, 211, 238, 0.18), transparent 28%)`,
 }))
 
+// ---- 仪表盘数据配置 ----
 const dashboardMetricMeta = [
   { value: 5280, change: '+28.3%', formatter: 'number' },
   { value: 125000, change: '+12.5%', formatter: 'compact' },
@@ -822,6 +825,7 @@ function animateDashboardValues() {
   dashboardAnimationFrame = requestAnimationFrame(tick)
 }
 
+// ---- 打字机效果 ----
 const brandLines = computed(() => langText.value.home.typeLines)
 const typedBrandLines = ref(['', ''])
 const activeTypingLine = ref(0)
@@ -888,6 +892,7 @@ const startTypewriter = () => {
   typingInterval = setInterval(tick, 90)
 }
 
+// 检测首次访问，显示欢迎弹窗
 const checkFirstVisit = () => {
   const hasVisited = localStorage.getItem('greenSightVisited')
   if (!hasVisited) {
@@ -908,9 +913,9 @@ const openLicense = () => {
   router.push('/license')
 }
 
-// --- Carousel Logic ---
-const currentSlide = ref(0)
-const isAutoPlaying = ref(true)
+// ---- 轮播逻辑 ----
+const currentSlide = ref(0)       // 当前轮播索引
+const isAutoPlaying = ref(true)   // 是否自动播放
 let autoPlayInterval = null
 
 const slideMeta = [
@@ -968,7 +973,7 @@ const resetAutoPlay = () => {
   if (isAutoPlaying.value) startAutoPlay()
 }
 
-// --- Features Data ---
+// ---- 功能卡片数据 ----
 const featureMeta = [
   {
     link: '/reconstruction',
@@ -1009,7 +1014,7 @@ const features = computed(() =>
   })),
 )
 
-// --- News Data & Pagination ---
+// ---- 新闻数据与分页 ----
 const newsDates = ['2025.03.18', '2025.03.15', '2025.03.12', '2025.03.10', '2025.03.07', '2025.03.05']
 const newsItems = computed(() =>
   langText.value.home.news.map((news, index) => ({
@@ -1290,7 +1295,7 @@ onUnmounted(() => {
   display: none;
 }
 
-/* Modal Transition */
+/* 欢迎弹窗过渡动画 */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: all 0.3s ease;
@@ -1316,7 +1321,7 @@ onUnmounted(() => {
   }
 }
 
-/* Slide Fade Transition */
+/* 轮播卡片淡入淡出过渡 */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: all 0.5s ease;
@@ -1343,6 +1348,7 @@ onUnmounted(() => {
   transform: translateY(18px);
 }
 
+/* 打字机光标闪烁动画 */
 .typing-caret {
   animation: blink-caret 0.9s steps(1) infinite;
 }
@@ -1484,10 +1490,12 @@ onUnmounted(() => {
   }
 }
 
+/* 品牌标语区域 */
 .hero-brand-block {
   position: relative;
 }
 
+/* 品牌区域绿色光晕装饰 */
 .hero-brand-glow {
   position: absolute;
   inset: 6% -8% auto auto;
@@ -1548,10 +1556,12 @@ onUnmounted(() => {
   text-wrap: pretty;
 }
 
+/* 各内容区块 */
 .relay-section {
   position: relative;
 }
 
+/* 内容区块左侧装饰竖线 */
 .relay-section::before {
   content: '';
   position: absolute;
@@ -1733,6 +1743,7 @@ onUnmounted(() => {
   word-break: break-word;
 }
 
+/* 底部滚动标语动画 */
 .animate-marquee {
   animation: marquee 30s linear infinite;
 }
@@ -1887,6 +1898,7 @@ onUnmounted(() => {
   }
 }
 
+/* 仪表盘区域环境光装饰 */
 .dashboard-ambient {
   position: absolute;
   border-radius: 999px;
@@ -1911,6 +1923,7 @@ onUnmounted(() => {
   background: radial-gradient(circle, rgba(167, 243, 208, 0.4) 0%, rgba(167, 243, 208, 0) 75%);
 }
 
+/* 仪表盘面板基础样式 */
 .dashboard-panel {
   position: relative;
   overflow: hidden;

@@ -1,4 +1,5 @@
 <template>
+  <!-- 24 小时预报卡片：横向展示未来小时温度与天气图标 -->
   <section class="forecast-card glass-card hover-float">
     <div class="section-header">
       <div class="section-title">
@@ -21,16 +22,20 @@
 </template>
 
 <script setup>
+// ============================================================
+// WeatherHourlyForecast.vue - 小时级天气预报组件
+// 以横向列表方式展示未来若干小时的天气趋势
+// ============================================================
 import { langText } from '@/language'
 import WeatherIcon from '@/components/weather/WeatherIcon.vue'
 import WeatherUiIcon from './WeatherUiIcon.vue'
 
 defineProps({
-  hourly: {
+  hourly: {        // 小时预报列表
     type: Array,
     default: () => [],
   },
-  formatHour: {
+  formatHour: {    // 将时间字符串格式化为“14:00”之类的短标签
     type: Function,
     required: true,
   },
@@ -38,6 +43,7 @@ defineProps({
 </script>
 
 <style scoped>
+/* 玻璃卡片基础外观：与天气页其他模块保持统一 */
 .glass-card {
   border-radius: 30px;
   background: linear-gradient(180deg, rgba(255,255,255,0.62), rgba(236,243,251,0.72));
@@ -65,6 +71,7 @@ defineProps({
   padding: 18px 18px 14px;
 }
 
+/* 标题区同时显示模块标题和辅助描述 */
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -99,6 +106,7 @@ defineProps({
   display: none;
 }
 
+/* 每个小时卡片固定最小宽度，保证横向滚动时排版稳定 */
 .hourly-item {
   min-width: 82px;
   display: flex;

@@ -11,6 +11,11 @@ import { useUserStore } from '../stores/user'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
 
+  /**
+   * 路由切换后的滚动行为
+   * 1. 浏览器前进/后退时恢复历史滚动位置
+   * 2. 普通页面跳转时默认回到页面顶部
+   */
   scrollBehavior(to, from, savedPosition) {
     void to
     void from
@@ -21,6 +26,7 @@ const router = createRouter({
   },
 
   routes: [
+    // ---- 首页与认证模块 ----
     {
       path: '/',
       name: 'home',
@@ -62,6 +68,8 @@ const router = createRouter({
       component: () => import('../views/auth/ResetPasswordView.vue'),
       meta: { guestOnly: true },
     },
+
+    // ---- 核心功能页 ----
     {
       path: '/reconstruction',
       name: 'reconstruction',
@@ -112,6 +120,8 @@ const router = createRouter({
       name: 'weather',
       component: () => import('../views/weather/WeatherView.vue'),
     },
+
+    // ---- 系统信息页 ----
     {
       path: '/license',
       name: 'license',
@@ -140,6 +150,7 @@ const router = createRouter({
   ],
 })
 
+// 全局前置守卫：启动顶部进度条，并确保用户状态已初始化
 router.beforeEach(async (_, __, next) => {
   NProgress.start()
 
@@ -151,6 +162,7 @@ router.beforeEach(async (_, __, next) => {
   next()
 })
 
+// 全局后置守卫：路由完成后关闭顶部进度条
 router.afterEach(() => {
   NProgress.done()
 })

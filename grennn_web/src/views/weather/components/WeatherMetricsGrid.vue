@@ -1,4 +1,5 @@
 <template>
+  <!-- 气象指标网格：以卡片形式展示 AQI、紫外线、风速、湿度等扩展数据 -->
   <section class="metrics-grid">
     <article class="metric-card hover-float">
       <div class="metric-header">
@@ -149,6 +150,10 @@
 </template>
 
 <script setup>
+// ============================================================
+// WeatherMetricsGrid.vue - 天气指标卡片网格
+// 展示空气质量、紫外线、风力、降水、体感温度等辅助信息
+// ============================================================
 import { langText } from '@/language'
 import WeatherUiIcon from './WeatherUiIcon.vue'
 
@@ -157,15 +162,15 @@ defineProps({
     type: Object,
     required: true,
   },
-  getAqiColor: {
+  getAqiColor: {   // 根据 AQI 数值返回对应文字颜色
     type: Function,
     required: true,
   },
-  getUvLevel: {
+  getUvLevel: {    // 根据紫外线数值生成风险等级文案
     type: Function,
     required: true,
   },
-  formatTime: {
+  formatTime: {    // 将日出日落时间格式化为界面展示文本
     type: Function,
     required: true,
   },
@@ -173,12 +178,14 @@ defineProps({
 </script>
 
 <style scoped>
+/* 指标卡片使用三列网格布局，桌面端突出仪表盘密度 */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
+/* 单张指标卡：半透明玻璃拟态外观 */
 .metric-card {
   position: relative;
   min-height: 206px;
@@ -218,6 +225,7 @@ defineProps({
   grid-column: span 2;
 }
 
+/* 指标标题区域：左侧图标 + 指标名称 */
 .metric-header {
   display: flex;
   align-items: center;
@@ -284,6 +292,7 @@ defineProps({
   font-size: 14px;
 }
 
+/* AQI 区域使用多层圆斑制造空气流动感 */
 .aqi-stage {
   position: relative;
   height: 120px;

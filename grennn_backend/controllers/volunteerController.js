@@ -1,5 +1,10 @@
+/**
+ * controllers/volunteerController.js - 志愿活动控制器
+ * 负责活动初始化、活动查询、报名以及服务时长登记
+ */
 const { VolunteerActivity, VolunteerEnrollment } = require('../models');
 
+// 默认志愿活动数据：数据库为空时自动初始化，保证页面可直接展示
 const defaultActivities = [
     {
         title: '城市公园清洁行动',
@@ -99,12 +104,14 @@ const defaultActivities = [
     },
 ];
 
+/** 若活动表为空，则写入默认志愿活动 */
 async function ensureDefaultActivities() {
     const count = await VolunteerActivity.count();
     if (count > 0) return;
     await VolunteerActivity.bulkCreate(defaultActivities);
 }
 
+/** 将活动模型和当前用户报名信息合并成前端友好的结构 */
 function toActivityPayload(activity, enrollment) {
     const startTime = activity.startTime ? new Date(activity.startTime) : null;
     return {
@@ -141,12 +148,18 @@ function toActivityPayload(activity, enrollment) {
     };
 }
 
+/**
+ * GET /api/v1/volunteer/activities
+ * 返回活动列表；若用户已登录，还会附带该用户的报名状态
+ */
 exports.getActivities = async (req, res) => {
     try {
         await ensureDefaultActivities();
         const activities = await VolunteerActivity.findAll({
             order: [['startTime', 'ASC']],
         });
+
+        // 若用户已登录，则额外查询其报名记录并映射回活动列表
         const userId = req.user?.id || null;
         const enrollments = userId ? await VolunteerEnrollment.findAll({ where: { userId } }) : [];
         const enrollmentMap = new Map(enrollments.map((item) => [item.activityId, item]));
@@ -156,21 +169,28 @@ exports.getActivities = async (req, res) => {
     }
 };
 
+/**
+ * POST /api/v1/volunteer/activities/:id/enroll
+ * 报名指定志愿活动，重复报名时直接返回现有报名信息
+ */
 exports.enroll = async (req, res) => {
     try {
         await ensureDefaultActivities();
         const activity = await VolunteerActivity.findByPk(req.params.id);
         if (!activity) return res.status(404).json({ error: 'Activity not found' });
 
+        // 已报名则直接返回，不重复创建记录和累加人数
         const existing = await VolunteerEnrollment.findOne({
             where: { userId: req.user.id, activityId: activity.id },
         });
         if (existing) return res.json({ item: toActivityPayload(activity, existing) });
 
+        // 人数达到上限时禁止继续报名
         if (activity.maxParticipants && activity.currentCount >= activity.maxParticipants) {
             return res.status(400).json({ error: 'Activity is full' });
         }
 
+        // 创建报名记录，同时保存电话、备注和规则同意状态
         const enrollment = await VolunteerEnrollment.create({
             userId: req.user.id,
             activityId: activity.id,
@@ -181,6 +201,7 @@ exports.enroll = async (req, res) => {
             enrolledAt: new Date(),
         });
 
+        // 报名成功后同步更新活动当前参与人数
         activity.currentCount = (activity.currentCount || 0) + 1;
         await activity.save();
 
@@ -190,6 +211,10 @@ exports.enroll = async (req, res) => {
     }
 };
 
+/**
+ * POST /api/v1/volunteer/activities/:id/log-hours
+ * 记录用户在某活动中的服务时长，并据此计算可获得积分
+ */
 exports.logHours = async (req, res) => {
     try {
         const enrollment = await VolunteerEnrollment.findOne({
@@ -205,6 +230,7 @@ exports.logHours = async (req, res) => {
             return res.status(400).json({ error: 'hours must be a positive number' });
         }
 
+        // 更新报名记录：写入服务时长、心得、完成时间和积分奖励
         enrollment.loggedHours = hours;
         enrollment.reflection = String(req.body?.reflection || '').trim() || null;
         enrollment.status = 'completed';

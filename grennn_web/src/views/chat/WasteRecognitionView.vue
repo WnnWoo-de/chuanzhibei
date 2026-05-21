@@ -1,14 +1,17 @@
 <template>
+  <!-- 垃圾分类识别页面主容器 -->
   <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-20 px-6 pb-12 flex flex-col">
-    <!-- Grid Background -->
+    <!-- 网格背景装饰 -->
     <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6">
       <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
     </div>
 
+    <!-- 主内容区域 -->
     <div class="relative z-10 grid grid-cols-12 gap-6 flex-1">
-      <!-- Sidebar / Header Info -->
+      <!-- 左侧边栏：返回链接和页面标题 -->
       <div class="col-span-12 md:col-span-3 flex flex-col">
         <div class="sticky top-24">
+          <!-- 返回 AI 聊天页面链接 -->
           <router-link
             to="/chat"
             class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-primary transition-opacity mb-8"
@@ -16,6 +19,7 @@
             <span>&larr; {{ langText.wasteRecognition.backToAI }}</span>
           </router-link>
 
+          <!-- 页面标题和描述 -->
           <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-6">{{ langText.wasteRecognition.pageTitle1 }}<br />{{ langText.wasteRecognition.pageTitle2 }}</h1>
           <p class="text-sm opacity-60 max-w-[200px] mb-8">
             {{ langText.wasteRecognition.pageDesc }}
@@ -23,18 +27,20 @@
         </div>
       </div>
 
-      <!-- Main Content -->
+      <!-- 右侧主内容区域：上传和识别结果 -->
       <div class="col-span-12 md:col-span-9 flex flex-col h-full">
+        <!-- 识别卡片容器：左右分栏布局 -->
         <div class="bg-white border border-black/10 flex-1 flex flex-col md:flex-row relative overflow-hidden shadow-sm rounded-2xl">
-          
-          <!-- Upload Area -->
+
+          <!-- 左侧：图片上传区域 -->
           <div class="flex-1 p-8 border-b md:border-b-0 md:border-r border-black/10 flex flex-col items-center justify-center relative bg-gray-50/30">
             <h2 class="text-2xl font-bold mb-6 flex items-center gap-3 self-start w-full">
               <el-icon><Camera /></el-icon>
               {{ langText.wasteRecognition.imageRecognition }}
             </h2>
-            
-            <div 
+
+            <!-- 拖拽/点击上传区域 -->
+            <div
               class="w-full h-64 border-2 border-dashed rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors relative overflow-hidden"
               :class="isDragging ? 'border-primary bg-primary/5' : 'border-gray-300 hover:border-primary hover:bg-gray-50'"
               @dragover.prevent="isDragging = true"
@@ -42,23 +48,27 @@
               @drop.prevent="handleDrop"
               @click="$refs.fileInput.click()"
             >
-              <input 
-                type="file" 
-                ref="fileInput" 
-                class="hidden" 
+              <!-- 隐藏的文件输入框 -->
+              <input
+                type="file"
+                ref="fileInput"
+                class="hidden"
                 accept="image/*"
                 @change="handleFileChange"
               />
-              
+
+              <!-- 已上传图片预览 -->
               <template v-if="previewUrl">
                 <img :src="previewUrl" class="w-full h-full object-contain relative z-10 p-2" />
+                <!-- 分析中遮罩层（扫描动画） -->
                 <div v-if="isAnalyzing" class="absolute inset-0 bg-white/80 z-20 flex flex-col items-center justify-center text-black backdrop-blur-sm">
                   <el-icon class="animate-spin text-4xl mb-2 text-primary"><Loading /></el-icon>
                   <p class="font-mono text-sm uppercase tracking-widest font-bold">{{ langText.wasteRecognition.analyzing }}</p>
-                  <!-- Scanning effect -->
+                  <!-- 扫描进度条动效 -->
                   <div class="absolute top-0 left-0 w-full h-1 bg-primary animate-[scan_2s_linear_infinite] shadow-[0_0_8px_2px_rgba(46,125,50,0.8)]"></div>
                 </div>
               </template>
+              <!-- 未上传时的占位提示 -->
               <template v-else>
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400 group-hover:text-primary transition-colors">
                   <el-icon size="24"><UploadFilled /></el-icon>
@@ -67,10 +77,11 @@
                 <p class="text-xs text-gray-500 font-mono pointer-events-none">{{ langText.wasteRecognition.uploadFormats }}</p>
               </template>
             </div>
-            
+
+            <!-- 重新上传按钮 -->
             <div class="w-full mt-6" v-if="previewUrl && !isAnalyzing">
-              <button 
-                @click="resetUpload" 
+              <button
+                @click="resetUpload"
                 class="w-full py-3 bg-white border border-black/20 text-xs font-bold uppercase tracking-widest hover:bg-gray-50 transition-colors"
               >
                 {{ langText.wasteRecognition.reupload }}
@@ -78,8 +89,9 @@
             </div>
           </div>
 
-          <!-- Analysis Results -->
+          <!-- 右侧：识别结果展示区域 -->
           <div class="flex-1 p-8 relative flex flex-col bg-white overflow-y-auto">
+            <!-- 未识别时显示默认提示 -->
             <div v-if="!analysisResult && !isAnalyzing" class="flex-1 animate-fade-in flex flex-col">
               <div class="flex-1 bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-md">
                 <h4 class="font-bold mb-4 flex items-center gap-2">
@@ -98,7 +110,9 @@
               </div>
             </div>
             
+            <!-- 识别结果展示 -->
             <div v-else-if="analysisResult" class="flex-1 animate-fade-in flex flex-col">
+              <!-- 识别物品名称和置信度 -->
               <div class="mb-6">
                 <span class="font-mono text-xs uppercase tracking-widest opacity-50 block mb-2">{{ langText.wasteRecognition.featureExtracted }} / {{ langText.wasteRecognition.extracted }}</span>
                 <h3 class="text-3xl font-bold flex items-center gap-3">
@@ -107,19 +121,24 @@
                 </h3>
               </div>
               
+              <!-- 垃圾分类信息卡片（带颜色标识） -->
               <div class="p-6 rounded border-l-4 mb-6 shadow-sm" :class="categoryColor(analysisResult.category)">
                 <div class="flex items-center gap-4 mb-4">
+                  <!-- 分类图标 -->
                   <div class="w-12 h-12 rounded flex items-center justify-center text-2xl text-white shadow-sm font-bold" :class="categoryBgColor(analysisResult.category)">
                     {{ categoryIcon(analysisResult.category) }}
                   </div>
                   <div>
+                    <!-- 分类名称 -->
                     <h4 class="text-xl font-bold">{{ categoryLabel(analysisResult.category) }}</h4>
                     <p class="text-xs opacity-70 font-mono uppercase tracking-widest">{{ categoryEngLabel(analysisResult.category) }}</p>
                   </div>
                 </div>
+                <!-- 分类说明 -->
                 <p class="text-sm leading-relaxed text-gray-700">{{ analysisResult.description }}</p>
               </div>
-              
+
+              <!-- 环保建议列表 -->
               <div class="flex-1 bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-md">
                 <h4 class="font-bold mb-4 flex items-center gap-2">
                   <el-icon class="text-primary"><InfoFilled /></el-icon> {{ langText.wasteRecognition.ecoAdviceTitle }}
@@ -272,6 +291,7 @@ const categoryEngLabel = (cat) => {
 </script>
 
 <style scoped>
+/* 识别结果淡入动画 */
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out;
 }
@@ -280,6 +300,7 @@ const categoryEngLabel = (cat) => {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* 图片扫描进度条动画 */
 @keyframes scan {
   0% { top: 0; opacity: 0; }
   10% { opacity: 1; }

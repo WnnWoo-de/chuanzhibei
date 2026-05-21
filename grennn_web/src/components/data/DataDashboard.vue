@@ -63,12 +63,21 @@
 </template>
 
 <script setup>
+// ============================================================
+// components/data/DataDashboard.vue - 数据仪表盘组件
+// 展示核心数据指标卡片（用户数、碳减排、旧物重构、社区活动）
+// 支持滚动进入视口时触发数字递增动画
+// ============================================================
+
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { langText } from '@/language'
 
+/** 控制卡片是否进入可视区域（触发动画） */
 const isVisible = ref(false)
+/** 存储各卡片当前显示的动画数值 */
 const displayedValues = ref({})
 
+/** 统计数据配置：标签、数值、单位、趋势、SVG图标路径（支持多语言） */
 const stats = computed(() => [
   {
     label: langText.value.dataDashboard.totalUsers,
@@ -100,6 +109,7 @@ const stats = computed(() => [
   },
 ])
 
+/** 将大数值格式化为简短形式（如 125000 -> 125.0K） */
 const displayValue = (value) => {
   if (value >= 1000000) {
     return (value / 1000000).toFixed(1) + 'M'
@@ -110,9 +120,12 @@ const displayValue = (value) => {
   return value.toString()
 }
 
+/** IntersectionObserver 实例，用于检测组件是否进入视口 */
 let observer = null
+/** requestAnimationFrame ID，用于卸载时取消动画 */
 let animationFrameId = null
 
+/** 数字递增动画：从 0 缓动到目标值，每张卡片延迟 60ms 依次播放 */
 const animateNumbers = () => {
   stats.value.forEach((stat, index) => {
     const startValue = 0
@@ -139,6 +152,7 @@ const animateNumbers = () => {
   })
 }
 
+/** 挂载时创建 IntersectionObserver，当仪表盘进入视口 20% 时触发动画 */
 onMounted(() => {
   const element = document.querySelector('.data-dashboard')
   if (!element) return

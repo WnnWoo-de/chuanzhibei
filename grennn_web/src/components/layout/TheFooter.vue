@@ -47,10 +47,10 @@
           </div>
         </div>
 
-        <!-- 间距列（仅桌面端显示） -->
+        <!-- 间距列（仅桌面端显示，用于品牌区与导航区的视觉间隔） -->
         <div class="hidden md:block md:col-span-1"></div>
 
-        <!-- 网站地图导航 -->
+        <!-- 网站地图导航：各页面路由链接列表 -->
         <div class="col-span-6 md:col-span-2">
           <h3
             class="text-xs uppercase tracking-widest mb-6 opacity-50 font-bold"
@@ -102,7 +102,7 @@
           </ul>
         </div>
 
-        <!-- 关于项目 -->
+        <!-- 关于项目：项目介绍、技术栈、源码等链接 -->
         <div class="col-span-6 md:col-span-2">
           <h3
             class="text-xs uppercase tracking-widest mb-6 opacity-50 font-bold"
@@ -141,7 +141,7 @@
           </ul>
         </div>
 
-        <!-- 社交媒体链接 -->
+        <!-- 社交媒体链接：Gitee 等外部平台入口 -->
         <div class="col-span-12 md:col-span-2">
           <h3
             class="text-xs uppercase tracking-widest mb-6 opacity-50 font-bold"
@@ -194,9 +194,15 @@
 </template>
 
 <script setup>
+// ============================================================
 // TheFooter.vue - 页脚组件
+// 包含品牌信息、统计数据、站点导航、社交媒体链接、版权信息
+// ============================================================
+
+// 多语言文本资源
 import { langText } from '@/language'
 
+// 平滑滚动到页面顶部
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }

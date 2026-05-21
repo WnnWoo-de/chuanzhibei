@@ -1,5 +1,7 @@
 <template>
+  <!-- 快捷提问区域：横向滚动展示预设问题 -->
   <div class="px-6 py-4 flex gap-3 overflow-x-auto no-scrollbar border-t border-black/5 bg-gray-50/30 backdrop-blur-sm items-center">
+    <!-- 换一换按钮：刷新快捷提问列表 -->
     <button
       class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 hover:text-primary hover:border-primary hover:bg-green-50 transition-all duration-300 shadow-sm"
       :class="{ 'animate-spin': isShuffling }"
@@ -10,6 +12,7 @@
       <el-icon><Refresh /></el-icon>
     </button>
 
+    <!-- 快捷提问按钮列表 -->
     <div class="flex gap-3">
       <transition-group name="list">
         <button
@@ -27,16 +30,20 @@
 </template>
 
 <script setup>
+// ============================================================
+// ChatQuickPrompts.vue - 快捷提问组件
+// 展示预设问题列表，点击可快速发送，支持换一换刷新
+// ============================================================
 import { Promotion, Refresh } from '@element-plus/icons-vue'
 
 defineProps({
   isShuffling: {
     type: Boolean,
-    default: false,
+    default: false,       // 是否正在刷新动画中
   },
   quickPrompts: {
     type: Array,
-    default: () => [],
+    default: () => [],    // 快捷提问列表
   },
 })
 

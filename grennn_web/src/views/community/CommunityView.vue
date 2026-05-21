@@ -7,6 +7,7 @@
     </div>
 
     <div class="relative z-10 max-w-7xl mx-auto space-y-6">
+      <!-- 社区顶部英雄区域：标题、统计数据、发布按钮 -->
       <section class="community-hero">
         <div class="grid grid-cols-12 gap-3 lg:gap-4 items-start lg:items-center">
           <div class="col-span-12 lg:col-span-8">
@@ -71,7 +72,9 @@
         </div>
       </section>
 
+      <!-- 社区主体：左侧边栏 + 右侧帖子列表 -->
       <div class="grid grid-cols-12 gap-5">
+        <!-- 左侧边栏：个人信息、排行榜、挑战、活动 -->
         <aside class="col-span-12 xl:col-span-4 order-2 xl:order-1">
           <div class="sticky top-24 space-y-4">
             <div class="community-glass">
@@ -165,6 +168,7 @@
           </div>
         </aside>
 
+        <!-- 右侧主内容：搜索筛选、精选帖子、话题概览、帖子流 -->
         <main class="col-span-12 xl:col-span-8 order-1 xl:order-2 space-y-5">
           <section class="community-glass">
             <div class="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between mb-3">
@@ -361,6 +365,7 @@
       </div>
     </div>
 
+    <!-- 发帖对话框 -->
     <el-dialog v-model="showPostDialog" :title="langText.community.postDialog.title" :width="560" align-center>
       <div class="space-y-4">
         <div>
@@ -398,6 +403,7 @@
       </div>
     </el-dialog>
 
+    <!-- 评论对话框 -->
     <el-dialog v-model="showCommentDialog" :title="langText.community.commentDialog.title" :width="560" align-center>
       <div v-if="activePost" class="space-y-4">
         <div class="community-quote">
@@ -422,6 +428,7 @@
       </div>
     </el-dialog>
 
+    <!-- 图片灯箱（全屏预览） -->
     <div v-if="showLightbox" class="fixed inset-0 z-[100] bg-black/92 backdrop-blur-sm flex items-center justify-center p-4" @click="showLightbox = false">
       <div class="relative max-w-5xl max-h-[90vh] w-full flex items-center justify-center">
         <button @click="showLightbox = false" class="absolute -top-12 right-0 text-white/50 hover:text-white transition-colors">
@@ -463,8 +470,9 @@ import communityImage1 from '@/assets/images/community_1.png'
 import communityImage2 from '@/assets/images/case_2.png'
 import communityImage3 from '@/assets/images/community_3.png'
 
+// ---- 状态变量 ----
 const userStore = useUserStore()
-const isLoading = ref(true)
+const isLoading = ref(true)             // 加载状态
 const isLoadingMore = ref(false)
 const showPostDialog = ref(false)
 const showCommentDialog = ref(false)
@@ -480,6 +488,7 @@ const searchQuery = ref('')
 const activeTopic = ref(langText.value.community.topics.all)
 const feedMode = ref('latest')
 
+// 话题选项列表
 const topicOptions = computed(() => [
   langText.value.community.topics.all,
   langText.value.community.topics.wasteSorting,
@@ -530,6 +539,7 @@ const leaderboard = computed(() => {
   return list.sort((a, b) => b.points - a.points)
 })
 
+// 根据帖子内容推断话题分类
 const inferTopic = (content = '') => {
   const text = String(content)
   const t = langText.value.community.topics
@@ -548,6 +558,7 @@ const topicMetaMap = computed(() => ({
   [langText.value.community.topics.greenDiet]: langText.value.community.topicMeta.greenDiet,
 }))
 
+// 装饰帖子数据：补充话题、徽章、影响力等默认值
 const decoratePost = (rawPost = {}) => {
   const topic = rawPost.topic || inferTopic(rawPost.fullContent || rawPost.content)
   const meta = topicMetaMap.value[topic] || topicMetaMap.value[langText.value.community.topics.communityActivity]
@@ -689,6 +700,7 @@ const openLightbox = (image) => {
   showLightbox.value = true
 }
 
+// 点赞/取消点赞
 const toggleLike = async (post) => {
   const prevLiked = Boolean(post.liked)
   const prevLikes = Number(post.likes || 0)
@@ -806,6 +818,7 @@ const loadMore = async () => {
   }, 1000)
 }
 
+// 发布新帖子（优先远程接口，失败则本地 mock）
 const publishPost = async () => {
   if (!newPost.value.content.trim()) {
     ElMessage.warning(langText.value.community.messages.contentRequired)
@@ -872,6 +885,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* 社区页面通用毛玻璃卡片样式 */
 .community-hero,
 .community-glass,
 .community-pulse-card,
@@ -1048,6 +1062,7 @@ onMounted(async () => {
   color: #111827;
 }
 
+/* 排行榜样式 */
 .community-rank-row {
   display: flex;
   align-items: center;
@@ -1075,6 +1090,7 @@ onMounted(async () => {
   color: #a16207;
 }
 
+/* 每周挑战卡片 */
 .community-challenge-card {
   padding: 1rem;
   border-radius: 1.3rem;
@@ -1104,6 +1120,7 @@ onMounted(async () => {
   color: #2e7d32;
 }
 
+/* 最新/热门切换按钮组 */
 .community-segment {
   display: inline-flex;
   padding: 0.2rem;
@@ -1188,6 +1205,7 @@ onMounted(async () => {
   padding: 0.8rem 0.85rem;
 }
 
+/* 帖子卡片 */
 .community-post {
   border-radius: 1.35rem;
   padding: 1rem;
@@ -1218,6 +1236,7 @@ onMounted(async () => {
   border: 1px solid rgba(15, 23, 42, 0.05);
 }
 
+/* 帖子操作按钮（点赞、评论、分享） */
 .community-action-btn {
   display: inline-flex;
   align-items: center;

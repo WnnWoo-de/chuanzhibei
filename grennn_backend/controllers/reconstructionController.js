@@ -1,9 +1,15 @@
+/**
+ * controllers/reconstructionController.js - 旧物重构控制器
+ * 负责接收图片、转发给 FastAPI AI 服务分析，并将结果持久化
+ */
 const fs = require('fs/promises');
 const axios = require('axios');
 const { ReconstructionRecord } = require('../models');
 
+// FastAPI AI 服务地址，默认指向本机 8003 端口
 const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL || 'http://127.0.0.1:8003';
 
+/** 清洗 FastAPI 返回的建议列表，统一字段并过滤无效项 */
 const normalizeSuggestions = (suggestions) => {
     if (!Array.isArray(suggestions)) return [];
 
@@ -24,12 +30,17 @@ const normalizeSuggestions = (suggestions) => {
         .filter((item) => item.title);
 };
 
+/**
+ * POST /api/v1/reconstruction/analyze
+ * 上传旧物图片并调用 AI 识别材质、可改造性和重构建议
+ */
 exports.analyzeImage = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No image uploaded' });
     }
 
     try {
+        // 读取上传文件并转成 base64，便于通过 JSON 请求体转发给 FastAPI
         const imageBuffer = await fs.readFile(req.file.path);
         const base64Image = imageBuffer.toString('base64');
 
@@ -45,11 +56,13 @@ exports.analyzeImage = async (req, res) => {
             },
         );
 
+        // FastAPI 未返回成功状态时，视为上游分析失败
         if (data?.status !== 'success' || !data?.data) {
             return res.status(502).json({ error: data?.message || 'FastAPI analysis failed' });
         }
 
         const payload = data.data;
+        // 对上游 AI 结果做兜底和字段规范化，保证前端总能拿到完整结构
         const analysis = {
             analysis_id: typeof payload.analysis_id === 'string' && payload.analysis_id.trim()
                 ? payload.analysis_id.trim()
@@ -81,6 +94,7 @@ exports.analyzeImage = async (req, res) => {
             suggestions: normalizeSuggestions(payload.suggestions),
         };
 
+        // 将分析结果摘要写入数据库，供后续个人记录或作品发布功能复用
         await ReconstructionRecord.create({
             userId: req.user?.id || null,
             imageUrl: analysis.image_url,
@@ -96,6 +110,7 @@ exports.analyzeImage = async (req, res) => {
 
         return res.json(analysis);
     } catch (err) {
+        // 优先返回 FastAPI 上游的 message，没有则回退到本地错误信息
         const message = err?.response?.data?.message || err.message;
         return res.status(500).json({ error: message || 'Reconstruction analysis failed' });
     }

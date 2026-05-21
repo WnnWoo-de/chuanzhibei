@@ -3,14 +3,18 @@
 // 在后端不可用时自动回退到本地模拟天气数据，保证页面部署后可直接展示
 // ============================================================
 
+// 是否允许在接口失败时回退到本地模拟天气数据
 const MOCK_ENABLED = true
+// 天气文案与图标池：模拟数据会按城市 seed 稳定抽取
 const WEATHER_TEXT_POOL = [
   { text: '晴', icon: '100' },
   { text: '多云', icon: '101' },
   { text: '阴', icon: '104' },
   { text: '小雨', icon: '305' },
 ]
+// 风向候选池
 const WIND_DIR_POOL = ['北风', '东北风', '东风', '东南风', '南风', '西南风', '西风', '西北风']
+// AQI 分级配置：用于给模拟空气质量匹配等级、建议和首要污染物
 const AQI_LEVELS = [
   { max: 50, level: '优', category: 'excellent', advice: '空气清新，适合外出活动。', primary: 'PM2.5' },
   { max: 100, level: '良', category: 'good', advice: '空气质量良好，敏感人群适度防护。', primary: 'PM10' },
@@ -18,24 +22,30 @@ const AQI_LEVELS = [
   { max: 200, level: '中度污染', category: 'moderate', advice: '外出建议佩戴口罩并注意补水。', primary: 'PM2.5' },
 ]
 
+/** 根据城市名生成稳定 seed，让同一城市每次都得到近似一致的模拟天气 */
 const createSeed = (city = '北京') => {
   return [...city].reduce((total, char) => total + char.charCodeAt(0), 0)
 }
 
+/** 数字补零工具：把 6 转成 "06" */
 const pad = (value) => String(value).padStart(2, '0')
 
+/** 将 Date 格式化为 yyyy-mm-dd */
 const formatDate = (date) => {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
 }
 
+/** 将 Date 格式化为带时区的 ISO 风格时间文本 */
 const formatIsoTime = (date) => {
   return `${formatDate(date)}T${pad(date.getHours())}:${pad(date.getMinutes())}:00+08:00`
 }
 
+/** 根据 seed 和索引从天气池中选取一组天气文案/图标 */
 const pickWeatherMeta = (seed, index = 0) => {
   return WEATHER_TEXT_POOL[(seed + index) % WEATHER_TEXT_POOL.length]
 }
 
+/** 构建整套模拟天气数据，结构尽量贴近真实接口返回 */
 const buildMockWeatherData = (city = '北京') => {
   const safeCity = city?.trim() || '北京'
   const seed = createSeed(safeCity)
@@ -140,6 +150,7 @@ const buildMockWeatherData = (city = '北京') => {
   }
 }
 
+/** 统一构建模拟查询返回结构 */
 const createMockResponse = (city, message = '当前为本地模拟天气数据（未连接后端服务）') => {
   return {
     ok: true,

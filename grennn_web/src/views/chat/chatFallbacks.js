@@ -1,7 +1,13 @@
+/**
+ * AI 服务不可用时的本地模拟回复
+ * 通过关键词返回一段可读性较好的环保建议，保证聊天功能具备兜底体验
+ */
 export const getSimulatedChatResponse = async ({ isTyping, userMessage }) => {
+  // 模拟真实请求的等待时间，避免回复瞬间弹出显得过于突兀
   await new Promise((resolve) => setTimeout(resolve, 1200))
   if (!isTyping()) return ''
 
+  // 统一转为小写后做关键词匹配，兼容中英文混合输入场景
   const lastUserMsg = String(userMessage || '').toLowerCase()
 
   if (lastUserMsg.includes('牛仔裤')) {
@@ -26,5 +32,6 @@ export const getSimulatedChatResponse = async ({ isTyping, userMessage }) => {
     return '你好！很高兴见到你 🌱 我是 GS AI 对话助手，来自 GreenSight-绿我同行。我们可以聊聊如何让生活更环保，或者你有具体的旧物想要改造吗？'
   }
 
+  // 未命中具体主题时，返回通用环保建议，保证始终有内容可展示
   return '这是一个很好的环保问题！\n\n作为 GS AI 对话助手，我建议你：\n1. **减少浪费** (Reduce)：优先选择耐用品。\n2. **重复使用** (Reuse)：寻找物品的第二次生命。\n3. **回收利用** (Recycle)：正确分类回收。\n\n如果你有具体的旧物想要改造，欢迎拍照上传到“旧物重构”板块，我会为你提供专属方案！'
 }

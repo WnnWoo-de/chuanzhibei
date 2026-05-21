@@ -28,24 +28,34 @@
 </template>
 
 <script setup>
+// ============================================================
+// components/data/ResilienceProgress.vue - 韧性进度条组件
+// 带呼吸光晕动画的进度条，滚动进入视口时显示动画效果
+// ============================================================
+
 import { ref, onMounted, onUnmounted } from 'vue'
 
 defineProps({
+  /** 进度百分比（0-100） */
   progress: {
     type: Number,
     default: 65,
     validator: (v) => v >= 0 && v <= 100,
   },
+  /** 进度条左侧标签文字 */
   label: {
     type: String,
     default: 'Resilience First',
   },
 })
 
+/** 控制进度条是否进入可视区域（触发动画） */
 const isVisible = ref(false)
 
+/** IntersectionObserver 实例 */
 let observer = null
 
+/** 挂载时创建 IntersectionObserver，当进度条进入视口 25% 时触发 */
 onMounted(() => {
   const element = document.querySelector('.resilience-progress')
   if (!element) return

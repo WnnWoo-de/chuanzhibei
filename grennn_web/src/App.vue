@@ -137,12 +137,14 @@ watch(() => route.path, () => {
 </template>
 
 <style>
+/* 亮色主题下的半透明磨砂玻璃背景遮罩 */
 .app-background-overlay {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(245, 245, 240, 0.7)),
     rgba(255, 255, 255, 0.62);
 }
 
+/* 暗色主题下背景遮罩：纯色背景，禁用磨砂效果 */
 :root[data-theme='dark'] .app-background-overlay {
   background: #1f1f1f;
   backdrop-filter: none !important;
@@ -153,6 +155,7 @@ watch(() => route.path, () => {
   opacity: 0;
 }
 
+/* 暗色模式动效层：网格渐变纹理，用于暗色主题的视觉装饰 */
 .dark-motion-layer {
   opacity: 0;
   background:
@@ -191,6 +194,7 @@ watch(() => route.path, () => {
   background: #1f1f1f !important;
 }
 
+/* 暗色网格流动动画 */
 @keyframes darkGridFlow {
   0% {
     background-position: 0% 0%, 100% 50%, 0 0, 0 0;
@@ -200,6 +204,7 @@ watch(() => route.path, () => {
   }
 }
 
+/* 暗色光带漂移动画 */
 @keyframes darkBandDrift {
   0% {
     transform: translate3d(-8%, -2%, 0) skewX(-4deg);
@@ -211,6 +216,7 @@ watch(() => route.path, () => {
   }
 }
 
+/* 页面布局淡入淡出过渡动画（侧边栏、导航栏进场/退场） */
 .shell-fade-enter-active,
 .shell-fade-leave-active {
   transition: opacity 0.9s ease, transform 0.9s ease;

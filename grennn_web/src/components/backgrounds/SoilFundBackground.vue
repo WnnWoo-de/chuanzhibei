@@ -84,10 +84,18 @@
 </template>
 
 <script setup>
+// ============================================================
+// components/backgrounds/SoilFundBackground.vue - 土壤基金背景组件
+// 使用 SVG 滤镜和噪声纹理生成有机形态的流动背景
+// 支持减少动效偏好设置（prefers-reduced-motion）
+// ============================================================
+
 import { ref, onMounted } from 'vue'
 
+/** 是否启用减少动效模式（跟随系统偏好） */
 const prefersReducedMotion = ref(false)
 
+/** 挂载时检测系统动效偏好，并监听变化 */
 onMounted(() => {
   const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
   prefersReducedMotion.value = mediaQuery.matches

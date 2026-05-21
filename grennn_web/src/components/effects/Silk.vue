@@ -16,13 +16,21 @@ type OglProgram = InstanceType<OglModule['Program']>
 type OglMesh = InstanceType<OglModule['Mesh']>
 type OglCamera = InstanceType<OglModule['Camera']>
 
+/** Silk 组件属性接口 */
 interface SilkProps {
+  /** 动画速度 */
   speed?: number
+  /** 噪声缩放比例 */
   scale?: number
+  /** 丝绸主色调（十六进制颜色） */
   color?: string
+  /** 噪声强度 */
   noiseIntensity?: number
+  /** 旋转角度（弧度） */
   rotation?: number
+  /** 自定义 CSS 类名 */
   className?: string
+  /** 自定义内联样式 */
   style?: CSSProperties
 }
 
@@ -36,8 +44,10 @@ const props = withDefaults(defineProps<SilkProps>(), {
   style: () => ({}),
 })
 
+/** 容器 DOM 引用 */
 const containerRef = useTemplateRef<HTMLDivElement>('containerRef')
 
+/** 将十六进制颜色转换为归一化 RGB 值（0-1 范围，供 WebGL 着色器使用） */
 const hexToNormalizedRGB = (hex: string): [number, number, number] => {
   const clean = hex.replace('#', '')
   const r = parseInt(clean.slice(0, 2), 16) / 255
@@ -46,6 +56,7 @@ const hexToNormalizedRGB = (hex: string): [number, number, number] => {
   return [r, g, b]
 }
 
+/** 顶点着色器：传递 UV 坐标和位置到片元着色器 */
 const vertexShader = `
 attribute vec2 uv;
 attribute vec3 position;
@@ -63,6 +74,7 @@ void main() {
 }
 `
 
+/** 片元着色器：基于正弦函数和噪声生成流动丝绸效果 */
 const fragmentShader = `
 precision highp float;
 
@@ -111,13 +123,15 @@ void main() {
 }
 `
 
-let renderer: OglRenderer | null = null
-let mesh: OglMesh | null = null
-let program: OglProgram | null = null
-let camera: OglCamera | null = null
-let animateId = 0
-let destroySilk: (() => void) | null = null
+/* WebGL 相关实例 */
+let renderer: OglRenderer | null = null   // OGL 渲染器
+let mesh: OglMesh | null = null           // 网格对象（平面）
+let program: OglProgram | null = null     // 着色器程序
+let camera: OglCamera | null = null       // 摄像机
+let animateId = 0                          // 动画帧 ID
+let destroySilk: (() => void) | null = null // 销毁函数引用
 
+/** 初始化 WebGL 场景：创建渲染器、摄像机、着色器程序和网格，并启动动画循环 */
 const initSilk = async () => {
   const container = containerRef.value
   if (!container) return
@@ -236,6 +250,7 @@ const initSilk = async () => {
   }
 }
 
+/** 清理所有 WebGL 资源，释放内存 */
 const cleanup = () => {
   if (destroySilk) {
     destroySilk()
@@ -265,6 +280,7 @@ watch(
 </script>
 
 <style scoped>
+/* 容器强制铺满父元素 */
 div {
   width: 100% !important;
   height: 100% !important;
@@ -272,6 +288,7 @@ div {
   display: block !important;
 }
 
+/* Canvas 画布强制铺满容器 */
 :deep(canvas) {
   width: 100% !important;
   height: 100% !important;

@@ -1,4 +1,5 @@
 <template>
+  <!-- 未来多日预报：显示日期、天气图标以及最高/最低温区间 -->
   <section class="forecast-card glass-card hover-float">
     <div class="section-header">
       <div class="section-title">
@@ -25,20 +26,24 @@
 </template>
 
 <script setup>
+// ============================================================
+// WeatherDailyForecast.vue - 多日天气预报组件
+// 展示未来几天的天气图标、日期和温度区间变化
+// ============================================================
 import { langText } from '@/language'
 import WeatherIcon from '@/components/weather/WeatherIcon.vue'
 import WeatherUiIcon from './WeatherUiIcon.vue'
 
 defineProps({
-  forecast: {
+  forecast: {      // 多日预报数组
     type: Array,
     default: () => [],
   },
-  formatDay: {
+  formatDay: {     // 将日期格式化为“周三”“5/21”等短文本
     type: Function,
     required: true,
   },
-  getBarStyle: {
+  getBarStyle: {   // 根据当天高低温计算温度条位置与长度
     type: Function,
     required: true,
   },
@@ -46,6 +51,7 @@ defineProps({
 </script>
 
 <style scoped>
+/* 与其他天气卡片统一的玻璃质感底板 */
 .glass-card {
   border-radius: 30px;
   background: linear-gradient(180deg, rgba(255,255,255,0.62), rgba(236,243,251,0.72));
@@ -74,6 +80,7 @@ defineProps({
   height: 100%;
 }
 
+/* 标题和说明文本横向排布 */
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -102,6 +109,7 @@ defineProps({
   gap: 14px;
 }
 
+/* 单日预报行：固定列宽，便于比较多天温度变化 */
 .daily-item {
   display: grid;
   grid-template-columns: 74px 38px 46px minmax(88px, 1fr) 46px;

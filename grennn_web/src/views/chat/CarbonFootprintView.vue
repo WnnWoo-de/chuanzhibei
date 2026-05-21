@@ -1,9 +1,12 @@
 <template>
+  <!-- 碳足迹计算器页面主容器 -->
   <div class="bg-transparent min-h-screen pt-10 px-6 pb-12">
+    <!-- 网格背景装饰 -->
     <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6">
       <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
     </div>
 
+    <!-- 返回链接 -->
     <div class="carbon-back-link-wrap relative z-10 mx-auto max-w-[1680px] mb-2">
       <router-link
         to="/chat"
@@ -13,13 +16,16 @@
       </router-link>
     </div>
 
+    <!-- 三列网格布局：输入 | 结果 | 建议 -->
     <div class="carbon-page__grid relative z-10 mx-auto max-w-[1680px]">
+      <!-- 左侧面板：碳足迹数据输入表单 -->
       <section class="carbon-panel carbon-panel--input carbon-rotate-reveal carbon-rotate-reveal--panel-1">
         <div class="carbon-panel__heading-wrap">
           <h2 class="carbon-panel__heading">{{ langText.carbonFootprint.inputTitle }}</h2>
         </div>
 
         <div class="space-y-5">
+          <!-- 通勤方式选择 -->
           <div class="carbon-field">
             <label class="carbon-field__label">{{ langText.carbonFootprint.transportLabel }}</label>
             <select v-model="commuteMode" class="carbon-field__control">
@@ -27,6 +33,7 @@
             </select>
           </div>
 
+          <!-- 通勤距离滑块 -->
           <div class="carbon-field">
             <label class="carbon-field__label">{{ langText.carbonFootprint.commuteDistLabel }}</label>
             <div class="carbon-field__range-wrap">
@@ -35,16 +42,19 @@
             </div>
           </div>
 
+          <!-- 每日用电量输入 -->
           <div class="carbon-field">
             <label class="carbon-field__label">{{ langText.carbonFootprint.energyLabel }}</label>
             <input v-model="electricityKwh" type="number" min="0" max="30" step="0.5" class="carbon-field__control" />
           </div>
 
+          <!-- 每周肉食餐数输入 -->
           <div class="carbon-field">
             <label class="carbon-field__label">{{ langText.carbonFootprint.meatLabel }}</label>
             <input v-model="meatMeals" type="number" min="0" max="6" step="1" class="carbon-field__control" />
           </div>
 
+          <!-- 快捷场景预设按钮 -->
           <div class="carbon-field">
             <label class="carbon-field__label">{{ langText.carbonFootprint.quickScenario }}</label>
             <div class="grid grid-cols-1 gap-2">
@@ -61,17 +71,21 @@
             </div>
           </div>
 
+          <!-- 重置按钮 -->
           <button @click="resetForm" class="carbon-submit">{{ langText.carbonFootprint.resetBtn }}</button>
         </div>
       </section>
 
+      <!-- 中间面板：碳足迹计算结果展示 -->
       <section class="carbon-panel carbon-panel--result carbon-rotate-reveal carbon-rotate-reveal--panel-2">
         <div class="carbon-panel__heading-wrap">
           <h2 class="carbon-panel__heading">{{ langText.carbonFootprint.resultTitle }}</h2>
         </div>
 
         <div class="carbon-result-stack">
+          <!-- 环形图卡片：显示总碳排放量 -->
           <div class="carbon-chart-card carbon-rotate-reveal carbon-rotate-reveal--chart">
+            <!-- 图例 -->
             <div class="carbon-legend">
               <span v-for="item in animatedBreakdownItems" :key="`${item.key}-legend`" class="carbon-legend__item">
                 <span class="carbon-legend__dot" :style="{ backgroundColor: item.color }"></span>
@@ -79,9 +93,11 @@
               </span>
             </div>
 
+            <!-- 环形饼图 -->
             <div class="flex justify-center py-3">
               <div :key="donutAnimationKey" class="carbon-donut-wrap">
                 <div class="carbon-donut-ring relative w-[270px] h-[270px] rounded-full" :style="{ background: donutGradient }">
+                  <!-- 饼图中心：总碳排放数值 -->
                   <div class="absolute inset-[42px] rounded-full bg-white flex flex-col items-center justify-center text-center shadow-[0_8px_20px_rgba(15,23,42,0.08)]">
                     <div class="text-sm text-black/50 mb-1">{{ langText.carbonFootprint.totalFootprint }}</div>
                     <div class="text-4xl font-bold leading-none">{{ totalFootprint.toFixed(2) }}</div>
@@ -92,6 +108,7 @@
             </div>
           </div>
 
+          <!-- 柱状条形图卡片：各项占比 -->
           <div class="carbon-chart-card carbon-chart-card--bars carbon-rotate-reveal carbon-rotate-reveal--bars">
             <div class="carbon-bars space-y-4">
               <div v-for="item in animatedBreakdownItems" :key="`${item.key}-bar`" class="carbon-bar-row">
@@ -99,6 +116,7 @@
                   <span>{{ item.label }}</span>
                   <span>{{ item.percent }}%</span>
                 </div>
+                <!-- 进度条（带呼吸光效） -->
                 <div class="carbon-bar-row__track">
                   <div class="carbon-bar-row__fill carbon-bar-row__fill--breathing" :style="{ width: `${item.percent}%`, background: item.gradient, '--bar-glow': item.glow }"></div>
                 </div>
@@ -106,6 +124,7 @@
             </div>
           </div>
 
+          <!-- 文字摘要卡片 -->
           <div class="carbon-summary carbon-rotate-reveal carbon-rotate-reveal--summary">
             <p class="mb-3">{{ langText.carbonFootprint.summaryPrefix }}<strong>{{ totalFootprint.toFixed(2) }} {{ langText.carbonFootprint.co2Unit }}。</strong> {{ langText.carbonFootprint.summarySuffix }}</p>
             <ul class="space-y-2">
@@ -113,26 +132,31 @@
                 {{ item.label }}{{ langText.carbonFootprint.detailSuffix }}{{ item.percent }}%
               </li>
             </ul>
+            <!-- 最近同步时间 -->
             <p v-if="latestSavedAt" class="carbon-summary__meta">{{ langText.carbonFootprint.recentSync }}{{ String(latestSavedAt).slice(0, 16).replace('T', ' ') }}</p>
           </div>
         </div>
       </section>
 
+      <!-- 右侧面板：减排建议 -->
       <section class="carbon-panel carbon-panel--advice carbon-rotate-reveal carbon-rotate-reveal--panel-3">
         <div class="carbon-panel__heading-wrap">
           <h2 class="carbon-panel__heading carbon-panel__heading--green">{{ langText.carbonFootprint.adviceTitle }}</h2>
         </div>
 
+        <!-- 主要减排方向提示 -->
         <div class="carbon-advice-block">
           <p><strong>{{ langText.carbonFootprint.reductionFocus }}</strong>{{ dominantSourceAdvice }}</p>
         </div>
 
+        <!-- 智能减排建议列表 -->
         <div class="carbon-advice-block space-y-3">
           <div v-for="tip in suggestions" :key="tip" class="carbon-advice-item">
             <span>{{ tip }}</span>
           </div>
         </div>
 
+        <!-- 绿色出行建议列表（带图标） -->
         <div class="carbon-advice-block space-y-3">
           <div v-for="tip in ecoTravelSuggestions" :key="tip.title" class="carbon-advice-item carbon-advice-item--icon">
             <span class="carbon-advice-item__icon" v-html="renderIcon(tip.icon)"></span>
@@ -143,9 +167,11 @@
           </div>
         </div>
 
+        <!-- AI 出行建议面板 -->
         <div class="carbon-ai-box carbon-rotate-reveal carbon-rotate-reveal--ai-box">
           <div class="flex items-center justify-between gap-3 mb-3 flex-wrap">
             <h3 class="font-semibold text-[#23452f]">{{ langText.carbonFootprint.aiTravelAdvice }}</h3>
+            <!-- 生成按钮（带冷却倒计时） -->
             <button
               @click="generateAiTravelAdvice"
               :disabled="isGeneratingAdvice || adviceCooldown > 0"
@@ -155,6 +181,7 @@
             </button>
           </div>
 
+          <!-- AI 建议内容区域（支持流式打字机效果） -->
           <div class="carbon-ai-box__content" :class="{ 'ai-loading-panel': isGeneratingAdvice }">
             <template v-if="isGeneratingAdvice && !aiTravelAdvice">
               {{ langText.carbonFootprint.generatingHint }}
@@ -173,6 +200,11 @@
 </template>
 
 <script setup>
+// ============================================================
+// CarbonFootprintView.vue - 碳足迹计算器页面
+// 用户输入通勤、用电、饮食等数据，计算每日碳排放量
+// 并展示环形图、柱状图、减排建议及 AI 出行建议
+// ============================================================
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { langText } from '@/language'
@@ -180,29 +212,36 @@ import { useUserStore } from '@/stores/user'
 import { consumeChatCompletionsStream, getResponseErrorMessage } from '@/utils/api'
 import { createCarbonRecord, fetchLatestCarbonRecord } from '@/services/carbonService'
 
-const commuteKm = ref(12)
-const electricityKwh = ref(6)
-const meatMeals = ref(1)
-const commuteMode = ref('bus')
-const latestSavedAt = ref('')
-const userStore = useUserStore()
-const aiTravelAdvice = ref('')
-const aiTravelAdviceBuffer = ref('')
-const isGeneratingAdvice = ref(false)
-const adviceCooldown = ref(0)
-const copiedAdvice = ref(false)
-const activePresetKey = ref('default')
-const donutAnimationKey = ref(0)
-const typewriterTimer = ref(null)
-const cooldownTimer = ref(null)
-const copyResetTimer = ref(null)
+// ---- 表单输入状态 ----
+const commuteKm = ref(12)           // 通勤距离（公里）
+const electricityKwh = ref(6)       // 每日用电量（千瓦时）
+const meatMeals = ref(1)            // 每周肉食餐数
+const commuteMode = ref('bus')      // 通勤方式（bike/bus/car）
+const latestSavedAt = ref('')       // 最近一次保存记录的时间
+const userStore = useUserStore()    // 用户状态管理
 
+// ---- AI 出行建议相关状态 ----
+const aiTravelAdvice = ref('')             // 最终显示的 AI 建议文本（打字机效果）
+const aiTravelAdviceBuffer = ref('')       // AI 返回的完整文本缓冲区
+const isGeneratingAdvice = ref(false)      // 是否正在生成 AI 建议
+const adviceCooldown = ref(0)              // 生成按钮冷却倒计时（秒）
+const copiedAdvice = ref(false)            // 是否已复制 AI 建议
+
+// ---- UI 动画状态 ----
+const activePresetKey = ref('default')     // 当前选中的预设场景 key
+const donutAnimationKey = ref(0)           // 环形图重绘 key（变化时触发动画）
+const typewriterTimer = ref(null)          // 打字机效果定时器
+const cooldownTimer = ref(null)            // 冷却倒计时定时器
+const copyResetTimer = ref(null)           // 复制状态重置定时器
+
+/** 通勤方式选项（含碳排放因子：kg CO2e/km） */
 const commuteModes = computed(() => [
   { label: langText.value.carbonFootprint.commuteModes.bike, value: 'bike', factor: 0 },
   { label: langText.value.carbonFootprint.commuteModes.bus, value: 'bus', factor: 0.08 },
   { label: langText.value.carbonFootprint.commuteModes.car, value: 'car', factor: 0.19 },
 ])
 
+/** 快捷场景预设（一键填充表单数据） */
 const carbonPresets = computed(() => [
   {
     key: 'default',
@@ -224,6 +263,7 @@ const carbonPresets = computed(() => [
   },
 ])
 
+// SVG 图标映射（用于出行建议中的图标展示）
 const iconMap = {
   bus: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 3.75C5.75736 3.75 4.75 4.75736 4.75 6V14.5C4.75 15.8807 5.86929 17 7.25 17H7.5V18.25C7.5 18.9404 8.05964 19.5 8.75 19.5C9.44036 19.5 10 18.9404 10 18.25V17H14V18.25C14 18.9404 14.5596 19.5 15.25 19.5C15.9404 19.5 16.5 18.9404 16.5 18.25V17H16.75C18.1307 17 19.25 15.8807 19.25 14.5V6C19.25 4.75736 18.2426 3.75 17 3.75H7Z" stroke="currentColor" stroke-width="1.5"/><path d="M7.5 8H16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M8.25 13.25H8.26" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15.75 13.25H15.76" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   bulb: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4.25C8.82436 4.25 6.25 6.82436 6.25 10C6.25 12.0767 7.35049 13.8958 9 14.8963V16.25C9 16.9404 9.55964 17.5 10.25 17.5H13.75C14.4404 17.5 15 16.9404 15 16.25V14.8963C16.6495 13.8958 17.75 12.0767 17.75 10C17.75 6.82436 15.1756 4.25 12 4.25Z" stroke="currentColor" stroke-width="1.5"/><path d="M10 20H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10.25 17.5H13.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
@@ -235,15 +275,18 @@ const iconMap = {
   pin: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 20C12 20 17 15.5 17 11.25C17 8.35051 14.6495 6 11.75 6C8.85051 6 6.5 8.35051 6.5 11.25C6.5 15.5 12 20 12 20Z" stroke="currentColor" stroke-width="1.5"/><path d="M11.75 12.5C12.4404 12.5 13 11.9404 13 11.25C13 10.5596 12.4404 10 11.75 10C11.0596 10 10.5 10.5596 10.5 11.25C10.5 11.9404 11.0596 12.5 11.75 12.5Z" stroke="currentColor" stroke-width="1.5"/></svg>',
 }
 
+/** 根据名称返回 SVG 图标，不存在时返回默认叶子图标 */
 const renderIcon = (name) => iconMap[name] ?? iconMap.leaf
 
-const commuteModeLabel = computed(() => commuteModes.value.find((item) => item.value === commuteMode.value)?.label ?? langText.value.carbonFootprint.notSelected)
-const commuteFactor = computed(() => commuteModes.value.find((item) => item.value === commuteMode.value)?.factor ?? 0)
-const commuteEmission = computed(() => Number(commuteKm.value) * commuteFactor.value)
-const electricityEmission = computed(() => Number(electricityKwh.value) * 0.58)
-const dietEmission = computed(() => Number(meatMeals.value) * 1.6)
-const totalFootprint = computed(() => commuteEmission.value + electricityEmission.value + dietEmission.value)
+// ---- 碳排放计算相关计算属性 ----
+const commuteModeLabel = computed(() => commuteModes.value.find((item) => item.value === commuteMode.value)?.label ?? langText.value.carbonFootprint.notSelected) // 当前通勤方式名称
+const commuteFactor = computed(() => commuteModes.value.find((item) => item.value === commuteMode.value)?.factor ?? 0) // 当前通勤方式的碳排放因子
+const commuteEmission = computed(() => Number(commuteKm.value) * commuteFactor.value)     // 交通排放 = 距离 * 因子
+const electricityEmission = computed(() => Number(electricityKwh.value) * 0.58)          // 用电排放 = 用电量 * 0.58 kg/kWh
+const dietEmission = computed(() => Number(meatMeals.value) * 1.6)                       // 饮食排放 = 肉食餐数 * 1.6 kg/餐
+const totalFootprint = computed(() => commuteEmission.value + electricityEmission.value + dietEmission.value) // 总碳排放
 
+/** 保存碳足迹记录到后端 */
 const persistCarbonRecord = async () => {
   const result = await createCarbonRecord({
     commuteKm: Number(commuteKm.value),
@@ -254,6 +297,7 @@ const persistCarbonRecord = async () => {
   if (result.ok && result.data?.createdAt) latestSavedAt.value = result.data.createdAt
 }
 
+/** 根据当前表单值匹配预设场景，更新高亮状态 */
 const updateActivePreset = () => {
   const matched = carbonPresets.value.find((preset) => {
     const values = preset.values
@@ -267,10 +311,12 @@ const updateActivePreset = () => {
   activePresetKey.value = matched?.key || 'custom'
 }
 
+/** 重绘环形图（通过改变 key 触发重新渲染动画） */
 const replayDonutAnimation = () => {
   donutAnimationKey.value += 1
 }
 
+/** 应用预设场景数据到表单 */
 const applyPreset = (preset) => {
   if (!preset?.values) return
   commuteKm.value = Number(preset.values.commuteKm)
@@ -280,6 +326,7 @@ const applyPreset = (preset) => {
   activePresetKey.value = preset.key
 }
 
+/** 从后端加载用户最近一次碳足迹记录并填充表单 */
 const hydrateLatestRecord = async () => {
   await userStore.init()
   if (!userStore.isLoggedIn) return
@@ -295,11 +342,13 @@ const hydrateLatestRecord = async () => {
   latestSavedAt.value = record.createdAt || ''
 }
 
+/** 计算某项占总碳排放的百分比 */
 const percentOfTotal = (value) => {
   if (totalFootprint.value <= 0) return 0
   return Math.round((value / totalFootprint.value) * 100)
 }
 
+/** 碳排放分项数据（交通、用电、饮食） */
 const breakdownItems = computed(() => [
   {
     key: 'commute',
@@ -336,6 +385,7 @@ const breakdownItems = computed(() => [
   },
 ])
 
+/** 带动画的分项数据（百分比为0但有值时设为1，避免柱状条不可见） */
 const animatedBreakdownItems = computed(() =>
   breakdownItems.value.map((item) => ({
     ...item,
@@ -343,6 +393,7 @@ const animatedBreakdownItems = computed(() =>
   })),
 )
 
+/** 环形饼图的 conic-gradient 渐变样式 */
 const donutGradient = computed(() => {
   const [commute, electricity, diet] = breakdownItems.value
   const first = commute.percent
@@ -351,14 +402,17 @@ const donutGradient = computed(() => {
   return `conic-gradient(${commute.color} 0% ${first}%, ${electricity.color} ${first}% ${second}%, ${diet.color} ${second}% 100%)`
 })
 
+/** 碳排放占比最高的分项 */
 const dominantSource = computed(() => [...breakdownItems.value].sort((a, b) => b.value - a.value)[0])
 
+/** 针对最大排放源的减排建议文案 */
 const dominantSourceAdvice = computed(() => {
   if (dominantSource.value.key === 'commute') return langText.value.carbonFootprint.dominantAdvice.commute
   if (dominantSource.value.key === 'electricity') return langText.value.carbonFootprint.dominantAdvice.electricity
   return langText.value.carbonFootprint.dominantAdvice.diet
 })
 
+/** 根据当前通勤方式生成绿色出行建议 */
 const ecoTravelSuggestions = computed(() => {
   const travel = langText.value.carbonFootprint.ecoTravel
 
@@ -382,6 +436,7 @@ const ecoTravelSuggestions = computed(() => {
   ]
 })
 
+/** 根据输入数据生成智能减排建议（最多3条） */
 const suggestions = computed(() => {
   const tips = langText.value.carbonFootprint.tips
   const list = []
@@ -403,8 +458,10 @@ const suggestions = computed(() => {
   return list.slice(0, 3)
 })
 
+/** AI 建议的显示文本（打字机效果逐字输出） */
 const displayedAiTravelAdvice = computed(() => aiTravelAdvice.value)
 
+/** 清除打字机效果定时器 */
 const clearTypewriterTimer = () => {
   if (typewriterTimer.value) {
     clearTimeout(typewriterTimer.value)
@@ -412,6 +469,7 @@ const clearTypewriterTimer = () => {
   }
 }
 
+/** 清除冷却倒计时定时器 */
 const clearCooldownTimer = () => {
   if (cooldownTimer.value) {
     clearInterval(cooldownTimer.value)
@@ -419,6 +477,7 @@ const clearCooldownTimer = () => {
   }
 }
 
+/** 清除复制状态重置定时器 */
 const clearCopyResetTimer = () => {
   if (copyResetTimer.value) {
     clearTimeout(copyResetTimer.value)
@@ -426,6 +485,7 @@ const clearCopyResetTimer = () => {
   }
 }
 
+/** 同步打字机效果：将缓冲区文本逐字显示到界面 */
 const syncTypewriterToBuffer = () => {
   clearTypewriterTimer()
 
@@ -446,6 +506,7 @@ const syncTypewriterToBuffer = () => {
   revealNext()
 }
 
+/** 启动生成按钮冷却倒计时 */
 const startAdviceCooldown = (seconds = 8) => {
   clearCooldownTimer()
   adviceCooldown.value = seconds
@@ -460,6 +521,7 @@ const startAdviceCooldown = (seconds = 8) => {
   }, 1000)
 }
 
+/** 复制 AI 出行建议到剪贴板 */
 const copyAiTravelAdvice = async () => {
   if (!aiTravelAdvice.value.trim()) return
 
@@ -478,6 +540,7 @@ const copyAiTravelAdvice = async () => {
   }
 }
 
+/** 构建 AI 出行建议的提示词 */
 const buildTravelAdvicePrompt = () => {
   return [
     '你是绿色出行顾问，请基于用户当前碳足迹数据，生成中文出行建议。',
@@ -493,6 +556,7 @@ const buildTravelAdvicePrompt = () => {
   ].join('\n')
 }
 
+/** 调用 AI 接口生成出行建议（流式输出 + 打字机效果） */
 const generateAiTravelAdvice = async () => {
   if (isGeneratingAdvice.value || adviceCooldown.value > 0) return
 
@@ -568,6 +632,7 @@ const generateAiTravelAdvice = async () => {
   }
 }
 
+/** 重置表单和所有状态到默认值 */
 const resetForm = () => {
   commuteKm.value = 12
   electricityKwh.value = 6
@@ -581,6 +646,7 @@ const resetForm = () => {
   clearTypewriterTimer()
 }
 
+// 监听表单数据变化：更新预设高亮、重绘饼图、自动保存记录
 watch([commuteKm, electricityKwh, meatMeals, commuteMode], () => {
   updateActivePreset()
   replayDonutAnimation()
@@ -588,11 +654,13 @@ watch([commuteKm, electricityKwh, meatMeals, commuteMode], () => {
   persistCarbonRecord().catch(() => {})
 })
 
+// 挂载时加载用户最近的碳足迹记录
 onMounted(async () => {
   await hydrateLatestRecord()
   updateActivePreset()
 })
 
+// 卸载时清除所有定时器，防止内存泄漏
 onUnmounted(() => {
   clearTypewriterTimer()
   clearCooldownTimer()
@@ -601,6 +669,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* ---- 页面三列网格布局 ---- */
 .carbon-page__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -608,6 +677,7 @@ onUnmounted(() => {
   align-items: stretch;
 }
 
+/* 面板基础样式（毛玻璃卡片） */
 .carbon-panel {
   min-height: calc(100vh - 10.5rem);
   height: 100%;
@@ -633,6 +703,7 @@ onUnmounted(() => {
   border-left: 1px solid rgba(71, 121, 84, 0.16);
 }
 
+/* ---- 面板标题样式 ---- */
 .carbon-panel__heading-wrap {
   border-bottom: 1px solid rgba(74, 154, 88, 0.22);
   padding-bottom: 12px;
@@ -649,6 +720,7 @@ onUnmounted(() => {
   color: #3a8b37;
 }
 
+/* ---- 表单字段样式 ---- */
 .carbon-field {
   display: grid;
   gap: 8px;
@@ -689,6 +761,7 @@ onUnmounted(() => {
   color: #607063;
 }
 
+/* ---- 预设场景按钮样式 ---- */
 .carbon-preset {
   display: flex;
   flex-direction: column;
@@ -728,6 +801,7 @@ onUnmounted(() => {
   font-weight: 700;
 }
 
+/* ---- 结果区域布局 ---- */
 .carbon-result-stack {
   display: flex;
   flex-direction: column;
@@ -744,6 +818,7 @@ onUnmounted(() => {
   animation: link-float-in 0.95s ease-out both;
 }
 
+/* ---- 3D 旋转入场动画基础样式 ---- */
 .carbon-rotate-reveal {
   opacity: 0;
   transform-style: preserve-3d;
@@ -786,6 +861,7 @@ onUnmounted(() => {
   transform-origin: right center;
 }
 
+/* ---- 图表卡片样式 ---- */
 .carbon-chart-card {
   border-radius: 24px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 249, 245, 0.92));
@@ -794,6 +870,7 @@ onUnmounted(() => {
   padding: 14px 16px 18px;
 }
 
+/* ---- 环形饼图样式 ---- */
 .carbon-donut-wrap {
   display: flex;
   align-items: center;
@@ -809,6 +886,7 @@ onUnmounted(() => {
   will-change: transform, opacity, filter;
 }
 
+/* ---- 图例样式 ---- */
 .carbon-legend {
   display: flex;
   flex-wrap: wrap;
@@ -831,6 +909,7 @@ onUnmounted(() => {
   border-radius: 3px;
 }
 
+/* ---- 柱状条形图样式 ---- */
 .carbon-bar-row__head {
   display: flex;
   justify-content: space-between;
@@ -869,6 +948,7 @@ onUnmounted(() => {
   animation: bar-sheen 2.2s linear infinite;
 }
 
+/* ---- 文字摘要卡片样式 ---- */
 .carbon-summary {
   font-size: 0.98rem;
   line-height: 1.8;
@@ -886,6 +966,7 @@ onUnmounted(() => {
   color: #6a796c;
 }
 
+/* ---- 减排建议样式 ---- */
 .carbon-advice-block {
   margin-bottom: 18px;
   color: #304633;
@@ -915,6 +996,7 @@ onUnmounted(() => {
   height: 100%;
 }
 
+/* ---- AI 出行建议面板样式 ---- */
 .carbon-ai-box {
   border-radius: 24px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(239, 248, 241, 0.92));
@@ -949,6 +1031,7 @@ onUnmounted(() => {
   white-space: pre-line;
 }
 
+/* AI 加载面板扫描光效 */
 .ai-loading-panel {
   position: relative;
   overflow: hidden;
@@ -963,10 +1046,12 @@ onUnmounted(() => {
   animation: ai-panel-sheen 1.8s linear infinite;
 }
 
+/* AI 流式文本淡入效果 */
 .ai-streaming-text {
   animation: ai-text-fade-in 0.28s ease-out;
 }
 
+/* ---- 响应式布局：窄屏时改为单列 ---- */
 @media (max-width: 1200px) {
   .carbon-page__grid {
     grid-template-columns: 1fr;
@@ -977,6 +1062,9 @@ onUnmounted(() => {
   }
 }
 
+/* ---- 动画关键帧定义 ---- */
+
+/* 柱状条呼吸动画 */
 @keyframes bar-breathe {
   0%,
   100% {

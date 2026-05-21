@@ -1,5 +1,10 @@
+/**
+ * controllers/storeController.js - 积分商城控制器
+ * 负责商品初始化、商品查询、兑换记录查询和积分兑换流程
+ */
 const { sequelize, RewardProduct, RedeemRecord } = require('../models');
 
+// 默认兑换商品清单：数据库为空时会自动写入，便于项目演示和初始化
 const seedProducts = [
     { id: 1, name: '环保帆布袋', category: '实物商品', description: '可重复使用，适合购物、通勤、日常收纳。', points: 500, stock: 20, productType: 'physical', icon: 'ShoppingBag', accent: 'accent-green', tags: ['低碳', '可重复使用'], sortOrder: 1 },
     { id: 2, name: '可重复使用水杯', category: '实物商品', description: '减少一次性杯具使用，适合校园与通勤场景。', points: 800, stock: 12, productType: 'physical', icon: 'CoffeeCup', accent: 'accent-blue', tags: ['随身', '减塑'], sortOrder: 2 },
@@ -10,12 +15,14 @@ const seedProducts = [
     { id: 7, name: '公益树苗认养证书', category: '公益证书', description: '生成一份公益认养证书，记录你的绿色行动。', points: 1500, stock: 6, productType: 'certificate', icon: 'Reading', accent: 'accent-emerald', tags: ['公益', '证书'], sortOrder: 7 },
 ];
 
+/** 若商品表为空，则自动写入默认商品 */
 const ensureProducts = async () => {
     const count = await RewardProduct.count();
     if (count > 0) return;
     await RewardProduct.bulkCreate(seedProducts, { ignoreDuplicates: true });
 };
 
+/** 将商品模型格式化为前端展示所需字段 */
 const formatProduct = (item) => ({
     id: item.id,
     name: item.name,
@@ -30,6 +37,7 @@ const formatProduct = (item) => ({
     enabled: item.enabled,
 });
 
+/** 将兑换记录模型转换为前端可直接渲染的结构 */
 const formatRecord = (item) => ({
     id: item.id,
     productId: item.productId,
@@ -43,6 +51,10 @@ const formatRecord = (item) => ({
     fulfilledAt: item.fulfilledAt,
 });
 
+/**
+ * GET /api/v1/store/products
+ * 返回当前可兑换商品列表；若数据库为空则先初始化默认商品
+ */
 exports.listProducts = async (_, res) => {
     try {
         await ensureProducts();
@@ -56,6 +68,10 @@ exports.listProducts = async (_, res) => {
     }
 };
 
+/**
+ * GET /api/v1/store/records
+ * 返回当前用户的积分兑换历史
+ */
 exports.listMyRedeemRecords = async (req, res) => {
     try {
         const items = await RedeemRecord.findAll({
@@ -70,12 +86,17 @@ exports.listMyRedeemRecords = async (req, res) => {
     }
 };
 
+/**
+ * POST /api/v1/store/redeem
+ * 使用积分兑换指定商品；在事务中同时扣减库存和用户积分
+ */
 exports.redeemProduct = async (req, res) => {
     const productId = Number(req.body?.productId);
     if (!Number.isInteger(productId) || productId <= 0) {
         return res.status(400).json({ error: 'productId 无效' });
     }
 
+    // 使用数据库事务保证“扣库存、扣积分、写记录”三个动作的一致性
     const t = await sequelize.transaction();
     try {
         const product = await RewardProduct.findOne({
@@ -83,6 +104,8 @@ exports.redeemProduct = async (req, res) => {
             transaction: t,
             lock: t.LOCK.UPDATE,
         });
+
+        // 依次校验：商品存在、库存充足、用户积分足够
         if (!product) {
             await t.rollback();
             return res.status(404).json({ error: '商品不存在或已下架' });
@@ -96,12 +119,15 @@ exports.redeemProduct = async (req, res) => {
             return res.status(400).json({ error: '绿色积分不足' });
         }
 
+        // 扣减库存
         product.stock -= 1;
         await product.save({ transaction: t });
 
+        // 扣减用户积分，且保证不出现负数
         req.user.points = Math.max(0, (req.user.points || 0) - product.points);
         await req.user.save({ transaction: t });
 
+        // 虚拟商品可视为即时到账，实物商品则进入待处理状态
         const isInstant = product.productType !== 'physical';
         const record = await RedeemRecord.create({
             userId: req.user.id,
@@ -114,6 +140,7 @@ exports.redeemProduct = async (req, res) => {
             fulfilledAt: isInstant ? new Date() : null,
         }, { transaction: t });
 
+        // 事务提交后再统一返回兑换结果
         await t.commit();
         res.status(201).json({
             message: 'Redeemed',
@@ -122,6 +149,7 @@ exports.redeemProduct = async (req, res) => {
             points: req.user.points,
         });
     } catch (err) {
+        // 任一步骤失败时回滚事务，避免只扣了积分或只扣了库存
         await t.rollback();
         res.status(500).json({ error: err.message });
     }

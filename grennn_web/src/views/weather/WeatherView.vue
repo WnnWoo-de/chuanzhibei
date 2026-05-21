@@ -1,16 +1,21 @@
 <template>
+  <!-- 天气页面主容器，根据天气状况动态切换主题样式 -->
   <div class="weather-page" :class="themeClass" :data-theme="themeClass">
+    <!-- 背景氛围光晕装饰层 -->
     <div class="weather-atmosphere weather-atmosphere--one"></div>
     <div class="weather-atmosphere weather-atmosphere--two"></div>
     <div class="weather-atmosphere weather-atmosphere--three"></div>
+    <!-- 呼吸动画光效层 -->
     <div class="weather-breath-layer weather-breath-layer--core"></div>
     <div class="weather-breath-layer weather-breath-layer--edge"></div>
 
+    <!-- 仪表盘主卡片容器 -->
     <div class="weather-dashboard-card">
       <div class="weather-container">
-        <!-- 天气查询与绿色出行内容卡片 -->
+        <!-- 天气查询与绿色出行提示卡片 -->
         <div class="green-travel-card glass-card mb-4">
           <div class="card-content">
+            <!-- 卡片标题区域 -->
             <div class="card-header">
               <div class="icon-wrapper">
                 <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -35,7 +40,9 @@
               </div>
             </div>
 
+            <!-- 绿色出行建议网格 -->
             <div class="tips-grid">
+              <!-- 晴天出行建议 -->
               <div class="tip-item">
                 <div class="tip-icon tip-icon--sunny">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -56,6 +63,7 @@
                 </div>
               </div>
 
+              <!-- 阴天出行建议 -->
               <div class="tip-item">
                 <div class="tip-icon tip-icon--cloudy">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -68,6 +76,7 @@
                 </div>
               </div>
 
+              <!-- 雨天出行建议 -->
               <div class="tip-item">
                 <div class="tip-icon tip-icon--rainy">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -86,6 +95,7 @@
                 </div>
               </div>
 
+              <!-- 绿色环保出行建议 -->
               <div class="tip-item">
                 <div class="tip-icon tip-icon--eco">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -102,6 +112,7 @@
           </div>
         </div>
 
+        <!-- 天气搜索区域组件 -->
         <WeatherSearchSection
           v-model:search-city="searchCity"
           :default-city="defaultCity"
@@ -112,17 +123,22 @@
           @search="handleSearch(searchCity)"
         />
 
+        <!-- 加载状态骨架屏 -->
         <div v-if="loading && !weather" class="loading-state glass-card">
           <el-skeleton :rows="10" animated />
         </div>
 
+        <!-- 天气数据内容区 -->
         <div v-else-if="weather" class="weather-content-fade">
+          <!-- 天气概览摘要组件 -->
           <WeatherHeroSummary :weather="weather" :format-temp="fmt.temp" />
 
           <div class="dashboard-grid">
+            <!-- 逐小时预报组件 -->
             <WeatherHourlyForecast :hourly="weather.hourly" :format-hour="formatHour" />
 
             <div class="bottom-layout">
+              <!-- 多日预报组件 -->
               <div class="left-column">
                 <WeatherDailyForecast
                   :forecast="weather.forecast"
@@ -130,6 +146,7 @@
                   :get-bar-style="getBarStyle"
                 />
               </div>
+              <!-- 天气指标网格组件 -->
               <div class="right-column">
                 <WeatherMetricsGrid
                   :weather="weather"
@@ -142,6 +159,7 @@
           </div>
         </div>
 
+        <!-- 空状态（初始加载或无数据时显示骨架屏） -->
         <div v-else class="loading-state glass-card">
           <el-skeleton :rows="10" animated />
         </div>
@@ -152,33 +170,36 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
-import { langText } from '@/language'
+import { langText } from '@/language' // 多语言文本
 import {
   getAqiColor,
   useWeatherFormatters,
   weatherFmt,
-} from './weatherFormatters'
-import { useWeatherQuery } from './useWeatherQuery'
+} from './weatherFormatters' // 天气数据格式化工具
+import { useWeatherQuery } from './useWeatherQuery' // 天气查询逻辑组合式函数
 import WeatherDailyForecast from './components/WeatherDailyForecast.vue'
 import WeatherHeroSummary from './components/WeatherHeroSummary.vue'
 import WeatherHourlyForecast from './components/WeatherHourlyForecast.vue'
 import WeatherMetricsGrid from './components/WeatherMetricsGrid.vue'
 import WeatherSearchSection from './components/WeatherSearchSection.vue'
 
+// 使用天气查询组合式函数，获取状态与方法
 const {
-  defaultCity,
-  errorMessage,
-  getBarStyle,
-  handleSearch,
-  infoMessage,
-  isMockData,
-  loading,
-  searchCity,
-  weather,
+  defaultCity,   // 默认城市
+  errorMessage,  // 错误提示信息
+  getBarStyle,   // 获取温度条样式
+  handleSearch,  // 搜索处理函数
+  infoMessage,   // 提示信息
+  isMockData,    // 是否为模拟数据
+  loading,       // 加载状态
+  searchCity,    // 搜索城市
+  weather,       // 天气数据
 } = useWeatherQuery()
+// 获取格式化工具函数
 const { formatDay, formatHour, formatTime, getUvLevel } = useWeatherFormatters()
-const fmt = weatherFmt
+const fmt = weatherFmt // 天气格式化工具
 
+// 根据当前天气文本动态计算主题类名（晴天/阴天/雨天）
 const themeClass = computed(() => {
   const text = weather.value?.now?.text || ''
   if (/雨|雷|雪/.test(text)) return 'theme-rainy'
@@ -186,12 +207,14 @@ const themeClass = computed(() => {
   return 'theme-cloudy'
 })
 
+// 页面挂载后自动查询默认城市的天气
 onMounted(() => {
   handleSearch(searchCity.value || defaultCity)
 })
 </script>
 
 <style scoped>
+/* 页面主容器 */
 .weather-page {
   --page-bg-top: #eef4fb;
   --page-bg-bottom: #dfe9f6;
@@ -217,6 +240,7 @@ onMounted(() => {
     color 0.8s ease;
 }
 
+/* 晴天主题配色 */
 .theme-sunny {
   --page-bg-top: #f5f8fd;
   --page-bg-bottom: #e6edf9;
@@ -227,6 +251,7 @@ onMounted(() => {
   --breath-edge: rgba(255, 233, 175, 0.24);
 }
 
+/* 阴天主题配色 */
 .theme-cloudy {
   --page-bg-top: #edf3fb;
   --page-bg-bottom: #d9e5f3;
@@ -237,6 +262,7 @@ onMounted(() => {
   --breath-edge: rgba(230, 239, 250, 0.26);
 }
 
+/* 雨天主题配色 */
 .theme-rainy {
   --page-bg-top: #e9f1fb;
   --page-bg-bottom: #d4e0f1;
@@ -247,6 +273,7 @@ onMounted(() => {
   --breath-edge: rgba(186, 219, 250, 0.24);
 }
 
+/* 背景氛围光晕装饰 */
 .weather-atmosphere {
   position: absolute;
   border-radius: 999px;
@@ -283,6 +310,7 @@ onMounted(() => {
   animation-delay: 5s;
 }
 
+/* 呼吸动画光效层 */
 .weather-breath-layer {
   position: absolute;
   pointer-events: none;
@@ -311,11 +339,13 @@ onMounted(() => {
   animation-delay: 2.2s;
 }
 
+/* 仪表盘主卡片 */
 .weather-dashboard-card {
   position: relative;
   z-index: 1;
 }
 
+/* 内容容器 */
 .weather-container {
   position: relative;
   z-index: 1;
@@ -515,6 +545,7 @@ onMounted(() => {
   }
 }
 
+/* 仪表盘网格布局 */
 .dashboard-grid {
   display: flex;
   flex-direction: column;
@@ -522,6 +553,7 @@ onMounted(() => {
   margin-top: 12px;
 }
 
+/* 底部两栏布局（预报 + 指标） */
 .bottom-layout {
   display: grid;
   grid-template-columns: minmax(380px, 0.9fr) minmax(0, 1.18fr);
@@ -529,11 +561,13 @@ onMounted(() => {
   align-items: start;
 }
 
+/* 左右栏容器 */
 .left-column,
 .right-column {
   min-width: 0;
 }
 
+/* 毛玻璃卡片通用样式 */
 .glass-card {
   border-radius: 30px;
   background: var(--card-bg);
@@ -550,11 +584,13 @@ onMounted(() => {
     transform 0.35s ease;
 }
 
+/* 加载状态样式 */
 .loading-state {
   margin-top: 16px;
   padding: 26px;
 }
 
+/* 天气内容淡入动画 */
 .weather-content-fade {
   animation: weatherFade 0.55s ease;
 }

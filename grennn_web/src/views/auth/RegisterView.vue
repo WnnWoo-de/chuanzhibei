@@ -1,16 +1,19 @@
 <template>
+  <!-- 注册页面主容器：全屏居中布局 -->
   <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans flex items-center justify-center px-6 relative overflow-hidden">
     <!-- 背景网格装饰 -->
     <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6">
       <div v-for="n in 12" :key="n" class="border-r border-black h-full"></div>
     </div>
 
+    <!-- 主内容区域 -->
     <div class="relative z-10 w-full max-w-md">
+      <!-- 注册卡片容器 -->
       <div class="bg-white/95 border border-black/10 p-8 md:p-12 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.15)] relative overflow-hidden group">
         <!-- 顶部绿色渐变装饰条 -->
         <div class="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-green-400 to-emerald-500"></div>
 
-        <!-- 卡片头部 -->
+        <!-- 卡片头部：Logo + 标题 -->
         <div class="text-center mb-8 pt-8">
           <div class="mb-6 flex justify-center">
             <img src="@/assets/logo.png" alt="GreenSight Logo" class="w-20 h-20 object-contain rounded-3xl shadow-lg border border-black/10" />
@@ -21,7 +24,7 @@
 
         <!-- 注册表单 -->
         <form @submit.prevent="handleRegister" class="space-y-6">
-          <!-- 用户名 -->
+          <!-- 用户名输入框 -->
           <BaseInput
             id="username"
             v-model="username"
@@ -34,7 +37,7 @@
             required
             @blur="validateName"
           />
-          <!-- 邮箱 -->
+          <!-- 邮箱输入框 -->
           <BaseInput
             id="email"
             v-model="email"
@@ -48,7 +51,7 @@
             required
             @blur="validateEmail"
           />
-          <!-- 密码 -->
+          <!-- 密码输入框 -->
           <BaseInput
             id="password"
             v-model="password"
@@ -60,7 +63,7 @@
             required
             @blur="validatePassword"
           />
-          <!-- 确认密码 -->
+          <!-- 确认密码输入框 -->
           <BaseInput
             id="confirmPassword"
             v-model="confirmPassword"
@@ -73,6 +76,7 @@
             @blur="validateConfirmPassword"
           />
 
+          <!-- 注册提交按钮 -->
           <div>
             <BaseButton type="submit" class="w-full" :is-loading="isLoading">{{ langText.auth.register }}</BaseButton>
           </div>
@@ -88,7 +92,7 @@
               class="inline-flex items-center justify-center gap-1 px-4 py-2 bg-black text-white text-xs font-mono uppercase tracking-wider rounded hover:bg-green-600 transition-colors"
             ><span>{{ langText.auth.loginNow }}</span><span>→</span></router-link>
           </div>
-          <!-- 游客模式 -->
+          <!-- 游客模式入口 -->
           <div class="text-center border-t border-black/10 pt-4">
             <p class="text-xs opacity-60 mb-2">{{ langText.auth.tryFirst }}</p>
             <router-link to="/chat" class="inline-flex items-center justify-center gap-1 px-4 py-2 bg-green-50 text-green-700 text-xs font-mono uppercase tracking-wider rounded border border-green-200 hover:bg-green-100 transition-colors">
@@ -120,6 +124,7 @@ const username = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+// 提交加载状态
 const isLoading = ref(false)
 
 // 字段错误信息
@@ -234,6 +239,7 @@ const handleRegister = async () => {
     return
   }
 
+  // 注册成功：跳转到 redirect 目标或首页
   const redirect = getRedirectPath(route.query?.redirect)
   router.replace(redirect || '/')
 }

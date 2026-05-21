@@ -8,7 +8,7 @@
     </div>
 
     <div class="relative z-10 max-w-6xl mx-auto">
-      <!-- Header -->
+      <!-- 成就页面头部：标题、总积分 -->
       <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
           <h1 class="text-4xl md:text-5xl font-bold mt-2 mb-2">{{ langText.achievements.title }}</h1>
@@ -20,7 +20,7 @@
         </div>
       </header>
 
-      <!-- Progress Section -->
+      <!-- 等级进度条 -->
       <div class="bg-white/80 backdrop-blur-md p-6 border border-black/10 mb-8 relative overflow-hidden shadow-xl rounded-2xl">
         <div class="absolute top-4 right-4 font-mono text-xs opacity-20">
           LEVEL_{{ currentLevel }}
@@ -50,7 +50,7 @@
         </p>
       </div>
 
-      <!-- Filter Tabs -->
+      <!-- 筛选标签：全部/已解锁/未解锁 -->
       <div class="flex gap-4 mb-6 overflow-x-auto pb-2">
         <button
           v-for="filterKey in filterKeys"
@@ -67,7 +67,7 @@
         </button>
       </div>
 
-      <!-- Badges Grid -->
+      <!-- 徽章网格展示 -->
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
         <transition-group name="badge-list">
           <div
@@ -133,7 +133,7 @@
         </transition-group>
       </div>
 
-      <!-- Empty State -->
+      <!-- 空状态提示 -->
       <div v-if="filteredBadges.length === 0" class="text-center py-16 col-span-full">
         <el-icon :size="64" class="text-gray-300 mb-4"><Box /></el-icon>
         <p class="text-gray-500">{{ langText.achievements.emptyPrefix }}{{ filterLabel(activeFilter) }}{{ langText.achievements.emptySuffix }}</p>
@@ -163,7 +163,7 @@
       </div>
     </transition>
 
-    <!-- Badge Detail Dialog -->
+    <!-- 徽章详情对话框 -->
     <el-dialog v-model="showBadgeDialog" :width="500" align-center>
       <template v-if="selectedBadge">
         <div class="text-center p-4">
@@ -451,6 +451,7 @@ watch(
 </script>
 
 <style scoped>
+/* 进度条闪光动画 */
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
@@ -460,6 +461,7 @@ watch(
   animation: shimmer 2s infinite;
 }
 
+/* 庆祝弹窗弹入动画 */
 @keyframes bounceIn {
   0% { opacity: 0; transform: scale(0.3); }
   50% { opacity: 1; transform: scale(1.08); }
@@ -482,6 +484,7 @@ watch(
   transform: scale(0.9) translateY(-20px);
 }
 
+/* 徽章列表过渡动画 */
 .badge-list-move,
 .badge-list-enter-active,
 .badge-list-leave-active {
