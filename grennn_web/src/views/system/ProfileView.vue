@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-24 px-6 relative overflow-x-hidden">
+  <div class="profile-root bg-transparent min-h-screen text-[#1a1a1a] font-sans pt-24 px-6 relative overflow-x-hidden">
     <!-- Grid Background -->
     <div class="fixed top-0 left-0 w-full h-full grid grid-cols-12 gap-4 pointer-events-none opacity-10 z-0 px-6">
       <div v-for="n in 12" :key="n" class="border-r border-black h-full hidden md:block"></div>
@@ -11,8 +11,8 @@
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10 items-start">
         <!-- Left Column: Title -->
         <div class="lg:col-span-1 mb-12 lg:mb-0">
-          <h1 class="text-4xl md:text-5xl font-bold mb-4 uppercase tracking-tighter text-primary">{{ langText.profile.title }}</h1>
-          <p class="font-mono text-xs uppercase tracking-widest text-gray-600">{{ langText.profile.subtitle }}</p>
+          <h1 class="profile-page-title text-4xl md:text-5xl font-bold mb-4 uppercase tracking-tighter text-primary">{{ langText.profile.title }}</h1>
+          <p class="profile-page-subtitle font-mono text-xs uppercase tracking-widest text-gray-600">{{ langText.profile.subtitle }}</p>
 
           <div class="profile-side-card mt-8">
             <span>{{ langText.profile.competitionProfile }}</span>
@@ -40,7 +40,7 @@
 
         <!-- Profile Content -->
         <div class="lg:col-span-4 lg:mt-12">
-          <div class="bg-white/95 backdrop-blur-md border border-primary/20 shadow-xl rounded-2xl min-h-[600px]">
+          <div class="profile-content-card bg-white/95 backdrop-blur-md border border-primary/20 shadow-xl rounded-2xl min-h-[600px]">
             <!-- Profile Overview -->
             <div v-if="activeTab === 'overview'" class="p-6 md:p-8 lg:p-8 animate-[fade-in_0.3s_ease]">
               <div class="mb-6 pb-3 border-b border-primary/10">
@@ -878,6 +878,11 @@ watch(() => form.bio, () => { if (touched.bio) validateBio() })
 </script>
 
 <style scoped>
+.profile-root {
+  position: relative;
+  isolation: isolate;
+}
+
 :deep(.profile-edit-dialog .el-dialog) {
   border-radius: 20px;
   overflow: hidden;
@@ -1380,6 +1385,225 @@ watch(() => form.bio, () => { if (touched.bio) validateBio() })
   font-size: 0.72rem;
   font-weight: 500;
   text-align: right;
+}
+
+:global(html.theme-dark .profile-root) {
+  color: #f1fff5;
+  background:
+    radial-gradient(circle at 18% 4%, rgba(35, 211, 133, 0.14), transparent 30%),
+    radial-gradient(circle at 82% 10%, rgba(235, 211, 150, 0.1), transparent 28%),
+    linear-gradient(90deg, rgba(4, 18, 13, 0.36), rgba(11, 48, 35, 0.18) 50%, rgba(4, 15, 11, 0.4)),
+    linear-gradient(180deg, #06140e 0%, #020806 100%) !important;
+}
+
+:global(html.theme-dark .profile-root .border-black) {
+  border-color: rgba(104, 244, 170, 0.18) !important;
+}
+
+:global(html.theme-dark .profile-page-title),
+:global(html.theme-dark .profile-root h2),
+:global(html.theme-dark .profile-root h3),
+:global(html.theme-dark .profile-root h4),
+:global(html.theme-dark .profile-user-name),
+:global(html.theme-dark .profile-hero__content h3),
+:global(html.theme-dark .profile-reward-card h4),
+:global(html.theme-dark .profile-badge-card h4),
+:global(html.theme-dark .profile-panel__head h3),
+:global(html.theme-dark .profile-timeline__item strong),
+:global(html.theme-dark .profile-action-list span),
+:global(html.theme-dark .profile-root .text-gray-800) {
+  color: #f4fff6 !important;
+}
+
+:global(html.theme-dark .profile-page-subtitle),
+:global(html.theme-dark .profile-side-card span),
+:global(html.theme-dark .profile-kicker),
+:global(html.theme-dark .profile-side-card p),
+:global(html.theme-dark .profile-hero__bio),
+:global(html.theme-dark .profile-level-panel__top span),
+:global(html.theme-dark .profile-level-panel p),
+:global(html.theme-dark .profile-user-email),
+:global(html.theme-dark .profile-mini-stats span),
+:global(html.theme-dark .profile-shortcut span),
+:global(html.theme-dark .profile-metric span),
+:global(html.theme-dark .profile-reward-card span),
+:global(html.theme-dark .profile-badge-card span),
+:global(html.theme-dark .profile-reward-card p),
+:global(html.theme-dark .profile-badge-card p),
+:global(html.theme-dark .profile-impact-card span),
+:global(html.theme-dark .profile-impact-card p),
+:global(html.theme-dark .profile-panel__head p),
+:global(html.theme-dark .profile-timeline__item p),
+:global(html.theme-dark .profile-action-list strong),
+:global(html.theme-dark .profile-root .text-gray-600),
+:global(html.theme-dark .profile-root .text-gray-500),
+:global(html.theme-dark .profile-root .text-gray-400) {
+  color: rgba(192, 212, 201, 0.76) !important;
+}
+
+:global(html.theme-dark .profile-side-card strong),
+:global(html.theme-dark .profile-level-panel__top strong),
+:global(html.theme-dark .profile-mini-stats strong),
+:global(html.theme-dark .profile-shortcut strong),
+:global(html.theme-dark .profile-metric strong),
+:global(html.theme-dark .profile-impact-card strong),
+:global(html.theme-dark .profile-panel__head a),
+:global(html.theme-dark .profile-root .text-primary) {
+  color: #33e58d !important;
+}
+
+:global(html.theme-dark .profile-content-card),
+:global(html.theme-dark .profile-root .bg-white\/95),
+:global(html.theme-dark .profile-side-card),
+:global(html.theme-dark .profile-hero),
+:global(html.theme-dark .profile-level-panel),
+:global(html.theme-dark .profile-mini-stats div),
+:global(html.theme-dark .profile-shortcut),
+:global(html.theme-dark .profile-metric),
+:global(html.theme-dark .profile-empty),
+:global(html.theme-dark .profile-reward-card),
+:global(html.theme-dark .profile-badge-card),
+:global(html.theme-dark .profile-impact-card),
+:global(html.theme-dark .profile-panel),
+:global(html.theme-dark .profile-action-list a),
+:global(html.theme-dark .profile-root .bg-green-50\/50),
+:global(html.theme-dark .profile-root .bg-green-50\/30),
+:global(html.theme-dark .profile-root .bg-green-50) {
+  border-color: rgba(213, 245, 224, 0.14) !important;
+  background:
+    linear-gradient(145deg, rgba(15, 37, 27, 0.88), rgba(7, 22, 16, 0.82) 58%, rgba(5, 15, 11, 0.92)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 30px 82px rgba(0, 0, 0, 0.34) !important;
+}
+
+:global(html.theme-dark .profile-hero) {
+  background:
+    radial-gradient(circle at 88% 12%, rgba(53, 211, 141, 0.16), transparent 34%),
+    linear-gradient(135deg, rgba(47, 48, 26, 0.9), rgba(45, 38, 34, 0.84) 52%, rgba(10, 31, 22, 0.92)) !important;
+}
+
+:global(html.theme-dark .profile-root nav button) {
+  border-color: transparent;
+  background: rgba(5, 18, 13, 0.35);
+  color: rgba(192, 212, 201, 0.76);
+}
+
+:global(html.theme-dark .profile-root nav button:hover),
+:global(html.theme-dark .profile-root nav button.border-primary) {
+  border-color: #33e58d !important;
+  background: rgba(23, 77, 51, 0.46) !important;
+  color: #f4fff6 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+:global(html.theme-dark .profile-tags span),
+:global(html.theme-dark .profile-timeline__item > span),
+:global(html.theme-dark .profile-badge-card__icon),
+:global(html.theme-dark .profile-root .bg-primary\/10),
+:global(html.theme-dark .profile-root .bg-green-100) {
+  border-color: rgba(82, 237, 154, 0.18) !important;
+  background: rgba(23, 77, 51, 0.46) !important;
+  color: #7df0b0 !important;
+}
+
+:global(html.theme-dark .profile-root .border-primary\/10),
+:global(html.theme-dark .profile-root .border-primary\/20),
+:global(html.theme-dark .profile-root .hover\:border-primary\/30:hover) {
+  border-color: rgba(213, 245, 224, 0.14) !important;
+}
+
+:global(html.theme-dark .profile-side-card__bar),
+:global(html.theme-dark .profile-progress) {
+  background: rgba(213, 245, 224, 0.1);
+}
+
+:global(html.theme-dark .profile-side-card__bar i),
+:global(html.theme-dark .profile-progress i) {
+  background: linear-gradient(90deg, #24dc83, #47d79a, #f6c85f);
+}
+
+:global(html.theme-dark .profile-avatar__image),
+:global(html.theme-dark .profile-avatar__fallback) {
+  border-color: rgba(232, 248, 237, 0.9);
+  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.28);
+}
+
+:global(html.theme-dark .profile-root input),
+:global(html.theme-dark .profile-root textarea) {
+  border-color: rgba(213, 245, 224, 0.14) !important;
+  background: rgba(5, 18, 13, 0.78) !important;
+  color: #f4fff6 !important;
+}
+
+:global(html.theme-dark .profile-root input:disabled) {
+  color: rgba(192, 212, 201, 0.62) !important;
+  cursor: not-allowed;
+}
+
+:global(html.theme-dark .profile-root input::placeholder),
+:global(html.theme-dark .profile-root textarea::placeholder) {
+  color: rgba(192, 212, 201, 0.46);
+}
+
+:global(html.theme-dark .profile-root .bg-primary) {
+  background: linear-gradient(135deg, #24dc83, #47d79a) !important;
+  color: #06140e !important;
+}
+
+:global(html.theme-dark .profile-root .profile-empty) {
+  border-style: dashed;
+  color: rgba(192, 212, 201, 0.76);
+}
+
+:global(html.theme-dark .profile-root .profile-reward-card strong) {
+  color: #ff9a82;
+}
+
+:global(html.theme-dark .profile-root .profile-reward-card strong.\!text-primary) {
+  color: #33e58d !important;
+}
+
+:global(html.theme-dark .profile-page-title) {
+  color: #f4fff6 !important;
+}
+
+:global(html.theme-dark .profile-edit-dialog.el-dialog),
+:global(html.theme-dark .profile-edit-dialog .el-dialog) {
+  overflow: hidden;
+  border: 1px solid rgba(213, 245, 224, 0.16);
+  background:
+    linear-gradient(145deg, rgba(15, 37, 27, 0.98), rgba(7, 22, 16, 0.96) 58%, rgba(5, 15, 11, 0.98));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 34px 90px rgba(0, 0, 0, 0.48);
+}
+
+:global(html.theme-dark .profile-edit-dialog .el-dialog__header),
+:global(html.theme-dark .profile-edit-dialog.el-dialog .el-dialog__header) {
+  background:
+    radial-gradient(circle at 86% 14%, rgba(53, 211, 141, 0.16), transparent 34%),
+    linear-gradient(135deg, rgba(47, 48, 26, 0.92), rgba(45, 38, 34, 0.86) 52%, rgba(30, 28, 26, 0.92));
+}
+
+:global(html.theme-dark .profile-edit-dialog .el-dialog__title),
+:global(html.theme-dark .profile-edit-dialog.el-dialog .el-dialog__title) {
+  color: #f4fff6;
+}
+
+:global(html.theme-dark .profile-edit-dialog .el-dialog__body),
+:global(html.theme-dark .profile-edit-dialog .el-dialog__footer),
+:global(html.theme-dark .profile-edit-dialog.el-dialog .el-dialog__body),
+:global(html.theme-dark .profile-edit-dialog.el-dialog .el-dialog__footer) {
+  color: #f4fff6;
+  background: transparent;
+}
+
+:global(html.theme-dark .profile-edit-dialog input),
+:global(html.theme-dark .profile-edit-dialog textarea) {
+  border-color: rgba(213, 245, 224, 0.14) !important;
+  background: rgba(5, 18, 13, 0.78) !important;
+  color: #f4fff6 !important;
 }
 @media (max-width: 1024px) {
   .profile-hero {

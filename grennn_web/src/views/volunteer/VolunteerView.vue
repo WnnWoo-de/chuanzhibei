@@ -487,6 +487,11 @@ onMounted(async () => { await userStore.init() })
 </script>
 
 <style scoped>
+.vol-root {
+  position: relative;
+  isolation: isolate;
+}
+
 /* 积分卡片样式：蓝色渐变背景，带阴影和圆角 */
 .vol-points-card {
   position: relative;
@@ -708,5 +713,173 @@ onMounted(async () => { await userStore.init() })
 .card-list-leave-to {
   opacity: 0;
   transform: scale(0.96);
+}
+
+:global(html.theme-dark .vol-root) {
+  --vol-dark-text: #f2fff5;
+  --vol-dark-muted: rgba(191, 211, 199, 0.76);
+  --vol-dark-soft: rgba(148, 168, 156, 0.62);
+  --vol-dark-line: rgba(213, 245, 224, 0.14);
+  --vol-dark-accent: #18dd7a;
+  color: var(--vol-dark-text);
+  background:
+    linear-gradient(90deg, rgba(3, 13, 9, 0.24), rgba(12, 54, 38, 0.16) 48%, rgba(3, 12, 9, 0.28)),
+    linear-gradient(180deg, rgba(3, 15, 10, 0.72), rgba(2, 10, 7, 0.9));
+}
+
+:global(html.theme-dark .vol-root > .fixed) {
+  opacity: 0.09 !important;
+}
+
+:global(html.theme-dark .vol-root > .fixed .border-primary) {
+  border-color: rgba(191, 244, 213, 0.16) !important;
+}
+
+:global(html.theme-dark .vol-root h1),
+:global(html.theme-dark .vol-root h2),
+:global(html.theme-dark .vol-root h3),
+:global(html.theme-dark .vol-root h4),
+:global(html.theme-dark .vol-root strong),
+:global(html.theme-dark .vol-root .text-black),
+:global(html.theme-dark .vol-root .text-blue-900) {
+  color: var(--vol-dark-text) !important;
+}
+
+:global(html.theme-dark .vol-root p),
+:global(html.theme-dark .vol-root li),
+:global(html.theme-dark .vol-root .text-gray-400),
+:global(html.theme-dark .vol-root .text-gray-500),
+:global(html.theme-dark .vol-root .text-gray-600),
+:global(html.theme-dark .vol-root .text-blue-700\/60),
+:global(html.theme-dark .vol-root .text-blue-500\/60),
+:global(html.theme-dark .vol-root .text-blue-500\/50) {
+  color: var(--vol-dark-muted) !important;
+}
+
+:global(html.theme-dark .vol-root .text-primary),
+:global(html.theme-dark .vol-root .text-primary\/50),
+:global(html.theme-dark .vol-root .text-primary\/60),
+:global(html.theme-dark .vol-root .text-primary\/20) {
+  color: var(--vol-dark-accent) !important;
+}
+
+:global(html.theme-dark .vol-sidebar-card),
+:global(html.theme-dark .vol-rules-card),
+:global(html.theme-dark .vol-activity-card) {
+  background:
+    linear-gradient(145deg, rgba(16, 37, 27, 0.9), rgba(9, 26, 19, 0.84) 55%, rgba(7, 18, 14, 0.92)) !important;
+  border-color: var(--vol-dark-line) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 30px 82px rgba(0, 0, 0, 0.38) !important;
+}
+
+:global(html.theme-dark .vol-points-card),
+:global(html.theme-dark .vol-redeem-banner),
+:global(html.theme-dark .vol-activity-card:nth-child(2n)) {
+  background:
+    linear-gradient(135deg, rgba(47, 48, 26, 0.9), rgba(45, 38, 34, 0.86) 50%, rgba(31, 29, 29, 0.92)) !important;
+  border-color: rgba(240, 230, 196, 0.14) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 68px rgba(0, 0, 0, 0.36) !important;
+}
+
+:global(html.theme-dark .vol-sidebar-card__header) {
+  border-bottom-color: rgba(213, 245, 224, 0.16) !important;
+  color: var(--vol-dark-text);
+}
+
+:global(html.theme-dark .vol-sidebar-card__icon),
+:global(html.theme-dark .vol-root .bg-gray-100),
+:global(html.theme-dark .vol-root .bg-white\/50),
+:global(html.theme-dark .vol-meta-cell),
+:global(html.theme-dark .vol-filter-btn),
+:global(html.theme-dark .vol-root .bg-gray-50),
+:global(html.theme-dark .vol-root .bg-primary\/5) {
+  background: rgba(3, 13, 9, 0.56) !important;
+  border-color: rgba(213, 245, 224, 0.12) !important;
+  color: var(--vol-dark-muted) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+:global(html.theme-dark .vol-sidebar-card li:hover),
+:global(html.theme-dark .vol-filter-btn:hover),
+:global(html.theme-dark .vol-activity-card:hover) {
+  background: rgba(24, 221, 122, 0.09) !important;
+  border-color: rgba(24, 221, 122, 0.34) !important;
+}
+
+:global(html.theme-dark .vol-filter-btn--active),
+:global(html.theme-dark .vol-redeem-btn),
+:global(html.theme-dark .vol-root button.bg-primary),
+:global(html.theme-dark .vol-root .border-primary.text-primary:hover) {
+  background: linear-gradient(90deg, #21df7e, #47d59a) !important;
+  border-color: rgba(24, 221, 122, 0.46) !important;
+  color: #04140b !important;
+  box-shadow: 0 12px 30px rgba(24, 221, 122, 0.18) !important;
+}
+
+:global(html.theme-dark .vol-root .border-primary),
+:global(html.theme-dark .vol-root .border-primary\/8),
+:global(html.theme-dark .vol-root .border-primary\/20),
+:global(html.theme-dark .vol-root .border-gray-200),
+:global(html.theme-dark .vol-root .border-black\/5) {
+  border-color: rgba(213, 245, 224, 0.14) !important;
+}
+
+:global(html.theme-dark .vol-root .border-blue-400),
+:global(html.theme-dark .vol-root .text-blue-700) {
+  border-color: rgba(24, 221, 122, 0.38) !important;
+  color: var(--vol-dark-accent) !important;
+}
+
+:global(html.theme-dark .vol-root .bg-blue-50\/60),
+:global(html.theme-dark .vol-root .hover\:bg-primary\/5:hover) {
+  background: rgba(24, 221, 122, 0.09) !important;
+}
+
+:global(html.theme-dark .vol-root .bg-gray-100 .text-gray-300),
+:global(html.theme-dark .vol-root .text-gray-300) {
+  color: rgba(191, 211, 199, 0.38) !important;
+}
+
+:global(html.theme-dark .vol-meta-cell--points) {
+  background: rgba(24, 221, 122, 0.1) !important;
+}
+
+:global(html.theme-dark .vol-category-badge) {
+  background: rgba(24, 221, 122, 0.12) !important;
+  border: 1px solid rgba(24, 221, 122, 0.22);
+  color: var(--vol-dark-accent) !important;
+}
+
+:global(html.theme-dark .vol-urgent-badge) {
+  background: rgba(248, 113, 113, 0.12) !important;
+  border-color: rgba(248, 113, 113, 0.28) !important;
+  color: #fca5a5 !important;
+}
+
+:global(html.theme-dark .vol-root .h-1\.5.bg-gray-100) {
+  background: rgba(213, 245, 224, 0.1) !important;
+}
+
+:global(html.theme-dark .vol-root .el-input__wrapper),
+:global(html.theme-dark .vol-root .el-textarea__inner) {
+  background: rgba(4, 16, 11, 0.68) !important;
+  border-color: rgba(213, 245, 224, 0.14) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(213, 245, 224, 0.14),
+    0 8px 20px rgba(0, 0, 0, 0.18) !important;
+}
+
+:global(html.theme-dark .vol-root .el-input__inner),
+:global(html.theme-dark .vol-root .el-textarea__inner) {
+  color: var(--vol-dark-text) !important;
+}
+
+:global(html.theme-dark .vol-root .el-input__inner::placeholder),
+:global(html.theme-dark .vol-root .el-textarea__inner::placeholder) {
+  color: rgba(191, 211, 199, 0.62) !important;
 }
 </style>

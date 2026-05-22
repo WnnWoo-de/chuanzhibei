@@ -657,49 +657,175 @@ onMounted(() => {
   }
 }
 
-:global(html.theme-dark) .weather-page {
-  --page-bg-top: #08110d;
-  --page-bg-bottom: #050b08;
-  --page-glow-1: rgba(110, 231, 164, 0.16);
-  --page-glow-2: rgba(103, 232, 249, 0.12);
-  --page-glow-3: rgba(251, 191, 36, 0.08);
-  --breath-core: rgba(110, 231, 164, 0.18);
-  --breath-edge: rgba(103, 232, 249, 0.12);
-  --card-bg: linear-gradient(180deg, rgba(16, 26, 20, 0.82), rgba(20, 34, 26, 0.72));
-  --card-border: rgba(202, 232, 214, 0.14);
-  --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.36);
-  --text-primary: var(--color-text);
-  --text-secondary: var(--color-text-muted);
+:global(html.theme-dark .weather-page) {
+  --page-bg-top: #06140e;
+  --page-bg-bottom: #030907;
+  --page-glow-1: rgba(31, 196, 122, 0.16);
+  --page-glow-2: rgba(56, 189, 248, 0.1);
+  --page-glow-3: rgba(240, 230, 196, 0.08);
+  --breath-core: rgba(31, 196, 122, 0.16);
+  --breath-edge: rgba(56, 189, 248, 0.1);
+  --card-bg: linear-gradient(145deg, rgba(15, 37, 27, 0.88), rgba(7, 22, 16, 0.82) 58%, rgba(5, 15, 11, 0.92));
+  --card-border: rgba(213, 245, 224, 0.14);
+  --card-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 30px 82px rgba(0, 0, 0, 0.42);
+  --text-primary: #f2fff5;
+  --text-secondary: rgba(191, 211, 199, 0.76);
+  color: var(--text-primary);
   background:
-    radial-gradient(circle at 50% 2%, rgba(110, 231, 164, 0.14), transparent 34%),
-    linear-gradient(180deg, var(--page-bg-top), var(--page-bg-bottom));
+    linear-gradient(90deg, rgba(3, 13, 9, 0.26), rgba(12, 54, 38, 0.17) 48%, rgba(3, 12, 9, 0.3)),
+    linear-gradient(180deg, rgba(3, 15, 10, 0.72), rgba(2, 10, 7, 0.92));
 }
 
-:global(html.theme-dark) .card-header {
-  border-bottom-color: var(--color-border-soft);
+:global(html.theme-dark .weather-page .weather-atmosphere) {
+  opacity: 0.64;
+  mix-blend-mode: screen;
 }
 
-:global(html.theme-dark) .card-title,
-:global(html.theme-dark) .tip-title {
-  color: var(--color-text);
+:global(html.theme-dark .weather-page .glass-card),
+:global(html.theme-dark .weather-page .search-card),
+:global(html.theme-dark .weather-page .hero-card),
+:global(html.theme-dark .weather-page .forecast-card),
+:global(html.theme-dark .weather-page .metric-card),
+:global(html.theme-dark .weather-page .glass-panel) {
+  background: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  box-shadow: var(--card-shadow) !important;
+  backdrop-filter: blur(22px) saturate(1.08);
+  -webkit-backdrop-filter: blur(22px) saturate(1.08);
 }
 
-:global(html.theme-dark) .card-subtitle,
-:global(html.theme-dark) .tip-text {
-  color: var(--color-text-muted);
+:global(html.theme-dark .weather-page .green-travel-card),
+:global(html.theme-dark .weather-page .hero-card) {
+  background:
+    linear-gradient(145deg, rgba(16, 37, 27, 0.92), rgba(9, 26, 19, 0.86) 55%, rgba(7, 18, 14, 0.94)) !important;
 }
 
-:global(html.theme-dark) .tip-item {
-  background: rgba(15, 27, 21, 0.62);
-  border-color: rgba(202, 232, 214, 0.12);
+:global(html.theme-dark .weather-page .metric-card:nth-child(1)),
+:global(html.theme-dark .weather-page .metric-card:nth-child(3)) {
+  background:
+    linear-gradient(135deg, rgba(47, 48, 26, 0.88), rgba(45, 38, 34, 0.84) 50%, rgba(31, 29, 29, 0.9)) !important;
+  border-color: rgba(240, 230, 196, 0.14) !important;
 }
 
-:global(html.theme-dark) .tip-item:hover {
-  background: rgba(20, 34, 26, 0.78);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+:global(html.theme-dark .weather-page .metric-card::before) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 46%);
 }
 
-:global(html.theme-dark) :deep(.el-skeleton__item) {
-  background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(110,231,164,0.12), rgba(255,255,255,0.05));
+:global(html.theme-dark .weather-page .card-header),
+:global(html.theme-dark .weather-page .section-header) {
+  border-bottom-color: rgba(213, 245, 224, 0.16);
+}
+
+:global(html.theme-dark .weather-page .card-title),
+:global(html.theme-dark .weather-page .tip-title),
+:global(html.theme-dark .weather-page .city-name),
+:global(html.theme-dark .weather-page .temp-display),
+:global(html.theme-dark .weather-page .weather-desc),
+:global(html.theme-dark .weather-page .hero-side-main),
+:global(html.theme-dark .weather-page .section-title),
+:global(html.theme-dark .weather-page .h-temp),
+:global(html.theme-dark .weather-page .d-day),
+:global(html.theme-dark .weather-page .d-temp-max),
+:global(html.theme-dark .weather-page .metric-header),
+:global(html.theme-dark .weather-page .metric-value),
+:global(html.theme-dark .weather-page .metric-value--large),
+:global(html.theme-dark .weather-page .metric-value--time),
+:global(html.theme-dark .weather-page .metric-highlight),
+:global(html.theme-dark .weather-page .wind-speed) {
+  color: var(--text-primary) !important;
+}
+
+:global(html.theme-dark .weather-page .card-subtitle),
+:global(html.theme-dark .weather-page .tip-text),
+:global(html.theme-dark .weather-page .search-eyebrow),
+:global(html.theme-dark .weather-page .search-hint),
+:global(html.theme-dark .weather-page .hero-kicker),
+:global(html.theme-dark .weather-page .hero-side-label),
+:global(html.theme-dark .weather-page .city-adm),
+:global(html.theme-dark .weather-page .hero-feels-like),
+:global(html.theme-dark .weather-page .hero-range-line),
+:global(html.theme-dark .weather-page .hero-side-sub),
+:global(html.theme-dark .weather-page .section-subtitle),
+:global(html.theme-dark .weather-page .h-time),
+:global(html.theme-dark .weather-page .d-temp-min),
+:global(html.theme-dark .weather-page .daily-item),
+:global(html.theme-dark .weather-page .metric-footnote),
+:global(html.theme-dark .weather-page .wind-dir) {
+  color: var(--text-secondary) !important;
+}
+
+:global(html.theme-dark .weather-page .tip-item),
+:global(html.theme-dark .weather-page .hourly-item),
+:global(html.theme-dark .weather-page .hero-pill),
+:global(html.theme-dark .weather-page .meta-badge),
+:global(html.theme-dark .weather-page .meta-info),
+:global(html.theme-dark .weather-page .meta-mock),
+:global(html.theme-dark .weather-page .meta-error),
+:global(html.theme-dark .weather-page .h-icon-shell) {
+  background: rgba(3, 13, 9, 0.58) !important;
+  border-color: rgba(213, 245, 224, 0.12) !important;
+  color: var(--text-secondary) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+:global(html.theme-dark .weather-page .tip-item:hover),
+:global(html.theme-dark .weather-page .hourly-item:hover) {
+  background: rgba(24, 221, 122, 0.09) !important;
+  border-color: rgba(24, 221, 122, 0.34) !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+}
+
+:global(html.theme-dark .weather-page .search-input-el .el-input__wrapper) {
+  background: rgba(4, 16, 11, 0.68) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(213, 245, 224, 0.14),
+    0 8px 20px rgba(0, 0, 0, 0.18) !important;
+}
+
+:global(html.theme-dark .weather-page .search-input-el .el-input__inner) {
+  color: var(--text-primary) !important;
+}
+
+:global(html.theme-dark .weather-page .search-input-el .el-input__inner::placeholder),
+:global(html.theme-dark .weather-page .search-input-el .el-input__prefix-inner),
+:global(html.theme-dark .weather-page .search-input-el .el-input__suffix-inner),
+:global(html.theme-dark .weather-page .meta-tip) {
+  color: rgba(191, 211, 199, 0.62) !important;
+}
+
+:global(html.theme-dark .weather-page .search-btn) {
+  background: linear-gradient(90deg, #21df7e, #47d59a) !important;
+  border-color: rgba(24, 221, 122, 0.46) !important;
+  color: #04140b !important;
+  box-shadow:
+    0 12px 30px rgba(24, 221, 122, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+:global(html.theme-dark .weather-page .d-bar-bg),
+:global(html.theme-dark .weather-page .sun-track::before) {
+  background: rgba(213, 245, 224, 0.1) !important;
+}
+
+:global(html.theme-dark .weather-page .sun-track::after) {
+  border-top-color: rgba(213, 245, 224, 0.22) !important;
+}
+
+:global(html.theme-dark .weather-page .wind-dial-inner) {
+  border-color: rgba(213, 245, 224, 0.2) !important;
+}
+
+:global(html.theme-dark .weather-page .wind-arrow) {
+  background: var(--text-secondary) !important;
+}
+
+:global(html.theme-dark .weather-page .wind-arrow::before) {
+  border-bottom-color: var(--text-secondary) !important;
+}
+
+:global(html.theme-dark .weather-page .el-skeleton__item) {
+  background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(110,231,164,0.12), rgba(255,255,255,0.05)) !important;
 }
 </style>

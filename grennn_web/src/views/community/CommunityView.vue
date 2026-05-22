@@ -885,6 +885,11 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.community-page {
+  position: relative;
+  isolation: isolate;
+}
+
 /* 社区页面通用毛玻璃卡片样式 */
 .community-hero,
 .community-glass,
@@ -1325,5 +1330,205 @@ onMounted(async () => {
   .community-empty {
     border-radius: 1.1rem;
   }
+}
+
+:global(html.theme-dark .community-page) {
+  --community-dark-text: #f2fff5;
+  --community-dark-muted: rgba(191, 211, 199, 0.76);
+  --community-dark-soft: rgba(148, 168, 156, 0.62);
+  --community-dark-line: rgba(213, 245, 224, 0.14);
+  --community-dark-accent: #18dd7a;
+  color: var(--community-dark-text);
+  background:
+    linear-gradient(90deg, rgba(3, 13, 9, 0.24), rgba(12, 54, 38, 0.16) 48%, rgba(3, 12, 9, 0.28)),
+    linear-gradient(180deg, rgba(3, 15, 10, 0.72), rgba(2, 10, 7, 0.9));
+}
+
+:global(html.theme-dark .community-page > .fixed) {
+  opacity: 0.08 !important;
+}
+
+:global(html.theme-dark .community-page > .fixed .border-black) {
+  border-color: rgba(191, 244, 213, 0.16) !important;
+}
+
+:global(html.theme-dark .community-hero),
+:global(html.theme-dark .community-glass),
+:global(html.theme-dark .community-pulse-card),
+:global(html.theme-dark .community-post),
+:global(html.theme-dark .community-highlight-card),
+:global(html.theme-dark .community-overview-card),
+:global(html.theme-dark .community-empty) {
+  background:
+    linear-gradient(145deg, rgba(16, 37, 27, 0.9), rgba(9, 26, 19, 0.84) 55%, rgba(7, 18, 14, 0.92)) !important;
+  border-color: var(--community-dark-line) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 30px 82px rgba(0, 0, 0, 0.38);
+}
+
+:global(html.theme-dark .community-hero),
+:global(html.theme-dark .community-post:nth-of-type(2n)),
+:global(html.theme-dark .community-highlight-card:nth-child(2)) {
+  background:
+    linear-gradient(135deg, rgba(47, 48, 26, 0.9), rgba(45, 38, 34, 0.86) 50%, rgba(31, 29, 29, 0.92)) !important;
+  border-color: rgba(240, 230, 196, 0.14) !important;
+}
+
+:global(html.theme-dark .community-page h1),
+:global(html.theme-dark .community-page h2),
+:global(html.theme-dark .community-page h3),
+:global(html.theme-dark .community-page strong),
+:global(html.theme-dark .community-page .community-metric__value),
+:global(html.theme-dark .community-page .community-mini-panel__value),
+:global(html.theme-dark .community-page .community-overview-card__value),
+:global(html.theme-dark .community-page .community-pulse-row strong),
+:global(html.theme-dark .community-page .community-side-stat strong) {
+  color: var(--community-dark-text) !important;
+}
+
+:global(html.theme-dark .community-page p),
+:global(html.theme-dark .community-page .text-gray-400),
+:global(html.theme-dark .community-page .text-gray-500),
+:global(html.theme-dark .community-page .text-gray-600),
+:global(html.theme-dark .community-page .community-metric__hint),
+:global(html.theme-dark .community-page .community-mini-panel__hint),
+:global(html.theme-dark .community-page .community-overview-card__hint),
+:global(html.theme-dark .community-page .community-pulse-row),
+:global(html.theme-dark .community-page .community-side-stat span),
+:global(html.theme-dark .community-page .community-metric__label),
+:global(html.theme-dark .community-page .community-mini-panel__label),
+:global(html.theme-dark .community-page .community-overview-card__label) {
+  color: var(--community-dark-muted) !important;
+}
+
+:global(html.theme-dark .community-page .text-primary\/65),
+:global(html.theme-dark .community-page .text-primary\/70),
+:global(html.theme-dark .community-page .text-primary),
+:global(html.theme-dark .community-inline-link),
+:global(html.theme-dark .community-page .community-action-btn:hover),
+:global(html.theme-dark .community-page .community-action-btn--active) {
+  color: var(--community-dark-accent) !important;
+}
+
+:global(html.theme-dark .community-metric),
+:global(html.theme-dark .community-mini-panel),
+:global(html.theme-dark .community-side-stat),
+:global(html.theme-dark .community-pulse-row),
+:global(html.theme-dark .community-rank-row),
+:global(html.theme-dark .community-topic-pill),
+:global(html.theme-dark .community-chip),
+:global(html.theme-dark .community-quote),
+:global(html.theme-dark .community-action-btn),
+:global(html.theme-dark .community-empty__icon) {
+  background: rgba(3, 13, 9, 0.54) !important;
+  border-color: rgba(213, 245, 224, 0.12) !important;
+  color: var(--community-dark-muted) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+:global(html.theme-dark .community-rank-row:hover),
+:global(html.theme-dark .community-action-btn:hover),
+:global(html.theme-dark .community-topic-pill:hover) {
+  background: rgba(24, 221, 122, 0.09) !important;
+  border-color: rgba(24, 221, 122, 0.34) !important;
+}
+
+:global(html.theme-dark .community-topic-pill--active),
+:global(html.theme-dark .community-action-btn--active),
+:global(html.theme-dark .community-segment__item--active) {
+  background: linear-gradient(90deg, #21df7e, #47d59a) !important;
+  border-color: rgba(24, 221, 122, 0.46) !important;
+  color: #04140b !important;
+  box-shadow: 0 12px 30px rgba(24, 221, 122, 0.18) !important;
+}
+
+:global(html.theme-dark .community-hero__cta--primary),
+:global(html.theme-dark .community-dialog-btn--primary),
+:global(html.theme-dark .community-load-more:hover) {
+  background: linear-gradient(90deg, #21df7e, #47d59a) !important;
+  border-color: rgba(24, 221, 122, 0.46) !important;
+  color: #04140b !important;
+}
+
+:global(html.theme-dark .community-hero__cta--secondary),
+:global(html.theme-dark .community-load-more),
+:global(html.theme-dark .community-dialog-btn--secondary) {
+  background: rgba(3, 13, 9, 0.58) !important;
+  border-color: rgba(213, 245, 224, 0.14) !important;
+  color: var(--community-dark-text) !important;
+}
+
+:global(html.theme-dark .community-segment) {
+  background: rgba(3, 13, 9, 0.58) !important;
+  border-color: rgba(213, 245, 224, 0.12) !important;
+}
+
+:global(html.theme-dark .community-segment__item) {
+  color: var(--community-dark-muted) !important;
+}
+
+:global(html.theme-dark .community-post__topic),
+:global(html.theme-dark .community-highlight-card__tag) {
+  background: rgba(24, 221, 122, 0.12) !important;
+  border-color: rgba(24, 221, 122, 0.22) !important;
+  color: var(--community-dark-accent) !important;
+}
+
+:global(html.theme-dark .community-challenge-card) {
+  background:
+    linear-gradient(135deg, rgba(47, 48, 26, 0.9), rgba(45, 38, 34, 0.86) 50%, rgba(31, 29, 29, 0.92)) !important;
+  border-color: rgba(240, 230, 196, 0.14) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 68px rgba(0, 0, 0, 0.36) !important;
+}
+
+:global(html.theme-dark .community-challenge-card h3),
+:global(html.theme-dark .community-challenge-card .text-emerald-950) {
+  color: var(--community-dark-text) !important;
+}
+
+:global(html.theme-dark .community-challenge-card p),
+:global(html.theme-dark .community-challenge-card .text-emerald-900\/75),
+:global(html.theme-dark .community-challenge-card .text-emerald-900\/70),
+:global(html.theme-dark .community-challenge-card .text-emerald-800\/65) {
+  color: var(--community-dark-muted) !important;
+}
+
+:global(html.theme-dark .community-progress-track) {
+  background: rgba(213, 245, 224, 0.1) !important;
+}
+
+:global(html.theme-dark .community-avatar-badge),
+:global(html.theme-dark .community-side-stat .community-avatar-badge) {
+  background: rgba(24, 221, 122, 0.12) !important;
+  border-color: rgba(24, 221, 122, 0.24) !important;
+  color: var(--community-dark-accent) !important;
+}
+
+:global(html.theme-dark .community-page .el-input__wrapper) {
+  background: rgba(4, 16, 11, 0.68) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(213, 245, 224, 0.14),
+    0 8px 20px rgba(0, 0, 0, 0.18) !important;
+}
+
+:global(html.theme-dark .community-page .el-input__inner) {
+  color: var(--community-dark-text) !important;
+}
+
+:global(html.theme-dark .community-page .el-input__inner::placeholder) {
+  color: rgba(191, 211, 199, 0.62) !important;
+}
+
+:global(html.theme-dark .community-page img) {
+  border-color: rgba(213, 245, 224, 0.18) !important;
+}
+
+:global(html.theme-dark .community-post--skeleton .bg-gray-100),
+:global(html.theme-dark .community-post--skeleton .bg-gray-200),
+:global(html.theme-dark .community-page .animate-pulse) {
+  background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(110,231,164,0.12), rgba(255,255,255,0.05)) !important;
 }
 </style>
