@@ -673,24 +673,24 @@
     </section>
 
     <!-- 底部滚动标语 -->
-    <div class="py-12 border-t border-black/10 overflow-hidden bg-white text-white/80">
-      <div class="flex whitespace-nowrap animate-marquee">
+    <div class="home-marquee">
+      <div class="home-marquee__track flex whitespace-nowrap animate-marquee">
         <!-- 第一组内容 -->
-        <div class="flex items-center shrink-0">
+        <div class="home-marquee__group">
           <span
             v-for="(item, index) in langText.home.marquee"
             :key="`m1-${index}`"
-            class="text-[4vw] font-bold mx-8"
-            :class="{ 'text-gray-500': index % 3 !== 0 }"
+            class="home-marquee__item"
+            :class="index % 3 === 0 ? 'home-marquee__item--accent' : 'home-marquee__item--muted'"
           >{{ item }}</span>
         </div>
         <!-- 第二组内容 (用于无缝循环) -->
-        <div class="flex items-center shrink-0">
+        <div class="home-marquee__group">
           <span
             v-for="(item, index) in langText.home.marquee"
             :key="`m2-${index}`"
-            class="text-[4vw] font-bold mx-8"
-            :class="{ 'text-gray-500': index % 3 !== 0 }"
+            class="home-marquee__item"
+            :class="index % 3 === 0 ? 'home-marquee__item--accent' : 'home-marquee__item--muted'"
           >{{ item }}</span>
         </div>
       </div>
@@ -1601,6 +1601,48 @@ onUnmounted(() => {
 }
 
 /* 底部滚动标语动画 */
+.home-marquee {
+  overflow: hidden;
+  border-top: 1px solid rgba(17, 24, 39, 0.1);
+  background:
+    linear-gradient(180deg, #ffffff 0%, #f8faf9 100%);
+  padding-block: clamp(3.25rem, 6vw, 5.25rem);
+}
+
+.home-marquee__track {
+  width: max-content;
+  align-items: center;
+}
+
+.home-marquee__group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-width: max-content;
+}
+
+.home-marquee__item {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  margin-inline: clamp(1.25rem, 3vw, 3.5rem);
+  padding-block: 0.18em;
+  color: #667085;
+  font-size: clamp(2.65rem, 4.3vw, 5.25rem);
+  font-weight: 850;
+  line-height: 1.12;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.home-marquee__item--accent {
+  color: #1f2937;
+}
+
+.home-marquee__item--muted {
+  color: #667085;
+}
+
 .animate-marquee {
   animation: marquee 30s linear infinite;
 }
@@ -1618,6 +1660,20 @@ onUnmounted(() => {
        移动 -50% 恰好到达第二组开头，视觉上与第一组起点相同，实现无缝循环。 */
     transform: translateX(-50%);
   }
+}
+
+:global(html.theme-dark) .home-marquee {
+  border-top-color: rgba(213, 245, 224, 0.12);
+  background:
+    linear-gradient(180deg, rgba(5, 15, 11, 0.94), rgba(2, 8, 6, 0.98));
+}
+
+:global(html.theme-dark) .home-marquee__item--accent {
+  color: #f4fff6;
+}
+
+:global(html.theme-dark) .home-marquee__item--muted {
+  color: rgba(192, 212, 201, 0.76);
 }
 
 /* Breathing Light for Buttons */
