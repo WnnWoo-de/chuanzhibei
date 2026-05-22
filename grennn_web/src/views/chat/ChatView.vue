@@ -125,6 +125,19 @@ const useQuickPrompt = (prompt) => {
   sendMessage()
 }
 
+/** 若历史记录里只有旧欢迎语，则替换为当前版本欢迎语 */
+const syncGreetingMessage = () => {
+  const firstMessage = messages.value[0]
+  const isLegacyGreeting =
+    messages.value.length === 1 &&
+    firstMessage?.role === 'assistant' &&
+    firstMessage.content.includes('我是 **GS AI 对话助手**')
+
+  if (!isLegacyGreeting) return
+  messages.value = [{ ...initialMessage, time: firstMessage.time || initialMessage.time }]
+  userStore.saveChat(messages.value)
+}
+
 /**
  * 复制消息内容到剪贴板
  * @param {{ content: string, index: number } | string} payload - 要复制的消息内容
@@ -170,8 +183,10 @@ const copyMessage = async (payload) => {
 onMounted(async () => {
   await userStore.init()
   await loadChatHistory()
+  syncGreetingMessage()
   if (messages.value.length === 0 && userStore.chatHistory.length > 0) {
     messages.value = userStore.chatHistory
+    syncGreetingMessage()
   }
   if (messages.value.length === 0) {
     messages.value = [initialMessage]

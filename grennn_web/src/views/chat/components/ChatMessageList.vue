@@ -18,11 +18,11 @@
         </div>
 
         <div
-          class="p-4 text-sm leading-relaxed relative group transition-all duration-300"
+          class="chat-message-bubble p-4 text-sm leading-relaxed relative group transition-all duration-300"
           :class="[
             msg.role === 'user'
-              ? 'bg-gradient-to-br from-black to-gray-800 text-white rounded-3xl rounded-tr-sm shadow-lg hover:shadow-xl hover:scale-105 whitespace-pre-wrap'
-              : 'bg-gradient-to-br from-gray-50 to-white text-gray-800 border-2 border-gray-200 rounded-3xl rounded-tl-sm shadow-sm hover:shadow-lg hover:border-green-300 hover:bg-green-50/30',
+              ? 'user-message-bubble bg-gradient-to-br from-black to-gray-800 text-white rounded-3xl rounded-tr-sm shadow-lg hover:shadow-xl hover:scale-105 whitespace-pre-wrap'
+              : 'assistant-message-bubble bg-gradient-to-br from-gray-50 to-white text-gray-800 border-2 border-gray-200 rounded-3xl rounded-tl-sm shadow-sm hover:shadow-lg hover:border-green-300 hover:bg-green-50/30',
           ]"
         >
           <div
@@ -39,7 +39,7 @@
             :class="
               msg.role === 'user'
                 ? 'bg-white/12 text-white hover:bg-white/20'
-                : 'bg-white/80 text-gray-500 hover:bg-white hover:text-gray-700 border border-black/5 shadow-sm'
+                : 'assistant-message-copy bg-white/80 text-gray-500 hover:bg-white hover:text-gray-700 border border-black/5 shadow-sm'
             "
             :title="copiedIndex === index ? langText.chat.copied : langText.chat.copyContent"
             @click="$emit('copy-message', { content: msg.content, index })"
@@ -181,3 +181,54 @@ defineExpose({
   scrollToBottom,
 })
 </script>
+
+<style scoped>
+:global(html.theme-dark .assistant-message-bubble) {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(244, 249, 246, 0.96)) !important;
+  border-color: rgba(255, 255, 255, 0.82) !important;
+  color: #000 !important;
+}
+
+:global(html.theme-dark .assistant-message-bubble),
+:global(html.theme-dark .assistant-message-bubble *),
+:global(html.theme-dark .assistant-message-bubble .markdown-body),
+:global(html.theme-dark .assistant-message-bubble .markdown-body *) {
+  color: #000 !important;
+}
+
+:global(html.theme-dark .assistant-message-bubble .markdown-body a) {
+  color: #064e3b !important;
+}
+
+:global(html.theme-dark .assistant-message-bubble .markdown-body code) {
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: #000 !important;
+}
+
+:global(html.theme-dark .assistant-message-bubble .markdown-body pre) {
+  background: #f5f5f4 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #000 !important;
+}
+
+:global(html.theme-dark .assistant-message-bubble .markdown-body pre code) {
+  background: transparent !important;
+  color: #000 !important;
+}
+
+:global(html.theme-dark .assistant-message-bubble .markdown-body blockquote) {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #000 !important;
+}
+
+:global(html.theme-dark .assistant-message-bubble .markdown-body th) {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: #000 !important;
+}
+
+:global(html.theme-dark .assistant-message-copy) {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #111 !important;
+}
+</style>
