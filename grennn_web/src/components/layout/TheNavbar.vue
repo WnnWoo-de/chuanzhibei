@@ -106,32 +106,6 @@
                   </button>
                 </div>
 
-                <button type="button" class="account-menu-row" @click="toggleAccountSection('theme')">
-                  <span>{{ langText.account.theme }}</span>
-                  <em>{{ currentThemeName }}</em>
-                  <b :class="{ 'is-expanded': expandedAccountSections.theme }">›</b>
-                </button>
-                <div v-if="expandedAccountSections.theme" class="account-submenu">
-                  <button
-                    type="button"
-                    class="account-menu-row account-menu-row--sub"
-                    :class="{ 'is-active': theme === 'light' }"
-                    @click="changeTheme('light')"
-                  >
-                    <span>{{ langText.account.lightTheme }}</span>
-                    <em>Light</em>
-                  </button>
-                  <button
-                    type="button"
-                    class="account-menu-row account-menu-row--sub"
-                    :class="{ 'is-active': theme === 'dark' }"
-                    @click="changeTheme('dark')"
-                  >
-                    <span>{{ langText.account.darkTheme }}</span>
-                    <em>Dark</em>
-                  </button>
-                </div>
-
                 <button type="button" class="account-menu-row" @click="toggleAccountSection('features')">
                   <span>{{ langText.account.featurePanel }}</span>
                   <em>{{ langText.account.featureHint }}</em>
@@ -327,7 +301,6 @@ import gsap from 'gsap'                                         // 动画库
 import { useUserStore } from '@/stores/user'                     // 用户状态管理
 import NavIcons from '@/components/icons/NavIcons.vue'            // 导航图标组件
 import { changeLang, lang, langTemplate, langText } from '@/language'  // 多语言
-import { setTheme, theme } from '@/theme'                        // 主题管理
 
 // 控制全屏抽屉菜单的展开/收起状态
 const isOpen = ref(false)
@@ -341,7 +314,6 @@ const accountMenuRef = ref(null)
 // 账户菜单中各子面板的展开状态（语言/主题/功能面板）
 const expandedAccountSections = reactive({
   language: false,
-  theme: false,
   features: false,
 })
 
@@ -366,11 +338,6 @@ const accountDisplayName = computed(() => userStore.user?.username || langText.v
 
 // 当前语言名称，用于账户菜单中显示
 const currentLanguageName = computed(() => langTemplate[lang.value]?.name || langTemplate.CN.name)
-
-// 当前主题名称，用于账户菜单中显示
-const currentThemeName = computed(() => (
-  theme.value === 'dark' ? langText.value.account.darkTheme : langText.value.account.lightTheme
-))
 
 // 用户头像首字母：取用户名或邮箱的前两个字母，用于未上传头像时显示
 const userInitials = computed(() => {
@@ -426,11 +393,6 @@ const toggleAccountSection = (section) => {
 // 切换界面语言
 const changeLanguage = (key) => {
   changeLang(key)
-}
-
-// 切换界面主题（亮色/暗色）
-const changeTheme = (key) => {
-  setTheme(key)
 }
 
 // 点击文档空白处时关闭账户菜单（点击菜单内部不关闭）

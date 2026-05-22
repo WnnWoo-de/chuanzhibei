@@ -236,18 +236,6 @@ onUnmounted(() => {
 }
 
 /* 暗色主题适配 */
-:root[data-theme='dark'] .pwa-status {
-  border-color: rgba(134, 239, 172, 0.18);
-  color: #e7f7ea;
-  background: rgba(31, 31, 31, 0.94);
-  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.24);
-}
-
-:root[data-theme='dark'] .pwa-status__close {
-  color: #c6f6d5;
-  background: rgba(134, 239, 172, 0.12);
-}
-
 /* 移动端适配：面板占满宽度 */
 @media (max-width: 640px) {
   .pwa-status {

@@ -1250,42 +1250,6 @@ button:disabled {
     transform: translate3d(calc(-50% + var(--finish-x-end)), calc(-50% + var(--finish-y-end)), 0) rotate(calc(var(--finish-rotate) + 620deg)) scale(0.64);
   }
 }
-:root[data-theme='dark'] .quiz-hero h1,
-:root[data-theme='dark'] .quiz-reward-panel h2,
-:root[data-theme='dark'] .quiz-card h2,
-:root[data-theme='dark'] .quiz-side-card h3 {
-  color: #fff;
-}
-:root[data-theme='dark'] .quiz-hero__copy,
-:root[data-theme='dark'] .quiz-stat span,
-:root[data-theme='dark'] .quiz-rule span,
-:root[data-theme='dark'] .quiz-record span,
-:root[data-theme='dark'] .quiz-complete__desc,
-:root[data-theme='dark'] .quiz-insight-card p {
-  color: rgba(255, 255, 255, 0.72);
-}
-:root[data-theme='dark'] .quiz-stat,
-:root[data-theme='dark'] .quiz-option,
-:root[data-theme='dark'] .quiz-result-cell,
-:root[data-theme='dark'] .quiz-ghost-btn,
-:root[data-theme='dark'] .quiz-card-ribbon,
-:root[data-theme='dark'] .quiz-hero-tags span {
-  background: #333 !important;
-}
-:root[data-theme='dark'] .quiz-secondary-btn {
-  color: #d8ceff;
-  background: rgba(159, 134, 255, 0.16);
-  border-color: rgba(159, 134, 255, 0.28);
-}
-:root[data-theme='dark'] .quiz-option--right,
-:root[data-theme='dark'] .quiz-primary-btn,
-:root[data-theme='dark'] .quiz-link-btn {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-}
-:root[data-theme='dark'] .quiz-explain--right,
-:root[data-theme='dark'] .quiz-explain--wrong {
-  background: #333;
-}
 @media (max-width: 768px) {
   .quiz-root {
     padding-left: 1rem;

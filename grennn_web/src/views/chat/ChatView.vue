@@ -219,57 +219,6 @@ onUnmounted(() => {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
-:global(:root[data-theme='dark'] .chat-page) {
-  color: var(--color-text);
-}
-
-:global(:root[data-theme='dark'] .chat-page .border-r) {
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-:global(:root[data-theme='dark'] .chat-shell) {
-  background:
-    linear-gradient(145deg, rgba(6, 18, 11, 0.94), rgba(15, 30, 20, 0.9)),
-    radial-gradient(circle at 18% 0%, rgba(110, 231, 123, 0.14), transparent 30rem) !important;
-  border-color: rgba(232, 255, 238, 0.2) !important;
-  box-shadow: 0 30px 110px rgba(0, 0, 0, 0.58) !important;
-  backdrop-filter: blur(28px) saturate(130%);
-  -webkit-backdrop-filter: blur(28px) saturate(130%);
-}
-
-:global(:root[data-theme='dark'] .chat-shell::before) {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent),
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 220% 100%, 100% 34px;
-  opacity: 0.28;
-  animation: chatGlassDrift 12s linear infinite;
-}
-
-:global(:root[data-theme='dark'] .chat-shell > *) {
-  position: relative;
-  z-index: 1;
-}
-
-:global(:root[data-theme='dark'] .chat-shell .markdown-body),
-:global(:root[data-theme='dark'] .chat-shell .markdown-body p),
-:global(:root[data-theme='dark'] .chat-shell .markdown-body li) {
-  color: rgba(244, 247, 244, 0.9);
-}
-
-:global(:root[data-theme='dark'] .chat-shell .markdown-body strong),
-:global(:root[data-theme='dark'] .chat-shell .markdown-body h1),
-:global(:root[data-theme='dark'] .chat-shell .markdown-body h2),
-:global(:root[data-theme='dark'] .chat-shell .markdown-body h3),
-:global(:root[data-theme='dark'] .chat-shell .markdown-body h4) {
-  color: #ffffff;
-}
-
 @keyframes chatGlassDrift {
   from {
     background-position: 0 0, 0 0;

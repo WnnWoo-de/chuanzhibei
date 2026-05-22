@@ -11,7 +11,6 @@ import TheFooter from './components/layout/TheFooter.vue'
 import TheSidebar from './components/layout/TheSidebar.vue' // 左侧导航栏
 import PwaInstallPrompt from './components/pwa/PwaInstallPrompt.vue'
 import './styles/design-tokens.css'                          // 设计令牌系统
-import { isDarkTheme } from './theme'
 
 const TheIntro = defineAsyncComponent(() => import('./components/layout/TheIntro.vue'))
 const Silk = defineAsyncComponent(() => import('./components/effects/Silk.vue'))
@@ -86,14 +85,12 @@ watch(() => route.path, () => {
   <!-- 全屏固定背景层：WebGL 丝绸动效（pointer-events-none 不阻挡交互） -->
   <div class="app-silk-layer fixed inset-0 z-0 pointer-events-none">
     <Silk
-      :speed="isDarkTheme ? 2.8 : 2"
-      :scale="isDarkTheme ? 1.25 : 1"
-      :color="isDarkTheme ? '#1f1f1f' : '#ffffff'"
-      :noiseIntensity="isDarkTheme ? 1.25 : 1.5"
+      :speed="2"
+      :scale="1"
+      color="#ffffff"
+      :noiseIntensity="1.5"
     />
   </div>
-
-  <div class="dark-motion-layer fixed inset-0 z-0 pointer-events-none"></div>
 
   <!-- 半透明磨砂玻璃遮罩层，叠在丝绸动效上方，柔化背景 -->
   <div class="app-background-overlay fixed inset-0 backdrop-blur-[20px] pointer-events-none z-0"></div>
@@ -137,86 +134,12 @@ watch(() => route.path, () => {
 </template>
 
 <style>
-/* 亮色主题下的半透明磨砂玻璃背景遮罩 */
 .app-background-overlay {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(245, 245, 240, 0.7)),
     rgba(255, 255, 255, 0.62);
 }
 
-/* 暗色主题下背景遮罩：纯色背景，禁用磨砂效果 */
-:root[data-theme='dark'] .app-background-overlay {
-  background: #1f1f1f;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-:root[data-theme='dark'] .app-silk-layer {
-  opacity: 0;
-}
-
-/* 暗色模式动效层：网格渐变纹理，用于暗色主题的视觉装饰 */
-.dark-motion-layer {
-  opacity: 0;
-  background:
-    linear-gradient(115deg, transparent 0%, rgba(110, 231, 123, 0.09) 18%, transparent 36%),
-    linear-gradient(245deg, transparent 0%, rgba(46, 125, 50, 0.12) 32%, transparent 58%),
-    repeating-linear-gradient(90deg, rgba(208, 255, 221, 0.035) 0 1px, transparent 1px 88px),
-    repeating-linear-gradient(0deg, rgba(208, 255, 221, 0.026) 0 1px, transparent 1px 88px);
-  background-size: 180% 180%, 220% 220%, 88px 88px, 88px 88px;
-  background-position: 0% 0%, 100% 50%, 0 0, 0 0;
-  mix-blend-mode: screen;
-  transition: opacity 0.35s ease;
-}
-
-.dark-motion-layer::before {
-  content: '';
-  position: absolute;
-  inset: -20%;
-  background:
-    linear-gradient(100deg, transparent 10%, rgba(134, 239, 172, 0.09) 42%, transparent 70%),
-    linear-gradient(18deg, transparent 18%, rgba(34, 197, 94, 0.08) 48%, transparent 82%);
-  filter: blur(18px);
-  transform: translate3d(-6%, 0, 0);
-}
-
-:root[data-theme='dark'] .dark-motion-layer {
-  opacity: 0;
-  animation: none;
-}
-
-:root[data-theme='dark'] .dark-motion-layer::before {
-  animation: none;
-}
-
-:root[data-theme='dark'] .app-shell {
-  color: var(--color-text);
-  background: #1f1f1f !important;
-}
-
-/* 暗色网格流动动画 */
-@keyframes darkGridFlow {
-  0% {
-    background-position: 0% 0%, 100% 50%, 0 0, 0 0;
-  }
-  100% {
-    background-position: 120% 80%, 0% 20%, 88px 0, 0 88px;
-  }
-}
-
-/* 暗色光带漂移动画 */
-@keyframes darkBandDrift {
-  0% {
-    transform: translate3d(-8%, -2%, 0) skewX(-4deg);
-    opacity: 0.65;
-  }
-  100% {
-    transform: translate3d(8%, 3%, 0) skewX(4deg);
-    opacity: 1;
-  }
-}
-
-/* 页面布局淡入淡出过渡动画（侧边栏、导航栏进场/退场） */
 .shell-fade-enter-active,
 .shell-fade-leave-active {
   transition: opacity 0.9s ease, transform 0.9s ease;

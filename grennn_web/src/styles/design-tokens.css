@@ -126,22 +126,6 @@
 }
 
 /* ---- 深色模式支持（可选） ---- */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-surface-primary: #1a1a1a;
-    --color-surface-secondary: #242424;
-    --color-surface-tertiary: #2e2e2e;
-    
-    --color-text-primary: #ffffff;
-    --color-text-secondary: #e0e0e0;
-    --color-text-tertiary: #b0b0b0;
-    
-    --color-border-light: rgba(255, 255, 255, 0.08);
-    --color-border-medium: rgba(255, 255, 255, 0.12);
-    --color-border-strong: rgba(255, 255, 255, 0.2);
-  }
-}
-
 /* ---- 玻璃拟态基础类 ---- */
 .glass-strong {
   background: rgba(255, 255, 255, var(--glass-opacity-strong));

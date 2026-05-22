@@ -395,38 +395,6 @@ onMounted(() => {
 }
 
 /* 暗色主题下侧边栏样式适配 */
-:global(:root[data-theme='dark']) .app-sidebar {
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  background: #1f1f1f !important;
-  color: #f7fff8 !important;
-  box-shadow: none;
-}
-
 /* 暗色主题下侧边栏文字颜色 */
-:global(:root[data-theme='dark']) .app-sidebar span,
-:global(:root[data-theme='dark']) .app-sidebar .text-gray-400,
-:global(:root[data-theme='dark']) .app-sidebar .text-gray-700 {
-  color: #dff7e3 !important;
-}
-
-:global(:root[data-theme='dark']) .app-sidebar button {
-  color: #dff7e3 !important;
-}
-
-:global(:root[data-theme='dark']) .app-sidebar button:hover {
-  background: rgba(115, 242, 135, 0.12) !important;
-  color: #ffffff !important;
-}
-
-:global(:root[data-theme='dark']) .app-sidebar .bg-primary\/10 {
-  background: #333333 !important;
-  color: #ffffff !important;
-}
-
 /* 暗色主题下展开/收起按钮样式 */
-:global(:root[data-theme='dark']) .sidebar-toggle {
-  border-color: rgba(255, 255, 255, 0.12) !important;
-  background: #2b2b2b !important;
-  color: #f7fff8 !important;
-}
 </style>
