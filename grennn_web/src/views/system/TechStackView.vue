@@ -67,7 +67,7 @@
               <span>🎨 {{ langText.techStack.frontendStack }}</span>
               <div class="flex-1 h-px bg-gradient-to-r from-black/20 to-transparent"></div>
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               <div class="bg-blue-50 p-6 rounded-lg border border-blue-100">
                 <h3 class="font-bold mb-4 text-blue-900">{{ langText.techStack.coreFramework }}</h3>
                 <ul class="space-y-2 text-sm text-gray-700">
@@ -88,6 +88,17 @@
                   <li class="flex items-center gap-2"><span class="text-purple-500">•</span> {{ langText.techStack.nprogress }}</li>
                   <li class="flex items-center gap-2"><span class="text-purple-500">•</span> {{ langText.techStack.ogImage }}</li>
                   <li class="flex items-center gap-2"><span class="text-purple-500">•</span> {{ langText.techStack.responsiveDesign }}</li>
+                </ul>
+              </div>
+
+              <div class="bg-emerald-50 p-6 rounded-lg border border-emerald-100">
+                <h3 class="font-bold mb-4 text-emerald-900">{{ langText.techStack.pwaTech }}</h3>
+                <ul class="space-y-2 text-sm text-gray-700">
+                  <li class="flex items-center gap-2"><span class="text-emerald-500">•</span> {{ langText.techStack.webManifest }}</li>
+                  <li class="flex items-center gap-2"><span class="text-emerald-500">•</span> {{ langText.techStack.serviceWorker }}</li>
+                  <li class="flex items-center gap-2"><span class="text-emerald-500">•</span> {{ langText.techStack.workboxCache }}</li>
+                  <li class="flex items-center gap-2"><span class="text-emerald-500">•</span> {{ langText.techStack.installPrompt }}</li>
+                  <li class="flex items-center gap-2"><span class="text-emerald-500">•</span> {{ langText.techStack.offlineFallback }}</li>
                 </ul>
               </div>
             </div>
