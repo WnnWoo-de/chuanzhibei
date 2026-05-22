@@ -1784,23 +1784,37 @@ onUnmounted(() => {
 .dashboard-panel {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(242, 251, 245, 0.92));
+  border: 1px solid rgba(213, 245, 224, 0.14);
+  background:
+    linear-gradient(145deg, rgba(15, 37, 27, 0.9), rgba(7, 22, 16, 0.84) 58%, rgba(5, 15, 11, 0.94));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 32px 82px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(22px) saturate(1.08);
+  -webkit-backdrop-filter: blur(22px) saturate(1.08);
 }
 
 .dashboard-panel::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), transparent 42%);
+  background:
+    radial-gradient(circle at 86% 12%, rgba(53, 211, 141, 0.16), transparent 34%),
+    linear-gradient(135deg, rgba(240, 230, 196, 0.08), transparent 44%);
   pointer-events: none;
 }
 
 .dashboard-panel--soft {
-  background: linear-gradient(145deg, rgba(247, 253, 249, 0.98), rgba(227, 245, 234, 0.94));
+  background:
+    linear-gradient(135deg, rgba(47, 48, 26, 0.88), rgba(45, 38, 34, 0.84) 50%, rgba(31, 29, 29, 0.9));
 }
 
 .dashboard-breathing-chip {
   position: relative;
+  border: 1px solid rgba(82, 237, 154, 0.18);
+  background: rgba(23, 77, 51, 0.46);
+  color: #f4fff6;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.18);
 }
 
 .dashboard-breathing-chip::after {
@@ -1825,6 +1839,9 @@ onUnmounted(() => {
 .dashboard-stat {
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(213, 245, 224, 0.12);
+  background: rgba(5, 18, 13, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
@@ -1848,7 +1865,8 @@ onUnmounted(() => {
   padding: 0.35rem;
   display: flex;
   align-items: flex-end;
-  background: linear-gradient(180deg, rgba(236, 253, 245, 0.9), rgba(220, 252, 231, 0.9));
+  border: 1px solid rgba(213, 245, 224, 0.1);
+  background: linear-gradient(180deg, rgba(13, 34, 24, 0.9), rgba(8, 22, 16, 0.9));
 }
 
 .dashboard-bar {
@@ -1888,11 +1906,11 @@ onUnmounted(() => {
   min-width: 3.5rem;
   height: 3.5rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(22, 101, 52, 0.08);
+  background: rgba(5, 18, 13, 0.72);
+  border: 1px solid rgba(213, 245, 224, 0.14);
   font-weight: 700;
-  color: #166534;
-  box-shadow: 0 12px 24px rgba(134, 239, 172, 0.2);
+  color: #33e58d;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
 }
 
 .dashboard-ring {
@@ -1936,7 +1954,8 @@ onUnmounted(() => {
   width: 100%;
   overflow: hidden;
   border-radius: 999px;
-  background: linear-gradient(90deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid rgba(213, 245, 224, 0.1);
+  background: linear-gradient(90deg, rgba(13, 34, 24, 0.9), rgba(8, 22, 16, 0.9));
 }
 
 .dashboard-heatmap-fill {
@@ -1970,11 +1989,73 @@ onUnmounted(() => {
   }
 }
 
-.dashboard-section :deep(h2),
-.dashboard-section :deep(h3),
-.dashboard-section :deep(p),
-.dashboard-section :deep(span) {
-  color: #000;
+.dashboard-copy__text {
+  max-width: 18rem;
+  color: #f4fff6;
+  line-height: 1.75;
+}
+
+.dashboard-eyebrow,
+.dashboard-muted,
+.dashboard-stat__label,
+.dashboard-stat__unit,
+.dashboard-stat__change,
+.dashboard-trend__month,
+.dashboard-ring__caption,
+.dashboard-mini-card__label,
+.dashboard-live-tag,
+.dashboard-zone__name {
+  color: rgba(224, 244, 232, 0.74);
+}
+
+.dashboard-eyebrow {
+  font-weight: 700;
+}
+
+.dashboard-muted--mono,
+.dashboard-live-tag {
+  font-family: var(--font-mono);
+}
+
+.dashboard-stat__value,
+.dashboard-trend__value,
+.dashboard-ring__number,
+.dashboard-mini-card__value,
+.dashboard-zone__value {
+  color: #f4fff6;
+}
+
+.dashboard-stat__value,
+.dashboard-ring__number,
+.dashboard-mini-card__value {
+  font-weight: 800;
+}
+
+.dashboard-stat__value {
+  font-size: 1.35rem;
+}
+
+.dashboard-mini-card {
+  border: 1px solid rgba(213, 245, 224, 0.12);
+  border-radius: 1rem;
+  background: rgba(5, 18, 13, 0.58);
+  padding: 1rem;
+}
+
+.dashboard-live-tag {
+  border: 1px solid rgba(82, 237, 154, 0.18);
+  border-radius: 999px;
+  background: rgba(23, 77, 51, 0.46);
+  padding: 0.32rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.dashboard-section h2,
+.dashboard-section h3,
+.dashboard-section p,
+.dashboard-section span {
+  color: #f4fff6;
 }
 
 .dashboard-section .dashboard-ring__track,
