@@ -11,6 +11,7 @@ import TheFooter from './components/layout/TheFooter.vue'
 import TheSidebar from './components/layout/TheSidebar.vue' // 左侧导航栏
 import PwaInstallPrompt from './components/pwa/PwaInstallPrompt.vue'
 import './styles/design-tokens.css'                          // 设计令牌系统
+import { isDarkTheme } from './theme'
 
 const TheIntro = defineAsyncComponent(() => import('./components/layout/TheIntro.vue'))
 const Silk = defineAsyncComponent(() => import('./components/effects/Silk.vue'))
@@ -40,6 +41,8 @@ const layoutOffsetClass = computed(() => {
   }
   return sidebarFull.value ? 'ml-64' : 'ml-14'
 })
+
+const silkColor = computed(() => (isDarkTheme.value ? '#10251b' : '#ffffff'))
 
 /**
  * 开场动画播放完毕后的回调
@@ -87,7 +90,7 @@ watch(() => route.path, () => {
     <Silk
       :speed="2"
       :scale="1"
-      color="#ffffff"
+      :color="silkColor"
       :noiseIntensity="1.5"
     />
   </div>
@@ -138,6 +141,18 @@ watch(() => route.path, () => {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(245, 245, 240, 0.7)),
     rgba(255, 255, 255, 0.62);
+}
+
+html.theme-dark .app-background-overlay {
+  background:
+    radial-gradient(circle at 18% 10%, rgba(110, 231, 183, 0.16), transparent 34%),
+    radial-gradient(circle at 86% 14%, rgba(56, 189, 248, 0.12), transparent 26%),
+    linear-gradient(180deg, rgba(7, 16, 12, 0.9), rgba(4, 10, 8, 0.84)),
+    rgba(3, 8, 6, 0.82);
+}
+
+html.theme-dark .app-silk-layer {
+  opacity: 0.82;
 }
 
 .shell-fade-enter-active,

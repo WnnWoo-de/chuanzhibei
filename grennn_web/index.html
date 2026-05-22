@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="GreenSight" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <title>GreenSight-绿我同行 | 可持续生活平台</title>
     <meta name="description" content="GreenSight AI Web 是一个通过人工智能技术促进环保行为的全栈平台。旧物重构、AI 助手、碳足迹计算、社区活动，开启你的绿色生活之旅。" />
     <meta name="keywords" content="绿色生活, 环保, 旧物重构, AI助手, 碳足迹, 可持续发展, 天气查询, 社区活动" />
@@ -64,6 +64,34 @@
         "query-input": "required name=search_term_string"
       }
     }
+    </script>
+    <script>
+      ;(() => {
+        const key = 'greensight_theme'
+        const themes = ['system', 'light', 'dark']
+        let selectedPreference = 'system'
+
+        try {
+          const storedTheme = localStorage.getItem(key)
+          if (themes.includes(storedTheme)) {
+            selectedPreference = storedTheme
+          }
+        } catch (err) {
+          selectedPreference = 'system'
+        }
+
+        const selectedTheme =
+          selectedPreference === 'system'
+            ? window.matchMedia?.('(prefers-color-scheme: dark)')?.matches
+              ? 'dark'
+              : 'light'
+            : selectedPreference
+
+        document.documentElement.dataset.theme = selectedTheme
+        document.documentElement.dataset.themePreference = selectedPreference
+        document.documentElement.classList.add(`theme-${selectedTheme}`)
+        document.documentElement.style.colorScheme = selectedTheme
+      })()
     </script>
   </head>
   <body>

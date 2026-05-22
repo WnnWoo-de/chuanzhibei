@@ -28,7 +28,6 @@
 
       <!-- 右侧：用户登录状态 + 全局菜单按钮 -->
       <div class="flex items-center gap-2 md:gap-4 relative z-20">
-
         <div ref="accountMenuRef" class="relative">
           <button
             type="button"
@@ -102,6 +101,25 @@
                     @click="changeLanguage(key)"
                   >
                     <span>{{ item.name }}</span>
+                    <em>{{ item.description }}</em>
+                  </button>
+                </div>
+
+                <button type="button" class="account-menu-row" @click="toggleAccountSection('theme')">
+                  <span>{{ langText.account.theme }}</span>
+                  <em>{{ currentThemeName }}</em>
+                  <b :class="{ 'is-expanded': expandedAccountSections.theme }">›</b>
+                </button>
+                <div v-if="expandedAccountSections.theme" class="account-submenu">
+                  <button
+                    v-for="item in themeOptions"
+                    :key="item.key"
+                    type="button"
+                    class="account-menu-row account-menu-row--sub"
+                    :class="{ 'is-active': themePreference === item.key }"
+                    @click="setColorTheme(item.key)"
+                  >
+                    <span>{{ item.label }}</span>
                     <em>{{ item.description }}</em>
                   </button>
                 </div>
@@ -301,6 +319,7 @@ import gsap from 'gsap'                                         // 动画库
 import { useUserStore } from '@/stores/user'                     // 用户状态管理
 import NavIcons from '@/components/icons/NavIcons.vue'            // 导航图标组件
 import { changeLang, lang, langTemplate, langText } from '@/language'  // 多语言
+import { THEMES, setTheme, themePreference } from '@/theme'
 
 // 控制全屏抽屉菜单的展开/收起状态
 const isOpen = ref(false)
@@ -314,6 +333,7 @@ const accountMenuRef = ref(null)
 // 账户菜单中各子面板的展开状态（语言/主题/功能面板）
 const expandedAccountSections = reactive({
   language: false,
+  theme: false,
   features: false,
 })
 
@@ -338,6 +358,20 @@ const accountDisplayName = computed(() => userStore.user?.username || langText.v
 
 // 当前语言名称，用于账户菜单中显示
 const currentLanguageName = computed(() => langTemplate[lang.value]?.name || langTemplate.CN.name)
+
+// 当前主题名称与切换提示
+const currentThemeName = computed(() => {
+  if (themePreference.value === THEMES.system) return langText.value.account.systemTheme
+  return themePreference.value === THEMES.dark
+    ? langText.value.account.darkTheme
+    : langText.value.account.lightTheme
+})
+
+const themeOptions = computed(() => [
+  { key: THEMES.system, label: langText.value.account.systemTheme, description: 'Auto' },
+  { key: THEMES.light, label: langText.value.account.lightTheme, description: 'Light' },
+  { key: THEMES.dark, label: langText.value.account.darkTheme, description: 'Dark' },
+])
 
 // 用户头像首字母：取用户名或邮箱的前两个字母，用于未上传头像时显示
 const userInitials = computed(() => {
@@ -393,6 +427,11 @@ const toggleAccountSection = (section) => {
 // 切换界面语言
 const changeLanguage = (key) => {
   changeLang(key)
+}
+
+// 设置指定主题
+const setColorTheme = (key) => {
+  setTheme(key)
 }
 
 // 点击文档空白处时关闭账户菜单（点击菜单内部不关闭）
@@ -693,6 +732,11 @@ nav {
 .account-menu-row--danger:hover {
   background: #fee2e2;
   color: #b91c1c;
+}
+
+:global(html.theme-dark) .account-menu-row--danger:hover {
+  background: rgba(248, 113, 113, 0.14);
+  color: #fca5a5;
 }
 
 .account-submenu {

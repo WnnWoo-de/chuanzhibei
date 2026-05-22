@@ -2184,4 +2184,76 @@ onUnmounted(() => {
     opacity: 0;
   }
 }
+
+:global(html.theme-dark) .home-view {
+  color: var(--color-text);
+}
+
+:global(html.theme-dark) .hero-section {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(110, 231, 164, 0.16), transparent 34%),
+    radial-gradient(circle at 78% 18%, rgba(56, 214, 192, 0.12), transparent 28%),
+    linear-gradient(135deg, #07100c, #0d1712 52%, #050b08) !important;
+  color: var(--color-text);
+}
+
+:global(html.theme-dark) .hero-tint-layer {
+  background:
+    radial-gradient(circle at top left, rgba(110, 231, 164, 0.13), transparent 42%),
+    radial-gradient(circle at 78% 20%, rgba(103, 232, 249, 0.1), transparent 26%),
+    linear-gradient(135deg, rgba(5, 13, 9, 0.7), rgba(11, 24, 17, 0.64)) !important;
+}
+
+:global(html.theme-dark) .hero-badge {
+  background: rgba(12, 24, 18, 0.86) !important;
+  border-color: rgba(202, 232, 214, 0.16) !important;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.34);
+}
+
+:global(html.theme-dark) .hero-badge img {
+  background: rgba(237, 249, 240, 0.9) !important;
+  border-color: rgba(202, 232, 214, 0.16) !important;
+}
+
+:global(html.theme-dark) .hero-badge p,
+:global(html.theme-dark) .hero-copy--title,
+:global(html.theme-dark) .hero-copy--description,
+:global(html.theme-dark) .hero-line--body,
+:global(html.theme-dark) .hero-line--body-soft {
+  color: var(--color-text) !important;
+}
+
+:global(html.theme-dark) .hero-copy--meta,
+:global(html.theme-dark) .hero-copy--subtitle,
+:global(html.theme-dark) .hero-line--eyebrow {
+  color: rgba(154, 243, 191, 0.72) !important;
+}
+
+:global(html.theme-dark) .dashboard-section :deep(h2),
+:global(html.theme-dark) .dashboard-section :deep(h3),
+:global(html.theme-dark) .dashboard-section :deep(p),
+:global(html.theme-dark) .dashboard-section :deep(span) {
+  color: var(--color-text) !important;
+}
+
+:global(html.theme-dark) .dashboard-panel,
+:global(html.theme-dark) .dashboard-panel--soft {
+  background: linear-gradient(145deg, rgba(16, 26, 20, 0.96), rgba(20, 34, 26, 0.9)) !important;
+  border-color: var(--color-border-soft) !important;
+}
+
+:global(html.theme-dark) .dashboard-panel::before {
+  background: linear-gradient(135deg, rgba(110, 231, 164, 0.08), transparent 42%);
+}
+
+:global(html.theme-dark) .dashboard-bar-track,
+:global(html.theme-dark) .dashboard-heatmap-track {
+  background: linear-gradient(180deg, rgba(13, 34, 24, 0.9), rgba(8, 22, 16, 0.9)) !important;
+}
+
+:global(html.theme-dark) .dashboard-ring-badge {
+  background: rgba(13, 34, 24, 0.78);
+  border-color: var(--color-border-soft);
+  color: var(--color-primary);
+}
 </style>

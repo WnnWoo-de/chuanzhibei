@@ -656,4 +656,50 @@ onMounted(() => {
     height: 110px;
   }
 }
+
+:global(html.theme-dark) .weather-page {
+  --page-bg-top: #08110d;
+  --page-bg-bottom: #050b08;
+  --page-glow-1: rgba(110, 231, 164, 0.16);
+  --page-glow-2: rgba(103, 232, 249, 0.12);
+  --page-glow-3: rgba(251, 191, 36, 0.08);
+  --breath-core: rgba(110, 231, 164, 0.18);
+  --breath-edge: rgba(103, 232, 249, 0.12);
+  --card-bg: linear-gradient(180deg, rgba(16, 26, 20, 0.82), rgba(20, 34, 26, 0.72));
+  --card-border: rgba(202, 232, 214, 0.14);
+  --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.36);
+  --text-primary: var(--color-text);
+  --text-secondary: var(--color-text-muted);
+  background:
+    radial-gradient(circle at 50% 2%, rgba(110, 231, 164, 0.14), transparent 34%),
+    linear-gradient(180deg, var(--page-bg-top), var(--page-bg-bottom));
+}
+
+:global(html.theme-dark) .card-header {
+  border-bottom-color: var(--color-border-soft);
+}
+
+:global(html.theme-dark) .card-title,
+:global(html.theme-dark) .tip-title {
+  color: var(--color-text);
+}
+
+:global(html.theme-dark) .card-subtitle,
+:global(html.theme-dark) .tip-text {
+  color: var(--color-text-muted);
+}
+
+:global(html.theme-dark) .tip-item {
+  background: rgba(15, 27, 21, 0.62);
+  border-color: rgba(202, 232, 214, 0.12);
+}
+
+:global(html.theme-dark) .tip-item:hover {
+  background: rgba(20, 34, 26, 0.78);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+:global(html.theme-dark) :deep(.el-skeleton__item) {
+  background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(110,231,164,0.12), rgba(255,255,255,0.05));
+}
 </style>

@@ -414,4 +414,30 @@ onUnmounted(() => {
     opacity: 0;
   }
 }
+
+:global(html.theme-dark) .chat-page :deep(.markdown-body h1),
+:global(html.theme-dark) .chat-page :deep(.markdown-body h2),
+:global(html.theme-dark) .chat-page :deep(.markdown-body h3),
+:global(html.theme-dark) .chat-page :deep(.markdown-body h4),
+:global(html.theme-dark) .chat-page :deep(.markdown-body strong) {
+  color: var(--color-text);
+}
+
+:global(html.theme-dark) .chat-page :deep(.markdown-body code) {
+  background: rgba(110, 231, 164, 0.12);
+  color: #b8f7d0;
+}
+
+:global(html.theme-dark) .chat-page :deep(.markdown-body blockquote) {
+  background: rgba(110, 231, 164, 0.1);
+  color: var(--color-text-muted);
+}
+
+:global(html.theme-dark) .chat-page :deep(.markdown-body th) {
+  background: rgba(110, 231, 164, 0.1);
+}
+
+:global(html.theme-dark) .typing-active > div::after {
+  color: var(--color-primary);
+}
 </style>
