@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-transparent min-h-screen text-[#1a1a1a] font-sans">
+  <div class="tech-stack-page bg-transparent min-h-screen text-[#1a1a1a] font-sans">
     <!-- Sidebar -->
     <TheSidebar :isOpen="sidebarOpen" @toggle="toggleSidebar" @close="closeSidebar" />
 
@@ -299,6 +299,143 @@ onMounted(() => {
 pre {
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+
+.tech-stack-page {
+  transition: color 0.28s ease;
+}
+
+:global(html.theme-dark .tech-stack-page) {
+  color: var(--color-text);
+}
+
+:global(html.theme-dark .tech-stack-page :is(h1, h2, h3)) {
+  color: var(--color-text) !important;
+}
+
+:global(html.theme-dark .tech-stack-page .fixed.grid) {
+  opacity: 0.08 !important;
+}
+
+:global(html.theme-dark .tech-stack-page .border-black) {
+  border-color: rgba(202, 232, 214, 0.16) !important;
+}
+
+:global(html.theme-dark .tech-stack-page nav a) {
+  color: rgba(237, 249, 240, 0.74);
+}
+
+:global(html.theme-dark .tech-stack-page nav a:hover) {
+  background: rgba(110, 231, 164, 0.12) !important;
+  border-color: rgba(110, 231, 164, 0.42) !important;
+  color: var(--color-primary) !important;
+}
+
+:global(html.theme-dark .tech-stack-page .bg-gradient-to-br) {
+  background:
+    radial-gradient(circle at 14% 12%, rgba(110, 231, 164, 0.12), transparent 18rem),
+    linear-gradient(135deg, rgba(13, 28, 20, 0.86), rgba(8, 17, 13, 0.72)) !important;
+  border-color: rgba(202, 232, 214, 0.2) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+:global(html.theme-dark .tech-stack-page .bg-gradient-to-br p) {
+  color: rgba(237, 249, 240, 0.84) !important;
+}
+
+:global(html.theme-dark .tech-stack-page .bg-gradient-to-r) {
+  --tw-gradient-from: rgba(202, 232, 214, 0.24) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgba(202, 232, 214, 0) var(--tw-gradient-to-position) !important;
+}
+
+:global(html.theme-dark .tech-stack-page :is(
+  .bg-blue-50,
+  .bg-purple-50,
+  .bg-emerald-50,
+  .bg-green-50,
+  .bg-yellow-50,
+  .bg-orange-50,
+  .bg-red-50,
+  .bg-pink-50,
+  .bg-teal-50,
+  .bg-indigo-50,
+  .bg-gray-50
+)) {
+  background:
+    linear-gradient(145deg, rgba(19, 34, 27, 0.92), rgba(10, 21, 16, 0.86)) !important;
+  border-color: rgba(202, 232, 214, 0.16) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 18px 54px rgba(0, 0, 0, 0.24);
+}
+
+:global(html.theme-dark .tech-stack-page :is(
+  .bg-blue-50,
+  .bg-purple-50,
+  .bg-emerald-50,
+  .bg-green-50,
+  .bg-yellow-50,
+  .bg-orange-50,
+  .bg-red-50,
+  .bg-pink-50,
+  .bg-teal-50,
+  .bg-indigo-50,
+  .bg-gray-50
+) ul) {
+  color: rgba(220, 240, 226, 0.78) !important;
+}
+
+:global(html.theme-dark .tech-stack-page .text-blue-900),
+:global(html.theme-dark .tech-stack-page .text-blue-500) {
+  color: #8fc7ff !important;
+}
+
+:global(html.theme-dark .tech-stack-page .text-purple-900),
+:global(html.theme-dark .tech-stack-page .text-purple-500) {
+  color: #d6b4ff !important;
+}
+
+:global(html.theme-dark .tech-stack-page .text-emerald-900),
+:global(html.theme-dark .tech-stack-page .text-emerald-500),
+:global(html.theme-dark .tech-stack-page .text-green-900),
+:global(html.theme-dark .tech-stack-page .text-green-500) {
+  color: #74f2ad !important;
+}
+
+:global(html.theme-dark .tech-stack-page .text-yellow-900),
+:global(html.theme-dark .tech-stack-page .text-yellow-500),
+:global(html.theme-dark .tech-stack-page .text-orange-900),
+:global(html.theme-dark .tech-stack-page .text-orange-500) {
+  color: #ffd36a !important;
+}
+
+:global(html.theme-dark .tech-stack-page .text-red-900),
+:global(html.theme-dark .tech-stack-page .text-red-500),
+:global(html.theme-dark .tech-stack-page .text-pink-900),
+:global(html.theme-dark .tech-stack-page .text-pink-500) {
+  color: #ff9fbd !important;
+}
+
+:global(html.theme-dark .tech-stack-page .text-teal-900),
+:global(html.theme-dark .tech-stack-page .text-teal-500) {
+  color: #67e8df !important;
+}
+
+:global(html.theme-dark .tech-stack-page .text-indigo-900),
+:global(html.theme-dark .tech-stack-page .text-indigo-500) {
+  color: #b5c7ff !important;
+}
+
+:global(html.theme-dark .tech-stack-page .text-gray-900),
+:global(html.theme-dark .tech-stack-page .text-gray-700) {
+  color: rgba(237, 249, 240, 0.86) !important;
+}
+
+:global(html.theme-dark .tech-stack-page .text-gray-500),
+:global(html.theme-dark .tech-stack-page .text-gray-400) {
+  color: rgba(180, 201, 186, 0.7) !important;
+}
+
+:global(html.theme-dark .tech-stack-page .border-t) {
+  border-color: rgba(202, 232, 214, 0.14) !important;
 }
 
 /* Hide scrollbar */
