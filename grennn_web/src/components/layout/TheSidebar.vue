@@ -42,9 +42,9 @@
             <button
               v-else
               type="button"
-              class="app-sidebar__item w-full flex items-center rounded-lg text-sm transition-all duration-200 hover:bg-gray-50 group/item relative overflow-hidden cursor-pointer"
+              class="app-sidebar__item w-full flex items-center rounded-lg text-sm transition-all duration-200 group/item relative overflow-hidden cursor-pointer"
               :class="[
-                activeNav === item.link ? 'app-sidebar__item--active font-medium' : 'text-gray-700',
+                activeNav === item.link ? 'app-sidebar__item--active font-medium' : 'app-sidebar__item--inactive',
                 isMiniMode ? 'justify-center px-0 py-2.5 w-10 mx-auto' : 'gap-3 px-3 py-2.5'
               ]"
               :title="isMiniMode ? (langText.nav[item.labelKey] || langText.common[item.labelKey] || item.label) : ''"
@@ -59,7 +59,7 @@
               <svg
                 v-if="item.icon"
                 class="app-sidebar__icon w-5 h-5 flex-shrink-0"
-                :class="activeNav === item.link ? 'app-sidebar__icon--active' : 'text-gray-400 group-hover/item:text-gray-700'"
+                :class="activeNav === item.link ? 'app-sidebar__icon--active' : 'app-sidebar__icon--muted'"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -394,9 +394,34 @@ onMounted(() => {
   scrollbar-width: none;
 }
 
-.app-sidebar__item--active {
+.app-sidebar__item {
+  color: #374151;
+}
+
+.app-sidebar__item--inactive {
+  background: transparent;
+}
+
+.app-sidebar__item--inactive:hover {
   background: rgba(46, 125, 50, 0.08);
   color: #111827;
+}
+
+.app-sidebar__icon--muted,
+.app-sidebar__arrow {
+  color: #9ca3af;
+}
+
+.app-sidebar__item--inactive:hover .app-sidebar__icon,
+.app-sidebar__item--inactive:hover .app-sidebar__item-label,
+.app-sidebar__item--inactive:hover .app-sidebar__arrow {
+  color: #111827;
+}
+
+.app-sidebar__item--active {
+  background: #f8fafc;
+  color: #06130c;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
 }
 
 .app-sidebar__item--active .app-sidebar__icon,
@@ -415,48 +440,57 @@ onMounted(() => {
 }
 
 :global(html.theme-dark) .app-sidebar__item {
-  color: rgba(237, 249, 240, 0.84) !important;
+  color: #eafbf0 !important;
 }
 
-:global(html.theme-dark) .app-sidebar__item:hover {
-  background: rgba(110, 231, 164, 0.12) !important;
-  color: #f4fff7 !important;
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--inactive {
+  background: transparent !important;
+  color: #eafbf0 !important;
 }
 
-:global(html.theme-dark) .app-sidebar__item:hover .app-sidebar__icon,
-:global(html.theme-dark) .app-sidebar__item:hover .app-sidebar__item-label,
-:global(html.theme-dark) .app-sidebar__item:hover .app-sidebar__arrow {
-  color: #f4fff7 !important;
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--inactive .app-sidebar__icon,
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--inactive .app-sidebar__item-label,
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--inactive .app-sidebar__arrow {
+  color: #d7f6e1 !important;
+}
+
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--inactive:hover {
+  background: rgba(110, 231, 164, 0.18) !important;
+  color: #ffffff !important;
+}
+
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--inactive:hover .app-sidebar__icon,
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--inactive:hover .app-sidebar__item-label,
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--inactive:hover .app-sidebar__arrow {
+  color: #ffffff !important;
 }
 
 :global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active {
-  background:
-    linear-gradient(135deg, rgba(39, 174, 96, 0.32), rgba(25, 125, 74, 0.24)) !important;
-  color: #f7fff9 !important;
-  border: 1px solid rgba(134, 239, 172, 0.42);
+  background: #f8fafc !important;
+  color: #06130c !important;
+  border: 1px solid rgba(255, 255, 255, 0.92);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 10px 28px rgba(0, 0, 0, 0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    0 12px 30px rgba(0, 0, 0, 0.26);
 }
 
 :global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active .app-sidebar__icon,
 :global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active .app-sidebar__icon--active,
 :global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active .app-sidebar__item-label,
 :global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active .app-sidebar__arrow {
-  color: #f7fff9 !important;
+  color: #06130c !important;
 }
 
 :global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active:hover {
-  background:
-    linear-gradient(135deg, rgba(52, 211, 153, 0.38), rgba(34, 139, 86, 0.28)) !important;
-  color: #ffffff !important;
+  background: #ffffff !important;
+  color: #06130c !important;
 }
 
 :global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active:hover .app-sidebar__icon,
 :global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active:hover .app-sidebar__icon--active,
 :global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active:hover .app-sidebar__item-label,
 :global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active:hover .app-sidebar__arrow {
-  color: #ffffff !important;
+  color: #06130c !important;
 }
 
 :global(html.theme-dark) .sidebar-toggle {
