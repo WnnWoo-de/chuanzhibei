@@ -44,7 +44,7 @@
               type="button"
               class="app-sidebar__item w-full flex items-center rounded-lg text-sm transition-all duration-200 hover:bg-gray-50 group/item relative overflow-hidden cursor-pointer"
               :class="[
-                activeNav === item.link ? 'app-sidebar__item--active bg-primary/10 text-primary font-medium' : 'text-gray-700',
+                activeNav === item.link ? 'app-sidebar__item--active font-medium' : 'text-gray-700',
                 isMiniMode ? 'justify-center px-0 py-2.5 w-10 mx-auto' : 'gap-3 px-3 py-2.5'
               ]"
               :title="isMiniMode ? (langText.nav[item.labelKey] || langText.common[item.labelKey] || item.label) : ''"
@@ -59,7 +59,7 @@
               <svg
                 v-if="item.icon"
                 class="app-sidebar__icon w-5 h-5 flex-shrink-0"
-                :class="activeNav === item.link ? 'text-primary' : 'text-gray-400 group-hover/item:text-gray-700'"
+                :class="activeNav === item.link ? 'app-sidebar__icon--active' : 'text-gray-400 group-hover/item:text-gray-700'"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -68,7 +68,7 @@
                 <path :d="item.icon" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
 
-              <span v-if="!isMiniMode" class="flex-1 whitespace-nowrap text-left">{{ langText.nav[item.labelKey] || langText.common[item.labelKey] || item.label }}</span>
+              <span v-if="!isMiniMode" class="app-sidebar__item-label flex-1 whitespace-nowrap text-left">{{ langText.nav[item.labelKey] || langText.common[item.labelKey] || item.label }}</span>
 
               <span
                 v-if="item.badge && !isMiniMode"
@@ -394,6 +394,18 @@ onMounted(() => {
   scrollbar-width: none;
 }
 
+.app-sidebar__item--active {
+  background: rgba(46, 125, 50, 0.08);
+  color: #111827;
+}
+
+.app-sidebar__item--active .app-sidebar__icon,
+.app-sidebar__item--active .app-sidebar__icon--active,
+.app-sidebar__item--active .app-sidebar__arrow,
+.app-sidebar__item--active .app-sidebar__item-label {
+  color: #111827;
+}
+
 :global(html.theme-dark) .app-sidebar {
   background:
     linear-gradient(180deg, rgba(9, 21, 15, 0.98), rgba(6, 16, 11, 0.96)),
@@ -416,7 +428,7 @@ onMounted(() => {
   color: rgba(244, 255, 247, 0.88) !important;
 }
 
-:global(html.theme-dark) .app-sidebar__item--active {
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active {
   background:
     linear-gradient(135deg, rgba(246, 255, 248, 0.98), rgba(227, 244, 235, 0.96)) !important;
   color: #08130d !important;
@@ -426,8 +438,7 @@ onMounted(() => {
     0 10px 28px rgba(0, 0, 0, 0.18);
 }
 
-:global(html.theme-dark) .app-sidebar__item--active .app-sidebar__icon,
-:global(html.theme-dark) .app-sidebar__item--active .app-sidebar__arrow {
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active :is(span, .app-sidebar__icon, .app-sidebar__icon--active, .app-sidebar__arrow) {
   color: #08130d !important;
 }
 
