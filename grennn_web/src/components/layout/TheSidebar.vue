@@ -419,27 +419,44 @@ onMounted(() => {
 }
 
 :global(html.theme-dark) .app-sidebar__item:hover {
-  background: rgba(110, 231, 164, 0.08) !important;
+  background: rgba(110, 231, 164, 0.12) !important;
   color: #f4fff7 !important;
 }
 
 :global(html.theme-dark) .app-sidebar__item:hover .app-sidebar__icon,
+:global(html.theme-dark) .app-sidebar__item:hover .app-sidebar__item-label,
 :global(html.theme-dark) .app-sidebar__item:hover .app-sidebar__arrow {
-  color: rgba(244, 255, 247, 0.88) !important;
+  color: #f4fff7 !important;
 }
 
 :global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active {
   background:
-    linear-gradient(135deg, rgba(246, 255, 248, 0.98), rgba(227, 244, 235, 0.96)) !important;
-  color: #08130d !important;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+    linear-gradient(135deg, rgba(39, 174, 96, 0.32), rgba(25, 125, 74, 0.24)) !important;
+  color: #f7fff9 !important;
+  border: 1px solid rgba(134, 239, 172, 0.42);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.72),
-    0 10px 28px rgba(0, 0, 0, 0.18);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 28px rgba(0, 0, 0, 0.2);
 }
 
-:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active :is(span, .app-sidebar__icon, .app-sidebar__icon--active, .app-sidebar__arrow) {
-  color: #08130d !important;
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active .app-sidebar__icon,
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active .app-sidebar__icon--active,
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active .app-sidebar__item-label,
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active .app-sidebar__arrow {
+  color: #f7fff9 !important;
+}
+
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active:hover {
+  background:
+    linear-gradient(135deg, rgba(52, 211, 153, 0.38), rgba(34, 139, 86, 0.28)) !important;
+  color: #ffffff !important;
+}
+
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active:hover .app-sidebar__icon,
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active:hover .app-sidebar__icon--active,
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active:hover .app-sidebar__item-label,
+:global(html.theme-dark) .app-sidebar .app-sidebar__item.app-sidebar__item--active:hover .app-sidebar__arrow {
+  color: #ffffff !important;
 }
 
 :global(html.theme-dark) .sidebar-toggle {
