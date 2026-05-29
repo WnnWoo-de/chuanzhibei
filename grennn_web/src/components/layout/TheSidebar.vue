@@ -418,17 +418,17 @@ onMounted(() => {
 
 :global(html.theme-dark) .app-sidebar__item--active {
   background:
-    linear-gradient(90deg, rgba(110, 231, 164, 0.18), rgba(56, 214, 192, 0.12)) !important;
-  color: #f6fff8 !important;
-  border: 1px solid rgba(110, 231, 164, 0.18);
+    linear-gradient(135deg, rgba(246, 255, 248, 0.98), rgba(227, 244, 235, 0.96)) !important;
+  color: #08130d !important;
+  border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
     0 10px 28px rgba(0, 0, 0, 0.18);
 }
 
 :global(html.theme-dark) .app-sidebar__item--active .app-sidebar__icon,
 :global(html.theme-dark) .app-sidebar__item--active .app-sidebar__arrow {
-  color: #9af3bf !important;
+  color: #08130d !important;
 }
 
 :global(html.theme-dark) .sidebar-toggle {
