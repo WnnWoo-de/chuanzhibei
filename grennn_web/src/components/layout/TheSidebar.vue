@@ -42,9 +42,9 @@
             <button
               v-else
               type="button"
-              class="w-full flex items-center rounded-lg text-sm transition-all duration-200 hover:bg-gray-50 group/item relative overflow-hidden cursor-pointer"
+              class="app-sidebar__item w-full flex items-center rounded-lg text-sm transition-all duration-200 hover:bg-gray-50 group/item relative overflow-hidden cursor-pointer"
               :class="[
-                activeNav === item.link ? 'bg-primary/10 text-primary font-medium' : 'text-gray-700',
+                activeNav === item.link ? 'app-sidebar__item--active bg-primary/10 text-primary font-medium' : 'text-gray-700',
                 isMiniMode ? 'justify-center px-0 py-2.5 w-10 mx-auto' : 'gap-3 px-3 py-2.5'
               ]"
               :title="isMiniMode ? (langText.nav[item.labelKey] || langText.common[item.labelKey] || item.label) : ''"
@@ -58,7 +58,7 @@
 
               <svg
                 v-if="item.icon"
-                class="w-5 h-5 flex-shrink-0"
+                class="app-sidebar__icon w-5 h-5 flex-shrink-0"
                 :class="activeNav === item.link ? 'text-primary' : 'text-gray-400 group-hover/item:text-gray-700'"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -75,7 +75,7 @@
                 class="text-xs px-2 py-0.5 bg-primary/20 text-primary rounded-full font-mono"
               >{{ langText.nav[item.badgeKey] || item.badge }}</span>
 
-              <span v-if="!isMiniMode" class="opacity-0 group-hover/item:opacity-100 transition-all duration-200 text-gray-400 text-xs">→</span>
+              <span v-if="!isMiniMode" class="app-sidebar__arrow opacity-0 group-hover/item:opacity-100 transition-all duration-200 text-gray-400 text-xs">→</span>
             </button>
           </div>
         </nav>
@@ -394,7 +394,52 @@ onMounted(() => {
   scrollbar-width: none;
 }
 
-/* 暗色主题下侧边栏样式适配 */
-/* 暗色主题下侧边栏文字颜色 */
-/* 暗色主题下展开/收起按钮样式 */
+:global(html.theme-dark) .app-sidebar {
+  background:
+    linear-gradient(180deg, rgba(9, 21, 15, 0.98), rgba(6, 16, 11, 0.96)),
+    radial-gradient(circle at top left, rgba(110, 231, 164, 0.08), transparent 38%);
+  border-right-color: rgba(202, 232, 214, 0.14) !important;
+  box-shadow: 20px 0 48px rgba(0, 0, 0, 0.28);
+}
+
+:global(html.theme-dark) .app-sidebar__item {
+  color: rgba(237, 249, 240, 0.84) !important;
+}
+
+:global(html.theme-dark) .app-sidebar__item:hover {
+  background: rgba(110, 231, 164, 0.08) !important;
+  color: #f4fff7 !important;
+}
+
+:global(html.theme-dark) .app-sidebar__item:hover .app-sidebar__icon,
+:global(html.theme-dark) .app-sidebar__item:hover .app-sidebar__arrow {
+  color: rgba(244, 255, 247, 0.88) !important;
+}
+
+:global(html.theme-dark) .app-sidebar__item--active {
+  background:
+    linear-gradient(90deg, rgba(110, 231, 164, 0.18), rgba(56, 214, 192, 0.12)) !important;
+  color: #f6fff8 !important;
+  border: 1px solid rgba(110, 231, 164, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+:global(html.theme-dark) .app-sidebar__item--active .app-sidebar__icon,
+:global(html.theme-dark) .app-sidebar__item--active .app-sidebar__arrow {
+  color: #9af3bf !important;
+}
+
+:global(html.theme-dark) .sidebar-toggle {
+  background: rgba(16, 26, 20, 0.94) !important;
+  color: #edf9f0 !important;
+  border-color: rgba(202, 232, 214, 0.14) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+}
+
+:global(html.theme-dark) .sidebar-toggle:hover {
+  background: rgba(22, 36, 28, 0.98) !important;
+  color: #ffffff !important;
+}
 </style>
