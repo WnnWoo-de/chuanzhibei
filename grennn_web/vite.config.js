@@ -142,7 +142,8 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      outDir: '../dist',
+      // Vercel 要求产物位于项目根目录内；Cloudflare/本地构建继续输出到仓库根 dist
+      outDir: process.env.VERCEL ? 'dist' : '../dist',
       rollupOptions: {
         output: {},
       },
