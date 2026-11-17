@@ -77,6 +77,10 @@
                   <span>{{ langText.account.settings }}</span>
                   <em>Ctrl+,</em>
                 </router-link>
+                <router-link v-if="userStore.user?.role === 'admin'" to="/admin" class="account-menu-row" @click="closeAccountMenu">
+                  <span>管理端</span>
+                  <em>Admin</em>
+                </router-link>
                 <div class="account-menu-row account-menu-row--muted">
                   <span>{{ langText.account.overview }}</span>
                   <em>{{ userStore.user?.points || 0 }} {{ langText.common.points }}</em>

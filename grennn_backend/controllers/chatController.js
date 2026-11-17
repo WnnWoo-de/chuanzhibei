@@ -22,6 +22,35 @@
 const ChatHistory = require('../models/ChatHistory');
 const axios       = require('axios');
 
+const normalizeServiceName = (value) => String(value || '').trim().toLowerCase();
+
+const isPlaceholderKey = (apiKey, placeholders = []) => {
+    const key = String(apiKey || '').trim();
+    return !key || placeholders.includes(key);
+};
+
+const extractApiErrorMessage = (err, providerName) => {
+    const status = err.response?.status;
+    const data = err.response?.data;
+    const rawMessage = data?.message || data?.error?.message || data?.error || err.message || '请求失败';
+    const message = String(rawMessage);
+    const lowerMessage = message.toLowerCase();
+
+    if (status === 401) {
+        return `${providerName} API Key 无效或已过期，请在后端 .env 中更换有效 Key。`;
+    }
+
+    if (status === 403 && (lowerMessage.includes('insufficient') || message.includes('余额不足'))) {
+        return `${providerName} 账号余额不足，请充值后重试，或在后端 .env 中更换可用的 API Key / 模型。`;
+    }
+
+    if (status === 429) {
+        return `${providerName} 请求过于频繁或额度受限，请稍后重试。`;
+    }
+
+    return `${providerName} 调用失败${status ? ` (${status})` : ''}：${message}`;
+};
+
 // ── AI API 调用封装 ────────────────────────────────────────────────────────────
 
 /**
@@ -36,8 +65,8 @@ const callGLMAPI = async (messages, stream = true) => {
     const model  = process.env.GLM_MODEL || 'glm-4-flash'; // 默认使用 glm-4-flash 模型
 
     // 未配置 API Key 或仍为占位符时跳过，避免无效请求
-    if (!apiKey || apiKey === 'your_glm_api_key_here') {
-        return null;
+    if (isPlaceholderKey(apiKey, ['your_glm_api_key_here'])) {
+        return { skipped: true, reason: 'GLM_API_KEY 未配置' };
     }
 
     try {
@@ -60,10 +89,10 @@ const callGLMAPI = async (messages, stream = true) => {
                 timeout: 60000 // 请求超时 60 秒
             }
         );
-        return response;
+        return { response };
     } catch (err) {
         console.error('GLM API Error:', err.response?.data || err.message);
-        return null;
+        return { error: extractApiErrorMessage(err, 'GLM') };
     }
 };
 
@@ -76,11 +105,11 @@ const callGLMAPI = async (messages, stream = true) => {
  */
 const callSiliconFlowAPI = async (messages, stream = true) => {
     const apiKey = process.env.SILICONFLOW_API_KEY;
-    const model  = 'Qwen/Qwen2.5-72B-Instruct'; // 固定使用通义千问 72B 模型
+    const model  = process.env.SILICONFLOW_MODEL || 'Qwen/Qwen2.5-72B-Instruct';
 
     // 未配置 API Key 时跳过
-    if (!apiKey || apiKey === 'your_api_key') {
-        return null;
+    if (isPlaceholderKey(apiKey, ['your_api_key', 'your_siliconflow_api_key'])) {
+        return { skipped: true, reason: 'SILICONFLOW_API_KEY 未配置' };
     }
 
     try {
@@ -102,10 +131,10 @@ const callSiliconFlowAPI = async (messages, stream = true) => {
                 timeout: 60000
             }
         );
-        return response;
+        return { response };
     } catch (err) {
         console.error('SiliconFlow API Error:', err.response?.data || err.message);
-        return null;
+        return { error: extractApiErrorMessage(err, 'SiliconFlow') };
     }
 };
 
@@ -154,19 +183,34 @@ exports.sendMessage = async (req, res) => {
         }
 
         // 根据环境变量决定主 AI 服务与备用 AI 服务
-        const aiService = process.env.AI_SERVICE || 'glm';
+        const aiService = normalizeServiceName(process.env.AI_SERVICE || 'glm');
         let response = null;
+        const providerErrors = [];
+
+        const tryProvider = async (providerFn) => {
+            const result = await providerFn(messages, stream);
+            if (result?.response) return result.response;
+            if (result?.error) providerErrors.push(result.error);
+            return null;
+        };
 
         if (aiService === 'glm') {
-            response = await callGLMAPI(messages, stream);          // 优先 GLM
-            if (!response) response = await callSiliconFlowAPI(messages, stream); // 降级到 SiliconFlow
+            response = await tryProvider(callGLMAPI);          // 优先 GLM
+            if (!response) response = await tryProvider(callSiliconFlowAPI); // 降级到 SiliconFlow
         } else {
-            response = await callSiliconFlowAPI(messages, stream);  // 优先 SiliconFlow
-            if (!response) response = await callGLMAPI(messages, stream);         // 降级到 GLM
+            response = await tryProvider(callSiliconFlowAPI);  // 优先 SiliconFlow
+            if (!response) response = await tryProvider(callGLMAPI);         // 降级到 GLM
         }
 
-        // 两个 AI 服务均不可用 → 本地模拟回复
+        // 已配置服务但被上游拒绝时，返回明确错误，避免误判为未配置 Key
         if (!response) {
+            if (providerErrors.length) {
+                return res.status(502).json({
+                    error: providerErrors.join('；')
+                });
+            }
+
+            // 两个 AI 服务均未配置 → 本地模拟回复
             return mockStreamResponse(res, req.user?.id, stream);
         }
 

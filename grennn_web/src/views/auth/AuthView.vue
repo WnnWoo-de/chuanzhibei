@@ -24,15 +24,15 @@
                 <div class="mb-6 flex justify-center">
                   <img src="@/assets/logo.png" alt="Logo" class="w-16 h-16 object-contain rounded-2xl shadow-lg border border-black/10" />
                 </div>
-                <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">{{ isLogin ? langText.auth.verification : langText.auth.register }}</p>
-                <h2 class="text-2xl md:text-3xl font-bold">{{ isLogin ? langText.auth.login : langText.auth.createAccount }}</h2>
+                <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">{{ authEyebrow }}</p>
+                <h2 class="text-2xl md:text-3xl font-bold">{{ authTitle }}</h2>
               </div>
 
               <!-- 登录表单 -->
               <form v-if="isLogin" @submit.prevent="handleLogin" class="space-y-6">
-                <BaseInput id="email" v-model="email" type="text" :label="langText.auth.emailOrUsername" :placeholder="langText.auth.enterEmailOrUsername" autocomplete="username" inputmode="text" :error="errors.email" required @blur="validateEmail" />
+                <BaseInput id="email" v-model="email" type="text" :label="loginAccountLabel" :placeholder="loginAccountPlaceholder" autocomplete="username" inputmode="text" :error="errors.email" required @blur="validateEmail" />
                 <div class="space-y-4">
-                  <BaseInput id="password" v-model="password" type="password" :label="langText.auth.password" placeholder="••••••••" :error="errors.password" required @blur="validatePassword" />
+                  <BaseInput id="password" v-model="password" type="password" :label="loginPasswordLabel" :placeholder="loginPasswordPlaceholder" :error="errors.password" required @blur="validatePassword" />
                   <!-- 忘记密码链接 -->
                   <div class="text-right">
                     <router-link
@@ -43,7 +43,7 @@
                     </router-link>
                   </div>
                 </div>
-                <BaseButton type="submit" class="w-full" :is-loading="isLoading">{{ langText.auth.login }}</BaseButton>
+                <BaseButton type="submit" class="w-full" :is-loading="isLoading">{{ loginButtonText }}</BaseButton>
               </form>
 
               <!-- 注册表单 -->
@@ -57,8 +57,14 @@
 
               <!-- 底部操作区域：切换登录/注册 + 游客模式 -->
               <div class="mt-6 space-y-4 border-t border-black/10 pt-6">
+                <div v-if="isAdminRedirect" class="text-center">
+                  <p class="text-xs opacity-60 mb-2">当前为 GreenSight 管理端身份验证</p>
+                  <router-link to="/auth/login" class="inline-flex items-center justify-center gap-1 px-4 py-2 bg-black text-white text-xs font-mono uppercase rounded-lg hover:bg-green-600 transition-all duration-300">
+                    <span>返回用户端登录</span><span>→</span>
+                  </router-link>
+                </div>
                 <!-- 切换登录/注册模式按钮 -->
-                <div class="text-center">
+                <div v-else class="text-center">
                   <p class="text-xs opacity-60 mb-2">{{ isLogin ? langText.auth.noAccount : langText.auth.hasAccount }}</p>
                   <button type="button" @click="toggleMode" class="inline-flex items-center justify-center gap-1 px-4 py-2 bg-black text-white text-xs font-mono uppercase rounded-lg hover:bg-green-600 transition-all duration-300">
                     <span>{{ isLogin ? langText.auth.registerNow : langText.auth.loginNow }}</span><span>→</span>
@@ -66,7 +72,7 @@
                 </div>
 
                 <!-- 游客模式入口（无需登录即可体验） -->
-                <div class="text-center border-t border-black/10 pt-4">
+                <div v-if="!isAdminRedirect" class="text-center border-t border-black/10 pt-4">
                   <p class="text-xs opacity-60 mb-2">{{ langText.auth.tryFirst }}</p>
                   <router-link to="/chat" class="inline-flex items-center justify-center gap-1 px-4 py-2 bg-green-50 text-green-700 text-xs font-mono uppercase rounded-lg border border-green-200 hover:bg-green-100 transition-all duration-300">
                     <span>{{ langText.auth.guestMode }}</span><span>→</span>
@@ -89,7 +95,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -144,6 +150,22 @@ const getRedirectPath = (redirect) => {
   if (redirect.startsWith('//')) return ''
   return redirect
 }
+
+const redirectPath = computed(() => getRedirectPath(route.query?.redirect))
+const isAdminRedirect = computed(() => redirectPath.value === '/admin' || redirectPath.value.startsWith('/admin/'))
+const authEyebrow = computed(() => {
+  if (!isLogin.value) return langText.value.auth.register
+  return isAdminRedirect.value ? 'ADMIN CONSOLE' : langText.value.auth.verification
+})
+const authTitle = computed(() => {
+  if (!isLogin.value) return langText.value.auth.createAccount
+  return isAdminRedirect.value ? '管理端登录' : langText.value.auth.login
+})
+const loginAccountLabel = computed(() => (isAdminRedirect.value ? '管理员账号' : langText.value.auth.emailOrUsername))
+const loginAccountPlaceholder = computed(() => langText.value.auth.enterEmailOrUsername)
+const loginPasswordLabel = computed(() => (isAdminRedirect.value ? '管理员密码' : langText.value.auth.password))
+const loginPasswordPlaceholder = computed(() => '••••••••')
+const loginButtonText = computed(() => langText.value.auth.login)
 
 // 校验邮箱/用户名字段
 const validateEmail = (options) => {
@@ -219,9 +241,9 @@ const handleLogin = async () => {
   }
 
   // 登录成功：跳转到 redirect 目标或首页
-  const redirect = getRedirectPath(route.query?.redirect)
-  router.replace(redirect || '/')
+  router.replace(redirectPath.value || '/')
 }
+
 
 // 处理注册表单提交
 const handleRegister = async () => {
@@ -247,8 +269,7 @@ const handleRegister = async () => {
   }
 
   // 注册成功：跳转到 redirect 目标或首页
-  const redirect = getRedirectPath(route.query?.redirect)
-  router.replace(redirect || '/')
+  router.replace(redirectPath.value || '/')
 }
 
 // 实时校验：字段被 touch 后，每次输入都触发校验
@@ -257,19 +278,19 @@ watch(password, () => { if (touched.password) validatePassword() })
 watch(username, () => { if (touched.username) validateName() })
 watch(confirmPassword, () => { if (touched.confirmPassword) validateConfirmPassword() })
 
-// 页面挂载时：根据路由设置模式 + 检查 URL 中的 Token
+// 页面挂载时：根据路由设置模式 + 用一次性 code 完成 OAuth 登录
 onMounted(async () => {
   updateModeFromRoute()
 
-  // 检查是否有 OAuth Token（第三方登录回调）
-  const queryToken = route.query?.token || route.query?.access_token
-  if (typeof queryToken !== 'string' || !queryToken) return
+  // OAuth 回调只携带 60 秒有效的一次性 code，长期令牌不会出现在 URL 中
+  const code = route.query?.code
+  if (typeof code !== 'string' || !code) return
   isLoading.value = true
-  const success = await userStore.acceptToken(queryToken)
+  const success = await userStore.exchangeOAuthCode(code)
   isLoading.value = false
   if (success) {
-    const redirect = getRedirectPath(route.query?.redirect)
-    router.replace(redirect || '/')
+    // 清除地址栏中的 code，避免被历史记录或日志留存
+    router.replace(redirectPath.value || '/')
   }
 })
 
@@ -311,4 +332,5 @@ watch(
   opacity: 0;
   transform: translateX(-30px);
 }
+
 </style>

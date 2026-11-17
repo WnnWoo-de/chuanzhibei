@@ -216,8 +216,8 @@
 
                 <div class="mt-8 flex justify-between items-center">
                   <p class="text-xs text-gray-400">
-                    <template v-if="userStore.isLoggedIn">
-                      {{ langText.reconstruction.pointsEarned }} <span class="text-primary font-bold">+50</span> {{ langText.common.points }}
+                    <template v-if="userStore.isLoggedIn && analysisPointsEarned > 0">
+                      {{ langText.reconstruction.pointsEarned }} <span class="text-primary font-bold">+{{ analysisPointsEarned }}</span> {{ langText.common.points }}
                     </template>
                     <template v-else>
                       {{ langText.reconstruction.pointsLoginHint }} <span class="text-primary font-bold">+50</span> {{ langText.reconstruction.pointsSuffix }}
@@ -236,6 +236,16 @@
         </transition>
 
         <!-- Cases Grid -->
+        <figure v-if="!showAnalysis" class="mb-8 overflow-hidden rounded-2xl border border-black/5 bg-emerald-50">
+          <img
+            :src="upcyclingImage"
+            alt="旧玻璃瓶与铁罐改造成绿植容器，木凳重新焕发生机"
+            width="1536"
+            height="1024"
+            decoding="async"
+            class="block w-full h-48 sm:h-64 lg:h-72 object-cover object-center"
+          />
+        </figure>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div
             v-for="(item, index) in cases"
@@ -388,6 +398,7 @@
 </template>
 
 <script setup>
+import upcyclingImage from '@/assets/images/editorial/upcycling.jpg'
 // ============================================================
 // views/reconstruction/ReconstructionView.vue - 旧物重构页面
 // 功能：上传旧物图片 → 调用 AI 分析 → 展示材质/碳减排数据和重构建议
@@ -414,6 +425,7 @@ const uploadedImage = ref(null)        // 上传图片的 base64 预览
 const uploadedFile = ref(null)         // 待上传的 File 对象
 const showAnalysis = ref(false)        // 是否显示 AI 分析区域
 const analysisComplete = ref(false)    // AI 分析是否已完成
+const analysisPointsEarned = ref(0)    // 本次分析实际获得的积分
 const analysisRunId = ref(0)           // 每次分析的唯一 ID，用于取消过期分析
 const showDetailDialog = ref(false)    // 案例详情对话框可见性
 const selectedCase = ref(null)         // 当前选中的案例
@@ -595,6 +607,8 @@ const startAnalysis = async () => {
       const mapped = mapAnalyzeResult(result.data)
       analysisMeta.value = mapped.meta
       suggestions.value = mapped.suggestions
+      analysisPointsEarned.value = Number(result.data?.pointsEarned || 0)
+      if (result.data?.points !== undefined) userStore.syncPoints(result.data.points)
       ElMessage.success(
         mapped.summary.isReconstructable
           ? langText.value.reconstruction.analysisSuccess
@@ -628,15 +642,13 @@ const startAnalysis = async () => {
   }
 
   analysisComplete.value = true
-  if (userStore.isLoggedIn) {
-    userStore.addPoints(50) // Reward logged-in user only
-  }
 }
 
 /** 关闭分析区域并重置所有分析状态 */
 const closeAnalysis = () => {
   analysisRunId.value += 1
   showAnalysis.value = false
+  analysisPointsEarned.value = 0
   analysisComplete.value = false
   uploadedImage.value = null
   uploadedFile.value = null

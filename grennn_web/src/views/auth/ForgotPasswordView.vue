@@ -25,11 +25,19 @@
               </div>
               <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">{{ langText.auth.passwordReset }}</p>
               <h2 class="text-2xl md:text-3xl font-bold">{{ langText.auth.forgotPassword }}</h2>
-              <p class="text-sm text-gray-500 mt-2">{{ langText.auth.enterEmailToVerify }}</p>
+              <p class="text-sm text-gray-500 mt-2">{{ langText.auth.resetEmailSent }}</p>
+            </div>
+
+            <!-- 邮件已发送提示 -->
+            <div v-if="emailSent" class="space-y-6 text-center">
+              <p class="text-sm text-gray-600">{{ langText.auth.resetEmailSent }}</p>
+              <BaseButton type="button" class="w-full" @click="router.push({ name: 'login' })">
+                {{ langText.auth.backToLogin }}
+              </BaseButton>
             </div>
 
             <!-- 邮箱验证表单 -->
-            <form @submit.prevent="handleVerifyEmail" class="space-y-6">
+            <form v-else @submit.prevent="handleVerifyEmail" class="space-y-6">
               <!-- 邮箱输入框 -->
               <BaseInput
                 id="email"
@@ -45,7 +53,7 @@
               />
               <!-- 验证邮箱提交按钮 -->
               <BaseButton type="submit" class="w-full" :is-loading="isLoading">
-                {{ langText.auth.verifyEmail }}
+                {{ langText.auth.sendResetLink }}
               </BaseButton>
               <!-- 返回登录链接 -->
               <div class="text-center">
@@ -127,6 +135,7 @@ import { langText } from '@/language'
 const email = ref('')
 // 提交加载状态
 const isLoading = ref(false)
+const emailSent = ref(false)
 
 // 字段错误信息
 const errors = reactive({ email: '' })
@@ -189,14 +198,14 @@ const handleVerifyEmail = async () => {
     return
   }
 
-  // 验证成功，跳转到重置密码页面，传递邮箱和临时 token
-  router.push({
-    name: 'reset-password',
-    query: {
-      email: email.value.trim(),
-      token: result.resetToken
-    }
-  })
+  // 本地演示模式下后端可能直接返回一次性 token，便于无邮件环境调试
+  if (result.resetToken) {
+    router.push({ name: 'reset-password', query: { token: result.resetToken } })
+    return
+  }
+
+  // 生产环境统一提示查收邮件，不暴露邮箱是否已注册
+  emailSent.value = true
 }
 
 // 实时校验：邮箱字段被 touch 后触发

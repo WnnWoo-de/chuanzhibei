@@ -8,7 +8,7 @@ const QuizRecord = sequelize.define('QuizRecord', {
         primaryKey: true,
     },
     userId: {
-        type: DataTypes.UUID,
+        type: DataTypes.CHAR(36),
         allowNull: false,
     },
     date: {

@@ -15,12 +15,13 @@ const express              = require('express');
 const router               = express.Router();
 const communityController  = require('../controllers/communityController');
 const { protect }          = require('../middleware/authMiddleware');
+const idempotency          = require('../middleware/idempotency');
 
 // 获取帖子列表（分页）
 router.get('/posts',              protect, communityController.getPosts);
 
 // 发布新帖子
-router.post('/posts',             protect, communityController.createPost);
+router.post('/posts',             protect, idempotency, communityController.createPost);
 
 // 为帖子点赞 / 取消点赞
 router.post('/posts/:id/like',    protect, communityController.likePost);

@@ -2,7 +2,9 @@
  * controllers/quizController.js - 环保问答控制器
  * 负责题库初始化、题目查询、用户答题记录查询与保存
  */
+const { Op } = require('sequelize');
 const { QuizQuestion, QuizRecord } = require('../models');
+const { awardPoints } = require('../services/points');
 
 // 默认题库：当数据库中还没有题目时，首次请求会自动写入这些种子题
 const seedQuestions = [
@@ -81,44 +83,99 @@ exports.listMyRecords = async (req, res) => {
 
 /**
  * POST /api/v1/quiz/records
- * 保存当前用户某一天的答题结果；同一天重复提交会更新原记录
+ * 保存当前用户某一天的答题结果；成绩由服务端根据题目标准答案重新计算。
+ *
+ * 请求体：{ date, answers: [{ questionId, selected: string[] }], completed: boolean }
  */
 exports.saveRecord = async (req, res) => {
     try {
-        // 取 yyyy-mm-dd 作为自然日主键，避免同一天产生多条成绩记录
         const date = String(req.body?.date || new Date().toISOString().slice(0, 10)).slice(0, 10);
-        const questionIds = Array.isArray(req.body?.questionIds) ? req.body.questionIds : [];
-        const correctCount = Number(req.body?.correctCount);
-        const totalCount = Number(req.body?.totalCount);
-        const earnedPoints = Number(req.body?.earnedPoints);
-
-        // 基础校验：答题数量必须合理，积分必须是有限且非负的数字
-        if (!Number.isInteger(correctCount) || !Number.isInteger(totalCount) || totalCount <= 0) {
-            return res.status(400).json({ error: '答题数量无效' });
-        }
-        if (!Number.isFinite(earnedPoints) || earnedPoints < 0 || earnedPoints > 10000) {
-            return res.status(400).json({ error: '积分数据无效' });
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+            return res.status(400).json({ error: '日期格式无效' });
         }
 
-        // 将正确题数限制在 [0, totalCount] 范围内，避免前端误传异常值
+        const answers = Array.isArray(req.body?.answers) ? req.body.answers : [];
+        if (answers.length === 0) {
+            return res.status(400).json({ error: '缺少答题结果' });
+        }
+        if (answers.length > 20) {
+            return res.status(400).json({ error: '答题数量超出限制' });
+        }
+
+        const completed = req.body?.completed === true;
+        const questionIds = [...new Set(answers.map((item) => Number(item?.questionId)).filter(Number.isInteger))];
+        if (questionIds.length === 0) {
+            return res.status(400).json({ error: '题号无效' });
+        }
+
+        const questions = await QuizQuestion.findAll({
+            where: { id: { [Op.in]: questionIds }, enabled: true },
+        });
+        const questionMap = new Map(questions.map((item) => [item.id, item]));
+        if (questionMap.size !== questionIds.length) {
+            return res.status(400).json({ error: '包含未知或已下架的题目' });
+        }
+
+        const normalizeSelection = (value) => (
+            Array.isArray(value)
+                ? [...new Set(value.map((item) => String(item).trim().toUpperCase()).filter(Boolean))].sort()
+                : []
+        );
+
+        let correctCount = 0;
+        let earnedPoints = 0;
+        for (const answer of answers) {
+            const question = questionMap.get(Number(answer?.questionId));
+            if (!question) continue;
+            const selected = normalizeSelection(answer?.selected);
+            const correct = normalizeSelection(question.answer);
+            const isCorrect = selected.length === correct.length && selected.every((item, index) => item === correct[index]);
+            if (isCorrect) {
+                correctCount += 1;
+                earnedPoints += Number(question.points || 10);
+            } else if (selected.length > 0) {
+                // 参与学习也给予少量积分，与前端展示保持一致
+                earnedPoints += 3;
+            }
+        }
+        if (completed) {
+            earnedPoints += 20;
+            if (correctCount === questions.length) earnedPoints += 50;
+        }
+
         const payload = {
             questionIds,
-            correctCount: Math.max(0, Math.min(correctCount, totalCount)),
-            totalCount,
+            correctCount,
+            totalCount: questions.length,
             earnedPoints,
-            completed: true,
+            completed,
         };
 
-        // 同一用户同一天只保留一条记录：没有就创建，有就更新
-        const [record] = await QuizRecord.findOrCreate({
+        // 同一用户同一天只保留一条记录
+        const [record, created] = await QuizRecord.findOrCreate({
             where: { userId: req.user.id, date },
             defaults: { userId: req.user.id, date, ...payload },
         });
-        if (!record.isNewRecord) {
+        if (!created) {
             await record.update(payload);
         }
 
-        res.status(201).json({ record: formatRecord(record) });
+        // 只有完成整轮答题才发放积分；每天一次，eventKey 防止重复发分
+        let reward = { awarded: 0, points: req.user.points, duplicated: false, capped: false };
+        if (completed) {
+            reward = await awardPoints({
+                userId: req.user.id,
+                amount: earnedPoints,
+                reason: 'quiz',
+                eventKey: `quiz:${req.user.id}:${date}`,
+            });
+        }
+
+        res.status(201).json({
+            record: formatRecord(record),
+            pointsAwarded: reward.awarded,
+            points: reward.points,
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

@@ -1,13 +1,16 @@
 /**
  * controllers/userController.js - 用户信息控制器
  *
- * 提供用户个人信息查询、资料更新与积分管理功能：
- *   getMe         - 获取当前登录用户的基本信息
- *   updateMe      - 更新当前登录用户的资料
- *   updatePoints  - 为当前用户增加或扣减积分
+ * 提供用户个人信息查询、资料更新与积分流水查询功能：
+ *   getMe               - 获取当前登录用户的基本信息
+ *   updateMe            - 更新当前登录用户的资料
+ *   listPointTransactions - 查询当前用户的积分流水
  *
- * 所有接口均需要通过 protect 中间件验证，req.user 已由中间件填充。
+ * 积分不再提供客户端直接写入接口，由服务端在业务事件完成后发放。
  */
+
+const { PointTransaction } = require('../models');
+const { getUserRole } = require('../services/roles');
 
 /**
  * GET /api/v1/users/me
@@ -27,10 +30,12 @@ exports.getMe = async (req, res) => {
             points:        user.points,
             avatar:        user.avatar,
             bio:           user.bio,
-            emailVerified: user.emailVerified
+            emailVerified: user.emailVerified,
+            role:          getUserRole(user),
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('GetMe controller error:', err);
+        res.status(500).json({ error: '获取用户信息失败，请稍后重试' });
     }
 };
 
@@ -93,49 +98,37 @@ exports.updateMe = async (req, res) => {
                 points:        user.points,
                 avatar:        user.avatar,
                 bio:           user.bio,
-                emailVerified: user.emailVerified
+                emailVerified: user.emailVerified,
+                role:          getUserRole(user),
             }
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        if (err?.name === 'SequelizeUniqueConstraintError') {
+            return res.status(409).json({
+                error: '该用户名已被占用',
+                errors: { username: '该用户名已被占用' }
+            });
+        }
+        console.error('UpdateMe controller error:', err);
+        res.status(500).json({ error: '更新资料失败，请稍后重试' });
     }
 };
 
 /**
- * POST /api/v1/users/me/points
- * 更新当前用户的积分（增加或扣减）
- *
- * 请求体：{ amount }  - 积分变化量（正数为增加，负数为扣减）
- *
- * 校验规则：
- *   - amount 必须是有限数字（排除 NaN、Infinity）
- *   - 单次变化量绝对值不超过 10000（防止异常大额操作）
- *   - 积分最低为 0，不会出现负积分
- *
- * 返回：{ message, points }  - points 为更新后的积分值
+ * GET /api/v1/users/me/points
+ * 返回当前用户最近的积分流水，便于个人中心展示积分来源。
  */
-exports.updatePoints = async (req, res) => {
+exports.listPointTransactions = async (req, res) => {
     try {
-        const amount = Number(req.body?.amount);
-
-        // 参数校验：必须是有效数字
-        if (!Number.isFinite(amount)) {
-            return res.status(400).json({ error: 'amount 必须是有效数字' });
-        }
-
-        // 安全校验：单次操作量不超过 ±10000，防止恶意或误操作
-        if (Math.abs(amount) > 10000) {
-            return res.status(400).json({ error: 'amount 超出允许范围' });
-        }
-
-        const user = req.user;
-
-        // 更新积分：确保积分不低于 0（不允许负积分）
-        user.points = Math.max(0, (user.points || 0) + amount);
-        await user.save();
-
-        res.json({ message: 'Points updated', points: user.points });
+        const items = await PointTransaction.findAll({
+            where: { userId: req.user.id },
+            order: [['createdAt', 'DESC']],
+            limit: 50,
+            attributes: ['id', 'amount', 'reason', 'balanceAfter', 'createdAt'],
+        });
+        res.json({ items, points: req.user.points });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('listPointTransactions controller error:', err);
+        res.status(500).json({ error: '获取积分流水失败，请稍后重试' });
     }
 };

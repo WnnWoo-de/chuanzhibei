@@ -1,5 +1,7 @@
 # 绿我同行（GreenSight AI Web）项目作品介绍文档
 
+> 作者：WnnWoo-de
+
 ---
 
 ## 一、项目详情及使用方式

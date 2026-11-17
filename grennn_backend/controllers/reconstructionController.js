@@ -5,6 +5,7 @@
 const fs = require('fs/promises');
 const axios = require('axios');
 const { ReconstructionRecord } = require('../models');
+const { awardPoints } = require('../services/points');
 
 // FastAPI AI 服务地址，默认指向本机 8003 端口
 const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL || 'http://127.0.0.1:8003';
@@ -52,7 +53,7 @@ exports.analyzeImage = async (req, res) => {
                 image_base64: base64Image,
             },
             {
-                timeout: 30000,
+                timeout: 120000,
             },
         );
 
@@ -95,7 +96,7 @@ exports.analyzeImage = async (req, res) => {
         };
 
         // 将分析结果摘要写入数据库，供后续个人记录或作品发布功能复用
-        await ReconstructionRecord.create({
+        const record = await ReconstructionRecord.create({
             userId: req.user?.id || null,
             imageUrl: analysis.image_url,
             originalFilename: req.file.originalname,
@@ -108,7 +109,23 @@ exports.analyzeImage = async (req, res) => {
             isPublished: false,
         });
 
-        return res.json(analysis);
+        // 登录用户完成一次分析可获得积分，以记录 ID 幂等并受每日上限约束
+        let reward = { awarded: 0, points: null };
+        if (req.user?.id) {
+            reward = await awardPoints({
+                userId: req.user.id,
+                amount: 50,
+                reason: 'reconstruction',
+                eventKey: `reconstruction:${record.id}`,
+                dailyCap: 200,
+            });
+        }
+
+        return res.json({
+            ...analysis,
+            pointsEarned: reward.awarded,
+            points: reward.points,
+        });
     } catch (err) {
         // 优先返回 FastAPI 上游的 message，没有则回退到本地错误信息
         const message = err?.response?.data?.message || err.message;

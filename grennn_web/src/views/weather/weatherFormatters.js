@@ -1,4 +1,3 @@
-import { computed } from 'vue'
 import { langText } from '@/language'
 
 export const weatherFmt = {

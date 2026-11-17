@@ -3,7 +3,7 @@ const sequelize = require('../config/database');
 
 const VolunteerActivity = sequelize.define('VolunteerActivity', {
     id: {
-        type: DataTypes.UUID,
+        type: DataTypes.CHAR(36),
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
@@ -75,7 +75,7 @@ const VolunteerActivity = sequelize.define('VolunteerActivity', {
         allowNull: true,
     },
     organizerId: {
-        type: DataTypes.UUID,
+        type: DataTypes.CHAR(36),
         allowNull: true,
     },
 }, {

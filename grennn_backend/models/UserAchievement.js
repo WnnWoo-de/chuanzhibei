@@ -8,7 +8,7 @@ const UserAchievement = sequelize.define('UserAchievement', {
         primaryKey: true,
     },
     userId: {
-        type: DataTypes.UUID,
+        type: DataTypes.CHAR(36),
         allowNull: false,
     },
     achievementId: {

@@ -7,7 +7,7 @@ const sequelize = require('../config/database');
 
 const Post = sequelize.define('Post', {
     id: {
-        type: DataTypes.UUID,
+        type: DataTypes.CHAR(36),
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
@@ -28,7 +28,7 @@ const Post = sequelize.define('Post', {
         defaultValue: 0,
     },
     userId: {
-        type: DataTypes.UUID,
+        type: DataTypes.CHAR(36),
         allowNull: true,
     },
 }, {

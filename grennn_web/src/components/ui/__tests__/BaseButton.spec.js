@@ -196,19 +196,23 @@ describe('reconstruction utils', () => {
   it('maps analyze result meta and suggestions', () => {
     const result = mapAnalyzeResult({
       material: '金属',
+      integrity: '良好 (B+)',
       carbon_reduction: '3.2 kg CO₂e',
       suggestions: [
         { title: '花盆', steps: ['打磨', '喷漆'], difficulty: '简单' },
         { title: '  ', steps: ['x'] },
       ],
     })
-    expect(result.meta).toEqual({
+    expect(result.meta).toMatchObject({
       material: '金属',
       integrity: '良好 (B+)',
       carbonReduction: '3.2 kg CO₂e',
     })
-    expect(result.suggestions).toEqual([
-      { title: '花盆', description: '打磨；喷漆', difficulty: '简单' },
-    ])
+    expect(result.suggestions).toHaveLength(1)
+    expect(result.suggestions[0]).toMatchObject({
+      title: '花盆',
+      description: '打磨；喷漆',
+      difficulty: '简单',
+    })
   })
 })

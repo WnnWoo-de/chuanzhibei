@@ -26,7 +26,7 @@
               <p class="font-mono text-xs uppercase tracking-widest opacity-50 mb-2">{{ langText.auth.setNewPassword }}</p>
               <h2 class="text-2xl md:text-3xl font-bold">{{ langText.auth.resetPassword }}</h2>
               <p class="text-sm text-gray-500 mt-2">
-                {{ langText.auth.setPasswordFor }} <span class="font-medium text-green-600">{{ userEmail }}</span> {{ langText.auth.setNewPasswordSuffix }}
+                {{ langText.auth.resetEmailSent }}
               </p>
             </div>
 
@@ -166,8 +166,8 @@ const confirmPassword = ref('')
 const isLoading = ref(false)
 // 密码是否已重置成功
 const isPasswordReset = ref(false)
-// 从 URL 获取的用户邮箱
-const userEmail = ref('')
+// 从 URL 获取的一次性重置令牌
+const resetToken = ref('')
 
 // 字段错误信息
 const errors = reactive({ password: '', confirmPassword: '' })
@@ -178,14 +178,14 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
-// 页面挂载时：从 URL 查询参数中获取邮箱，无邮箱则跳转回忘记密码页
+// 页面挂载时：从 URL 查询参数中获取一次性 token，无 token 则跳转回忘记密码页
 onMounted(() => {
-  const queryEmail = route.query?.email
-  if (typeof queryEmail !== 'string' || !queryEmail) {
+  const token = route.query?.token
+  if (typeof token !== 'string' || !token) {
     router.push('/auth/forgot-password')
     return
   }
-  userEmail.value = queryEmail
+  resetToken.value = token
 })
 
 /** 校验新密码（至少 8 位） */
@@ -246,7 +246,7 @@ const handleResetPassword = async () => {
   }
 
   isLoading.value = true
-  const result = await userStore.resetPassword(userEmail.value, password.value)
+  const result = await userStore.resetPassword(resetToken.value, password.value)
   isLoading.value = false
 
   if (!result.ok) {

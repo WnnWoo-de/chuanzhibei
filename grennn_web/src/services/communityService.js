@@ -64,5 +64,5 @@ export const createCommunityPost = async ({ content, imageUrls = [] } = {}) => {
   // 规范化后端返回的帖子数据（兼容不同包装字段名）
   const raw = result.data?.item || result.data?.post || result.data
   const post = buildPostFromApi({ ...(raw || {}), content: payload.content })
-  return { ok: true, message: '', post }
+  return { ok: true, message: '', post, points: result.data?.points }
 }

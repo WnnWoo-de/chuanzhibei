@@ -521,25 +521,6 @@ const startAdviceCooldown = (seconds = 8) => {
   }, 1000)
 }
 
-/** 复制 AI 出行建议到剪贴板 */
-const copyAiTravelAdvice = async () => {
-  if (!aiTravelAdvice.value.trim()) return
-
-  try {
-    await navigator.clipboard.writeText(aiTravelAdvice.value)
-    copiedAdvice.value = true
-    ElMessage.success(langText.value.carbonFootprint.adviceCopied)
-    clearCopyResetTimer()
-    copyResetTimer.value = setTimeout(() => {
-      copiedAdvice.value = false
-      copyResetTimer.value = null
-    }, 1800)
-  } catch (error) {
-    console.error('Copy AI travel advice failed:', error)
-    ElMessage.error(langText.value.carbonFootprint.copyFailed)
-  }
-}
-
 /** 构建 AI 出行建议的提示词 */
 const buildTravelAdvicePrompt = () => {
   return [

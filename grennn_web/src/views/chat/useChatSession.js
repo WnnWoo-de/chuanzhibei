@@ -240,7 +240,7 @@ export const useChatSession = ({ initialMessage, scrollToBottom, userStore }) =>
         messages.value.pop()
       }
 
-      ElMessage.error('AI 服务暂时不可用，已切换到模拟模式')
+      ElMessage.error(`${error.message || 'AI 服务暂时不可用'}，已切换到模拟模式`)
       await fallbackToSimulation(userMsg)
     } finally {
       // 无论成功或失败，都要回收计时器并重置状态

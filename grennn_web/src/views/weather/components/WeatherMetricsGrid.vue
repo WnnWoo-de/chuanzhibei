@@ -13,7 +13,7 @@
         <div class="aqi-center">
           <div class="aqi-center-value">
             <transition name="roll-number" mode="out-in">
-              <span :key="`aqi-${Math.round(weather.airQuality.aqi || 0)}`" class="rolling-number-sm">
+              <span :key="`aqi-${Math.round(weather.airQuality.aqi || 0)}`" class="rolling-number-sm" data-testid="aqi-value">
                 {{ Math.round(weather.airQuality.aqi || 0) }}
               </span>
             </transition>

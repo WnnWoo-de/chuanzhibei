@@ -122,6 +122,16 @@
       </aside>
       <!-- 右侧主内容区域（9列宽） -->
       <main class="col-span-12 md:col-span-9">
+        <figure class="mb-6 overflow-hidden rounded-2xl border border-black/5 bg-emerald-50">
+          <img
+            :src="volunteerImage"
+            alt="志愿者在公园中一起栽种树苗的环保主题示意图"
+            width="1536"
+            height="1024"
+            decoding="async"
+            class="block w-full h-48 sm:h-64 lg:h-80 object-cover object-center"
+          />
+        </figure>
 
         <!-- 搜索栏和分类筛选按钮 -->
         <div class="flex flex-col sm:flex-row gap-3 mb-8 animate-fade-in-up">
@@ -335,6 +345,7 @@
 </template>
 
 <script setup>
+import volunteerImage from '@/assets/images/editorial/volunteer.jpg'
 // ============================================================
 // views/volunteer/VolunteerView.vue - 志愿活动页面
 // 功能：浏览志愿活动、报名参与、记录志愿时长并换取积分
@@ -470,8 +481,8 @@ const submitLogHours = () => {
   // 添加时长记录
   volunteerLogs.value.push({ activityId: selectedActivity.value.id, title: selectedActivity.value.title, hours: logForm.value.hours, points: pts, date: new Date().toISOString().split('T')[0] })
   localStorage.setItem('volunteer_logs', JSON.stringify(volunteerLogs.value))
-  // 给用户增加积分
-  userStore.addPoints(pts)
+  // 本地演示数据仅更新界面余额；真实积分由服务端志愿时长接口发放
+  if (userStore.user) userStore.syncPoints(Number(userStore.user.points || 0) + pts)
   // 更新排行榜数据
   const userName = userStore.user?.name || userStore.user?.username || '我'
   const idx = volunteerLeaderboard.value.findIndex(u => u.name === userName)

@@ -1,8 +1,12 @@
+const crypto = require('crypto');
 const { WasteRecognitionRecord } = require('../models');
+const { awardPoints } = require('../services/points');
 const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
+
+const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8003/api/ai/predict';
 
 // 确保 uploads 目录存在
 const uploadsDir = path.join(__dirname, '..', 'uploads');
@@ -19,41 +23,66 @@ exports.analyzeImage = async (req, res) => {
         const form = new FormData();
         form.append('file', req.file.buffer, { filename: req.file.originalname });
 
-        // 转发图片给本地 8003 端口的 Python AI 服务
-        const aiResponse = await axios.post('http://127.0.0.1:8003/api/ai/predict', form, {
+        // 转发图片给 Python AI 视觉识别服务
+        const aiResponse = await axios.post(AI_SERVICE_URL, form, {
             headers: form.getHeaders(),
-            timeout: 15000 // 15秒超时保护
+            timeout: 60000
         });
 
         if (aiResponse.data.status === 'success') {
             const aiData = aiResponse.data.data;
+            const category = normalizeCategory(aiData.category);
 
             // 将 AI 响应转换为前端期望的格式
             const result = {
-                itemName: aiData.name,
-                confidence: 95, // AI 识别默认置信度
-                category: normalizeCategory(aiData.category),
+                itemName: aiData.name || aiData.itemName || '未识别物品',
+                confidence: normalizeConfidence(aiData.confidence),
+                category,
                 description: aiData.reason || 'AI 识别结果',
-                tips: generateTipsByCategory(normalizeCategory(aiData.category))
+                tips: normalizeTips(aiData.tips, category),
+                pointsEarned: 0,
             };
 
-            // 保存文件到磁盘
-            const filename = `${Date.now()}-${req.file.originalname}`;
+            // 使用随机文件名与真实扩展名，避免原始文件名造成路径穿越
+            const extMap = {
+                'image/jpeg': 'jpg',
+                'image/png': 'png',
+                'image/webp': 'webp',
+                'image/gif': 'gif',
+            };
+            const ext = extMap[String(req.file.mimetype || '').toLowerCase()] || 'jpg';
+            const filename = `waste-${Date.now()}-${crypto.randomBytes(4).toString('hex')}.${ext}`;
             const filePath = path.join(uploadsDir, filename);
-            fs.writeFileSync(filePath, req.file.buffer);
+            await fs.promises.writeFile(filePath, req.file.buffer);
 
-            // 保存到数据库
-            await WasteRecognitionRecord.create({
-                userId: req.user?.id || null,
-                imageUrl: `/uploads/${filename}`,
-                originalFilename: req.file.originalname,
-                wasteCategory: result.category,
-                wasteName: result.itemName,
-                confidence: result.confidence,
-                aiExplanation: result.description,
-                tips: result.tips,
-                pointsEarned: 20,
-            });
+            // 保存识别记录；数据库临时不可用时不影响本次识别结果返回
+            try {
+                const record = await WasteRecognitionRecord.create({
+                    userId: req.user?.id || null,
+                    imageUrl: `/uploads/${filename}`,
+                    originalFilename: path.basename(req.file.originalname || '').slice(0, 200),
+                    wasteCategory: result.category,
+                    wasteName: result.itemName,
+                    confidence: result.confidence,
+                    aiExplanation: result.description,
+                    tips: result.tips,
+                    pointsEarned: 20,
+                });
+
+                if (req.user?.id) {
+                    const reward = await awardPoints({
+                        userId: req.user.id,
+                        amount: 20,
+                        reason: 'waste',
+                        eventKey: `waste:${record.id}`,
+                        dailyCap: 100,
+                    });
+                    result.pointsEarned = reward.awarded;
+                    result.points = reward.points;
+                }
+            } catch (saveErr) {
+                console.error('保存垃圾识别记录失败:', saveErr.message);
+            }
 
             return res.json(result);
         } else {
@@ -61,7 +90,7 @@ exports.analyzeImage = async (req, res) => {
         }
     } catch (error) {
         console.error('垃圾分类失败:', error.message);
-        res.status(500).json({ error: '服务器繁忙或 AI 请求超时' });
+        res.status(500).json({ error: error.message || '服务器繁忙或 AI 请求超时' });
     }
 };
 
@@ -76,6 +105,32 @@ const normalizeCategory = (category) => {
         '其他垃圾': '其他垃圾'
     };
     return categoryMap[category] || '其他垃圾';
+};
+
+const normalizeConfidence = (confidence) => {
+    if (typeof confidence === 'number' && Number.isFinite(confidence)) {
+        return Math.max(1, Math.min(99, Math.round(confidence)));
+    }
+    const text = String(confidence || '').trim();
+    if (text.includes('高')) return 92;
+    if (text.includes('中')) return 78;
+    if (text.includes('低')) return 58;
+    const parsed = Number.parseFloat(text.replace('%', ''));
+    if (Number.isFinite(parsed)) {
+        return Math.max(1, Math.min(99, Math.round(parsed)));
+    }
+    return 88;
+};
+
+const normalizeTips = (tips, category) => {
+    if (Array.isArray(tips)) {
+        const cleaned = tips
+            .map((tip) => String(tip || '').trim())
+            .filter(Boolean)
+            .slice(0, 4);
+        if (cleaned.length) return cleaned;
+    }
+    return generateTipsByCategory(category);
 };
 
 // 根据分类生成环保建议

@@ -11,6 +11,25 @@ import { dispatchAuthLogout, requestAxios } from '@/utils/api'
 
 // 标记 Axios 拦截器是否已安装（防止重复安装）
 let axiosInterceptorsInstalled = false
+const ACCOUNT_KEY = 'green_account_id'
+
+const getStoredAccountId = () => {
+  try {
+    return String(localStorage.getItem(ACCOUNT_KEY) || '')
+  } catch (err) {
+    void err
+    return ''
+  }
+}
+
+const setStoredAccountId = (value) => {
+  try {
+    if (value) localStorage.setItem(ACCOUNT_KEY, String(value))
+    else localStorage.removeItem(ACCOUNT_KEY)
+  } catch (err) {
+    void err
+  }
+}
 
 export const useUserStore = defineStore('user', () => {
   // ---- 响应式状态 ----
@@ -73,6 +92,45 @@ export const useUserStore = defineStore('user', () => {
    */
   const setUser = (rawUser) => {
     user.value = normalizeUser(rawUser)
+    setStoredAccountId(user.value?.id || '')
+  }
+
+  /** 当前账号的本地缓存键；未登录时归入 guest，避免与前一位登录用户混用 */
+  const getAccountCacheKey = (base) => {
+    const accountId = user.value?.id ? String(user.value.id) : (getStoredAccountId() || 'guest')
+    return `${base}:${accountId}`
+  }
+
+  /** 读取当前账号的聊天记录与徽章；旧版全局缓存会被清除，避免跨账号泄漏 */
+  const loadAccountCache = () => {
+    try { localStorage.removeItem('green_chat') } catch (err) { void err }
+    try { localStorage.removeItem('green_badges') } catch (err) { void err }
+
+    try {
+      const storedChat = localStorage.getItem(getAccountCacheKey('green_chat'))
+      if (storedChat) {
+        const parsed = JSON.parse(storedChat)
+        chatHistory.value = Array.isArray(parsed) ? parsed : []
+      } else {
+        chatHistory.value = []
+      }
+    } catch (err) {
+      void err
+      chatHistory.value = []
+    }
+
+    try {
+      const storedBadges = localStorage.getItem(getAccountCacheKey('green_badges'))
+      if (storedBadges) {
+        const parsed = JSON.parse(storedBadges)
+        badges.value = Array.isArray(parsed) ? parsed : []
+      } else {
+        badges.value = []
+      }
+    } catch (err) {
+      void err
+      badges.value = []
+    }
   }
 
   /**
@@ -151,6 +209,30 @@ export const useUserStore = defineStore('user', () => {
     if (token.value && !user.value) {
       await fetchUserProfile()
     }
+    loadAccountCache()
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('auth:login'))
+    }
+  }
+
+  /**
+   * 使用 OAuth 一次性授权码换取令牌（避免长期令牌出现在 URL 中）
+   * @param {string} code - OAuth 回调返回的一次性 code
+   */
+  const exchangeOAuthCode = async (code) => {
+    if (!code) return false
+    const result = await requestAxios(
+      () => axios.post('/api/v1/auth/oauth/exchange', { code }),
+      { fallbackMessage: '第三方登录失败' },
+    )
+    if (!result.ok) {
+      if (Object.keys(result.fieldErrors).length === 0) ElMessage.error(result.message)
+      return false
+    }
+    const accessToken = result.data?.access_token || result.data?.token || ''
+    if (!accessToken) return false
+    await applyAuth({ accessToken, rawUser: result.data?.user })
+    return true
   }
 
   /**
@@ -179,7 +261,6 @@ export const useUserStore = defineStore('user', () => {
     if (isReady.value) return // 已初始化则跳过
     installAxiosInterceptors()
 
-    // 有 Token 时，验证 Token 有效性并获取用户信息
     if (token.value) {
       try {
         await fetchUserProfile()
@@ -189,27 +270,8 @@ export const useUserStore = defineStore('user', () => {
       }
     }
 
-    // 从 localStorage 恢复成就徽章数据
-    const storedBadges = localStorage.getItem('green_badges')
-    if (storedBadges) {
-      try {
-        const parsed = JSON.parse(storedBadges)
-        if (Array.isArray(parsed)) badges.value = parsed
-      } catch (err) {
-        void err
-      }
-    }
-
-    // 从 localStorage 恢复聊天历史
-    const storedChat = localStorage.getItem('green_chat')
-    if (storedChat) {
-      try {
-        const parsed = JSON.parse(storedChat)
-        if (Array.isArray(parsed)) chatHistory.value = parsed
-      } catch (err) {
-        void err
-      }
-    }
+    // 聊天记录与徽章按账号隔离存储
+    loadAccountCache()
 
     isReady.value = true
   }
@@ -289,19 +351,20 @@ export const useUserStore = defineStore('user', () => {
    * @returns {{ ok: boolean, message: string, fieldErrors: object, resetToken?: string }}
    */
   const verifyEmail = async (email, { silent } = {}) => {
-    const result = await requestAxios(() => axios.post('/api/v1/auth/verify-email', { email }), {
-      fallbackMessage: '验证邮箱失败',
+    const result = await requestAxios(() => axios.post('/api/v1/auth/forgot-password', { email }), {
+      fallbackMessage: '发送重置邮件失败',
     })
     if (!result.ok) {
       if (!silent && Object.keys(result.fieldErrors).length === 0) ElMessage.error(result.message)
       return { ok: false, message: result.message, fieldErrors: result.fieldErrors }
     }
 
-    if (!silent) ElMessage.success('邮箱验证成功，可继续重置密码')
+    if (!silent) ElMessage.success(result.data?.message || '如果该邮箱已注册，我们已发送密码重置邮件')
     return {
       ok: true,
-      message: '',
-      resetToken: result.data?.reset_token || 'temp-token' // 临时 token，实际项目中应该由后端生成
+      message: result.data?.message || '',
+      // 仅在本地演示且后端开启 AUTH_DEBUG_RESET 时返回
+      resetToken: result.data?.reset_token || '',
     }
   }
 
@@ -312,8 +375,8 @@ export const useUserStore = defineStore('user', () => {
    * @param {object} options - { silent: 是否静默（不弹提示） }
    * @returns {{ ok: boolean, message: string, fieldErrors: object }}
    */
-  const resetPassword = async (email, newPassword, { silent } = {}) => {
-    const result = await requestAxios(() => axios.post('/api/v1/auth/reset-password', { email, password: newPassword }), {
+  const resetPassword = async (token, newPassword, { silent } = {}) => {
+    const result = await requestAxios(() => axios.post('/api/v1/auth/reset-password', { token, password: newPassword }), {
       fallbackMessage: '重置密码失败',
     })
     if (!result.ok) {
@@ -333,32 +396,25 @@ export const useUserStore = defineStore('user', () => {
   const logout = ({ silent } = {}) => {
     setToken('')
     user.value = null
+    chatHistory.value = []
+    badges.value = []
+    setStoredAccountId('')
     if (!silent) ElMessage.info('已退出登录')
     // 触发全局 auth:logout 事件，通知其他监听者（如 main.js）
     dispatchAuthLogout({ reason: silent ? 'expired' : 'user' })
   }
 
   /**
-   * 增加用户积分（本地先更新，再同步到后端）
-   * 若后端同步失败，回滚本地积分
-   * @param {number} amount - 增加的积分数量
+   * 使用服务端返回的最新余额同步本地积分。
+   * 客户端不再自行增加积分，积分统一由业务接口发放。
+   * @param {number} points - 服务端返回的最新积分余额
    */
-  const addPoints = async (amount) => {
+  const syncPoints = (points) => {
     if (!user.value) return
-    const inc = Number(amount)
-    if (!Number.isFinite(inc)) return
-
-    const prev = Number(user.value.points || 0)
-    user.value.points = prev + inc
-
-    // 积分更新后，检查是否解锁新成就
+    const value = Number(points)
+    if (!Number.isFinite(value) || value < 0) return
+    user.value.points = value
     checkAndUnlockBadges()
-
-    const result = await requestAxios(() => axios.post('/api/v1/users/me/points', { amount: inc }), {
-      fallbackMessage: '同步积分失败',
-    })
-    // 后端同步失败时回滚积分
-    if (!result.ok) user.value.points = prev
   }
 
   /**
@@ -401,23 +457,23 @@ export const useUserStore = defineStore('user', () => {
   const saveChat = (messages) => {
     chatHistory.value = messages
     try {
-      localStorage.setItem('green_chat', JSON.stringify(messages))
+      localStorage.setItem(getAccountCacheKey('green_chat'), JSON.stringify(messages))
     } catch (err) {
       void err
     }
   }
 
   /**
-   * 持久化徽章和聊天记录到 localStorage
+   * 持久化当前账号的徽章和聊天记录
    */
   const save = () => {
     try {
-      localStorage.setItem('green_badges', JSON.stringify(badges.value))
+      localStorage.setItem(getAccountCacheKey('green_badges'), JSON.stringify(badges.value))
     } catch (err) {
       void err
     }
     try {
-      localStorage.setItem('green_chat', JSON.stringify(chatHistory.value))
+      localStorage.setItem(getAccountCacheKey('green_chat'), JSON.stringify(chatHistory.value))
     } catch (err) {
       void err
     }
@@ -434,6 +490,7 @@ export const useUserStore = defineStore('user', () => {
     chatHistory,
     init,
     acceptToken,
+    exchangeOAuthCode,
     fetchUserProfile,
     updateProfile,
     login,
@@ -441,7 +498,7 @@ export const useUserStore = defineStore('user', () => {
     verifyEmail,
     resetPassword,
     logout,
-    addPoints,
+    syncPoints,
     unlockBadge,
     checkAndUnlockBadges,
     saveChat,

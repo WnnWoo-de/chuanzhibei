@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <!-- ============================================================
      Silk.vue - WebGL 丝绸背景动效组件
      使用 OGL（轻量级 WebGL 库）渲染基于噪声的流动丝绸效果
@@ -7,48 +8,24 @@
   <div ref="containerRef" :class="className" :style="style" class="w-full h-full"></div>
 </template>
 
-<script setup lang="ts">
-import { onMounted, onUnmounted, watch, type CSSProperties, useTemplateRef } from 'vue'
+<script setup>
+import { onMounted, onUnmounted, watch, useTemplateRef } from 'vue'
 
-type OglModule = typeof import('ogl')
-type OglRenderer = InstanceType<OglModule['Renderer']>
-type OglProgram = InstanceType<OglModule['Program']>
-type OglMesh = InstanceType<OglModule['Mesh']>
-type OglCamera = InstanceType<OglModule['Camera']>
-
-/** Silk 组件属性接口 */
-interface SilkProps {
-  /** 动画速度 */
-  speed?: number
-  /** 噪声缩放比例 */
-  scale?: number
-  /** 丝绸主色调（十六进制颜色） */
-  color?: string
-  /** 噪声强度 */
-  noiseIntensity?: number
-  /** 旋转角度（弧度） */
-  rotation?: number
-  /** 自定义 CSS 类名 */
-  className?: string
-  /** 自定义内联样式 */
-  style?: CSSProperties
-}
-
-const props = withDefaults(defineProps<SilkProps>(), {
-  speed: 5,
-  scale: 1,
-  color: '#7B7481',
-  noiseIntensity: 1.5,
-  rotation: 0,
-  className: '',
-  style: () => ({}),
+const props = defineProps({
+  speed: { type: Number, default: 5 },
+  scale: { type: Number, default: 1 },
+  color: { type: String, default: '#7B7481' },
+  noiseIntensity: { type: Number, default: 1.5 },
+  rotation: { type: Number, default: 0 },
+  className: { type: String, default: '' },
+  style: { type: Object, default: () => ({}) },
 })
 
 /** 容器 DOM 引用 */
-const containerRef = useTemplateRef<HTMLDivElement>('containerRef')
+const containerRef = useTemplateRef('containerRef')
 
 /** 将十六进制颜色转换为归一化 RGB 值（0-1 范围，供 WebGL 着色器使用） */
-const hexToNormalizedRGB = (hex: string): [number, number, number] => {
+const hexToNormalizedRGB = (hex) => {
   const clean = hex.replace('#', '')
   const r = parseInt(clean.slice(0, 2), 16) / 255
   const g = parseInt(clean.slice(2, 4), 16) / 255
@@ -124,12 +101,12 @@ void main() {
 `
 
 /* WebGL 相关实例 */
-let renderer: OglRenderer | null = null   // OGL 渲染器
-let mesh: OglMesh | null = null           // 网格对象（平面）
-let program: OglProgram | null = null     // 着色器程序
-let camera: OglCamera | null = null       // 摄像机
+let renderer = null   // OGL 渲染器
+let mesh = null           // 网格对象（平面）
+let program = null     // 着色器程序
+let camera = null       // 摄像机
 let animateId = 0                          // 动画帧 ID
-let destroySilk: (() => void) | null = null // 销毁函数引用
+let destroySilk = null // 销毁函数引用
 
 /** 初始化 WebGL 场景：创建渲染器、摄像机、着色器程序和网格，并启动动画循环 */
 const initSilk = async () => {
@@ -221,7 +198,7 @@ const initSilk = async () => {
   gl.canvas.style.zIndex = '1'
 
   let lastTime = 0
-  const update = (t: number) => {
+  const update = (t) => {
     animateId = requestAnimationFrame(update)
     const deltaTime = (t - lastTime) / 1000
     lastTime = t

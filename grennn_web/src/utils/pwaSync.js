@@ -2,12 +2,33 @@ import axios from 'axios'
 
 // 本地离线同步队列配置
 const QUEUE_KEY = 'greensight_pwa_sync_queue'
+const ACCOUNT_KEY = 'green_account_id'
 const MAX_QUEUE_SIZE = 50
 const SYNCABLE_METHODS = new Set(['post', 'put', 'patch', 'delete'])
 const EXCLUDED_PATHS = ['/api/v1/auth/login', '/api/v1/auth/register', '/api/v1/auth/reset-password']
 
 let installed = false
 let flushing = false
+
+/**
+ * 当前账号标识：由 user store 在登录/恢复会话时写入。
+ * 队列项按账号隔离，切换账号后不会用新账号的凭据重放旧账号的写操作。
+ */
+export const getActiveAccountId = () => {
+  if (typeof localStorage === 'undefined') return ''
+  try {
+    return String(localStorage.getItem(ACCOUNT_KEY) || '')
+  } catch (err) {
+    void err
+    return ''
+  }
+}
+
+/** 生成一次请求的幂等键（同时用作队列项 ID） */
+const createRequestKey = () => {
+  const random = Math.random().toString(16).slice(2)
+  return `${Date.now().toString(36)}-${random}`
+}
 
 /** 向前端广播当前离线同步状态，供 PWA 提示组件展示 */
 const emitSyncStatus = (detail = {}) => {
@@ -25,6 +46,13 @@ const readQueue = () => {
     void err
     return []
   }
+}
+
+/** 只读取当前账号的队列项；旧版本无 ownerId 的项目一律不重放 */
+const readOwnQueue = () => {
+  const accountId = getActiveAccountId()
+  if (!accountId) return []
+  return readQueue().filter((item) => item?.ownerId === accountId)
 }
 
 /** 将队列写回本地，并限制最大长度，避免无限增长 */
@@ -74,6 +102,7 @@ const normalizeHeaders = (headers = {}) => {
 const shouldQueueRequest = (config = {}, error) => {
   if (!isNetworkError(error)) return false
   if (config.__pwaSyncReplay || config.__skipPwaSync) return false
+  if (!getActiveAccountId()) return false
 
   const method = String(config.method || 'get').toLowerCase()
   if (!SYNCABLE_METHODS.has(method)) return false
@@ -86,15 +115,18 @@ const shouldQueueRequest = (config = {}, error) => {
 /** 将 Axios 配置压缩为可持久化的队列项 */
 const buildQueueItem = (config = {}) => {
   const method = String(config.method || 'get').toLowerCase()
+  const headers = normalizeHeaders(config.headers)
+  const id = String(headers['Idempotency-Key'] || headers['idempotency-key'] || createRequestKey())
   return {
-    id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    id,
+    ownerId: getActiveAccountId(),
     createdAt: Date.now(),
     method,
     url: config.url,
     baseURL: config.baseURL || '',
     params: config.params || null,
     data: config.data || null,
-    headers: normalizeHeaders(config.headers),
+    headers: { ...headers, 'Idempotency-Key': id },
     timeout: config.timeout || 0,
     withCredentials: Boolean(config.withCredentials),
   }
@@ -104,13 +136,16 @@ const buildQueueItem = (config = {}) => {
 const enqueueRequest = (config) => {
   const queue = readQueue()
   const item = buildQueueItem(config)
-  queue.push(item)
-  writeQueue(queue)
-  emitSyncStatus({ pending: queue.length, lastQueuedAt: item.createdAt })
+  if (!item.ownerId) return null
+  // 同一幂等键只保留一条，避免重试导致队列重复
+  const nextQueue = queue.filter((entry) => entry.id !== item.id)
+  nextQueue.push(item)
+  writeQueue(nextQueue)
+  emitSyncStatus({ pending: readOwnQueue().length, lastQueuedAt: item.createdAt })
   return item
 }
 
-/** 重放单条已排队的离线请求 */
+/** 重放单条已排队的离线请求（沿用原始幂等键） */
 const replayItem = async (item) => {
   await axios.request({
     method: item.method,
@@ -125,9 +160,9 @@ const replayItem = async (item) => {
   })
 }
 
-/** 获取当前离线同步状态快照 */
+/** 获取当前账号的离线同步状态快照 */
 export const getPwaSyncState = (extra = {}) => {
-  const queue = readQueue()
+  const queue = readOwnQueue()
   return {
     pending: queue.length,
     flushing,
@@ -136,13 +171,21 @@ export const getPwaSyncState = (extra = {}) => {
   }
 }
 
-/** 批量回放本地离线请求队列，遇到再次断网时保留剩余项目 */
+/** 批量回放当前账号的队列；其他账号的项目原样保留 */
 export const flushPwaSyncQueue = async () => {
   if (flushing) return getPwaSyncState()
   if (typeof navigator !== 'undefined' && navigator.onLine === false) return getPwaSyncState()
 
-  const queue = readQueue()
+  const accountId = getActiveAccountId()
+  if (!accountId) return getPwaSyncState()
+
+  const allQueue = readQueue()
+  // 丢弃旧版本无 ownerId 的项目，避免把未知账号的请求重放给当前用户
+  const queue = allQueue.filter((item) => item?.ownerId === accountId)
+  const others = allQueue.filter((item) => item?.ownerId && item.ownerId !== accountId)
+
   if (queue.length === 0) {
+    writeQueue(others)
     emitSyncStatus({ pending: 0 })
     return getPwaSyncState()
   }
@@ -152,43 +195,68 @@ export const flushPwaSyncQueue = async () => {
 
   const failed = []
   let synced = 0
+  let retryLater = false
 
-  for (const [index, item] of queue.entries()) {
+  for (const item of queue) {
+    if (retryLater) {
+      failed.push(item)
+      continue
+    }
     try {
       await replayItem(item)
       synced += 1
     } catch (err) {
       failed.push(item)
-      if (isNetworkError(err)) {
-        failed.push(...queue.slice(index + 1))
-        break
-      }
+      if (isNetworkError(err)) retryLater = true
     }
   }
 
-  writeQueue(failed)
+  writeQueue([...others, ...failed])
   flushing = false
   emitSyncStatus({ flushing: false, pending: failed.length, synced })
 
   return getPwaSyncState({ synced })
 }
 
-/** 安装 Axios 离线同步拦截器，并在重新联机/回到前台时自动重试 */
 export const installPwaSync = () => {
   if (installed || typeof window === 'undefined') return
   installed = true
+
+  axios.interceptors.request.use((config) => {
+    const method = String(config.method || 'get').toLowerCase()
+    if (!SYNCABLE_METHODS.has(method) || config.__pwaSyncReplay) return config
+
+    const path = getUrlPath(config.url)
+    if (!path.startsWith('/api/') || EXCLUDED_PATHS.includes(path)) return config
+
+    const headers = config.headers || {}
+    const hasKey = typeof headers.get === 'function'
+      ? headers.get('Idempotency-Key')
+      : headers['Idempotency-Key']
+    if (hasKey) return config
+
+    const key = createRequestKey()
+    if (typeof headers.set === 'function') {
+      headers.set('Idempotency-Key', key)
+    } else {
+      config.headers = { ...headers, 'Idempotency-Key': key }
+    }
+    return config
+  })
 
   axios.interceptors.response.use(
     (response) => response,
     (error) => {
       const config = error?.config || {}
       if (shouldQueueRequest(config, error)) {
-        enqueueRequest(config)
-        const queuedError = new Error('当前网络不可用，操作已加入同步队列')
-        queuedError.name = 'PwaSyncQueuedError'
-        queuedError.isPwaSyncQueued = true
-        queuedError.config = config
-        return Promise.reject(queuedError)
+        const item = enqueueRequest(config)
+        if (item) {
+          const queuedError = new Error('当前网络不可用，操作已加入同步队列')
+          queuedError.name = 'PwaSyncQueuedError'
+          queuedError.isPwaSyncQueued = true
+          queuedError.config = config
+          return Promise.reject(queuedError)
+        }
       }
       return Promise.reject(error)
     },
@@ -200,6 +268,14 @@ export const installPwaSync = () => {
 
   window.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') void flushPwaSyncQueue()
+  })
+
+  // 登录状态变化后，仅回放当前账号的项目
+  window.addEventListener('auth:login', () => {
+    void flushPwaSyncQueue()
+  })
+  window.addEventListener('auth:logout', () => {
+    emitSyncStatus()
   })
 
   void flushPwaSyncQueue()

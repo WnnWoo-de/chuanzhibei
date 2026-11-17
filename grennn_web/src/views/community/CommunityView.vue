@@ -355,8 +355,8 @@
               <div class="community-empty__icon">
                 <el-icon :size="28"><Search /></el-icon>
               </div>
-              <h3 class=”text-lg font-bold mb-2”>{{ langText.community.emptyTitle }}</h3>
-              <p class=”text-sm text-gray-500 max-w-md mx-auto leading-relaxed”>
+              <h3 class="text-lg font-bold mb-2">{{ langText.community.emptyTitle }}</h3>
+              <p class="text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
                 {{ langText.community.emptyDesc }}
               </p>
             </div>
@@ -842,6 +842,7 @@ const publishPost = async () => {
       }),
     )
     isRemoteFeed.value = true
+    if (result.points !== undefined) userStore.syncPoints(result.points)
     resetPostDialog()
     ElMessage.success(langText.value.community.messages.publishSuccess)
     return
@@ -866,9 +867,9 @@ const publishPost = async () => {
     }),
   )
 
-  userStore.addPoints(10)
+  // 离线 mock 仅用于界面演示，不发放真实积分
   resetPostDialog()
-  ElMessage.success(langText.value.community.messages.publishSuccessPoints)
+  ElMessage.success(langText.value.community.messages.publishSuccess)
 }
 
 onMounted(async () => {

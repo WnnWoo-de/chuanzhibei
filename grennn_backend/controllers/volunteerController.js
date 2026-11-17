@@ -3,6 +3,7 @@
  * 负责活动初始化、活动查询、报名以及服务时长登记
  */
 const { VolunteerActivity, VolunteerEnrollment } = require('../models');
+const { awardPoints } = require('../services/points');
 
 // 默认志愿活动数据：数据库为空时自动初始化，保证页面可直接展示
 const defaultActivities = [
@@ -226,21 +227,38 @@ exports.logHours = async (req, res) => {
         if (!activity) return res.status(404).json({ error: 'Activity not found' });
 
         const hours = Number(req.body?.hours);
-        if (!Number.isFinite(hours) || hours <= 0) {
-            return res.status(400).json({ error: 'hours must be a positive number' });
+        if (!Number.isFinite(hours) || hours <= 0 || hours > 24) {
+            return res.status(400).json({ error: '服务时长需为 0-24 之间的数字' });
         }
 
         // 更新报名记录：写入服务时长、心得、完成时间和积分奖励
+        const targetPoints = Math.max(0, Math.min(2000, Math.round(hours * Number(activity.pointsPerHour || 0))));
+        const previousPoints = Number(enrollment.pointsAwarded || 0);
+        const delta = Math.max(0, targetPoints - previousPoints);
+
         enrollment.loggedHours = hours;
-        enrollment.reflection = String(req.body?.reflection || '').trim() || null;
+        enrollment.reflection = String(req.body?.reflection || '').trim().slice(0, 500) || null;
         enrollment.status = 'completed';
         enrollment.completedAt = new Date();
-        enrollment.pointsAwarded = Math.max(0, Math.round(hours * Number(activity.pointsPerHour || 0)));
+        enrollment.pointsAwarded = targetPoints;
         await enrollment.save();
+
+        // 只发放新增部分，重复提交相同时长不会重复发分
+        const reward = delta > 0
+            ? await awardPoints({
+                userId: req.user.id,
+                amount: delta,
+                reason: 'volunteer',
+                eventKey: `volunteer:${enrollment.id}:${targetPoints}`,
+                dailyCap: 1000,
+            })
+            : { awarded: 0, points: req.user.points };
 
         res.json({
             hours: Number(enrollment.loggedHours),
             pointsAwarded: enrollment.pointsAwarded,
+            pointsEarnedNow: reward.awarded,
+            points: reward.points,
             completedAt: enrollment.completedAt,
         });
     } catch (err) {

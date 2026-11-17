@@ -2,7 +2,7 @@
  * controllers/storeController.js - 积分商城控制器
  * 负责商品初始化、商品查询、兑换记录查询和积分兑换流程
  */
-const { sequelize, RewardProduct, RedeemRecord } = require('../models');
+const { sequelize, User, RewardProduct, RedeemRecord, PointTransaction } = require('../models');
 
 // 默认兑换商品清单：数据库为空时会自动写入，便于项目演示和初始化
 const seedProducts = [
@@ -99,8 +99,13 @@ exports.redeemProduct = async (req, res) => {
     // 使用数据库事务保证“扣库存、扣积分、写记录”三个动作的一致性
     const t = await sequelize.transaction();
     try {
+        // 先锁定商品行，再锁定用户行；所有并发兑换串行读取最新余额
         const product = await RewardProduct.findOne({
             where: { id: productId, enabled: true },
+            transaction: t,
+            lock: t.LOCK.UPDATE,
+        });
+        const user = await User.findByPk(req.user.id, {
             transaction: t,
             lock: t.LOCK.UPDATE,
         });
@@ -110,11 +115,15 @@ exports.redeemProduct = async (req, res) => {
             await t.rollback();
             return res.status(404).json({ error: '商品不存在或已下架' });
         }
+        if (!user) {
+            await t.rollback();
+            return res.status(401).json({ error: '用户不存在或登录已失效' });
+        }
         if (product.stock <= 0) {
             await t.rollback();
             return res.status(400).json({ error: '商品库存不足' });
         }
-        if ((req.user.points || 0) < product.points) {
+        if ((user.points || 0) < product.points) {
             await t.rollback();
             return res.status(400).json({ error: '绿色积分不足' });
         }
@@ -124,13 +133,13 @@ exports.redeemProduct = async (req, res) => {
         await product.save({ transaction: t });
 
         // 扣减用户积分，且保证不出现负数
-        req.user.points = Math.max(0, (req.user.points || 0) - product.points);
-        await req.user.save({ transaction: t });
+        user.points = Math.max(0, (user.points || 0) - product.points);
+        await user.save({ transaction: t });
 
         // 虚拟商品可视为即时到账，实物商品则进入待处理状态
         const isInstant = product.productType !== 'physical';
         const record = await RedeemRecord.create({
-            userId: req.user.id,
+            userId: user.id,
             productId: product.id,
             productName: product.name,
             category: product.category,
@@ -140,13 +149,22 @@ exports.redeemProduct = async (req, res) => {
             fulfilledAt: isInstant ? new Date() : null,
         }, { transaction: t });
 
+        // 记录积分支出，保证用户积分流水完整
+        await PointTransaction.create({
+            userId: user.id,
+            eventKey: `redeem:${record.id}`,
+            amount: -product.points,
+            reason: 'redeem',
+            balanceAfter: user.points,
+        }, { transaction: t });
+
         // 事务提交后再统一返回兑换结果
         await t.commit();
         res.status(201).json({
             message: 'Redeemed',
             product: formatProduct(product),
             record: formatRecord(record),
-            points: req.user.points,
+            points: user.points,
         });
     } catch (err) {
         // 任一步骤失败时回滚事务，避免只扣了积分或只扣了库存

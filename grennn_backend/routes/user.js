@@ -8,7 +8,9 @@
  * 路由列表：
  *   GET  /me        - 获取当前登录用户的基本信息
  *   PUT  /me        - 更新当前登录用户资料
- *   POST /me/points - 为当前用户增加或扣减积分
+ *   GET  /me/points - 查询当前用户的积分流水
+ *
+ * 注意：不提供客户端直接修改积分的接口，积分由服务端业务事件发放。
  */
 
 const express          = require('express');
@@ -22,7 +24,7 @@ router.get('/me',         protect, userController.getMe);
 // 更新当前用户资料（请求体：{ username, avatar, bio }）
 router.put('/me',         protect, userController.updateMe);
 
-// 更新当前用户积分（请求体：{ amount: number }，正数加分，负数扣分）
-router.post('/me/points', protect, userController.updatePoints);
+// 查询当前用户积分流水
+router.get('/me/points',  protect, userController.listPointTransactions);
 
 module.exports = router;

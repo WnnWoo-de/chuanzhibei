@@ -18,6 +18,8 @@ const RewardProduct           = require('./RewardProduct');
 const RedeemRecord            = require('./RedeemRecord');
 const QuizQuestion            = require('./QuizQuestion');
 const QuizRecord              = require('./QuizRecord');
+const PointTransaction        = require('./PointTransaction');
+const IdempotencyKey          = require('./IdempotencyKey');
 
 Post.belongsTo(User, { foreignKey: 'userId', as: 'author' });
 User.hasMany(Post, { foreignKey: 'userId', as: 'posts' });
@@ -60,6 +62,9 @@ RewardProduct.hasMany(RedeemRecord, { foreignKey: 'productId', as: 'redeemRecord
 QuizRecord.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 User.hasMany(QuizRecord, { foreignKey: 'userId', as: 'quizRecords' });
 
+PointTransaction.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+User.hasMany(PointTransaction, { foreignKey: 'userId', as: 'pointTransactions' });
+
 const db = {
     sequelize,
     User,
@@ -77,6 +82,8 @@ const db = {
     RedeemRecord,
     QuizQuestion,
     QuizRecord,
+    PointTransaction,
+    IdempotencyKey,
 };
 
 module.exports = db;

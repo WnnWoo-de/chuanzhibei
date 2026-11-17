@@ -7,7 +7,7 @@
  *
  * 返回格式：{ url, filename }
  *   url      - 文件的完整公开访问地址（含域名前缀 CALLBACK_URL_BASE）
- *   filename - 服务器上存储的文件名（含时间戳前缀，如 1700000000000-photo.jpg）
+ *   filename - 服务器上存储的文件名（时间戳 + 随机串 + 扩展名）
  */
 
 /**
@@ -16,7 +16,8 @@
  *
  * 前置中间件：
  *   protect         - 必须登录
- *   upload.single   - multer 处理文件并挂载到 req.file
+ *   handleUpload    - multer 处理文件并挂载到 req.file
+ *   validateImage   - 校验文件头，拒绝伪造 MIME 的非图片内容
  *
  * 错误情况：
  *   400 - 未携带文件（req.file 为空）
@@ -32,7 +33,9 @@ exports.uploadFile = (req, res) => {
 
     // 拼接文件的完整公开访问 URL
     // CALLBACK_URL_BASE 示例：https://api.example.com 或 http://localhost:3000
-    const fileUrl = `${process.env.CALLBACK_URL_BASE}/uploads/${req.file.filename}`;
+    const baseUrl = (process.env.CALLBACK_URL_BASE
+        || `${req.protocol}://${req.get('host')}`).replace(/\/+$/, '');
+    const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
 
     res.json({
         url:      fileUrl,          // 前端可直接用于显示图片或存入数据库

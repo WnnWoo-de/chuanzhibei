@@ -1,18 +1,48 @@
+import asyncio
 import base64
 import json
 import os
+from pathlib import Path
 from uuid import uuid4
 
 import uvicorn
 from fastapi import FastAPI, File, UploadFile
-from openai import OpenAI
+from openai import AsyncOpenAI
 
 app = FastAPI()
 
-client = OpenAI(
-    api_key=os.getenv("SILICONFLOW_API_KEY", "sk-qdxkefntzaiahyvyjvbwyxzscigsmonainooyfgruynlmcdc"),
+
+def load_backend_env():
+    """Load grennn_backend/.env so FastAPI shares the same API key as Node."""
+    env_path = Path(__file__).resolve().parents[1] / ".env"
+    if not env_path.exists():
+        return
+
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+load_backend_env()
+
+MAX_IMAGE_BYTES = int(os.getenv("AI_MAX_IMAGE_BYTES", str(5 * 1024 * 1024)))
+MAX_RECONSTRUCTION_BASE64_CHARS = int(os.getenv("AI_MAX_IMAGE_BYTES", str(5 * 1024 * 1024))) * 2
+MAX_CONCURRENT_MODEL_CALLS = int(os.getenv("AI_MAX_CONCURRENCY", "4"))
+
+client = AsyncOpenAI(
+    api_key=os.getenv("SILICONFLOW_API_KEY", ""),
     base_url=os.getenv("SILICONFLOW_BASE_URL", "https://api.siliconflow.cn/v1"),
+    timeout=float(os.getenv("SILICONFLOW_TIMEOUT", "60")),
+    max_retries=1,
 )
+# 限制同时进行的模型调用数，避免上游限流或本地事件循环过载
+model_semaphore = asyncio.Semaphore(MAX_CONCURRENT_MODEL_CALLS)
 
 
 def clean_json_text(content: str):
@@ -20,20 +50,22 @@ def clean_json_text(content: str):
     return json.loads(text)
 
 
-def ask_vision_model(prompt: str, image_url: str, temperature: float = 0.1):
-    response = client.chat.completions.create(
-        model="Qwen/Qwen2-VL-72B-Instruct",
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": prompt},
-                    {"type": "image_url", "image_url": {"url": image_url}},
-                ],
-            }
-        ],
-        temperature=temperature,
-    )
+async def ask_vision_model(prompt: str, image_url: str, temperature: float = 0.1):
+    """异步调用视觉模型；信号量限制并发，SDK 自带超时与重试。"""
+    async with model_semaphore:
+        response = await client.chat.completions.create(
+            model=os.getenv("SILICONFLOW_VISION_MODEL", "Qwen/Qwen3-VL-8B-Instruct"),
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {"type": "image_url", "image_url": {"url": image_url}},
+                    ],
+                }
+            ],
+            temperature=temperature,
+        )
     return clean_json_text(response.choices[0].message.content)
 
 
@@ -119,17 +151,34 @@ def normalize_reconstruction_result(result: dict, identity: dict):
 async def predict_garbage(file: UploadFile = File(...)):
     try:
         image_bytes = await file.read()
+        if len(image_bytes) > MAX_IMAGE_BYTES:
+            return {"status": "error", "message": "图片过大，请上传 5MB 以内的图片"}
         base64_image = base64.b64encode(image_bytes).decode("utf-8")
         image_url = f"data:{file.content_type or 'image/jpeg'};base64,{base64_image}"
 
         prompt = """
-        你是一个图像识别系统。请分析图片中的主要物体，判断其属于哪种生活垃圾。
-        必须且只能从以下四个类别中选择：['可回收物', '有害垃圾', '湿垃圾', '干垃圾']。
+        你是一个面向中国城市生活场景的垃圾分类视觉识别系统。
+        请分析图片中的主要物体，判断它应该投入哪类生活垃圾。
+        必须且只能从以下四个类别中选择：['可回收物', '有害垃圾', '厨余垃圾', '其他垃圾']。
+
+        分类参考：
+        - 可回收物：干净纸类、塑料瓶、玻璃瓶、金属罐、旧衣物等可再生利用物。
+        - 有害垃圾：电池、灯管、药品、油漆桶、含汞温度计等可能污染环境的物品。
+        - 厨余垃圾：剩饭剩菜、果皮果核、菜叶、茶渣等易腐生物质。
+        - 其他垃圾：污染纸巾、烟蒂、尘土、破碎陶瓷、难以回收的复合包装等。
+
         严格以JSON格式输出，不要包含任何Markdown标记和额外解释。
-        输出示例：{"name": "易拉罐", "category": "可回收物", "reason": "主要材质为铝"}
+        输出结构：
+        {
+          "name": "图片中的主要物品名称",
+          "category": "四类之一",
+          "confidence": 1到99之间的数字,
+          "reason": "一句话说明分类依据",
+          "tips": ["投放建议1", "投放建议2", "投放建议3"]
+        }
         """
 
-        result_json = ask_vision_model(prompt, image_url, temperature=0.1)
+        result_json = await ask_vision_model(prompt, image_url, temperature=0.1)
         return {"status": "success", "data": result_json}
 
     except json.JSONDecodeError:
@@ -146,6 +195,8 @@ async def analyze_reconstruction(payload: dict):
 
         if not image_base64:
             return {"status": "error", "message": "缺少图片数据"}
+        if len(image_base64) > MAX_RECONSTRUCTION_BASE64_CHARS:
+            return {"status": "error", "message": "图片过大，请上传 5MB 以内的图片"}
 
         image_url = f"data:{mime_type};base64,{image_base64}"
 
@@ -166,7 +217,7 @@ async def analyze_reconstruction(payload: dict):
         3. 不要把木椅、木桌等家具识别为一次性用品或包装物。
         4. 无法完全确定时使用保守名称，例如“木椅（待确认）”。
         """
-        identity = ask_vision_model(identify_prompt, image_url, temperature=0.1)
+        identity = await ask_vision_model(identify_prompt, image_url, temperature=0.1)
 
         reconstruct_prompt = f"""
         你是一名旧物重构顾问。下面是已经识别出的物品信息，请据此判断是否适合重构。
@@ -207,7 +258,7 @@ async def analyze_reconstruction(payload: dict):
         5. reconstructable=true 时，suggestions 返回 2 到 3 条真正合理、与物品匹配的方案。
         6. 不要把纸类包装识别成木质，也不要把木椅识别成包装物。
         """
-        draft_result = ask_vision_model(reconstruct_prompt, image_url, temperature=0.1)
+        draft_result = await ask_vision_model(reconstruct_prompt, image_url, temperature=0.1)
         result_json = normalize_reconstruction_result(draft_result, identity)
         return {"status": "success", "data": result_json}
 

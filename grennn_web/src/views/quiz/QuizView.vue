@@ -413,10 +413,9 @@ watch(greenPoints, (value) => {
   window.dispatchEvent(new CustomEvent('green-points:change', { detail: { points: value } }))
 })
 
-// 奖励积分（本地 + 远程同步）
+// 本地展示用积分；登录用户的真实余额由服务端返回后同步
 const awardPoints = (amount) => {
   greenPoints.value += amount
-  if (userStore.isLoggedIn) userStore.addPoints(amount)
 }
 
 const sameAnswer = (left, right) => left.slice().sort().join('|') === right.slice().sort().join('|')
@@ -488,7 +487,7 @@ const submitAnswer = (event) => {
   if (submitted.value || isTodayCompleted.value || selectedAnswers.value.length === 0) return
   const correct = isCurrentCorrect.value
   const points = correct ? 10 : 3
-  answers.value.push({ id: currentQuestion.value.id, correct, points })
+  answers.value.push({ id: currentQuestion.value.id, selected: selectedAnswers.value.slice(), correct, points })
   awardPoints(points)
   submitted.value = true
   triggerCelebration(event)
@@ -496,7 +495,7 @@ const submitAnswer = (event) => {
   ElMessage.success(correct ? t.correctPoints.replace('{points}', points) : t.learnedPoints.replace('{points}', points))
 }
 
-const finishToday = (event) => {
+const finishToday = async (event) => {
   if (isTodayCompleted.value) return
   triggerCelebration(event)
   let bonus = 20
@@ -512,10 +511,23 @@ const finishToday = (event) => {
   }
   quizRecords.value = [record, ...quizRecords.value.filter((item) => item.date !== record.date)].slice(0, 5)
   localStorage.setItem(RECORDS_KEY, JSON.stringify(quizRecords.value))
-  if (userStore.isLoggedIn) saveQuizRecord(record)
   isTodayCompleted.value = true
   triggerFinishCelebration(event)
   ElMessage.success(langText.value.quiz.messages.todayComplete.replace('{bonus}', bonus))
+
+  if (!userStore.isLoggedIn) return
+  // 服务端根据题库重新判分并发放积分，客户端只提交题目与所选答案
+  const result = await saveQuizRecord({
+    date: record.date,
+    completed: true,
+    answers: answers.value.map((item) => ({
+      questionId: item.id,
+      selected: Array.isArray(item.selected) ? item.selected : [],
+    })),
+  })
+  if (result.ok && result.data?.points !== undefined) {
+    userStore.syncPoints(result.data.points)
+  }
 }
 
 const nextQuestion = (event) => {

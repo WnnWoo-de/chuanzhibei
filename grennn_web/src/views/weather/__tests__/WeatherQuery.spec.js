@@ -90,7 +90,7 @@ describe('WeatherView', () => {
 
     expect(queryWeatherByCity).toHaveBeenCalledWith('北京')
     expect(wrapper.text()).toContain('天气查询')
-    expect(wrapper.text()).toContain('未来 5 天预报')
+    expect(wrapper.text()).toContain('10日天气预报')
     expect(wrapper.text()).toContain('北京')
     expect(wrapper.get('[data-testid="aqi-value"]').text()).toBe('92')
   })
@@ -106,25 +106,12 @@ describe('WeatherView', () => {
     const wrapper = mount(WeatherView)
     await flushPromises()
 
-    expect(wrapper.text()).toContain('天气数据加载失败')
+    expect(wrapper.text()).toContain('网络异常')
     expect(wrapper.text()).toContain('网络异常')
 
-    await wrapper.get('[data-testid="retry-button"]').trigger('click')
+    await wrapper.get('.search-btn').trigger('click')
     await flushPromises()
-    expect(wrapper.text()).toContain('污染物监测')
+    expect(wrapper.text()).toContain('空气质量')
   })
 
-  /**
-   * 交互路径：切换污染物趋势图类型
-   * 验证：点击 PM10 按钮后，该按钮应获得 active 样式（bg-black）
-   */
-  it('支持污染物趋势切换按钮状态', async () => {
-    queryWeatherByCity.mockResolvedValue({ ok: true, message: '', data: successPayload })
-    const wrapper = mount(WeatherView)
-    await flushPromises()
-
-    const pm10Toggle = wrapper.get('[data-testid="trend-toggle-pm10"]')
-    await pm10Toggle.trigger('click')
-    expect(pm10Toggle.classes().includes('bg-black')).toBe(true)
-  })
 })

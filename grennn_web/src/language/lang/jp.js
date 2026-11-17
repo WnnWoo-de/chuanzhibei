@@ -319,6 +319,8 @@ export const text = {
     passwordReset: 'パスワードリセット',
     enterEmailToVerify: 'メールアドレスを入力してください',
     verifyEmail: 'メール認証',
+    sendResetLink: 'リセットリンクを送信',
+    resetEmailSent: 'このメールアドレスが登録済みの場合、リセットリンクを送信しました。',
     backToLogin: 'ログインに戻る',
     identityVerify: '本人確認',
     enterRegisteredEmail: '登録時のメールアドレスを入力してください。本人確認後、新しいパスワードを直接設定できます。',

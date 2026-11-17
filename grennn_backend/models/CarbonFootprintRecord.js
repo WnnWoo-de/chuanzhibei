@@ -3,12 +3,12 @@ const sequelize = require('../config/database');
 
 const CarbonFootprintRecord = sequelize.define('CarbonFootprintRecord', {
     id: {
-        type: DataTypes.UUID,
+        type: DataTypes.CHAR(36),
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
     userId: {
-        type: DataTypes.UUID,
+        type: DataTypes.CHAR(36),
         allowNull: true,
     },
     commuteKm: {

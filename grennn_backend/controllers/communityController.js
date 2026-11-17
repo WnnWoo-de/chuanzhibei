@@ -3,6 +3,7 @@
  * 处理帖子分页查询、发帖和点赞/取消点赞等社区互动逻辑
  */
 const { Post, PostLike, User } = require('../models');
+const { awardPoints } = require('../services/points');
 
 /**
  * GET /api/v1/community/posts
@@ -47,16 +48,23 @@ exports.getPosts = async (req, res) => {
  */
 exports.createPost = async (req, res) => {
     try {
-        const { content, image_urls } = req.body;
+        const content = String(req.body?.content || '').trim();
+        const rawImages = Array.isArray(req.body?.image_urls) ? req.body.image_urls : [];
+        const imageUrls = rawImages
+            .filter((url) => typeof url === 'string' && /^https?:\/\//i.test(url))
+            .slice(0, 5);
 
-        // 纯空内容且没有图片时拒绝创建帖子
-        if (!content && (!image_urls || image_urls.length === 0)) {
+        // 纯空内容且没有合法图片时拒绝创建帖子
+        if (!content && imageUrls.length === 0) {
             return res.status(400).json({ error: 'Content or images are required' });
+        }
+        if (content.length > 2000) {
+            return res.status(400).json({ error: '帖子内容最多 2000 个字符' });
         }
 
         const post = await Post.create({
-            content: content || '',
-            images: image_urls || [],
+            content,
+            images: imageUrls,
             userId: req.user.id,
         });
 
@@ -69,7 +77,19 @@ exports.createPost = async (req, res) => {
             }]
         });
 
-        res.status(201).json(postWithAuthor);
+        // 发帖奖励由服务端发放，以帖子 ID 作为幂等键
+        const reward = await awardPoints({
+            userId: req.user.id,
+            amount: 10,
+            reason: 'community',
+            eventKey: `post:${post.id}`,
+        });
+
+        res.status(201).json({
+            ...postWithAuthor.toJSON(),
+            pointsAwarded: reward.awarded,
+            points: reward.points,
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

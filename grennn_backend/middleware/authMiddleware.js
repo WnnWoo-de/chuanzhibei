@@ -40,6 +40,9 @@ const protect = async (req, res, next) => {
 
             // 根据令牌中的用户 ID 查询数据库，将完整用户对象挂载到 req.user
             req.user = await User.findByPk(decoded.id);
+            if (!req.user) {
+                return res.status(401).json({ error: 'Not authorized, user not found' });
+            }
 
             next(); // 认证通过，继续执行后续中间件或路由处理器
         } catch (error) {

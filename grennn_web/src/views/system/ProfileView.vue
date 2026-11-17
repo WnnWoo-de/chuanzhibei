@@ -171,7 +171,7 @@
                     </div>
                   </div>
 
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <router-link to="/quiz" class="profile-shortcut">
                       <span>{{ langText.profile.dailyQuiz }}</span>
                       <strong>{{ quizSummary.total }} {{ langText.profile.recordsSuffix }}</strong>
@@ -183,6 +183,10 @@
                     <router-link to="/achievements" class="profile-shortcut">
                       <span>{{ langText.profile.achievementBadges }}</span>
                       <strong>{{ unlockedBadgeCount }} {{ langText.profile.unlockedSuffix }}</strong>
+                    </router-link>
+                    <router-link v-if="userStore.user?.role === 'admin'" to="/admin" class="profile-shortcut profile-shortcut--admin">
+                      <span>管理端</span>
+                      <strong>进入系统后台</strong>
                     </router-link>
                   </div>
                 </div>

@@ -14,10 +14,14 @@
  */
 
 const User    = require('../models/User');
+const { IdempotencyKey } = require('../models');
 const bcrypt  = require('bcryptjs');     // 密码哈希库
 const jwt     = require('jsonwebtoken'); // JWT 生成与验证
 const { Op }  = require('sequelize');    // Sequelize 操作符（用于 OR 查询）
 const crypto  = require('crypto');       // Node.js 内置加密模块（生成随机令牌）
+const passport = require('passport');    // 第三方登录策略
+const { sendPasswordResetEmail, sendVerificationEmail } = require('../services/email');
+const { getUserRole } = require('../services/roles');
 
 const getSafeRedirectPath = (redirect) => {
     if (typeof redirect !== 'string') return '';
@@ -29,12 +33,31 @@ const getSafeRedirectPath = (redirect) => {
 const getOAuthRedirectFromState = (state) => {
     if (typeof state !== 'string' || !state) return '';
     try {
-        const decoded = JSON.parse(Buffer.from(state, 'base64url').toString('utf8'));
+        const decoded = jwt.verify(state, process.env.JWT_SECRET);
         return getSafeRedirectPath(decoded?.redirect);
     } catch {
         return '';
     }
 };
+
+/** 生成 OAuth state（签名 JWT，10 分钟有效），同时携带回跳路径 */
+const createOAuthState = (redirect) => {
+    if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET 环境变量未配置');
+    return jwt.sign(
+        { redirect: getSafeRedirectPath(redirect), nonce: crypto.randomBytes(8).toString('hex') },
+        process.env.JWT_SECRET,
+        { expiresIn: '10m' },
+    );
+};
+
+/** 对邮箱令牌做哈希后再入库，数据库泄漏时无法直接使用令牌 */
+const hashToken = (token) => crypto.createHash('sha256').update(String(token)).digest('hex');
+
+/** 是否允许在响应中返回重置令牌（仅用于无 SMTP 的本地演示） */
+const isDebugResetEnabled = () => (
+    process.env.NODE_ENV !== 'production' &&
+    String(process.env.AUTH_DEBUG_RESET || '').toLowerCase() === 'true'
+);
 
 // ── 工具函数 ──────────────────────────────────────────────────────────────────
 
@@ -154,14 +177,16 @@ exports.register = async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            emailVerificationToken:   verificationToken,
+            emailVerificationToken:   hashToken(verificationToken),
             emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000) // 令牌 24 小时后过期
         });
 
         const token = generateToken(user);
 
-        // TODO: 发送邮箱验证邮件
-        // await sendVerificationEmail(user.email, verificationToken);
+        // 异步发送邮箱验证邮件，不阻塞注册响应
+        sendVerificationEmail(user.email, verificationToken).catch((err) => {
+            console.error('sendVerificationEmail failed:', err?.message);
+        });
 
         res.status(201).json({
             message: 'User created',
@@ -170,13 +195,21 @@ exports.register = async (req, res) => {
                 username:      user.username,
                 email:         user.email,
                 points:        user.points || 0,
-                emailVerified: user.emailVerified
+                emailVerified: user.emailVerified,
+                role:          getUserRole(user),
             },
             token,
             access_token: token // 兼容前端双字段读取
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        if (err?.name === 'SequelizeUniqueConstraintError') {
+            return sendFieldError(res, 409, '该邮箱或用户名已被注册', {
+                email: '该邮箱或用户名已被注册',
+                username: '该邮箱或用户名已被占用',
+            });
+        }
+        console.error('Register controller error:', err);
+        res.status(500).json({ error: '注册失败，请稍后重试' });
     }
 };
 
@@ -234,7 +267,8 @@ exports.login = async (req, res) => {
                 username: user.username,
                 email:    user.email,
                 points:   user.points || 0,
-                avatar:   user.avatar || ''
+                avatar:   user.avatar || '',
+                role:     getUserRole(user),
             }
         });
     } catch (err) {
@@ -243,21 +277,238 @@ exports.login = async (req, res) => {
     }
 };
 
+// ── 密码重置与邮箱验证 ────────────────────────────────────────────────────────
+
+/**
+ * POST /api/v1/auth/forgot-password
+ * 请求密码重置邮件。无论邮箱是否存在都返回同一提示，避免账号枚举。
+ */
+exports.forgotPassword = async (req, res) => {
+    const genericMessage = '如果该邮箱已注册，我们已发送密码重置邮件，请查收';
+    try {
+        const email = String(req.body?.email || '').trim().toLowerCase();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+            return sendFieldError(res, 400, '请输入有效的邮箱格式', { email: '请输入有效的邮箱格式' });
+        }
+
+        const user = await User.findOne({ where: { email } });
+        // 第三方账号没有本地密码，同样返回统一提示
+        if (!user || !user.password) return res.json({ message: genericMessage });
+
+        const rawToken = generateVerificationToken();
+        user.passwordResetToken = hashToken(rawToken);
+        user.passwordResetExpires = new Date(Date.now() + 30 * 60 * 1000);
+        await user.save();
+
+        sendPasswordResetEmail(user.email, rawToken).catch((err) => {
+            console.error('sendPasswordResetEmail failed:', err?.message);
+        });
+
+        if (isDebugResetEnabled()) {
+            return res.json({ message: genericMessage, reset_token: rawToken, debug: true });
+        }
+        return res.json({ message: genericMessage });
+    } catch (err) {
+        console.error('forgotPassword controller error:', err);
+        return res.status(500).json({ error: '发送重置邮件失败，请稍后重试' });
+    }
+};
+
+/**
+ * POST /api/v1/auth/reset-password
+ * 使用一次性令牌重置密码。请求体：{ token, password }
+ */
+exports.resetPassword = async (req, res) => {
+    try {
+        const token = String(req.body?.token || '').trim();
+        const password = String(req.body?.password || '');
+
+        if (!/^[a-f0-9]{64}$/i.test(token)) {
+            return sendFieldError(res, 400, '重置链接无效或已过期', { token: '重置链接无效或已过期' });
+        }
+        if (!password || password.length < 8) {
+            return sendFieldError(res, 400, '密码长度至少为 8 位', { password: '密码长度至少为 8 位' });
+        }
+
+        const user = await User.findOne({
+            where: {
+                passwordResetToken: hashToken(token),
+                passwordResetExpires: { [Op.gt]: new Date() },
+            },
+        });
+        if (!user) {
+            return sendFieldError(res, 400, '重置链接无效或已过期', { token: '重置链接无效或已过期' });
+        }
+
+        user.password = await bcrypt.hash(password, 10);
+        user.passwordResetToken = null;
+        user.passwordResetExpires = null;
+        await user.save();
+
+        return res.json({ message: '密码已重置，请使用新密码登录' });
+    } catch (err) {
+        console.error('resetPassword controller error:', err);
+        return res.status(500).json({ error: '重置密码失败，请稍后重试' });
+    }
+};
+
+/**
+ * POST /api/v1/auth/verify-email
+ * 使用一次性令牌验证邮箱。请求体：{ token }
+ */
+exports.verifyEmail = async (req, res) => {
+    try {
+        const token = String(req.body?.token || '').trim();
+        if (!/^[a-f0-9]{64}$/i.test(token)) {
+            return sendFieldError(res, 400, '验证链接无效或已过期', { token: '验证链接无效或已过期' });
+        }
+
+        const user = await User.findOne({
+            where: {
+                emailVerificationToken: hashToken(token),
+                emailVerificationExpires: { [Op.gt]: new Date() },
+            },
+        });
+        if (!user) {
+            return sendFieldError(res, 400, '验证链接无效或已过期', { token: '验证链接无效或已过期' });
+        }
+
+        user.emailVerified = true;
+        user.emailVerificationToken = null;
+        user.emailVerificationExpires = null;
+        await user.save();
+
+        return res.json({ message: '邮箱验证成功' });
+    } catch (err) {
+        console.error('verifyEmail controller error:', err);
+        return res.status(500).json({ error: '验证邮箱失败，请稍后重试' });
+    }
+};
+
+/**
+ * POST /api/v1/auth/resend-verification
+ * 重新发送邮箱验证邮件；邮箱不存在时仍返回统一提示。
+ */
+exports.resendVerification = async (req, res) => {
+    const genericMessage = '如果该邮箱需要验证，验证邮件已重新发送';
+    try {
+        const email = String(req.body?.email || '').trim().toLowerCase();
+        const user = await User.findOne({ where: { email } });
+        if (!user || user.emailVerified) return res.json({ message: genericMessage });
+
+        const rawToken = generateVerificationToken();
+        user.emailVerificationToken = hashToken(rawToken);
+        user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        await user.save();
+
+        sendVerificationEmail(user.email, rawToken).catch((err) => {
+            console.error('sendVerificationEmail failed:', err?.message);
+        });
+        return res.json({ message: genericMessage });
+    } catch (err) {
+        console.error('resendVerification controller error:', err);
+        return res.status(500).json({ error: '发送验证邮件失败，请稍后重试' });
+    }
+};
+
 // ── OAuth 回调 ────────────────────────────────────────────────────────────────
+
+/** OAuth 授权入口：生成签名 state 并跳转到第三方授权页 */
+exports.oauthStart = (provider) => (req, res, next) => {
+    const scope = provider === 'google' ? ['profile', 'email'] : ['user.read'];
+    const state = createOAuthState(req.query?.redirect);
+    return passport.authenticate(provider, { scope, state, session: false })(req, res, next);
+};
+
+/** OAuth 回调前校验 state，防止 CSRF 与开放重定向 */
+exports.validateOAuthState = (req, res, next) => {
+    const state = req.query?.state;
+    if (typeof state !== 'string' || !state) {
+        return res.status(400).json({ error: '缺少 OAuth state' });
+    }
+    try {
+        const decoded = jwt.verify(state, process.env.JWT_SECRET);
+        req.oauthRedirect = getSafeRedirectPath(decoded?.redirect);
+        return next();
+    } catch {
+        return res.status(400).json({ error: 'OAuth state 无效或已过期' });
+    }
+};
 
 /**
  * GET /api/v1/auth/google/callback
  * GET /api/v1/auth/microsoft/callback
- * OAuth 第三方登录统一回调处理
- *
- * Passport 认证成功后，req.user 已被填充为对应的数据库用户对象。
- * 生成 JWT 令牌并重定向到前端的 /auth/callback 页面（携带 token 参数）。
+ * OAuth 第三方登录统一回调处理。
+ * 不在 URL 中直接传递长期令牌，而是发放 60 秒有效的一次性 code。
  */
 exports.oauthCallback = (req, res) => {
-    const token = generateToken(req.user);
-    const redirect = getOAuthRedirectFromState(req.query?.state);
-    const query = new URLSearchParams({ token });
+    const redirect = req.oauthRedirect || getOAuthRedirectFromState(req.query?.state);
+    const code = jwt.sign(
+        { id: req.user.id, email: req.user.email, scope: 'oauth-exchange' },
+        process.env.JWT_SECRET,
+        { expiresIn: '60s', jwtid: crypto.randomBytes(16).toString('hex') },
+    );
+    const query = new URLSearchParams({ code });
     if (redirect) query.set('redirect', redirect);
-    // 将令牌以 query string 形式传给前端，前端接收后存入本地存储
-    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?${query.toString()}`);
+    const frontendBase = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/+$/, '');
+    res.redirect(`${frontendBase}/auth/callback?${query.toString()}`);
+};
+
+/**
+ * POST /api/v1/auth/oauth/exchange
+ * 用一次性 code 换取长期访问令牌。请求体：{ code }
+ */
+exports.exchangeOAuthCode = async (req, res) => {
+    try {
+        const code = String(req.body?.code || '');
+        if (!code) return res.status(400).json({ error: '缺少授权码' });
+
+        let payload;
+        try {
+            payload = jwt.verify(code, process.env.JWT_SECRET);
+        } catch {
+            return res.status(401).json({ error: '授权码无效或已过期' });
+        }
+        if (payload?.scope !== 'oauth-exchange' || !payload?.jti) {
+            return res.status(401).json({ error: '授权码类型无效' });
+        }
+
+        // 通过主键唯一约束保证同一个 code 只能使用一次
+        try {
+            await IdempotencyKey.create({
+                key: `oauth:${payload.jti}`,
+                userId: payload.id,
+                status: 200,
+                body: {},
+                expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+            });
+        } catch (err) {
+            if (err?.name === 'SequelizeUniqueConstraintError') {
+                return res.status(401).json({ error: '授权码已使用，请重新登录' });
+            }
+            // 幂等表不可用时仍允许登录，但要记录告警
+            console.error('OAuth code 去重失败:', err.message);
+        }
+
+        const user = await User.findByPk(payload.id);
+        if (!user) return res.status(401).json({ error: '用户不存在' });
+
+        return res.json({
+            access_token: generateToken(user),
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                points: user.points,
+                avatar: user.avatar,
+                bio: user.bio,
+                emailVerified: user.emailVerified,
+                role: getUserRole(user),
+            },
+        });
+    } catch (err) {
+        console.error('exchangeOAuthCode controller error:', err);
+        return res.status(500).json({ error: '登录失败，请稍后重试' });
+    }
 };

@@ -143,6 +143,12 @@ const router = createRouter({
       component: () => import('../views/system/SettingsView.vue'),
     },
     {
+      path: '/admin',
+      name: 'admin-dashboard',
+      component: () => import('../views/admin/AdminDashboardView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/system/NotFound.vue'),
@@ -151,12 +157,25 @@ const router = createRouter({
 })
 
 // 全局前置守卫：启动顶部进度条，并确保用户状态已初始化
-router.beforeEach(async (_, __, next) => {
+router.beforeEach(async (to, _, next) => {
   NProgress.start()
 
   const userStore = useUserStore()
   if (!userStore.isReady) {
     await userStore.init()
+  }
+
+  if (to.meta?.requiresAuth && !userStore.isLoggedIn) {
+    next({
+      name: 'login',
+      query: { redirect: to.fullPath },
+    })
+    return
+  }
+
+  if (to.meta?.requiresAdmin && userStore.user?.role !== 'admin') {
+    next({ name: 'home' })
+    return
   }
 
   next()

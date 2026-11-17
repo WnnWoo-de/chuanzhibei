@@ -29,7 +29,7 @@
       <!-- 导航菜单区域：可滚动，包含分类标题和菜单项 -->
       <div class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar p-3 pt-3">
         <nav class="space-y-1">
-          <div v-for="(item, index) in sidebarItems" :key="index" class="group">
+          <div v-for="(item, index) in sidebarItems" v-show="!item.adminOnly || userStore.user?.role === 'admin'" :key="index" class="group">
             <div
               v-if="item.category"
               class="transition-all duration-300 overflow-hidden"
@@ -136,6 +136,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { langText } from '@/language'  // 多语言文本资源
+import { useUserStore } from '@/stores/user'
 
 // 接收父组件传入的属性
 const props = defineProps({
@@ -150,6 +151,7 @@ const emit = defineEmits(['toggle', 'close', 'expand-change'])
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 // 默认以 mini 形态收起侧边栏
 const isMini = ref(true)
@@ -368,6 +370,15 @@ const sidebarItems = [
     labelKey: 'profile',
     link: '/profile',
     icon: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0',
+  },
+  {
+    label: '管理端',
+    labelKey: 'admin',
+    link: '/admin',
+    icon: 'M4.75 5.75h14.5v12.5H4.75zM8 9h3.5M8 12h8M8 15h5.5M14.75 9h1.75',
+    badge: 'Admin',
+    badgeKey: 'admin',
+    adminOnly: true,
   },
   {
     label: '设置',

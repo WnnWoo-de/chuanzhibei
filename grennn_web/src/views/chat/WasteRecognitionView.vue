@@ -97,7 +97,7 @@
                 <h4 class="font-bold mb-4 flex items-center gap-2">
                   <el-icon class="text-primary"><InfoFilled /></el-icon> {{ langText.wasteRecognition.defaultAdviceTitle }}
                 </h4>
-                <ul class="space-y-3">
+                <ul class="space-y-3 mb-6">
                   <li class="flex gap-3 text-sm text-gray-600 leading-relaxed">
                     <span class="text-primary mt-0.5">•</span>
                     <span>{{ langText.wasteRecognition.defaultAdvice1 }}</span>
@@ -107,6 +107,16 @@
                     <span>{{ langText.wasteRecognition.defaultAdvice2 }}</span>
                   </li>
                 </ul>
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                  <div class="border border-gray-100 rounded-xl p-4 bg-gray-50/80">
+                    <p class="font-mono opacity-50 mb-1">STATUS</p>
+                    <p class="font-bold">{{ previewUrl ? '图片已上传，等待重新识别' : '等待上传图片' }}</p>
+                  </div>
+                  <div class="border border-gray-100 rounded-xl p-4 bg-gray-50/80">
+                    <p class="font-mono opacity-50 mb-1">MODEL</p>
+                    <p class="font-bold">Qwen VL</p>
+                  </div>
+                </div>
               </div>
             </div>
             
@@ -119,6 +129,14 @@
                   {{ analysisResult.itemName }}
                   <span class="text-xs font-mono font-normal px-2 py-1 rounded-sm text-white bg-black whitespace-nowrap">{{ langText.wasteRecognition.confidence }} {{ analysisResult.confidence }}%</span>
                 </h3>
+                <div class="flex flex-wrap gap-2 mt-4">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-bold border border-green-100">
+                    识别完成
+                  </span>
+                  <span v-if="analysisResult.pointsEarned" class="inline-flex items-center px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold border border-amber-100">
+                    +{{ analysisResult.pointsEarned }} 积分
+                  </span>
+                </div>
               </div>
               
               <!-- 垃圾分类信息卡片（带颜色标识） -->
@@ -149,6 +167,9 @@
                     <span>{{ tip }}</span>
                   </li>
                 </ul>
+                <div class="mt-5 pt-5 border-t border-gray-100 text-xs leading-relaxed text-gray-500">
+                  结果由 AI 视觉模型生成，请结合所在城市的实际分类标准和小区投放点规则确认。
+                </div>
               </div>
             </div>
           </div>
@@ -164,11 +185,12 @@
 // views/chat/WasteRecognitionView.vue - 垃圾分类 AI 识别页面
 // 用户上传图片后，调用后端识别接口返回分类结果和环保建议
 // ============================================================
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { Camera, UploadFilled, Loading, InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { analyzeWasteImage } from '@/services/wasteService'
 import { langText } from '@/language'
+import { useUserStore } from '@/stores/user'
 
 // 拖拽悬停状态（控制上传区域的高亮效果）
 const isDragging = ref(false)
@@ -176,6 +198,7 @@ const previewUrl = ref(null)        // 上传图片的预览 URL（Object URL）
 const fileInput = ref(null)         // 文件 input DOM 引用
 const isAnalyzing = ref(false)      // 是否正在「识别」中（显示扫描动画）
 const analysisResult = ref(null)    // 识别结果对象
+const userStore = useUserStore()
 
 /** 处理拖拽放置事件 */
 const handleDrop = (e) => {
@@ -204,12 +227,14 @@ const processFile = (file) => {
     return
   }
   
+  if (previewUrl.value) URL.revokeObjectURL(previewUrl.value)
   previewUrl.value = URL.createObjectURL(file)
   analyzeImage(file)
 }
 
 /** 重置上传状态，清除预览和识别结果 */
 const resetUpload = () => {
+  if (previewUrl.value) URL.revokeObjectURL(previewUrl.value)
   previewUrl.value = null
   analysisResult.value = null
   if (fileInput.value) fileInput.value.value = ''
@@ -229,6 +254,7 @@ const analyzeImage = async (file) => {
   }
 
   analysisResult.value = result.data
+  if (result.data?.points !== undefined) userStore.syncPoints(result.data.points)
 }
 
 // ---- 分类样式映射工具函数 ----

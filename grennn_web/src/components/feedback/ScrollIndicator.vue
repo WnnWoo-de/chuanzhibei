@@ -56,7 +56,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { langText } from '@/language'
 
-const props = defineProps({
+defineProps({
   /** 自定义提示文字（为空时使用多语言默认值） */
   text: {
     type: String,

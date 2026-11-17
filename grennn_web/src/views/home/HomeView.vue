@@ -234,6 +234,15 @@
                 :key="currentSlide"
                 class="hero-slide-card flex flex-col justify-center pl-0 sm:pl-10 min-h-[280px] sm:min-h-[320px] lg:min-h-[420px] lg:pl-14"
               >
+                <img
+                  :src="forestImage"
+                  alt="晨光与薄雾中的绿色森林，清澈河流蜿蜒其间"
+                  width="1536"
+                  height="1024"
+                  fetchpriority="high"
+                  decoding="async"
+                  class="hero-nature-image"
+                />
                 <p class="hero-copy hero-copy--meta text-[9px] sm:text-[10px] md:text-xs font-mono uppercase tracking-[0.35em] sm:tracking-[0.4em] text-emerald-600/50">
                   0{{ currentSlide + 1 }} / 0{{ slides.length }}
                 </p>
@@ -699,6 +708,7 @@
 </template>
 
 <script setup>
+import forestImage from '@/assets/images/editorial/forest.jpg'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import gsap from 'gsap'
@@ -1286,6 +1296,17 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.hero-nature-image {
+  display: block;
+  width: 100%;
+  height: clamp(9rem, 18vw, 14rem);
+  object-fit: cover;
+  object-position: center 58%;
+  margin-bottom: 1.25rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 14px 36px rgba(24, 67, 42, 0.12);
+}
+
 .home-view {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -1525,6 +1546,7 @@ onUnmounted(() => {
 .hero-slide-panel {
   position: relative;
   isolation: isolate;
+  min-width: 0;
 }
 
 .hero-slide-glow-trail {
@@ -1542,6 +1564,8 @@ onUnmounted(() => {
 .hero-slide-card {
   position: relative;
   z-index: 1;
+  width: 100%;
+  min-width: 0;
 }
 
 .hero-copy {

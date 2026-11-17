@@ -8,11 +8,11 @@ const PostLike = sequelize.define('PostLike', {
         primaryKey: true,
     },
     postId: {
-        type: DataTypes.UUID,
+        type: DataTypes.CHAR(36),
         allowNull: false,
     },
     userId: {
-        type: DataTypes.UUID,
+        type: DataTypes.CHAR(36),
         allowNull: false,
     },
 }, {

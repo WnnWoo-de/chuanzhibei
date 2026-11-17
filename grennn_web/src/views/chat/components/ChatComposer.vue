@@ -94,7 +94,7 @@ const syncHeight = async () => {
 }
 
 /** 处理输入事件：同步值到父组件并调整高度 */
-const handleInput = (event) => {
+const handleInput = () => {
   emit('update:newMessage', localNewMessage.value)
   emit('adjust-height')
 }
