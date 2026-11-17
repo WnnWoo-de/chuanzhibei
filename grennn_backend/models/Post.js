@@ -23,10 +23,6 @@ const Post = sequelize.define('Post', {
         type: DataTypes.INTEGER,
         defaultValue: 0,
     },
-    views_count: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-    },
     userId: {
         type: DataTypes.CHAR(36),
         allowNull: true,

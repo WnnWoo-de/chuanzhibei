@@ -1156,6 +1156,11 @@ export const text = {
     dangerZone: '危险区域',
     deleteAccountWarning: '删除账号将永久清除您的所有数据、环保记录及成就徽章。这一操作无法撤销。',
     deleteAccount: '永久删除账号',
+    saving: '保存中...',
+    saveFailed: '保存通知偏好失败',
+    changePasswordSent: '密码重置邮件已发送，请查收邮箱',
+    changePasswordFailed: '发送密码重置邮件失败',
+    deleteAccountContact: '注销账号需要人工核验，请联系项目管理员处理。',
     saveSuccess: '成功保存个人资料！',
   },
   notFound: {

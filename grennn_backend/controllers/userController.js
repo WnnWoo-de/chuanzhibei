@@ -52,10 +52,15 @@ exports.getMe = async (req, res) => {
  */
 exports.updateMe = async (req, res) => {
     try {
-        const username = String(req.body?.username || '').trim();
-        const avatar = String(req.body?.avatar || '').trim();
-        const bio = String(req.body?.bio || '').trim();
         const user = req.user;
+        const username = String(req.body?.username || '').trim();
+        // 未传 avatar / bio 时保留原值，避免只修改用户名时清空其他资料
+        const avatar = req.body?.avatar === undefined
+            ? String(user.avatar || '').trim()
+            : String(req.body.avatar || '').trim();
+        const bio = req.body?.bio === undefined
+            ? String(user.bio || '').trim()
+            : String(req.body.bio || '').trim();
 
         if (!username) {
             return res.status(400).json({ error: '请输入用户名', errors: { username: '请输入用户名' } });

@@ -17,6 +17,13 @@ const PostLike = sequelize.define('PostLike', {
     },
 }, {
     tableName: 'PostLikes',
+    indexes: [
+        {
+            name: 'uq_postlikes_post_user',
+            unique: true,
+            fields: ['postId', 'userId'],
+        },
+    ],
 });
 
 module.exports = PostLike;

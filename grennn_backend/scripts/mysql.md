@@ -179,7 +179,6 @@ npm start     # 生产模式
 | content | TEXT | 否 | — | 帖子正文 |
 | images | JSON | 否 | [] | 图片URL数组 |
 | likes_count | INT | 否 | 0 | 点赞总数（冗余计数） |
-| views_count | INT | 否 | 0 | 浏览次数 |
 | userId | CHAR(36) | 是 | NULL | 外键→Users.id（用户删除后置NULL） |
 | createdAt | DATETIME | 否 | — | 发布时间 |
 | updatedAt | DATETIME | 否 | — | 更新时间 |

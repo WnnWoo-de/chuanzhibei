@@ -838,6 +838,11 @@ export const text = {
     dangerZone: '危険ゾーン',
     deleteAccountWarning: 'アカウントを削除すると、すべてのデータ、環境記録、実績バッジが永久に消去されます。この操作は元に戻せません。',
     deleteAccount: 'アカウントを永久に削除',
+    saving: '保存中...',
+    saveFailed: '通知設定の保存に失敗しました',
+    changePasswordSent: 'パスワード再設定メールを送信しました。メールをご確認ください。',
+    changePasswordFailed: 'パスワード再設定メールの送信に失敗しました',
+    deleteAccountContact: 'アカウント削除には本人確認が必要です。プロジェクト管理者にお問い合わせください。',
     saveSuccess: 'プロフィールが正常に保存されました！',
   },
   notFound: {

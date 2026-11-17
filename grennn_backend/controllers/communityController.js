@@ -2,7 +2,7 @@
  * controllers/communityController.js - 社区帖子控制器
  * 处理帖子分页查询、发帖和点赞/取消点赞等社区互动逻辑
  */
-const { Post, PostLike, User } = require('../models');
+const { Post, PostLike, User, sequelize } = require('../models');
 const { awardPoints } = require('../services/points');
 
 /**
@@ -100,44 +100,53 @@ exports.createPost = async (req, res) => {
  * 对帖子点赞或取消点赞，并同步维护帖子点赞总数
  */
 exports.likePost = async (req, res) => {
+    let transaction;
     try {
-        const post = await Post.findByPk(req.params.id);
+        transaction = await sequelize.transaction();
+        // 行锁串行化同一帖子的点赞请求，避免并发下重复计数
+        const post = await Post.findByPk(req.params.id, {
+            transaction,
+            lock: transaction.LOCK.UPDATE,
+        });
         if (!post) {
+            await transaction.rollback();
             return res.status(404).json({ error: 'Post not found' });
         }
 
-        // 判断当前用户是否已经给这条帖子点过赞
         const existingLike = await PostLike.findOne({
             where: {
                 postId: post.id,
                 userId: req.user.id,
-            }
+            },
+            transaction,
         });
 
         const wantsUnlike = req.body?.action === 'unlike';
 
-        // 取消点赞：删除关联记录，并将点赞数减 1（最低不小于 0）
         if (wantsUnlike) {
             if (existingLike) {
-                await existingLike.destroy();
+                await existingLike.destroy({ transaction });
                 post.likes_count = Math.max(0, (post.likes_count || 0) - 1);
-                await post.save();
+                await post.save({ transaction });
             }
+            await transaction.commit();
             return res.json({ status: 'unliked', count: post.likes_count, likes_count: post.likes_count });
         }
 
-        // 点赞：只有尚未点赞时才新增记录，避免重复累计
         if (!existingLike) {
             await PostLike.create({
                 postId: post.id,
                 userId: req.user.id,
-            });
+            }, { transaction });
             post.likes_count = (post.likes_count || 0) + 1;
-            await post.save();
+            await post.save({ transaction });
         }
 
-        res.json({ status: 'liked', count: post.likes_count, likes_count: post.likes_count });
+        await transaction.commit();
+        return res.json({ status: 'liked', count: post.likes_count, likes_count: post.likes_count });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        if (transaction && !transaction.finished) await transaction.rollback();
+        console.error('Like post error:', err);
+        res.status(500).json({ error: '更新点赞状态失败' });
     }
 };

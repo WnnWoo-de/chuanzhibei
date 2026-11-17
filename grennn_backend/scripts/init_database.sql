@@ -62,7 +62,6 @@ CREATE TABLE IF NOT EXISTS `Posts` (
     `content`     TEXT      NOT NULL COMMENT '帖子正文',
     `images`      JSON      NOT NULL COMMENT '图片URL数组，默认[]',
     `likes_count` INT       NOT NULL DEFAULT 0 COMMENT '点赞总数（冗余计数）',
-    `views_count` INT       NOT NULL DEFAULT 0 COMMENT '浏览次数',
     `userId`      CHAR(36)  NULL     COMMENT '发帖用户ID（用户删除后置NULL）',
     `createdAt`   DATETIME  NOT NULL COMMENT '发布时间',
     `updatedAt`   DATETIME  NOT NULL COMMENT '最后修改时间',
@@ -73,7 +72,6 @@ CREATE TABLE IF NOT EXISTS `Posts` (
     INDEX `idx_posts_userId`      (`userId`),
     INDEX `idx_posts_createdAt`   (`createdAt` DESC),
     INDEX `idx_posts_likes_count` (`likes_count` DESC),
-    INDEX `idx_posts_views_count` (`views_count` DESC)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='社区帖子表（图文 + 点赞/浏览统计）';
 

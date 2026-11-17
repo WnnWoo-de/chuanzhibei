@@ -11,6 +11,7 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+dev-dist
 coverage
 *.local
 
@@ -25,6 +26,10 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# 自动生成的文件
+auto-imports.d.ts
+components.d.ts
 
 .eslintcache
 build_output.txt

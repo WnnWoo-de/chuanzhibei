@@ -61,8 +61,8 @@
 
                 <div class="pt-8 flex justify-end gap-4">
                   <button type="button" @click="resetForm" class="px-6 py-3 border border-black/20 text-sm font-bold hover:bg-neutral-100 transition-colors">{{ langText.settings.cancel }}</button>
-                  <button type="submit" class="px-8 py-3 bg-black text-white text-sm font-bold hover:bg-primary transition-colors flex items-center gap-2">
-                    {{ langText.settings.saveChanges }}
+                  <button type="submit" :disabled="saving" class="px-8 py-3 bg-black text-white text-sm font-bold hover:bg-primary transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    {{ saving ? langText.settings.saving : langText.settings.saveChanges }}
                   </button>
                 </div>
               </form>
@@ -89,7 +89,7 @@
                 </div>
                 
                 <div class="pt-6">
-                  <button class="px-6 py-2 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-primary transition-colors">
+                  <button type="button" @click="saveNotificationPrefs" class="px-6 py-2 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-primary transition-colors">
                     {{ langText.settings.saveNotifPrefs }}
                   </button>
                 </div>
@@ -108,7 +108,7 @@
                   <h3 class="text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
                     <span class="w-1 h-4 bg-primary inline-block"></span> {{ langText.settings.passwordManage }}
                   </h3>
-                  <button class="px-6 py-3 border border-black text-sm font-bold hover:bg-black hover:text-white transition-colors">
+                  <button type="button" @click="handleChangePassword" class="px-6 py-3 border border-black text-sm font-bold hover:bg-black hover:text-white transition-colors">
                     {{ langText.settings.changePassword }}
                   </button>
                 </div>
@@ -120,7 +120,7 @@
                   <p class="text-xs text-gray-500 mb-4 line-relaxed max-w-lg">
                     {{ langText.settings.deleteAccountWarning }}
                   </p>
-                  <button class="px-6 py-3 border border-red-200 text-red-600 bg-red-50 text-sm font-bold hover:bg-red-600 hover:text-white transition-colors">
+                  <button type="button" @click="handleDeleteAccount" class="px-6 py-3 border border-red-200 text-red-600 bg-red-50 text-sm font-bold hover:bg-red-600 hover:text-white transition-colors">
                     {{ langText.settings.deleteAccount }}
                   </button>
                 </div>
@@ -140,7 +140,7 @@
 // 包含账号信息编辑、消息通知偏好、安全与隐私三个分组
 // 通过 activeTab 切换左侧导航对应的内容区域
 // ============================================================
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
 import { langText } from '@/language'
@@ -148,6 +148,7 @@ import { langText } from '@/language'
 const userStore = useUserStore()
 // 当前激活的设置分组（account / notifications / security）
 const activeTab = ref('account')
+const saving = ref(false)
 
 // 左侧导航标签配置
 const tabs = computed(() => [
@@ -171,11 +172,34 @@ const notifSettings = reactive([
   { title: computed(() => langText.value.settings.weeklyReport), desc: computed(() => langText.value.settings.weeklyReportDesc), enabled: false }
 ])
 
-// 组件挂载时，将 userStore 中的用户信息填充到表单
+// 通知偏好按账号隔离，避免切换账号后互相影响
+const notificationStorageKey = () => `greensight_notification_prefs:${userStore.user?.id || 'guest'}`
+
+const loadNotificationPrefs = () => {
+  try {
+    const raw = localStorage.getItem(notificationStorageKey())
+    if (!raw) return
+    const saved = JSON.parse(raw)
+    if (!Array.isArray(saved)) return
+    notifSettings.forEach((item, index) => {
+      if (typeof saved[index] === 'boolean') item.enabled = saved[index]
+    })
+  } catch {
+    // 本地存储损坏时回退到默认值
+  }
+}
+
+// 组件挂载与账号切换时，同步表单和通知偏好
 onMounted(() => {
   if (userStore.user) {
     resetForm()
+    loadNotificationPrefs()
   }
+})
+
+watch(() => userStore.user?.id, () => {
+  resetForm()
+  loadNotificationPrefs()
 })
 
 /**
@@ -185,18 +209,76 @@ onMounted(() => {
 const resetForm = () => {
   form.username = userStore.user?.username || ''
   form.email = userStore.user?.email || ''
-  form.bio = ''
+  form.bio = userStore.user?.bio || ''
 }
 
 /**
- * 保存账号设置
- * 当前为本地 mock，后续可替换为 PATCH /api/v1/users/me 接口
+ * 保存账号设置到后端
  */
-const saveSettings = () => {
-  // Mock save — TODO: 接入后端接口
-  ElMessage.success(langText.value.settings.saveSuccess)
-  if (userStore.user) {
-    userStore.user.username = form.username
+const saveSettings = async () => {
+  if (saving.value) return
+
+  const username = form.username.trim()
+  form.username = username
+  if (username.length < 2) {
+    ElMessage.error(langText.value.auth.usernameMinLength)
+    return
   }
+  if (username.length > 20) {
+    ElMessage.error(langText.value.auth.usernameMaxLength)
+    return
+  }
+
+  saving.value = true
+  const result = await userStore.updateProfile({
+    username,
+    bio: form.bio.trim(),
+    avatar: userStore.user?.avatar || '',
+  })
+  saving.value = false
+
+  if (!result.ok) {
+    // 字段级错误由 store 返回，但设置页没有内联错误位，这里统一提示
+    if (Object.keys(result.fieldErrors || {}).length) {
+      ElMessage.error(result.message)
+    }
+    return
+  }
+
+  form.bio = userStore.user?.bio || ''
+}
+
+/** 保存通知偏好到当前浏览器 */
+const saveNotificationPrefs = () => {
+  try {
+    localStorage.setItem(
+      notificationStorageKey(),
+      JSON.stringify(notifSettings.map((item) => item.enabled)),
+    )
+    ElMessage.success(langText.value.settings.saveSuccess)
+  } catch {
+    ElMessage.error(langText.value.settings.saveFailed)
+  }
+}
+
+/** 已登录用户通过邮箱重置密码 */
+const handleChangePassword = async () => {
+  const email = userStore.user?.email
+  if (!email) {
+    ElMessage.error(langText.value.settings.changePasswordFailed)
+    return
+  }
+
+  const result = await userStore.verifyEmail(email, { silent: true })
+  if (!result.ok) {
+    ElMessage.error(result.message || langText.value.settings.changePasswordFailed)
+    return
+  }
+  ElMessage.success(langText.value.settings.changePasswordSent)
+}
+
+/** 注销账号需要人工核验，当前仅提供明确指引 */
+const handleDeleteAccount = () => {
+  ElMessage.info(langText.value.settings.deleteAccountContact)
 }
 </script>

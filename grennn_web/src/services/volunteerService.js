@@ -7,11 +7,10 @@ import { requestAxios } from '@/utils/api'
 // ============================================================
 
 // 本地 mock 活动状态的持久化键
-const MOCK_STATE_KEY = 'green_volunteer_mock_state_v1'
+const MOCK_STATE_KEY = 'greensight_volunteer_mock_state'
 
-// 开发/部署阶段如果显式开启 mock，或生产环境未接入接口时，允许回退到本地模拟
-const shouldUseVolunteerMock = () =>
-  import.meta.env.VITE_USE_MOCK_VOLUNTEER === 'true' || import.meta.env.PROD
+// 仅在显式开启时使用本地模拟，避免接口异常时静默展示假数据
+const shouldUseVolunteerMock = () => import.meta.env.VITE_USE_MOCK_VOLUNTEER === 'true'
 
 // 本地模拟活动清单：用于无后端时保证页面仍可完整演示
 const volunteerMockActivities = [

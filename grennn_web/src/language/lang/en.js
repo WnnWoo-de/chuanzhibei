@@ -838,6 +838,11 @@ export const text = {
     dangerZone: 'Danger Zone',
     deleteAccountWarning: 'Deleting your account will permanently erase all your data, eco records and achievement badges. This action cannot be undone.',
     deleteAccount: 'Permanently Delete Account',
+    saving: 'Saving...',
+    saveFailed: 'Failed to save notification preferences',
+    changePasswordSent: 'Password reset email sent. Please check your inbox.',
+    changePasswordFailed: 'Failed to send password reset email',
+    deleteAccountContact: 'Account deletion requires manual verification. Please contact the project administrator.',
     saveSuccess: 'Profile saved successfully!',
   },
   notFound: {

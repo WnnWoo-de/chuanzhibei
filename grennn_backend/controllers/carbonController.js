@@ -4,6 +4,25 @@
  */
 const { CarbonFootprintRecord } = require('../models');
 
+// 输入边界：防止负数、NaN 与异常大值写入数据库
+const INPUT_LIMITS = {
+    commuteKm: { min: 0, max: 1000 },
+    electricityKwh: { min: 0, max: 10000 },
+    meatMeals: { min: 0, max: 100 },
+};
+
+/**
+ * 读取并校验数值字段
+ * @returns {number|null} 非法输入返回 null
+ */
+function readBoundedNumber(value, { min, max }) {
+    if (value === undefined || value === null || value === '') return 0;
+    if (typeof value !== 'number' && typeof value !== 'string') return null;
+    const n = Number(value);
+    if (!Number.isFinite(n) || n < min || n > max) return null;
+    return n;
+}
+
 /**
  * 根据用户输入的通勤、用电和饮食数据估算碳排放
  * 返回交通、用电、生活方式三部分排放以及总评级
@@ -32,11 +51,18 @@ function calculateEmissions({ commuteKm, commuteMode, electricityKwh, meatMeals 
  */
 exports.createRecord = async (req, res) => {
     try {
-        // 从请求体中读取用户输入，并对通勤方式做白名单校验
-        const commuteKm = Number(req.body?.commuteKm || 0);
-        const commuteMode = ['bike', 'bus', 'car'].includes(req.body?.commuteMode) ? req.body.commuteMode : 'bus';
-        const electricityKwh = Number(req.body?.electricityKwh || 0);
-        const meatMeals = Number(req.body?.meatMeals || 0);
+        // 从请求体中读取用户输入，并对数值和通勤方式做严格校验
+        const commuteKm = readBoundedNumber(req.body?.commuteKm, INPUT_LIMITS.commuteKm);
+        const electricityKwh = readBoundedNumber(req.body?.electricityKwh, INPUT_LIMITS.electricityKwh);
+        const meatMeals = readBoundedNumber(req.body?.meatMeals, INPUT_LIMITS.meatMeals);
+        const commuteMode = req.body?.commuteMode ?? 'bus';
+
+        if (commuteKm === null || electricityKwh === null || meatMeals === null) {
+            return res.status(400).json({ error: '碳足迹输入超出有效范围' });
+        }
+        if (!['bike', 'bus', 'car'].includes(commuteMode)) {
+            return res.status(400).json({ error: '不支持的通勤方式' });
+        }
 
         const emissions = calculateEmissions({ commuteKm, commuteMode, electricityKwh, meatMeals });
         // 根据占比最高的排放来源生成一条简单优化建议
@@ -54,7 +80,8 @@ exports.createRecord = async (req, res) => {
 
         res.status(201).json(record);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Create carbon record error:', err);
+        res.status(500).json({ error: '保存碳足迹记录失败' });
     }
 };
 
@@ -70,6 +97,7 @@ exports.getLatestRecord = async (req, res) => {
         });
         res.json(record || null);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Get latest carbon record error:', err);
+        res.status(500).json({ error: '加载碳足迹记录失败' });
     }
 };

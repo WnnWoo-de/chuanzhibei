@@ -162,6 +162,8 @@ MICROSOFT_CLIENT_ID=your_microsoft_client_id
 MICROSOFT_CLIENT_SECRET=your_microsoft_client_secret
 ```
 
+> 前端开发环境变量见 `grennn_web/.env.example`。志愿活动默认请求真实后端；仅在无后端演示时设置 `VITE_USE_MOCK_VOLUNTEER=true`。
+
 #### 初始化数据库
 
 ```bash

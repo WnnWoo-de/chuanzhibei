@@ -11,7 +11,9 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '', '')
-  const siliconflowApiKey = env.SILICONFLOW_API_KEY
+  // 开发代理目标与监听地址均可通过环境变量覆盖；默认仅监听本机，避免 API 能力暴露到局域网
+  const apiProxyTarget = env.VITE_API_PROXY_TARGET || 'http://127.0.0.1:3000'
+  const devHost = env.VITE_DEV_HOST || 'localhost'
 
   return {
     plugins: [
@@ -131,23 +133,11 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      host: '0.0.0.0',
+      host: devHost,
       proxy: {
         '/api': {
-          target: 'http://localhost:3000',
+          target: apiProxyTarget,
           changeOrigin: true,
-        },
-        '/siliconflow-api': {
-          target: 'https://api.siliconflow.cn',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/siliconflow-api/, ''),
-          configure: (proxy) => {
-            proxy.on('proxyReq', (proxyReq) => {
-              if (siliconflowApiKey) {
-                proxyReq.setHeader('Authorization', `Bearer ${siliconflowApiKey}`)
-              }
-            })
-          },
         },
       },
     },
